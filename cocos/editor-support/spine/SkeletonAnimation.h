@@ -57,6 +57,7 @@ public:
 
 	spTrackEntry* setAnimation (int trackIndex, const std::string& name, bool loop);
 	spTrackEntry* addAnimation (int trackIndex, const std::string& name, bool loop, float delay = 0);
+	spAnimation *findAnimation(const std::string& name) const;
 	spTrackEntry* getCurrent (int trackIndex = 0);
 	void clearTracks ();
 	void clearTrack (int trackIndex = 0);
@@ -76,7 +77,7 @@ public:
 
 	spAnimationState* getState() const;
 
-protected:
+CC_CONSTRUCTOR_ACCESS:
 	SkeletonAnimation ();
 	SkeletonAnimation (spSkeletonData* skeletonData);
 	SkeletonAnimation (const std::string&skeletonDataFile, spAtlas* atlas, float scale = 1);
@@ -84,6 +85,7 @@ protected:
 	virtual ~SkeletonAnimation ();
 	void initialize ();
 
+protected:
 	spAnimationState* _state;
 
 	bool _ownsAnimationStateData;
