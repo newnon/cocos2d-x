@@ -304,6 +304,15 @@ void CCBReader::calcScales(const Size &designResolution, float designScale, Scen
     }
 }
 
+Node* CCBReader::readNodeGraphFromData(const cocos2d::Data &data, SceneScaleType scaleType)
+{
+    return readNodeGraphFromData(data, nullptr, scaleType);
+}
+    
+Node* CCBReader::readNodeGraphFromData(const cocos2d::Data &data, cocos2d::Ref *pOwner, SceneScaleType scaleType)
+{
+    return readNodeGraphFromData(data, pOwner, Director::getInstance()->getWinSize(), scaleType);
+}
 
 Node* CCBReader::readNodeGraphFromData(const cocos2d::Data &data, Ref *pOwner, const Size &parentSize, SceneScaleType scaleType)
 {

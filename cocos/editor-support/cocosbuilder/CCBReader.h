@@ -251,6 +251,8 @@ public:
      * @js NA
      * @lua NA
      */
+    cocos2d::Node* readNodeGraphFromData(const cocos2d::Data &data, SceneScaleType scaleType = SceneScaleType::NONE);
+    cocos2d::Node* readNodeGraphFromData(const cocos2d::Data &data, cocos2d::Ref *pOwner, SceneScaleType scaleType = SceneScaleType::NONE);
     cocos2d::Node* readNodeGraphFromData(const cocos2d::Data &data, cocos2d::Ref *pOwner, const cocos2d::Size &parentSize, SceneScaleType scaleType = SceneScaleType::NONE);
    
     /**
