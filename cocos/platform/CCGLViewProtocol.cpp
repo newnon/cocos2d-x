@@ -444,10 +444,7 @@ void GLViewProtocol::cancellAllTouches()
     g_touchIdReorderMap.clear();
     
     if (touchEvent._touches.size() == 0)
-    {
-        CCLOG("touchesEnded or touchesCancel: size = 0");
         return;
-    }
     
     touchEvent._eventCode = EventTouch::EventCode::CANCELLED;
     auto dispatcher = Director::getInstance()->getEventDispatcher();
