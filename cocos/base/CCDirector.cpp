@@ -968,7 +968,9 @@ void Director::purgeDirector()
     FontFreeType::shutdownFreeType();
 
     // purge all managed caches
+#ifndef __clang_analyzer__
     DrawPrimitives::free();
+#endif
     AnimationCache::destroyInstance();
     SpriteFrameCache::destroyInstance();
     GLProgramCache::destroyInstance();
