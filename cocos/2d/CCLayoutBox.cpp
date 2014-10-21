@@ -77,7 +77,7 @@ void LayoutBox::layout()
         {
             Size childSize = child->getContentSize();
             
-            Point offset = child->getAnchorPoint();
+            Point offset = child->getAnchorPointInPoints();
             Point localPos = Point(roundf(width), roundf((maxHeight-childSize.height)/2.0f));
             Point position = localPos + offset;
             
@@ -109,7 +109,7 @@ void LayoutBox::layout()
         {
             Size childSize = child->getContentSize();
             
-            Point offset = child->getAnchorPoint();
+            Point offset = child->getAnchorPointInPoints();
             Point localPos = Point(roundf((maxWidth-childSize.width)/2.0f), roundf(height));
             Point position = localPos + offset;
             
