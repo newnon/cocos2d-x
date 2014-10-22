@@ -69,7 +69,7 @@ void LayoutNode::visit(Renderer *renderer, const Mat4& parentTransform, uint32_t
 void LayoutNode::addChild(Node *child, int zOrder, int tag)
 {
     Node::addChild(child, zOrder, tag);
-    layout();
+    needsLayout();
 }
 
 void LayoutNode::removeChild(Node* child, bool cleanup)
