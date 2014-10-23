@@ -1049,10 +1049,10 @@ void Node::addChildHelper(Node* child, int localZOrder, int tag, const std::stri
     
 #if CC_USE_PHYSICS
     // Recursive add children with which have physics body.
-    auto scene = this->getScene();
-    if (scene && scene->getPhysicsWorld())
+    PhysicsNode* physicsNode = getPhysicsNode();
+    if (physicsNode && physicsNode->getPhysicsWorld())
     {
-        scene->addChildToPhysicsWorld(child);
+        physicsNode->addChildToPhysicsWorld(child);
     }
 #endif
     
@@ -2051,11 +2051,11 @@ void Node::setPhysicsBody(PhysicsBody* body)
         _physicsScaleStartX = _scaleX;
         _physicsScaleStartY = _scaleY;
 
-        auto scene = getScene();
-        if (scene && scene->getPhysicsWorld())
+        PhysicsNode* physicsNode = getPhysicsNode();
+        if (physicsNode && physicsNode->getPhysicsWorld())
         {
             _physicsTransformDirty = true;
-            scene->getPhysicsWorld()->addBody(body);
+            physicsNode->getPhysicsWorld()->addBody(body);
         }
     }
 }
@@ -2103,6 +2103,27 @@ void Node::updateTransformFromPhysics(const Mat4& parentTransform, uint32_t pare
     }
     _physicsRotation = _physicsBody->getRotation();
     setRotation(_physicsRotation - _parent->_physicsRotation);
+}
+
+PhysicsNode* Node::getPhysicsNode() const
+{
+    if(!_parent)
+        return nullptr;
+    
+    return _parent->getPhysicsNode();
+}
+
+Vec2 Node::convertToPhysicsSpace(const Vec2& nodePoint) const
+{
+    if(_physicsBody)
+    {
+        PhysicsNode &physicsNode = _physicsBody->getWorld()->getPhysicsNode();
+        return physicsNode.convertToNodeSpace(convertToWorldSpace(nodePoint));
+    }
+    else
+    {
+        return convertToWorldSpace(nodePoint);
+    }
 }
 
 #endif //CC_USE_PHYSICS

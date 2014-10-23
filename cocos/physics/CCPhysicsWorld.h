@@ -48,7 +48,7 @@ typedef Vec2 Vect;
 class Director;
 class Node;
 class Sprite;
-class Scene;
+class PhysicsNode;
 class DrawNode;
 class PhysicsDebugDraw;
 
@@ -122,7 +122,7 @@ public:
     PhysicsBody* getBody(int tag) const;
     
     /** Get scene contain this physics world */
-    inline Scene& getScene() const { return *_scene; }
+    inline PhysicsNode& getPhysicsNode() const { return *_physicsNode; }
     /** get the gravity value */
     inline Vect getGravity() const { return _gravity; }
     /** set the gravity value */
@@ -172,8 +172,8 @@ public:
     void step(float delta);
     
 protected:
-    static PhysicsWorld* construct(Scene& scene);
-    bool init(Scene& scene);
+    static PhysicsWorld* construct(PhysicsNode& physicsNode);
+    bool init(PhysicsNode& scene);
     
     virtual void addBody(PhysicsBody* body);
     virtual void addShape(PhysicsShape* shape);
@@ -207,7 +207,7 @@ protected:
     bool _updateBodyTransform;
     Vector<PhysicsBody*> _bodies;
     std::list<PhysicsJoint*> _joints;
-    Scene* _scene;
+    PhysicsNode* _physicsNode;
     
     bool _autoStep;
     PhysicsDebugDraw* _debugDraw;
@@ -225,7 +225,7 @@ protected:
     
     friend class Node;
     friend class Sprite;
-    friend class Scene;
+    friend class PhysicsNode;
     friend class Director;
     friend class PhysicsBody;
     friend class PhysicsShape;

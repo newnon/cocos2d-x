@@ -54,6 +54,7 @@ class GLProgram;
 class GLProgramState;
 #if CC_USE_PHYSICS
 class PhysicsBody;
+class PhysicsNode;
 #endif
 
 /**
@@ -1541,6 +1542,16 @@ public:
      */
     void removeFromPhysicsWorld();
     
+    /**
+     *   get the PhysicsNode the sprite have
+     */
+    virtual PhysicsNode* getPhysicsNode() const;
+    
+    /**
+     * Converts a Vec2 to physics space coordinates. The result is in Points.
+     */
+    Vec2 convertToPhysicsSpace(const Vec2& nodePoint) const;
+    
     void updateTransformFromPhysics(const Mat4& parentTransform, uint32_t parentFlags);
 
     virtual void updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t parentFlags, float parentScaleX, float parentScaleY);
@@ -1734,7 +1745,7 @@ private:
     CC_DISALLOW_COPY_AND_ASSIGN(Node);
     
 #if CC_USE_PHYSICS
-    friend class Layer;
+    friend class PhysicsNode;
 #endif //CC_USTPS
 };
 
