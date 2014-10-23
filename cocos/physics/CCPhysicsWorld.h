@@ -33,6 +33,7 @@
 #include "math/CCGeometry.h"
 #include "physics/CCPhysicsBody.h"
 #include <list>
+#include <set>
 
 struct cpSpace;
 
@@ -48,7 +49,7 @@ typedef Vec2 Vect;
 class Director;
 class Node;
 class Sprite;
-class Scene;
+class PhysicsNode;
 class DrawNode;
 class PhysicsDebugDraw;
 
@@ -216,12 +217,12 @@ public:
     PhysicsBody* getBody(int tag) const;
     
     /**
-    * Get a scene contain this physics world.
+    * Get a PhysicsNode contain this physics world.
     * 
     * @attention This value is initialized in constructor
     * @return A Scene object reference.
     */
-    inline Scene& getScene() const { return *_scene; }
+    inline PhysicsNode& getPhysicsNode() const { return *_physicsNode; }
     
     /**
     * Get the gravity value of this physics world.
@@ -284,6 +285,15 @@ public:
     * @return An interger number.
     */
     inline int getSubsteps() const { return _substeps; }
+    
+    /**
+     * set the number of update of the physics world in a second.
+     * 0 - disable fixed step system
+     * default value is 0
+     */
+    void setFixedUpdateRate(int updatesPerSecond) { if(updatesPerSecond > 0) { _fixedRate = updatesPerSecond; } }
+    /** get the number of substeps */
+    inline int getFixedUpdateRate() const { return _fixedRate; }
 
     /**
     * Set the debug draw mask of this physics world.
@@ -326,9 +336,11 @@ public:
      */
     void step(float delta);
     
+    static const std::set<PhysicsWorld*>& getAllWorlds();
+    
 protected:
-    static PhysicsWorld* construct(Scene& scene);
-    bool init(Scene& scene);
+    static PhysicsWorld* construct(PhysicsNode& physicsNode);
+    bool init(PhysicsNode& scene);
     
     virtual void addBody(PhysicsBody* body);
     virtual void addShape(PhysicsShape* shape);
@@ -357,17 +369,19 @@ protected:
     int _updateRateCount;
     float _updateTime;
     int _substeps;
+    int _fixedRate;
     cpSpace* _cpSpace;
     
     bool _updateBodyTransform;
     Vector<PhysicsBody*> _bodies;
     std::list<PhysicsJoint*> _joints;
-    Scene* _scene;
+    PhysicsNode* _physicsNode;
     
     bool _autoStep;
     PhysicsDebugDraw* _debugDraw;
     int _debugDrawMask;
     
+    static std::set<PhysicsWorld*> _worlds;
     
     Vector<PhysicsBody*> _delayAddBodies;
     Vector<PhysicsBody*> _delayRemoveBodies;
@@ -380,7 +394,7 @@ protected:
     
     friend class Node;
     friend class Sprite;
-    friend class Scene;
+    friend class PhysicsNode;
     friend class Director;
     friend class PhysicsBody;
     friend class PhysicsShape;
@@ -411,6 +425,7 @@ protected:
     PhysicsWorld& _world;
     
     friend class PhysicsWorld;
+    friend class PhysicsNode;
 };
 extern const float CC_DLL PHYSICS_INFINITY;
 

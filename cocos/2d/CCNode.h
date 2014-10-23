@@ -54,6 +54,7 @@ class GLProgram;
 class GLProgramState;
 #if CC_USE_PHYSICS
 class PhysicsBody;
+class PhysicsNode;
 #endif
 
 /**
@@ -1649,7 +1650,7 @@ public:
      *
      * @param body A given physics body.
      */
-    void setPhysicsBody(PhysicsBody* body);
+    void setPhysicsBody(PhysicsBody* body, bool ignoreScale = false);
 
     /**
      * Get the PhysicsBody the sprite have.
@@ -1662,6 +1663,31 @@ public:
      * Remove this node from physics world. it will remove all the physics bodies in it's children too.
      */
     void removeFromPhysicsWorld();
+    
+    /**
+     *   get the PhysicsNode the sprite have
+     */
+    virtual PhysicsNode* getPhysicsNode() const;
+    
+    /**
+     * Converts a Vec2 to physics space coordinates. The result is in Points.
+     */
+    Vec2 convertToPhysicsSpace(const Vec2& nodePoint) const;
+    
+    /**
+     * Converts a Vec2 to node (local) space coordinates. The result is in Points.
+     */
+    Vec2 convertFromPhysicsSpace(const Vec2& physicsPoint) const;
+    
+    /**
+     * Returns the physics transform matrix. The matrix is in Pixels.
+     */
+    Mat4 getNodeToPhysicsTransform() const;
+    
+    /**
+     * Returns the inverse physics transform matrix. The matrix is in Pixels.
+     */
+    Mat4 getPhysicsToNodeTransform() const;
     
     /** 
      * Update the transform matrix from physics.
@@ -1862,7 +1888,7 @@ private:
     CC_DISALLOW_COPY_AND_ASSIGN(Node);
     
 #if CC_USE_PHYSICS
-    friend class Layer;
+    friend class PhysicsNode;
 #endif //CC_USTPS
 };
 

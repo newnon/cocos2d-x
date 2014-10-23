@@ -38,6 +38,7 @@ struct cpBody;
 NS_CC_BEGIN
 
 class Node;
+class PhysicsNode;
 class Sprite;
 class PhysicsWorld;
 class PhysicsJoint;
@@ -555,7 +556,7 @@ protected:
     friend class PhysicsShape;
     friend class PhysicsJoint;
     friend class Node;
-    friend class Layer;
+    friend class PhysicsNode;
     friend class ProtectedNode;
 };
 
