@@ -66,11 +66,13 @@ public:
     virtual void update(float delta) override;
     inline PhysicsWorld* getPhysicsWorld() { return _physicsWorld; }
     virtual PhysicsNode* getPhysicsNode() const override;
+    const Mat4& getInverseModelViewTransform() const;
 protected:
     bool initWithPhysics();
     void addChildToPhysicsWorld(Node* child);
 
     PhysicsWorld* _physicsWorld;
+    Mat4 _inverseModelViewTransform;
 #endif // CC_USE_PHYSICS
 };
 

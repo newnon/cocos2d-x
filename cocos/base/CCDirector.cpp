@@ -291,7 +291,7 @@ void Director::drawScene()
         const std::set<PhysicsWorld*>& worlds = PhysicsWorld::getAllWorlds();
         for(PhysicsWorld* physicsWorld : worlds)
         {
-            if(physicsWorld->isAutoStep() && physicsWorld->getPhysicsNode().getScene() == _runningScene)
+            if(physicsWorld->isAutoStep() && (&physicsWorld->getPhysicsNode() == _runningScene || physicsWorld->getPhysicsNode().getScene() == _runningScene))
             {
                 physicsWorld->update(_deltaTime, false);
             }

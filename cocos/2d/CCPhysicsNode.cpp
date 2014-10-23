@@ -152,6 +152,14 @@ void PhysicsNode::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_
         this->draw(renderer, _modelViewTransform, flags);
     }
     
+    if(flags & FLAGS_DIRTY_MASK)
+    {
+        if(_modelViewTransform.isIdentity())
+            _inverseModelViewTransform = _modelViewTransform;
+        else
+            _inverseModelViewTransform = _modelViewTransform.getInversed();
+    }
+
     // draw _debugDraw  
     if(_physicsWorld && _physicsWorld->_debugDraw)
         reinterpret_cast<Node*>(_physicsWorld->_debugDraw->_drawNode)->visit(renderer, _modelViewTransform, flags);
@@ -208,6 +216,11 @@ void PhysicsNode::addChildToPhysicsWorld(Node* child)
 PhysicsNode* PhysicsNode::getPhysicsNode() const
 {
     return const_cast<PhysicsNode*>(this);
+}
+
+const Mat4& PhysicsNode::getInverseModelViewTransform() const
+{
+    return _inverseModelViewTransform;
 }
 
 #endif

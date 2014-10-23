@@ -1279,11 +1279,17 @@ uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFl
 #if CC_USE_PHYSICS
     if (_physicsBody && _physicsBody->getWorld() && _updateTransformFromPhysics)
     {
-        Node &physicsNode =  _physicsBody->getWorld()->getPhysicsNode();
-        Mat4 mat = physicsNode._modelViewTransform;
-        mat.inverse();
-        mat.multiply(parentTransform);
-        updateTransformFromPhysics(mat, parentFlags);
+        PhysicsNode &physicsNode =  _physicsBody->getWorld()->getPhysicsNode();
+        if(physicsNode.getParent())
+        {
+            Mat4 mat = physicsNode.getInverseModelViewTransform();
+            mat.multiply(parentTransform);
+            updateTransformFromPhysics(mat, parentFlags);
+        }
+        else
+        {
+            updateTransformFromPhysics(parentTransform, parentFlags);
+        }
     }
 #endif
     if(_usingNormalizedPosition)
