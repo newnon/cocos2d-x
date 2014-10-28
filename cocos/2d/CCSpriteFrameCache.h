@@ -109,6 +109,20 @@ public:
      */
     void addSpriteFrame(SpriteFrame *frame, const std::string& frameName);
 
+    /** Registers a sprite sheet with the sprite frame cache so that the sprite frames can be loaded by name.
+     * @param plist Sprite sheet file.
+     */
+    void registerSpriteFramesFile(const std::string& plist);
+
+    /** Loads a sprite sheet lookup file and registers all the referenced sprite sheets with the sprite frame cache.
+     *  @param filename Sprite sheet lookup file.
+     */
+    void loadSpriteFrameLookupDictionaryFromFile(const std::string& filename);
+    
+    /** Clear all sprite sheet lookup data.     
+    */
+    void clearSpriteFrameLookupDictionary();
+
     /** Purges the dictionary of loaded sprite frames.
      * Call this method if you receive the "Memory Warning".
      * In the short term: it will free some resources preventing your app from being killed.
@@ -173,6 +187,7 @@ protected:
     Map<std::string, SpriteFrame*> _spriteFrames;
     ValueMap _spriteFramesAliases;
     std::set<std::string>*  _loadedFileNames;
+    std::map<std::string, std::string> _spriteFrameFileLookup;
 };
 
 // end of sprite_nodes group
