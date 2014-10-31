@@ -91,7 +91,8 @@ _doLayoutDirty(true),
 _isInterceptTouch(false),
 _loopFocus(false),
 _passFocusToChild(true),
-_isFocusPassing(false)
+_isFocusPassing(false),
+_spacing(0.f)
 {
     //no-op
 }
@@ -212,6 +213,9 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
         return;
     }
     
+    if(FLAGS_TRANSFORM_DIRTY & parentFlags)
+        _clippingRectDirty = true;
+    
     adaptRenderers();
     doLayout();
     
@@ -231,7 +235,7 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
     }
     else
     {
-        Widget::visit(renderer, parentTransform, parentFlags);
+        ProtectedNode::visit(renderer, parentTransform, parentFlags);
     }
 }
     
@@ -517,6 +521,7 @@ const Rect& Layout::getClippingRect()
     if (_clippingRectDirty)
     {
         Vec2 worldPos = convertToWorldSpace(Vec2::ZERO);
+
         AffineTransform t = getNodeToWorldAffineTransform();
         float scissorWidth = _contentSize.width*t.a;
         float scissorHeight = _contentSize.height*t.d;
@@ -581,8 +586,8 @@ const Rect& Layout::getClippingRect()
         }
         else
         {
-            _clippingRect.origin.x = worldPos.x - (scissorWidth * _anchorPoint.x);
-            _clippingRect.origin.y = worldPos.y - (scissorHeight * _anchorPoint.y);
+            _clippingRect.origin.x = worldPos.x;
+            _clippingRect.origin.y = worldPos.y;
             _clippingRect.size.width = scissorWidth;
             _clippingRect.size.height = scissorHeight;
         }
@@ -713,6 +718,29 @@ void Layout::supplyTheLayoutParameterLackToChild(Widget *child)
             }
             break;
         }
+        case Type::HORIZONTAL_AUTO:
+        {
+            LinearLayoutParameter* layoutParameter = dynamic_cast<LinearLayoutParameter*>(child->getLayoutParameter());
+            if (!layoutParameter)
+            {
+                LinearLayoutParameter *parameter = LinearLayoutParameter::create();
+                parameter->setGravity(LinearLayoutParameter::LinearGravity::CENTER_VERTICAL);
+                child->setLayoutParameter(parameter);
+            }
+            break;
+        }
+        case Type::VERTICAL_AUTO:
+        {
+            LinearLayoutParameter* layoutParameter = dynamic_cast<LinearLayoutParameter*>(child->getLayoutParameter());
+            if (!layoutParameter)
+            {
+                LinearLayoutParameter *parameter = LinearLayoutParameter::create();
+                parameter->setGravity(LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL);
+                child->setLayoutParameter(parameter);
+            }
+            break;
+        }
+
         default:
             break;
     }
@@ -968,9 +996,24 @@ void Layout::requestDoLayout()
     _doLayoutDirty = true;
 }
     
+void Layout::setLayoutContentSize(const Size &size)
+{
+    this->setContentSize(size);
+}
+
 Size Layout::getLayoutContentSize()const
 {
     return this->getContentSize();
+}
+    
+void Layout::setSpacing(float spacing)
+{
+    _spacing = spacing;
+}
+    
+float Layout::getSpacing() const
+{
+    return _spacing;
 }
     
 const Vector<Node*>& Layout::getLayoutElements()const
@@ -991,6 +1034,12 @@ LayoutManager* Layout::createLayoutManager()
             break;
         case Type::RELATIVE:
             exe = RelativeLayoutManager::create();
+            break;
+        case Type::VERTICAL_AUTO:
+            exe = LinearVerticalAutoLayoutManager::create();
+            break;
+        case Type::HORIZONTAL_AUTO:
+            exe = LinearHorizontalAutoLayoutManager::create();
             break;
         default:
             break;

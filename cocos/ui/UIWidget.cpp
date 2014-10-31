@@ -276,6 +276,7 @@ LayoutComponent* Widget::getOrCreateLayoutComponent()
    
 void Widget::setContentSize(const cocos2d::Size &contentSize)
 {
+    bool sizeChanged = !contentSize.equals(_contentSize);
     ProtectedNode::setContentSize(contentSize);
     
     _customSize = contentSize;
@@ -311,7 +312,8 @@ void Widget::setContentSize(const cocos2d::Size &contentSize)
         }
         _sizePercent = Vec2(spx, spy);
     }
-    onSizeChanged();
+    if(sizeChanged)
+        onSizeChanged();
 }
 
 void Widget::setSize(const Size &size)
@@ -529,6 +531,11 @@ void Widget::onSizeChanged()
                 widgetChild->updateSizeAndPosition();
             }
         }
+    }
+    Layout* layout = dynamic_cast<Layout*>(_parent);
+    if(layout)
+    {
+        layout->requestDoLayout();
     }
 }
 
