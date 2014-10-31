@@ -91,7 +91,8 @@ _doLayoutDirty(true),
 _isInterceptTouch(false),
 _loopFocus(false),
 _passFocusToChild(true),
-_isFocusPassing(false)
+_isFocusPassing(false),
+_spacing(0.f)
 {
     //no-op
 }
@@ -211,6 +212,9 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
     {
         return;
     }
+    
+    if(FLAGS_TRANSFORM_DIRTY & parentFlags)
+        _clippingRectDirty = true;
     
     adaptRenderers();
     doLayout();
@@ -517,6 +521,7 @@ const Rect& Layout::getClippingRect()
     if (_clippingRectDirty)
     {
         Vec2 worldPos = convertToWorldSpace(Vec2::ZERO);
+
         AffineTransform t = getNodeToWorldAffineTransform();
         float scissorWidth = _contentSize.width*t.a;
         float scissorHeight = _contentSize.height*t.d;
@@ -581,8 +586,8 @@ const Rect& Layout::getClippingRect()
         }
         else
         {
-            _clippingRect.origin.x = worldPos.x - (scissorWidth * _anchorPoint.x);
-            _clippingRect.origin.y = worldPos.y - (scissorHeight * _anchorPoint.y);
+            _clippingRect.origin.x = worldPos.x;
+            _clippingRect.origin.y = worldPos.y;
             _clippingRect.size.width = scissorWidth;
             _clippingRect.size.height = scissorHeight;
         }
@@ -968,9 +973,24 @@ void Layout::requestDoLayout()
     _doLayoutDirty = true;
 }
     
+void Layout::setLayoutContentSize(const Size &size)
+{
+    this->setContentSize(size);
+}
+
 Size Layout::getLayoutContentSize()const
 {
     return this->getContentSize();
+}
+    
+void Layout::setSpacing(float spacing)
+{
+    _spacing = spacing;
+}
+    
+float Layout::getSpacing() const
+{
+    return _spacing;
 }
     
 const Vector<Node*>& Layout::getLayoutElements()const
