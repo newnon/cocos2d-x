@@ -49,7 +49,9 @@ public:
     virtual ~LayoutProtocol(){}
     
     virtual LayoutManager* createLayoutManager() = 0;
+    virtual void setLayoutContentSize(const Size &size) = 0;
     virtual Size getLayoutContentSize()const = 0;
+    virtual float getSpacing()const = 0;
     virtual const Vector<Node*>& getLayoutElements()const = 0;
     virtual void doLayout() = 0;
 };
@@ -233,6 +235,8 @@ public:
     virtual void setLayoutType(Type type);
     
     virtual  Type getLayoutType() const;
+    
+    virtual void setSpacing(float spacing);
 
     /**
      * Adds a child to the container with z order and tag
@@ -340,10 +344,13 @@ protected:
     void setStencilClippingSize(const Size& size);
     const Rect& getClippingRect();
     
-    virtual void doLayout()override;
-    virtual LayoutManager* createLayoutManager()override;
-    virtual Size getLayoutContentSize()const override;
-    virtual const Vector<Node*>& getLayoutElements()const override;
+    virtual void doLayout() override;
+    virtual LayoutManager* createLayoutManager() override;
+    virtual void setLayoutContentSize(const Size &size) override;
+    virtual Size getLayoutContentSize() const override;
+    
+    virtual float getSpacing() const override;
+    virtual const Vector<Node*>& getLayoutElements() const override;
     
     //clipping
     void onBeforeVisitStencil();
@@ -527,6 +534,7 @@ protected:
     bool _passFocusToChild;
      //when finding the next focused widget, use this variable to pass focus between layout & widget
     bool _isFocusPassing;
+    float _spacing;
 };
     
 }
