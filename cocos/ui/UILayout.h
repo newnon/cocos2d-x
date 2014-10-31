@@ -71,11 +71,23 @@ public:
     virtual LayoutManager* createLayoutManager() = 0;
     
     /**
+     * @brief Set the content size of layout.
+     */
+    virtual void setLayoutContentSize(const Size &size) = 0;
+    
+    /**
      * @brief Return the content size of layout.
      *
      * @return A content size in Size.
      */
     virtual Size getLayoutContentSize()const = 0;
+    
+    /**
+     * @brief Return spacing of layout.
+     *
+     * @return A spacing size.
+     */
+    virtual float getSpacing()const = 0;
     
     /**
      * @brief Get all elements of the layout.
@@ -124,7 +136,9 @@ public:
         ABSOLUTE,
         VERTICAL,
         HORIZONTAL,
-        RELATIVE
+        RELATIVE,
+        VERTICAL_AUTO,
+        HORIZONTAL_AUTO,
     };
     
     /**
@@ -358,6 +372,11 @@ public:
      *@return Get the layout type.
      */
     virtual  Type getLayoutType() const;
+    
+    /**
+     * Set apcing between elements
+     */
+    virtual void setSpacing(float spacing);
 
     
     virtual void addChild(Node* child)override;
@@ -480,10 +499,13 @@ protected:
     void setStencilClippingSize(const Size& size);
     const Rect& getClippingRect();
     
-    virtual void doLayout()override;
-    virtual LayoutManager* createLayoutManager()override;
-    virtual Size getLayoutContentSize()const override;
-    virtual const Vector<Node*>& getLayoutElements()const override;
+    virtual void doLayout() override;
+    virtual LayoutManager* createLayoutManager() override;
+    virtual void setLayoutContentSize(const Size &size) override;
+    virtual Size getLayoutContentSize() const override;
+    
+    virtual float getSpacing() const override;
+    virtual const Vector<Node*>& getLayoutElements() const override;
     
     //clipping
     void onBeforeVisitStencil();
@@ -668,6 +690,7 @@ protected:
     bool _passFocusToChild;
      //when finding the next focused widget, use this variable to pass focus between layout & widget
     bool _isFocusPassing;
+    float _spacing;
 };
     
 }
