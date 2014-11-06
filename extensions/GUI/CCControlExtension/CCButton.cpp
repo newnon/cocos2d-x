@@ -95,9 +95,9 @@ bool ButtonControl::isTouchInside(Touch * touch)
     touchLocation = this->getParent()->convertToNodeSpace(touchLocation);
     Rect rect = Rect(0, 0, _contentSize.width, _contentSize.height);
     rect.origin.x += _leftOffsets * getContentSize().width;
-    rect.origin.y += _topOffsets * getContentSize().height;
+    rect.origin.y += _bottomOffsets * getContentSize().height;
     rect.size.width -= _rightOffsets * getContentSize().width - rect.origin.x;
-    rect.size.height -= _bottomOffsets * getContentSize().height - rect.origin.y;
+    rect.size.height -= _topOffsets * getContentSize().height - rect.origin.y;
     Rect bBox = RectApplyAffineTransform(rect, getNodeToParentAffineTransform());
     return bBox.containsPoint(touchLocation);
 }
