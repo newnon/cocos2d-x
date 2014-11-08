@@ -9,7 +9,7 @@ using namespace cocos2d;
 
 namespace cocosbuilder {
 
-CCBReaderParams::CCBReaderParams():_loaded(false),_curentLanguage(Application::getInstance()->getCurrentLanguageCode()) {
+CCBReaderParams::CCBReaderParams():_loaded(false),_curentLanguage(Application::getInstance()->getCurrentLanguageCode()),_curLanguageMap(nullptr) {
 }
 
 CCBReaderParams::~CCBReaderParams() {
@@ -71,11 +71,16 @@ bool CCBReaderParams::loadLocalization(const std::string &path)
         return false;
     auto activeLanguages = translationDict.find("activeLanguages");
     if (activeLanguages != translationDict.end()) {
-        std::unordered_set<std::string> languages;
+        std::vector<std::string> languages;
         for(const auto &language : activeLanguages->second.asValueVector())
-            languages.insert(language.asString());
-        if(languages.find(_curentLanguage) == languages.end())
+            languages.push_back(language.asString());
+        _defaultLanguage = *languages.begin();
+        if(std::find(languages.begin(), languages.end(), _curentLanguage) == languages.end())
             _curentLanguage = *languages.begin();
+        for(auto it = languages.begin(); it != languages.end();++it)
+        {
+            _languages.emplace(*it,std::map<std::string,std::string>());
+        }
     }
     auto translations = translationDict.find("translations");
     if (translations != translationDict.end()) {
@@ -89,17 +94,32 @@ bool CCBReaderParams::loadLocalization(const std::string &path)
                 auto strings = valueMap.find("translations");
                 for(const auto &localizedString : strings->second.asValueMap())
                 {
-                    _languages[localizedString.first][key->second.asString()] = localizedString.second.asString();
+                    auto it = _languages.find(localizedString.first);
+                    if(it != _languages.end())
+                    {
+                        it->second[key->second.asString()]  = localizedString.second.asString();
+                    }
                 }
             }
         }
     }
+    _curLanguageMap = &_languages[_curentLanguage];
     return true;
 }
     
 void CCBReaderParams::setLanguage(const std::string &language)
 {
-    _curentLanguage = language;
+    auto it = _languages.find(language);
+    if(it == _languages.end())
+    {
+        _curentLanguage = language;
+        _curLanguageMap = &it->second;
+    }
+    else
+    {
+        _curentLanguage = _defaultLanguage;
+        _curLanguageMap = &_languages[_defaultLanguage];
+    }
 }
 const std::string &CCBReaderParams::getLanguage() const
 {
@@ -108,11 +128,10 @@ const std::string &CCBReaderParams::getLanguage() const
     
 const std::string &CCBReaderParams::getLocalizedString(const std::string &key) const
 {
-    auto language = _languages.find(_curentLanguage);
-    if(language == _languages.end())
+    if(!_curLanguageMap)
         return key;
-    auto recordIt = language->second.find(key);
-    if(recordIt == language->second.end())
+    auto recordIt = _curLanguageMap->find(key);
+    if(recordIt == _curLanguageMap->end())
         return key;
     return recordIt->second;
 }

@@ -69,7 +69,9 @@ private:
     cocos2d::Size _designResolution;
     float _designResolutionscale;
     std::string _curentLanguage;
+    std::string _defaultLanguage;
     std::unordered_map<std::string,std::map<std::string,std::string>> _languages;
+    std::map<std::string,std::string> *_curLanguageMap;
     bool _loaded;
 };
 
