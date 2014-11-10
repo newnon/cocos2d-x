@@ -38,13 +38,13 @@ namespace cocosbuilder {;
 #define PROPERTY_TITLECOLOR_HIGHLIGHTED "labelColor|Highlighted"
 #define PROPERTY_TITLECOLOR_DISABLED "labelColor|Disabled"
 #define PROPERTY_TITLECOLOR_SELECTED "labelColor|Selected"
-#define PROPERTY_TITLECOLOR_HIHGLIGHTED_SELECTED "labelColor|Selected"
+#define PROPERTY_TITLECOLOR_HIHGLIGHTED_SELECTED "labelColor|HighlightedSelected"
     
 #define PROPERTY_BACKGROUNDCOLOR_NORMAL "backgroundColor|Normal"
 #define PROPERTY_BACKGROUNDCOLOR_HIGHLIGHTED "backgroundColor|Highlighted"
 #define PROPERTY_BACKGROUNDCOLOR_DISABLED "backgroundColor|Disabled"
 #define PROPERTY_BACKGROUNDCOLOR_SELECTED "backgroundColor|Selected"
-#define PROPERTY_BACKGROUNDCOLOR_HIHGLIGHTED_SELECTED "backgroundColor|Selected"
+#define PROPERTY_BACKGROUNDCOLOR_HIHGLIGHTED_SELECTED "backgroundColor|HighlightedSelected"
     
 #define PROPERTY_HORIZONTALPADDING "horizontalPadding"
 #define PROPERTY_VERTICALPADDING "verticalPadding"
