@@ -93,6 +93,13 @@ public:
     * @lua NA
     */
     virtual void applicationWillEnterForeground() = 0;
+    
+    /**
+     @brief You cam execute your long time operaion in this function. it will be called when the application enters background.
+     * @js NA
+     * @lua NA
+     */
+    virtual void applicationBackgroundTask() {};
 
     /**
     @brief    Callback by Director for limit FPS.
