@@ -173,6 +173,11 @@ void GLView::end()
     [eaglview release];
 }
 
+void GLView::setBuffers()
+{
+    CCEAGLView *eaglview = (CCEAGLView*) _eaglview;
+    [eaglview setBuffers];
+}
 
 void GLView::swapBuffers()
 {

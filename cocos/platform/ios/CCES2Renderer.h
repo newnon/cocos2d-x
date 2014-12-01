@@ -76,7 +76,9 @@
 /** EAGLContext */
 @property (nonatomic,readonly) EAGLContext* context;
 
-- (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
+- (void)deleteFramebuffer;
+- (void)setFramebuffer:(CAEAGLLayer *)layer;
+
 @end
 
 

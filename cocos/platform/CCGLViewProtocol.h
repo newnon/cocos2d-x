@@ -93,6 +93,12 @@ public:
      * does not provide event callbacks.
      */
     virtual void pollInputEvents();
+    
+    /**
+     * Called before draw. Subclass must implement methods if platform
+     * need some additional steps before draw.
+     */
+    virtual void setBuffers();
 
     /**
      * Get the frame size of EGL view.

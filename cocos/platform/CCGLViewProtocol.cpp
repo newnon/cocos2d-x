@@ -101,6 +101,10 @@ void GLViewProtocol::pollInputEvents()
 {
 }
 
+void GLViewProtocol::setBuffers()
+{
+}
+
 
 void GLViewProtocol::updateDesignResolutionSize()
 {

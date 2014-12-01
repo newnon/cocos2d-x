@@ -263,6 +263,7 @@ void Director::drawScene()
 
     if (_openGLView)
     {
+        _openGLView->setBuffers();
         _openGLView->pollInputEvents();
     }
 
