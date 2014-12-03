@@ -156,6 +156,56 @@ namespace ui {
         return init(sprite, rect, false, capInsets);
     }
     
+    void Scale9Sprite::setBlendFunc(const BlendFunc &blendFunc)
+    {
+        _blendFunc = blendFunc;
+        applyBlendFunc();
+    }
+    const BlendFunc &Scale9Sprite::getBlendFunc() const
+    {
+        return _blendFunc;
+    }
+    
+    void Scale9Sprite::updateBlendFunc(Texture2D *texture)
+    {
+        
+        // it is possible to have an untextured sprite
+        if (! texture || ! texture->hasPremultipliedAlpha())
+        {
+            _blendFunc = BlendFunc::ALPHA_NON_PREMULTIPLIED;
+            setOpacityModifyRGB(false);
+        }
+        else
+        {
+            _blendFunc = BlendFunc::ALPHA_PREMULTIPLIED;
+            setOpacityModifyRGB(true);
+        }
+    }
+    
+    void Scale9Sprite::applyBlendFunc()
+    {
+        if(_scale9Image)
+            _scale9Image->setBlendFunc(_blendFunc);
+        if(_topLeft)
+            _topLeft->setBlendFunc(_blendFunc);
+        if(_top)
+            _top->setBlendFunc(_blendFunc);
+        if(_topRight)
+            _topRight->setBlendFunc(_blendFunc);
+        if(_left)
+            _left->setBlendFunc(_blendFunc);
+        if(_centre)
+            _centre->setBlendFunc(_blendFunc);
+        if(_right)
+            _right->setBlendFunc(_blendFunc);
+        if(_bottomLeft)
+            _bottomLeft->setBlendFunc(_blendFunc);
+        if(_bottom)
+            _bottom->setBlendFunc(_blendFunc);
+        if(_bottomRight)
+            _bottomRight->setBlendFunc(_blendFunc);
+    }
+    
 #define    TRANSLATE_X(x, y, xtranslate) \
 x+=xtranslate;                       \
 
@@ -195,6 +245,8 @@ y+=ytranslate;         \
         // Release old sprites
         this->cleanupSlicedSprites();
         _protectedChildren.clear();
+        
+        updateBlendFunc(sprite?sprite->getTexture():nullptr);
         
         if(this->_scale9Image != sprite)
         {
@@ -246,6 +298,8 @@ y+=ytranslate;         \
         {
             this->createSlicedSprites();
         }
+        
+        applyBlendFunc();
         
         this->setContentSize(size);
         
