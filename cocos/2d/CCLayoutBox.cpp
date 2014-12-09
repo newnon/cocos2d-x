@@ -75,16 +75,19 @@ void LayoutBox::layout()
         float width = 0;
         for (Node* child : this->_children)
         {
-            Size childSize = child->getContentSize();
-            
-            Point offset = child->getAnchorPointInPoints();
-            Point localPos = Point(roundf(width), roundf((maxHeight-childSize.height)/2.0f));
-            Point position = localPos + offset;
-            
-            child->setPosition(position);
-            
-            width += childSize.width;
-            width += _spacing;
+            if(child->isVisible())
+            {
+                Size childSize = child->getContentSize();
+                
+                Point offset = child->getAnchorPointInPoints();
+                Point localPos = Point(roundf(width), roundf((maxHeight-childSize.height)/2.0f));
+                Point position = localPos + offset;
+                
+                child->setPosition(position);
+                
+                width += childSize.width;
+                width += _spacing;
+            }
         }
         
         // Account for last added increment
@@ -107,16 +110,19 @@ void LayoutBox::layout()
         float height = 0;
         for (Node* child : this->_children)
         {
-            Size childSize = child->getContentSize();
-            
-            Point offset = child->getAnchorPointInPoints();
-            Point localPos = Point(roundf((maxWidth-childSize.width)/2.0f), roundf(height));
-            Point position = localPos + offset;
-            
-            child->setPosition(position);
-            
-            height += childSize.height;
-            height += _spacing;
+            if(child->isVisible())
+            {
+                Size childSize = child->getContentSize();
+                
+                Point offset = child->getAnchorPointInPoints();
+                Point localPos = Point(roundf((maxWidth-childSize.width)/2.0f), roundf(height));
+                Point position = localPos + offset;
+                
+                child->setPosition(position);
+                
+                height += childSize.height;
+                height += _spacing;
+            }
         }
         
         // Account for last added increment
