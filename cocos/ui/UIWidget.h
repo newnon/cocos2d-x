@@ -61,6 +61,13 @@ typedef void (Ref::*SEL_TouchEvent)(Ref*,TouchEventType);
 #endif
 #endif
 
+enum class WidgetTouchEventType
+{
+    BEGAN,
+    MOVED,
+    ENDED,
+    CANCELED
+};
 
 class CC_GUI_DLL Widget : public ProtectedNode, public LayoutParameterProtocol
 {
@@ -85,13 +92,7 @@ public:
         PERCENT
     };
     
-    enum class TouchEventType
-    {
-        BEGAN,
-        MOVED,
-        ENDED,
-        CANCELED
-    };
+    typedef WidgetTouchEventType TouchEventType;
     
     enum class TextureResType
     {

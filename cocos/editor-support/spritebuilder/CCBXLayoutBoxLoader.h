@@ -1,0 +1,44 @@
+#ifndef _CCB_CCLAYOUTBOXLOADER_H_
+#define _CCB_CCLAYOUTBOXLOADER_H_
+
+#include "CCBXWidgetLoader.h"
+
+NS_CC_BEGIN
+namespace spritebuilder {
+
+/* Forward declaration. */
+class CCBReader;
+
+class LayoutBoxLoader : public WidgetLoader {
+public:
+    
+    static LayoutBoxLoader *create();
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) override;
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale) override;
+    
+CC_CONSTRUCTOR_ACCESS:
+    LayoutBoxLoader();
+    ~LayoutBoxLoader();
+
+protected:
+    virtual void onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value) override;
+    virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
+    
+private:
+    enum LayoutBoxDirection
+    {
+        /// The children will be layout out in a horizontal line.
+        Horizontal,
+        
+        /// The children will be layout out in a vertical line.
+        Vertical,
+    };
+    LayoutBoxDirection _direction;
+    float _spacing;
+};
+
+}
+
+NS_CC_END
+
+#endif
