@@ -132,7 +132,7 @@ else()
   message( FATAL_ERROR "Unsupported platform, CMake will exit" )
 endif()
 
-foreach(pkg ZLIB MINIZIP JPEG PNG TIFF TinyXML2 FREETYPE WEBSOCKETS CURL FLATBUFFERS)
+foreach(pkg ZLIB MINIZIP JPEG PNG TIFF LIBLZMA TinyXML2 FREETYPE WEBSOCKETS OPENSSL CURL FLATBUFFERS)
   cocos_use_pkg(cocos2d ${pkg})
 endforeach()
 
