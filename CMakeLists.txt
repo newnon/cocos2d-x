@@ -120,7 +120,9 @@ else()
 endif()
 
 if(MINGW)
-  #add_definitions(-DGLEW_STATIC)
+  add_definitions(-DGLEW_STATIC)
+  add_definitions(-DCURL_STATICLIB)
+  add_definitions(-DAL_LIBTYPE_STATIC)
   add_definitions(-D__SSIZE_T)
 
   if(CLANG)
@@ -218,13 +220,13 @@ else()
 endif(USE_BOX2D)
 
 # Tinyxml2 (not prebuilded, exists as source)
-if(USE_PREBUILT_LIBS)
+#if(USE_PREBUILT_LIBS)
   add_subdirectory(external/tinyxml2)
   set(TinyXML2_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/tinyxml2)
   set(TinyXML2_LIBRARIES tinyxml2)
-else()
-  cocos_find_package(TinyXML2 TinyXML2 REQUIRED)
-endif()
+#else()
+#  cocos_find_package(TinyXML2 TinyXML2 REQUIRED)
+#endif()
 message(STATUS "TinyXML2 include dirs: ${TinyXML2_INCLUDE_DIRS}")
 
 # libjpeg
@@ -236,21 +238,21 @@ cocos_find_package(ZLIB ZLIB REQUIRED)
 # dists have packages from zlib, thats very old for us.
 # moreover our embedded version modified to quick provide
 # functionality needed by cocos.
-if(USE_PREBUILT_LIBS OR NOT MINGW)
+#if(USE_PREBUILT_LIBS OR NOT MINGW)
   add_subdirectory(external/unzip)
   set(MINIZIP_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/unzip)
   set(MINIZIP_LIBRARIES unzip)
   message(STATUS "MINIZIP include dirs: ${MINIZIP_INCLUDE_DIRS}")
-else()
-  cocos_find_package(MINIZIP MINIZIP REQUIRED)
-  # double check that we have needed functions
-  include(CheckLibraryExists)
-  check_library_exists(${MINIZIP_LIBRARIES} "unzGoToFirstFile2" "" MINIZIP_HAS_GOTOFIRSTFILE2)
-  if(NOT MINIZIP_HAS_GOTOFIRSTFILE2)
-    message(FATAL_ERROR "Minizip library on you system very old. Please use recent version from https://github.com/nmoinvaz/minizip or enable USE_PREBUILT_LIBS")
-  endif()
-  add_definitions(-DMINIZIP_FROM_SYSTEM)
-endif()
+#else()
+#  cocos_find_package(MINIZIP MINIZIP REQUIRED)
+#  # double check that we have needed functions
+#  include(CheckLibraryExists)
+#  check_library_exists(${MINIZIP_LIBRARIES} "unzGoToFirstFile2" "" MINIZIP_HAS_GOTOFIRSTFILE2)
+#  if(NOT MINIZIP_HAS_GOTOFIRSTFILE2)
+#    message(FATAL_ERROR "Minizip library on you system very old. Please use recent version from https://github.com/nmoinvaz/minizip or enable USE_PREBUILT_LIBS")
+#  endif()
+#  add_definitions(-DMINIZIP_FROM_SYSTEM)
+#endif()
 
 cocos_find_package(PNG PNG REQUIRED)
 cocos_find_package(TIFF TIFF REQUIRED)
@@ -263,9 +265,9 @@ message(STATUS "Flatbuffers include dirs: ${FLATBUFFERS_INCLUDE_DIRS}")
 
 
 # build for 3rd party libraries
-if(LINUX OR APPLE)
+#if(LINUX OR APPLE)
 add_subdirectory(external/xxhash)
-endif()
+#endif()
 
 # libcocos2d.a
 add_subdirectory(cocos)
