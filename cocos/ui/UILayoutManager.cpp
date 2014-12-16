@@ -127,7 +127,6 @@ void LinearVerticalLayoutManager::doLayout(LayoutProtocol* layout)
 {
     Size layoutSize = layout->getLayoutContentSize();
     Vector<Node*> container = layout->getLayoutElements();
-    float topBoundary = layoutSize.height;
     
     float spacing = layout->getSpacing();
     
@@ -144,6 +143,7 @@ void LinearVerticalLayoutManager::doLayout(LayoutProtocol* layout)
         layoutSize.height -= spacing;
         layout->setLayoutContentSize(layoutSize);
     }
+    float topBoundary = layoutSize.height;
     
     for (auto& subWidget : container)
     {
@@ -188,7 +188,7 @@ void LinearVerticalLayoutManager::doLayout(LayoutProtocol* layout)
             float finalPosY = topBoundary - ((1.0f-ap.y) * cs.height);
 
             subWidget->setPosition(Vec2(finalPosX, finalPosY));
-            topBoundary = subWidget->getPosition().y - subWidget->getAnchorPoint().y * subWidget->getContentSize().height - subWidget->getContentSize().height + spacing;
+            topBoundary = subWidget->getPosition().y + ap.y * cs.height - cs.height - spacing;
         }
 
     }
