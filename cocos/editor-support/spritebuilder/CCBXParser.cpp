@@ -687,10 +687,10 @@ private:
         colors.first.b = blue;
         colors.first.a = alpha;
         
-        colors.first.r = redVar;
-        colors.first.g = greenVar;
-        colors.first.b = blueVar;
-        colors.first.a = alphaVar;
+        colors.second.r = redVar;
+        colors.second.g = greenVar;
+        colors.second.b = blueVar;
+        colors.second.a = alphaVar;
         
         return colors;
     }

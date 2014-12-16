@@ -31,9 +31,9 @@ static std::string PROPERTY_RESETONVISIBLE("resetOnVisibilityToggle");
 class BuilderParticleSystemQuad: public ParticleSystemQuad
 {
 public:
-    static BuilderParticleSystemQuad * create() {
+    static BuilderParticleSystemQuad * createWithTotalParticles(int numberOfParticles) {
         BuilderParticleSystemQuad *particleSystemQuad = new (std::nothrow) BuilderParticleSystemQuad();
-        if (particleSystemQuad && particleSystemQuad->init())
+        if (particleSystemQuad && particleSystemQuad->initWithTotalParticles(numberOfParticles))
         {
             particleSystemQuad->autorelease();
             return particleSystemQuad;
@@ -51,6 +51,14 @@ public:
                 stopSystem();
         }
         ParticleSystemQuad::setVisible(visible);
+    }
+    void setResetOnVisible(bool resetOnVisible)
+    {
+        _resetOnVisible = resetOnVisible;
+    }
+    bool getResetOnVisible()
+    {
+        return _resetOnVisible;
     }
     virtual void update(float dt) override
     {
@@ -76,19 +84,22 @@ ParticleSystemQuadLoader *ParticleSystemQuadLoader::create()
     
 Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    return BuilderParticleSystemQuad::create();
+    return BuilderParticleSystemQuad::createWithTotalParticles(_totalParticles);
 }
     
 void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
-    ParticleSystemQuad *particle = dynamic_cast<ParticleSystemQuad*>(node);
+    BuilderParticleSystemQuad *particle = static_cast<BuilderParticleSystemQuad*>(node);
+    
+    // additive
+    particle->setBlendAdditive(true);
+    
     if(particle)
     {
         particle->setPosVar(_posVar);
         
         particle->setEmissionRate(_emissionRate);
         particle->setDuration(_duration);
-        particle->setTotalParticles(_totalParticles);
         particle->setLife(_life.x);
         particle->setLifeVar(_life.y);
         particle->setStartSize(_startSize.x);
@@ -123,24 +134,14 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
                 particle->setRotatePerSecondVar(_rotatePerSecond.y);
                 break;
         }
+        particle->setStartColor(_startColor);
+        particle->setStartColorVar(_startColorVar);
+        particle->setEndColor(_endColor);
+        particle->setEndColorVar(_endColorVar);
     }
-}
-/* gravity
-
-
-    void ParticleSystem::setRotationIsDir(bool t)
-    {
-        CCASSERT(_emitterMode == Mode::GRAVITY, "Particle Mode should be Gravity");
-        modeA.rotationIsDir = t;
+    particle->setResetOnVisible(_resetOnVisible);
     }
  
- 
- */
-/*  radius
-    // ParticleSystem - Properties of Radius Mode
-
-*/
-
 ParticleSystemQuadLoader::ParticleSystemQuadLoader()
     :_texture(nullptr)
     ,_resetOnVisible(false)
@@ -233,7 +234,7 @@ void ParticleSystemQuadLoader::onHandlePropTypeColor4FVar(const std::string &pro
         _startColorVar = value.second;
     } else if(propertyName == PROPERTY_ENDCOLOR) {
         _endColor = value.first;
-        _endColor = value.second;
+        _endColorVar = value.second;
     } else {
         NodeLoader::onHandlePropTypeColor4FVar(propertyName, isExtraProp, value);
     }
