@@ -114,7 +114,7 @@ void CCBXReader::calcScales(SceneScaleType scaleType, float &mainScale, float &a
 }
 
     
-Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType, const CreateNodeFunction &createNodeFunction) const
+Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
 {
     float mainScale = 1.0f;
     float additionalScale = 1.0f;
