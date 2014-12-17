@@ -882,7 +882,7 @@ void CCBAnimationManager::runAction(Node *pNode, CCBSequenceProperty *pSeqProp, 
     }
 }
 
-void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, float fTweenDuration, const std::function<void(AnimationCompleteType)> &callback)
+void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, float fTweenDuration, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback)
 {
     CCASSERT(nSeqId != -1, "Sequence id couldn't be found");
     
@@ -891,7 +891,7 @@ void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, fl
         if (_delegate)
             _delegate->completedAnimationSequenceNamed(_runningSequence.first->getName(), AnimationCompleteType::CHAINED);
         if(_runningSequence.second)
-            _runningSequence.second(AnimationCompleteType::STOPED);
+            _runningSequence.second(_rootNode, AnimationCompleteType::STOPED);
     }
     
     _rootNode->stopAllActionsByTag(animationTag);
@@ -952,7 +952,7 @@ void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, fl
     // Make callback at end of sequence
     CCBSequence *seq = getSequence(nSeqId);
     Action *completeAction = Sequence::createWithTwoActions(DelayTime::create(seq->getDuration() + fTweenDuration),
-                                                                CallFunc::create( std::bind(&CCBAnimationManager::sequenceCompleted,this,callback)));
+                                                                CallFunc::create(std::bind(&CCBAnimationManager::sequenceCompleted, this, callback)));
     completeAction->setTag(animationTag);
     _rootNode->runAction(completeAction);
     
@@ -978,13 +978,13 @@ void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, fl
     _runningSequence.second = callback;
 }
 
-void CCBAnimationManager::runAnimationsForSequenceNamedTweenDuration(const char *pName, float fTweenDuration, const std::function<void(AnimationCompleteType)> &callback)
+void CCBAnimationManager::runAnimationsForSequenceNamedTweenDuration(const char *pName, float fTweenDuration, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback)
 {
     int seqId = getSequenceId(pName);
     runAnimationsForSequenceIdTweenDuration(seqId, fTweenDuration, callback);
 }
 
-void CCBAnimationManager::runAnimationsForSequenceNamed(const char *pName, const std::function<void(AnimationCompleteType)> &callback)
+void CCBAnimationManager::runAnimationsForSequenceNamed(const char *pName, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback)
 {
     runAnimationsForSequenceNamedTweenDuration(pName, 0, callback);
 }
@@ -994,7 +994,7 @@ void CCBAnimationManager::debug()
     
 }
 
-void CCBAnimationManager::sequenceCompleted(const std::function<void(AnimationCompleteType)> &callback)
+void CCBAnimationManager::sequenceCompleted(const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback)
 {
     const char *runningSequenceName = _runningSequence.first->getName();
     int nextSeqId = _runningSequence.first->getChainedSequenceId();
@@ -1008,7 +1008,7 @@ void CCBAnimationManager::sequenceCompleted(const std::function<void(AnimationCo
     if (nextSeqId != -1)
     {
         if(callback)
-            callback(AnimationCompleteType::CHAINED);
+            callback(_rootNode, AnimationCompleteType::CHAINED);
         if (_delegate)
             _delegate->completedAnimationSequenceNamed(runningSequenceName, AnimationCompleteType::CHAINED);
         runAnimationsForSequenceIdTweenDuration(nextSeqId, 0, callback);
@@ -1016,7 +1016,7 @@ void CCBAnimationManager::sequenceCompleted(const std::function<void(AnimationCo
     else
     {
         if(callback)
-            callback(AnimationCompleteType::COMPLETED);
+            callback(_rootNode, AnimationCompleteType::COMPLETED);
         if (_delegate)
             _delegate->completedAnimationSequenceNamed(runningSequenceName, AnimationCompleteType::COMPLETED);
     }

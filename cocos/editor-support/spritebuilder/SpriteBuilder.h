@@ -117,7 +117,7 @@ public:
     static CCBXReader* createFromFile(const std::string &pCCBFileName, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr);
     static CCBXReader* createFromData(const Data &data, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr);
     
-    Node *createNode(CCBXReaderOwner *pOwner = nullptr, SceneScaleType scaleType = SceneScaleType::NONE, const CreateNodeFunction &createNodeFunction = nullptr) const;
+    Node *createNode(CCBXReaderOwner *pOwner = nullptr, SceneScaleType scaleType = SceneScaleType::NONE, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     
     static float getResolutionScale();
     static void setResolutionScale(float scale);

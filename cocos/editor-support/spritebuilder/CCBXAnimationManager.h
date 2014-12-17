@@ -81,9 +81,9 @@ public:
     
     void moveAnimationsFromNode(cocos2d::Node* fromNode, cocos2d::Node* toNode);
 
-    void runAnimationsForSequenceNamedTweenDuration(const char *pName, float fTweenDuration, const std::function<void(AnimationCompleteType)> &callback = nullptr);
-    void runAnimationsForSequenceNamed(const char *pName, const std::function<void(AnimationCompleteType)> &callback = nullptr);
-    void runAnimationsForSequenceIdTweenDuration(int nSeqId, float fTweenDuraiton, const std::function<void(AnimationCompleteType)> &callback = nullptr);
+    void runAnimationsForSequenceNamedTweenDuration(const char *pName, float fTweenDuration, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback = nullptr);
+    void runAnimationsForSequenceNamed(const char *pName, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback = nullptr);
+    void runAnimationsForSequenceIdTweenDuration(int nSeqId, float fTweenDuraiton, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback = nullptr);
 
     void debug();
 
@@ -112,7 +112,7 @@ private:
     void setFirstFrame(cocos2d::Node *pNode, CCBSequenceProperty *pSeqProp, float fTweenDuration);
     cocos2d::ActionInterval* getEaseAction(cocos2d::ActionInterval *pAction, CCBKeyframe::EasingType easingType, float fEasingOpt);
     void runAction(cocos2d::Node *pNode, CCBSequenceProperty *pSeqProp, float fTweenDuration);
-    void sequenceCompleted(const std::function<void(AnimationCompleteType)> &callback);
+    void sequenceCompleted(const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback);
     
 private:
     cocos2d::Vector<CCBSequence*> _sequences;
@@ -128,7 +128,7 @@ private:
     cocos2d::Size _rootContainerSize;
     
     CCBAnimationManagerDelegate *_delegate;
-    std::pair<CCBSequence*, std::function<void(AnimationCompleteType)>>_runningSequence;
+    std::pair<CCBSequence*, std::function<void(cocos2d::Node*, AnimationCompleteType)>>_runningSequence;
     
     cocos2d::ValueVector _documentOutletNames;
     cocos2d::Vector<cocos2d::Node*> _documentOutletNodes;

@@ -193,7 +193,7 @@ NodeLoader *NodeLoader::create()
     return ret;
 }
     
-Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, const CreateNodeFunction &createNodeFunction)
+Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback)
 {
     Node *ret;
     if(createNodeFunction)
@@ -282,7 +282,11 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
         if (ret && _autoPlaySequenceId != -1)
         {
             // Auto play animations
-            manager->runAnimationsForSequenceIdTweenDuration(_autoPlaySequenceId, 0);
+            manager->runAnimationsForSequenceIdTweenDuration(_autoPlaySequenceId, 0, defaultAnimationCallback);
+        }
+        else if (defaultAnimationCallback)
+        {
+            rootNode->scheduleOnce([rootNode,defaultAnimationCallback](float) { defaultAnimationCallback(rootNode, AnimationCompleteType::COMPLETED); }, 0, "defaultAnimationCallback");
         }
     }
 
