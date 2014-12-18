@@ -27,11 +27,11 @@ void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, f
             layout->setLayoutType(ui::Layout::Type::HORIZONTAL);
         else
             layout->setLayoutType(ui::Layout::Type::VERTICAL);
-        layout->setSpacing(_spacing);
+        layout->setSpacing(getAbsoluteScale(mainScale, additionalScale, _spacing.scale, _spacing.type));
     }
 }
 
-LayoutBoxLoader::LayoutBoxLoader():_spacing(0)
+LayoutBoxLoader::LayoutBoxLoader():_spacing{0,0}
 {
     
 }
@@ -44,7 +44,7 @@ LayoutBoxLoader::~LayoutBoxLoader()
 void LayoutBoxLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
 {
     if(propertyName == PROPERTY_SPACING) {
-        _spacing = value.scale;
+        _spacing = value;
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
     }

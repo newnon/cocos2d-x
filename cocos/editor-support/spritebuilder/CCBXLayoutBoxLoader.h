@@ -34,7 +34,7 @@ private:
         Vertical,
     };
     LayoutBoxDirection _direction;
-    float _spacing;
+    FloatScaleDescription _spacing;
 };
 
 }
