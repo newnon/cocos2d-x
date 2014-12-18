@@ -103,7 +103,7 @@ void LinearHorizontalLayoutManager::doLayout(LayoutProtocol* layout)
             Vec2 ap = subWidget->getAnchorPoint();
             Size cs = subWidget->getContentSize();
             float finalPosX = leftBoundary + (ap.x * cs.width);
-            float finalPosY = layoutSize.height - (1.0f - ap.y) * cs.height;
+            float finalPosY = layoutSize.height / 2.0f - cs.height * (0.5f - ap.y);
             subWidget->setPosition(Vec2(finalPosX, finalPosY));
             leftBoundary = subWidget->getPosition().x - subWidget->getAnchorPoint().x * subWidget->getContentSize().width + subWidget->getContentSize().width + spacing;
         }
@@ -184,7 +184,7 @@ void LinearVerticalLayoutManager::doLayout(LayoutProtocol* layout)
         {
             Vec2 ap = subWidget->getAnchorPoint();
             Size cs = subWidget->getContentSize();
-            float finalPosX = ap.x * cs.width;
+            float finalPosX = layoutSize.width / 2.0f - cs.width * (0.5f-ap.x);//ap.x * cs.width;
             float finalPosY = topBoundary - ((1.0f-ap.y) * cs.height);
 
             subWidget->setPosition(Vec2(finalPosX, finalPosY));
