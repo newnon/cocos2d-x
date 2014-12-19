@@ -23,6 +23,7 @@ CC_CONSTRUCTOR_ACCESS:
 protected:
     virtual void onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value) override;
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
+    virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
     
 private:
     enum LayoutBoxDirection
@@ -35,6 +36,7 @@ private:
     };
     LayoutBoxDirection _direction;
     FloatScaleDescription _spacing;
+    bool _clipping;
 };
 
 }

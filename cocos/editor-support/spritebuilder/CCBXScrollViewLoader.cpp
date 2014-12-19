@@ -13,6 +13,7 @@ static std::string PROPERTY_CONTENTNODE("contentNode");
 static std::string PROPERTY_VERTICALSCROLLENABLED("verticalScrollEnabled");
 static std::string PROPERTY_HORIZONTALSCROLLENABLED("horizontalScrollEnabled");
 static std::string PROPERTY_PAGINGENABLED("pagingEnabled");
+static std::string PROPERTY_CLIPCONTENT("clipContent");
     
 ScrollViewLoader *ScrollViewLoader::create()
 {
@@ -31,16 +32,32 @@ Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainSca
 void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
     ui::ScrollView *scrollView = static_cast<ui::ScrollView*>(node);
+    ui::ScrollView::Direction direction = ui::ScrollView::Direction::NONE;
+    if(_horizontalScrollEnabled && _verticalScrollEnabled)
+        direction = ui::ScrollView::Direction::BOTH;
+    else if(_horizontalScrollEnabled)
+        direction = ui::ScrollView::Direction::HORIZONTAL;
+    else if(_verticalScrollEnabled)
+        direction = ui::ScrollView::Direction::VERTICAL;
+    scrollView->setBounceEnabled(_bounce);
+    scrollView->setDirection(direction);
+    if(_file)
+    {
+        Node *childNode = _file->createNode(parentSize, mainScale, additionalScale);
+        scrollView->setInnerContainerSize(childNode->getContentSize());
+        scrollView->getInnerContainer()->addChild(childNode);
+        scrollView->setEnabled(true);
+    }
 }
 
-ScrollViewLoader::ScrollViewLoader()
+ScrollViewLoader::ScrollViewLoader():_clipping(false),_bounce(false),_file(nullptr)
 {
     
 }
     
 ScrollViewLoader::~ScrollViewLoader()
 {
-    
+    CC_SAFE_RELEASE(_file);
 }
     
 void ScrollViewLoader::onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value)
@@ -51,6 +68,8 @@ void ScrollViewLoader::onHandlePropTypeSize(const std::string &propertyName, boo
 void ScrollViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, NodeLoader *value)
 {
     if(propertyName == PROPERTY_CONTENTNODE) {
+        _file = value;
+        CC_SAFE_RETAIN(_file);
     } else {
         WidgetLoader::onHandlePropTypeCCBFile(propertyName, isExtraProp, value);
     }
@@ -58,108 +77,19 @@ void ScrollViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, 
     
 void ScrollViewLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
 {
-    if(propertyName == PROPERTY_CLIPSTOBOUNDS) {
-        //((ScrollView *)pNode)->setClippingToBounds(pCheck);
+    if(propertyName == PROPERTY_CLIPCONTENT) {
+        _clipping = value;
     } else if(propertyName == PROPERTY_BOUNCES) {
-        //((ScrollView *)pNode)->setBounceable(pCheck);
+        _bounce = value;
     } else if(propertyName == PROPERTY_VERTICALSCROLLENABLED) {
-        //_verticalScrollEnabled = pCheck;
+        _verticalScrollEnabled = value;
     } else if(propertyName == PROPERTY_HORIZONTALSCROLLENABLED) {
-        //_horizontalScrollEnabled = pCheck;
+        _horizontalScrollEnabled = value;
     } else if(propertyName == PROPERTY_PAGINGENABLED) {
-        //_horizontalScrollEnabled = pCheck;
-    } else{
+    } else {
         WidgetLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
     }
 }
-
-void ScrollViewLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
-{
-    WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
-}
-
-void ScrollViewLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
-{
-    
-}
-
-    
-/*
-void ScrollViewLoader::onStarPropertiesParsing(cocos2d::Node * pNode, CCBReader * ccbReader)
-{
-    _verticalScrollEnabled = false;
-    _horizontalScrollEnabled = false;
-    pNode->ignoreAnchorPointForPosition(false);
-}
-
-void ScrollViewLoader::onEndPropertiesParsing(cocos2d::Node * pNode, CCBReader * ccbReader)
-{
-    if(ccbReader->getVersion()>5)
-    {
-        if(_verticalScrollEnabled)
-        {
-            if(_horizontalScrollEnabled)
-                ((ScrollView *)pNode)->setDirection(ScrollView::Direction::BOTH);
-            else
-                ((ScrollView *)pNode)->setDirection(ScrollView::Direction::VERTICAL);
-        }
-        else
-        {
-            if(_horizontalScrollEnabled)
-                ((ScrollView *)pNode)->setDirection(ScrollView::Direction::HORIZONTAL);
-            else
-                ((ScrollView *)pNode)->setDirection(ScrollView::Direction::NONE);
-        }
-    }
-}
-
-void ScrollViewLoader::onHandlePropTypeSize(Node * pNode, Node * pParent, const char * pPropertyName, const Size &pSize, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_CONTENTSIZE) == 0) {
-        ((ScrollView *)pNode)->setViewSize(pSize);
-    } else {
-        NodeLoader::onHandlePropTypeSize(pNode, pParent, pPropertyName, pSize, ccbReader);
-    }
-}
-
-void ScrollViewLoader::onHandlePropTypeCheck(Node * pNode, Node * pParent, const char * pPropertyName, bool pCheck, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_CLIPSTOBOUNDS) == 0) {
-        ((ScrollView *)pNode)->setClippingToBounds(pCheck);
-    } else if(strcmp(pPropertyName, PROPERTY_BOUNCES) == 0) {
-        ((ScrollView *)pNode)->setBounceable(pCheck);
-    } else if(strcmp(pPropertyName, PROPERTY_VERTICALSCROLLENABLED) == 0) {
-        _verticalScrollEnabled = pCheck;
-    } else if(strcmp(pPropertyName, PROPERTY_HORIZONTALSCROLLENABLED) == 0) {
-        _horizontalScrollEnabled = pCheck;
-    } else {
-        NodeLoader::onHandlePropTypeCheck(pNode, pParent, pPropertyName, pCheck, ccbReader);
-    }
-}
-
-void ScrollViewLoader::onHandlePropTypeCCBFile(Node * pNode, Node * pParent, const char * pPropertyName, Node * pCCBFileNode, CCBReader * ccbReader) {
-    if((strcmp(pPropertyName, PROPERTY_CONTAINER) == 0) || (strcmp(pPropertyName, PROPERTY_CONTENTNODE) == 0)) {
-        ((ScrollView *)pNode)->setContainer(pCCBFileNode);
-        ((ScrollView *)pNode)->updateInset();
-    } else {
-        NodeLoader::onHandlePropTypeCCBFile(pNode, pParent, pPropertyName, pCCBFileNode, ccbReader);
-    }
-}
-
-void ScrollViewLoader::onHandlePropTypeFloat(Node * pNode, Node * pParent, const char * pPropertyName, float pFloat, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_SCALE) == 0) {
-        ((ScrollView *)pNode)->setScale(pFloat);
-    } else {
-        NodeLoader::onHandlePropTypeFloat(pNode, pParent, pPropertyName, pFloat, ccbReader);
-    }
-}
-
-void ScrollViewLoader::onHandlePropTypeIntegerLabeled(Node * pNode, Node * pParent, const char * pPropertyName, int pIntegerLabeled, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_DIRECTION) == 0) {
-        ((ScrollView *)pNode)->setDirection(ScrollView::Direction(pIntegerLabeled));
-    } else {
-        NodeLoader::onHandlePropTypeFloatScale(pNode, pParent, pPropertyName, pIntegerLabeled, ccbReader);
-    }
-}
-*/
 
 }
     

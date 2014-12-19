@@ -6,6 +6,7 @@ namespace spritebuilder {
     
 static std::string PROPERTY_SPACING("spacing");
 static std::string PROPERTY_DIRECTION("direction");
+static std::string PROPERTY_CLIPCONTENT("clipContent");
     
     
 LayoutBoxLoader *LayoutBoxLoader::create()
@@ -31,7 +32,7 @@ void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, f
     }
 }
 
-LayoutBoxLoader::LayoutBoxLoader():_spacing{0,0}
+LayoutBoxLoader::LayoutBoxLoader():_spacing{0,0},_clipping(false)
 {
     
 }
@@ -54,9 +55,17 @@ void LayoutBoxLoader::onHandlePropTypeIntegerLabeled(const std::string &property
 {
     if(propertyName == PROPERTY_DIRECTION) {
         _direction = static_cast<LayoutBoxDirection>(value);
-        //((LayoutBox *)pNode)->setDirection(static_cast<cocos2d::LayoutBoxDirection>(pIntegerLabeled));
     } else {
         WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
+    }
+}
+    
+void LayoutBoxLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
+{
+    if(propertyName == PROPERTY_CLIPCONTENT) {
+        _clipping = value;
+    } else {
+        WidgetLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
     }
 }
 
