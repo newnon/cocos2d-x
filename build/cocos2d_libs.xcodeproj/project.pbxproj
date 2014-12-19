@@ -1771,6 +1771,10 @@
 		A559DC8D193E543A006072B5 /* CCPhysicsNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A559DC8A193E543A006072B5 /* CCPhysicsNode.cpp */; };
 		A559DC8E193E543A006072B5 /* CCPhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A559DC8B193E543A006072B5 /* CCPhysicsNode.h */; };
 		A559DC8F193E543A006072B5 /* CCPhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A559DC8B193E543A006072B5 /* CCPhysicsNode.h */; };
+		A59003531A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */; };
+		A59003541A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */; };
+		A59003551A4433D500AF12A4 /* CCBXScissorsNodeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */; };
+		A59003561A4433D500AF12A4 /* CCBXScissorsNodeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */; };
 		A5B57CE21A3B919900CCBDB4 /* CCBXAnimationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B57CAC1A3B919900CCBDB4 /* CCBXAnimationManager.cpp */; };
 		A5B57CE31A3B919900CCBDB4 /* CCBXAnimationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B57CAC1A3B919900CCBDB4 /* CCBXAnimationManager.cpp */; };
 		A5B57CE41A3B919900CCBDB4 /* CCBXAnimationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B57CAD1A3B919900CCBDB4 /* CCBXAnimationManager.h */; };
@@ -3049,6 +3053,8 @@
 		B20564AA1A6E5744001C1B6E /* ccShader_PositionColorTextureAsPointsize.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_PositionColorTextureAsPointsize.vert; sourceTree = "<group>"; };
 		A559DC8A193E543A006072B5 /* CCPhysicsNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCPhysicsNode.cpp; sourceTree = "<group>"; };
 		A559DC8B193E543A006072B5 /* CCPhysicsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhysicsNode.h; sourceTree = "<group>"; };
+		A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXScissorsNodeLoader.cpp; path = spritebuilder/CCBXScissorsNodeLoader.cpp; sourceTree = "<group>"; };
+		A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXScissorsNodeLoader.h; path = spritebuilder/CCBXScissorsNodeLoader.h; sourceTree = "<group>"; };
 		A5B57CAC1A3B919900CCBDB4 /* CCBXAnimationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXAnimationManager.cpp; path = spritebuilder/CCBXAnimationManager.cpp; sourceTree = "<group>"; };
 		A5B57CAD1A3B919900CCBDB4 /* CCBXAnimationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXAnimationManager.h; path = spritebuilder/CCBXAnimationManager.h; sourceTree = "<group>"; };
 		A5B57CAE1A3B919900CCBDB4 /* CCBXButtonLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXButtonLoader.cpp; path = spritebuilder/CCBXButtonLoader.cpp; sourceTree = "<group>"; };
@@ -5355,6 +5361,8 @@
 				A5B57CB71A3B919900CCBDB4 /* CCBXLabelTTFLoader.h */,
 				A5B57CB81A3B919900CCBDB4 /* CCBXLayoutBoxLoader.cpp */,
 				A5B57CB91A3B919900CCBDB4 /* CCBXLayoutBoxLoader.h */,
+				A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */,
+				A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */,
 				A5B57CBA1A3B919900CCBDB4 /* CCBXLoadingBarLoader.cpp */,
 				A5B57CBB1A3B919900CCBDB4 /* CCBXLoadingBarLoader.h */,
 				A5B57CBC1A3B919900CCBDB4 /* CCBXNodeColorLoader.cpp */,
@@ -5549,6 +5557,7 @@
 				1A57006B180BC5A10088DEC7 /* CCActionCatmullRom.h in Headers */,
 				4D76BE3C1A4AAF0A00102962 /* CCActionTimelineNode.h in Headers */,
 				1A57006F180BC5A10088DEC7 /* CCActionEase.h in Headers */,
+				A59003551A4433D500AF12A4 /* CCBXScissorsNodeLoader.h in Headers */,
 				15AE1BD719AAE01E00C27E9E /* CCControlSlider.h in Headers */,
 				15AE1BE519AAE01E00C27E9E /* CCTableView.h in Headers */,
 				15AE1BD319AAE01E00C27E9E /* CCControlPotentiometer.h in Headers */,
@@ -6292,6 +6301,7 @@
 				15AE1AA219AAD40300C27E9E /* b2Body.h in Headers */,
 				15AE1C0419AAE01E00C27E9E /* CCTableView.h in Headers */,
 				50ABBEA21925AB6F00A911A9 /* CCScheduler.h in Headers */,
+				A59003561A4433D500AF12A4 /* CCBXScissorsNodeLoader.h in Headers */,
 				1A57020B180BCBDF0088DEC7 /* CCMotionStreak.h in Headers */,
 				15AE195219AAD35100C27E9E /* CCDecorativeDisplay.h in Headers */,
 				15AE196619AAD35100C27E9E /* CCTween.h in Headers */,
@@ -6741,6 +6751,7 @@
 				15AE18F619AAD35000C27E9E /* CCBatchNode.cpp in Sources */,
 				A5B57D3A1A3B919900CCBDB4 /* CCBXSpriteLoader.cpp in Sources */,
 				15AE184419AAD2F700C27E9E /* CCSprite3DMaterial.cpp in Sources */,
+				A59003531A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */,
 				50ABBE591925AB6F00A911A9 /* CCEventKeyboard.cpp in Sources */,
 				B29A7DDF19EE1B7700872B35 /* IkConstraintData.c in Sources */,
 				1A57007D180BC5A10088DEC7 /* CCActionInterval.cpp in Sources */,
@@ -7279,6 +7290,7 @@
 				15AE18AF19AAD33D00C27E9E /* CCBKeyframe.cpp in Sources */,
 				B29A7DE419EE1B7700872B35 /* SkeletonBounds.c in Sources */,
 				50643BDF19BFCCA400EF68ED /* LocalStorage-android.cpp in Sources */,
+				A59003541A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */,
 				50ABBED81925AB6F00A911A9 /* ZipUtils.cpp in Sources */,
 				15AE1B9219AADA9A00C27E9E /* UIHelper.cpp in Sources */,
 				15AE1AA119AAD40300C27E9E /* b2Body.cpp in Sources */,
