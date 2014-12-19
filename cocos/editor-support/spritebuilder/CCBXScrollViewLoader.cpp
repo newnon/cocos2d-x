@@ -40,6 +40,7 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
     else if(_verticalScrollEnabled)
         direction = ui::ScrollView::Direction::VERTICAL;
     scrollView->setBounceEnabled(_bounce);
+    scrollView->setClippingEnabled(_clipping);
     scrollView->setDirection(direction);
     if(_file)
     {
