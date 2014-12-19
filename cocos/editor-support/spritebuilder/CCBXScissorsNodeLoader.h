@@ -9,16 +9,16 @@ namespace spritebuilder {
 /* Forward declaration. */
 class CCBReader;
 
-class CCBXScissorsNodeLoader : public WidgetLoader {
+class ScissorsNodeLoader : public WidgetLoader {
 public:
     
-    static CCBXScissorsNodeLoader *create();
+    static ScissorsNodeLoader *create();
     virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) override;
     virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale) override;
     
 CC_CONSTRUCTOR_ACCESS:
-    CCBXScissorsNodeLoader();
-    ~CCBXScissorsNodeLoader();
+    ScissorsNodeLoader();
+    ~ScissorsNodeLoader();
 };
 
 }

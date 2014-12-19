@@ -23,6 +23,7 @@ CCBXPhysicsNodeLoader.cpp \
 CCBXProgressTimerLoader.cpp \
 CCBXReaderParams.cpp \
 CCBXScale9SpriteLoader.cpp \
+CCBXScissorsNodeLoader.cpp \
 CCBXScrollViewLoader.cpp \
 CCBXSequence.cpp \
 CCBXSequenceProperty.cpp \

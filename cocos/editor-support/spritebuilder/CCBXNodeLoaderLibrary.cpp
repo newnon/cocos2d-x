@@ -26,6 +26,7 @@
 #include "CCBXScrollViewLoader.h"
 #include "CCBXTextFieldLoader.h"
 #include "CCBXSliderLoader.h"
+#include "CCBXScissorsNodeLoader.h"
 
 NS_CC_BEGIN
 namespace spritebuilder {
@@ -93,6 +94,7 @@ void NodeLoaderLibrary::registerDefaultLoaders()
     _loaders.emplace("CCScrollView", NodeLoaderCreateFuntion(&ScrollViewLoader::create));
     _loaders.emplace("CCTextField", NodeLoaderCreateFuntion(&TextFieldLoader::create));
     _loaders.emplace("CCSlider", NodeLoaderCreateFuntion(&SliderLoader::create));
+    _loaders.emplace("CCScissorsNode", NodeLoaderCreateFuntion(&ScissorsNodeLoader::create));
 }
 
 }

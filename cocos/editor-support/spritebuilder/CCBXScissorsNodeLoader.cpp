@@ -8,29 +8,29 @@ static std::string PROPERTY_SPACING("spacing");
 static std::string PROPERTY_DIRECTION("direction");
     
     
-CCBXScissorsNodeLoader *CCBXScissorsNodeLoader::create()
+ScissorsNodeLoader *ScissorsNodeLoader::create()
 {
-    CCBXScissorsNodeLoader *ret = new CCBXScissorsNodeLoader();
+    ScissorsNodeLoader *ret = new ScissorsNodeLoader();
     ret->autorelease();
     return ret;
 }
-Node *CCBXScissorsNodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *ScissorsNodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     return ui::Layout::create();
 }
-void CCBXScissorsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void ScissorsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
     ui::Layout *layout = dynamic_cast<ui::Layout*>(node);
     layout->setClippingEnabled(true);
     layout->setClippingType(ui::Layout::ClippingType::SCISSOR);
 }
 
-CCBXScissorsNodeLoader::CCBXScissorsNodeLoader()
+ScissorsNodeLoader::ScissorsNodeLoader()
 {
     
 }
 
-CCBXScissorsNodeLoader::~CCBXScissorsNodeLoader()
+ScissorsNodeLoader::~ScissorsNodeLoader()
 {
     
 }
