@@ -119,7 +119,7 @@ Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType, 
     float mainScale = 1.0f;
     float additionalScale = 1.0f;
     calcScales(scaleType, mainScale, additionalScale);
-    Node * ret = _rootNodeLoader->createNode(Director::getInstance()->getWinSize(), mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction);
+    Node * ret = _rootNodeLoader->createNode(Director::getInstance()->getWinSize(), mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
     return ret;
 }
 
