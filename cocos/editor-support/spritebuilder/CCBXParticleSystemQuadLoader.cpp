@@ -113,6 +113,7 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
         particle->setAngle(_angle.x);
         particle->setAngleVar(_angle.y);
         particle->setTexture(_texture);
+        particle->setBlendFunc(_blendFunc);
         
         switch(_emitterMode)
         {
@@ -145,6 +146,7 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
 ParticleSystemQuadLoader::ParticleSystemQuadLoader()
     :_texture(nullptr)
     ,_resetOnVisible(false)
+    ,_blendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED)
 {
     
 }
@@ -243,6 +245,7 @@ void ParticleSystemQuadLoader::onHandlePropTypeColor4FVar(const std::string &pro
 void ParticleSystemQuadLoader::onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const cocos2d::BlendFunc &pBlendFunc)
 {
     if(propertyName == PROPERTY_BLENDFUNC) {
+        _blendFunc = pBlendFunc;
         //((ParticleSystemQuad *)pNode)->setBlendFunc(pBlendFunc);
     } else {
         NodeLoader::onHandlePropTypeBlendFunc(propertyName, isExtraProp, pBlendFunc);

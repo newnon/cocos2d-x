@@ -56,6 +56,7 @@ protected:
     Color4F _endColor;
     Color4F _endColorVar;
     cocos2d::Texture2D * _texture;
+    BlendFunc _blendFunc;
 };
 
 }
