@@ -114,6 +114,7 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
         particle->setAngleVar(_angle.y);
         particle->setTexture(_texture);
         particle->setBlendFunc(_blendFunc);
+        particle->setEmitterMode(_emitterMode);
         
         switch(_emitterMode)
         {
