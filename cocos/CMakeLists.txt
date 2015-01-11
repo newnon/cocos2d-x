@@ -50,6 +50,7 @@ set(COCOS_LINK
   opengl32
   iconv
   freetype
+  harfbuzz
   bz2
   )
 
