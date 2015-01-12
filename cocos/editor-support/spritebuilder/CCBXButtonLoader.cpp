@@ -101,7 +101,7 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
             {
                 Size size = _selectedSpriteFrame.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                button->loadTextureNormal(_selectedSpriteFrame.path, ui::Widget::TextureResType::LOCAL);
+                button->loadTexturePressed(_selectedSpriteFrame.path, ui::Widget::TextureResType::LOCAL);
                 button->setCapInsetsPressedRenderer(realMargins);
             }
             break;
@@ -109,7 +109,7 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
             {
                 Size size = _selectedSpriteFrame.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                button->loadTextureNormal(_selectedSpriteFrame.path, ui::Widget::TextureResType::PLIST);
+                button->loadTexturePressed(_selectedSpriteFrame.path, ui::Widget::TextureResType::PLIST);
                 button->setCapInsetsPressedRenderer(realMargins);
             }
             break;
@@ -122,7 +122,7 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
             {
                 Size size = _disabledSpriteFrame.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                button->loadTextureNormal(_disabledSpriteFrame.path, ui::Widget::TextureResType::LOCAL);
+                button->loadTextureDisabled(_disabledSpriteFrame.path, ui::Widget::TextureResType::LOCAL);
                 button->setCapInsetsDisabledRenderer(realMargins);
             }
             break;
@@ -130,7 +130,7 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
             {
                 Size size = _disabledSpriteFrame.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                button->loadTextureNormal(_disabledSpriteFrame.path, ui::Widget::TextureResType::PLIST);
+                button->loadTextureDisabled(_disabledSpriteFrame.path, ui::Widget::TextureResType::PLIST);
                 button->setCapInsetsDisabledRenderer(realMargins);
             }
             break;
