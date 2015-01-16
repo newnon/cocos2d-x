@@ -517,7 +517,7 @@ namespace ui {
             float offsetX = (rotatedCenterBounds.origin.x + rotatedCenterBounds.size.width/2) - (rotatedCenterBoundsOriginal.origin.x + rotatedCenterBoundsOriginal.size.width/2);
             float offsetY = (rotatedCenterBoundsOriginal.origin.y + rotatedCenterBoundsOriginal.size.height/2)- (rotatedCenterBounds.origin.y + rotatedCenterBounds.size.height/2);
             _centerOffset.x = offsetX;
-            _centerOffset.y = offsetY;
+            _centerOffset.y = -offsetY;
         }
         
         // Centre
