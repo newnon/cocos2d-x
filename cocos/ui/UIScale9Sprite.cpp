@@ -508,7 +508,7 @@ y+=ytranslate;         \
             float offsetx = (rotatedcenterbounds.origin.x + rotatedcenterbounds.size.width/2) - (rotatedcenterboundsorig.origin.x + rotatedcenterboundsorig.size.width/2);
             float offsety = (rotatedcenterboundsorig.origin.y + rotatedcenterboundsorig.size.height/2)- (rotatedcenterbounds.origin.y + rotatedcenterbounds.size.height/2);
             _centerOffset.x = offsetx;
-            _centerOffset.y = offsety;
+            _centerOffset.y = -offsety;
         }
         
         // Centre
