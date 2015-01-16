@@ -581,8 +581,8 @@ namespace ui {
         float height = _originalSize.height;
 
         Vec2 offsetPosition(floor(_offset.x + (_originalSize.width - _spriteRect.size.width) / 2),
-                            floor(_offset.y + (_originalSize.height - _spriteRect.size.height) / 2));
-
+                            floor(-_offset.y + (_originalSize.height - _spriteRect.size.height) / 2));
+        
         // If there is no specified center region
         if ( _capInsetsInternal.equals(Rect::ZERO) )
         {
@@ -592,9 +592,8 @@ namespace ui {
 
         Rect originalRect=_spriteRect;
         if(_spriteFrameRotated)
-            originalRect = Rect(_spriteRect.origin.x - offsetPosition.y,
-                                _spriteRect.origin.y - offsetPosition.x,
-                                _originalSize.width, _originalSize.height);
+            originalRect = Rect(_spriteRect.origin.x + _spriteRect.size.height - _originalSize.height + offsetPosition.y,
+                                _spriteRect.origin.y - offsetPosition.x, _originalSize.width, _originalSize.height);
         else
             originalRect = Rect(_spriteRect.origin.x - offsetPosition.x,
                                 _spriteRect.origin.y - offsetPosition.y,
@@ -757,8 +756,6 @@ namespace ui {
             rotatedLeftCenterBounds.origin = leftCenterBounds.origin;
             rotatedCenterBottomBounds.origin = centerBottomBounds.origin;
             rotatedCenterTopBounds.origin = centerTopBounds.origin;
-
-
         }
 
         _topLeftSize = rotatedLeftTopBoundsOriginal.size;
@@ -774,11 +771,9 @@ namespace ui {
 
         if(_spriteFrameRotated)
         {
-            float offsetX = (rotatedCenterBounds.origin.x + rotatedCenterBounds.size.height/2)
-                - (rotatedCenterBoundsOriginal.origin.x + rotatedCenterBoundsOriginal.size.height/2);
-            float offsetY = (rotatedCenterBoundsOriginal.origin.y + rotatedCenterBoundsOriginal.size.width/2)
-                - (rotatedCenterBounds.origin.y + rotatedCenterBounds.size.width/2);
-            _centerOffset.x = -offsetY;
+            float offsetX = (rotatedCenterBounds.origin.x + rotatedCenterBounds.size.height/2) - (rotatedCenterBoundsOriginal.origin.x + rotatedCenterBoundsOriginal.size.height/2);
+            float offsetY = (rotatedCenterBoundsOriginal.origin.y + rotatedCenterBoundsOriginal.size.width/2)- (rotatedCenterBounds.origin.y + rotatedCenterBounds.size.width/2);
+            _centerOffset.x = offsetY;
             _centerOffset.y = offsetX;
         }
         else
