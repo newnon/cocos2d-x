@@ -150,15 +150,27 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
         button->setZoomScale(_zoomOnClick);
         button->setNormalTitleColor(_normalLabelColor);
         button->setNormalBackgroundColor(_normalBackgroundColor);
+        button->setNormalTitleOpacity(_normalLabelOpacity);
+        button->setNormalBackgroundOpacity(_normalBackgroundOpacity);
+        
         button->setPressedTitleColor(_selectedLabelColor);
         button->setPressedBackgroundColor(_selectedBackgroundColor);
+        button->setPressedTitleOpacity(_selectedLabelOpacity);
+        button->setPressedBackgroundOpacity(_selectedBackgroundOpacity);
+        
         button->setDisabledTitleColor(_disabledLabelColor);
         button->setDisabledBackgroundColor(_disabledBackgroundColor);
-        button->setTitleText(_label);
-        button->setTitleFontName(_font);
+        button->setDisabledTitleOpacity(_disabledLabelOpacity);
+        button->setDisabledBackgroundOpacity(_disabledBackgroundOpacity);
+        
+        button->getTitleRenderer()->setSystemFontName(_font);
         button->setTitleFontSize(getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
         button->getTitleRenderer()->setVerticalAlignment(_textVAlignment);
         button->getTitleRenderer()->setHorizontalAlignment(_textHAlignment);
+        button->setHorizontalPadding(getAbsoluteScale(mainScale, additionalScale, _horizPadding.scale, _horizPadding.type));
+        button->setVerticalPadding(getAbsoluteScale(mainScale, additionalScale, _vertPadding.scale, _vertPadding.type));
+        button->setOffsets(_offset.origin.x, _offset.origin.y, _offset.size.width, _offset.size.height);
+        button->setTitleText(_label);
     }
 }
 
@@ -178,6 +190,8 @@ ButtonLoader::ButtonLoader()
     ,_disabledBackgroundOpacity(255)
     ,_textHAlignment(TextHAlignment::CENTER)
     ,_textVAlignment(TextVAlignment::CENTER)
+    ,_horizPadding{0,0.0f}
+    ,_vertPadding{0,0.0f}
 {
     
 }
@@ -216,13 +230,13 @@ void ButtonLoader::onHandlePropTypeFloat(const std::string &propertyName, bool i
     } else if(propertyName == PROPERTY_MARGIN_BOTTOM) {
         _margins.size.height = value;
     } else if(propertyName == PROPERTY_OFFSET_LEFT) {
-        //((ButtonControl *)pNode)->setLeftOffset(pFloat);
+        _offset.origin.x = value;
     } else if(propertyName == PROPERTY_OFFSET_TOP) {
-        //((ButtonControl *)pNode)->setTopOffset(pFloat);
+        _offset.origin.y = value;
     } else if(propertyName == PROPERTY_OFFSET_RIGHT) {
-        //((ButtonControl *)pNode)->setRightOffset(pFloat);
+        _offset.size.width = value;
     } else if(propertyName == PROPERTY_OFFSET_BOTTOM) {
-        //((ButtonControl *)pNode)->setBottomOffset(pFloat);
+        _offset.size.height = value;
     } else if(propertyName == PROPERTY_BACKGROUNDOPACITY_NORMAL) {
         float opacity = value * 255.0f;
         _normalBackgroundOpacity = (opacity<0.0f)?0:((opacity>255.0f)?255:static_cast<GLubyte>(opacity));
@@ -253,9 +267,9 @@ void ButtonLoader::onHandlePropTypeFloatScale(const std::string &propertyName, b
     if(propertyName == PROPERTY_FONTSIZE) {
         _fontSize = value;
     } else if(propertyName == PROPERTY_HORIZONTALPADDING) {
-        //((ButtonControl *)pNode)->setHorizontalPadding(pFloatScale);
+        _horizPadding = value;
     } else if(propertyName == PROPERTY_VERTICALPADDING) {
-        //((ButtonControl *)pNode)->setVerticalPadding(pFloatScale);
+        _vertPadding = value;
     } else if(propertyName == PROPERTY_OUTLINEWIDTH) {
         //_outlineWidth = pFloatScale;
     } else if(propertyName == PROPERTY_SHADOWBLURRADIUS) {

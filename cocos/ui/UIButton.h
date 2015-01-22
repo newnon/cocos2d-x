@@ -45,6 +45,13 @@ class CC_GUI_DLL Button : public Widget
     DECLARE_CLASS_GUI_INFO
     
 public:
+    
+    enum class State
+    {
+        NORMAL,
+        PRESSED,
+        DISABLED
+    };
 
     /**
      * Default constructor
@@ -70,7 +77,7 @@ public:
      */
     static Button* create(const std::string& normalImage,
                           const std::string& selectedImage = "",
-                          const std::string& disableImage = "",
+                          const std::string& disabledImage = "",
                           TextureResType texType = TextureResType::LOCAL);
     
     /**
@@ -101,11 +108,11 @@ public:
     /**
      * Load selected state texture for button.
      *
-     * @param selected    selected state texture.
+     * @param pressed    selected state texture.
      *
      * @param texType    @see TextureResType
      */
-    void loadTexturePressed(const std::string& selected, TextureResType texType = TextureResType::LOCAL);
+    void loadTexturePressed(const std::string& pressed, TextureResType texType = TextureResType::LOCAL);
 
     /**
      * Load dark state texture for button.
@@ -189,7 +196,7 @@ public:
     void setTitleText(const std::string& text);
     const std::string& getTitleText() const;
     void setTitleColor(const Color3B& color);
-    Color3B getTitleColor() const;
+    const Color3B& getTitleColor() const;
     void setTitleFontSize(float size);
     float getTitleFontSize() const;
     void setTitleFontName(const std::string& fontName);
@@ -204,6 +211,51 @@ public:
      * @since v3.3
      */
     float getZoomScale()const;
+    
+    void setNormalBackgroundColor(const Color3B &color);
+    const Color3B& getNormalBackgroundColor() const;
+    void setPressedBackgroundColor(const Color3B &color);
+    const Color3B& getPressedBackgroundColor() const;
+    void setDisabledBackgroundColor(const Color3B &color);
+    const Color3B& getDisabledBackgroundColor() const;
+    
+    void setNormalBackgroundOpacity(GLubyte opacity);
+    GLubyte getNormalBackgroundOpacity() const;
+    void setPressedBackgroundOpacity(GLubyte opacity);
+    GLubyte getPressedBackgroundOpacity() const;
+    void setDisabledBackgroundOpacity(GLubyte opacity);
+    GLubyte getDisabledBackgroundOpacity() const;
+    
+    void setNormalTitleColor(const Color3B &color);
+    const Color3B& getNormalTitleColor() const;
+    void setPressedTitleColor(const Color3B &color);
+    const Color3B& getPressedTitleColor() const;
+    void setDisabledTitleColor(const Color3B &color);
+    const Color3B& getDisabledTitleColor() const;
+    
+    void setNormalTitleOpacity(GLubyte opacity);
+    GLubyte getNormalTitleOpacity() const;
+    void setPressedTitleOpacity(GLubyte opacity);
+    GLubyte getPressedTitleOpacity() const;
+    void setDisabledTitleOpacity(GLubyte opacity);
+    GLubyte getDisabledTitleOpacity() const;
+    
+    State getState() const { return _state; }
+    
+    void setHorizontalPadding(float padding);
+    void setVerticalPadding(float padding);
+    
+    void setOffsets(float left, float top, float right, float bottom);
+    void setLeftOffset(float left);
+    float getLeftOffset() const;
+    void setTopOffset(float top);
+    float getTopOffset() const;
+    void setRightOffset(float right);
+    float getRightOffset() const;
+    void setBottomOffset(float bottom);
+    float getBottomOffset() const;
+    
+    bool hitTest(const Vec2 &pt) override;
     
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
@@ -231,8 +283,12 @@ protected:
     
     virtual Widget* createCloneInstance() override;
     virtual void copySpecialProperties(Widget* model) override;
+    
+    void updateDisplayedOpacity(GLubyte parentOpacity) override;
+    void updateDisplayedColor(const Color3B& parentColor) override;
    
     virtual Size getNormalSize() const;
+    
 protected:
     Scale9Sprite* _buttonNormalRenderer;
     Scale9Sprite* _buttonClickedRenderer;
@@ -259,12 +315,40 @@ protected:
     float _normalTextureScaleYInSize;
     float _pressedTextureScaleXInSize;
     float _pressedTextureScaleYInSize;
+    
+    State _state;
+    
     bool _normalTextureLoaded;
     bool _pressedTextureLoaded;
     bool _disabledTextureLoaded;
+    
     bool _normalTextureAdaptDirty;
     bool _pressedTextureAdaptDirty;
     bool _disabledTextureAdaptDirty;
+    
+    Color3B _normalBackgroundColor;
+    Color3B _pressedBackgroundColor;
+    Color3B _disabledBackgroundColor;
+    
+    GLubyte _normalBackgroundOpacity;
+    GLubyte _pressedBackgroundOpacity;
+    GLubyte _disabledBackgroundOpacity;
+
+    Color3B _normalTitleColor;
+    Color3B _pressedTitleColor;
+    Color3B _disabledTitleColor;
+    
+    GLubyte _normalTitleOpacity;
+    GLubyte _pressedTitleOpacity;
+    GLubyte _disabledTitleOpacity;
+    
+    float _verticalPadding;
+    float _horizontalPadding;
+    
+    float _leftOffsets;
+    float _topOffsets;
+    float _rightOffsets;
+    float _bottomOffsets;
 
 private:
     enum class FontType
