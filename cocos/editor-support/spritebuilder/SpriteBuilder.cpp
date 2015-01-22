@@ -21,6 +21,17 @@ namespace spritebuilder {
     
 float CCBXReader::_resolutionScale = 1.0f;
 Map<std::string,CCBReaderParams*> CCBXReader::_paramsMap;
+bool CCBXReader::_playSound = true;
+    
+void CCBXReader::setPlaySound(bool value)
+{
+    _playSound = value;
+}
+    
+bool CCBXReader::getPlaySound()
+{
+    return _playSound;
+}
     
 CCBXReader* CCBXReader::createFromFile(const std::string &pCCBFileName, const std::string &rootPath, const NodeLoaderLibrary *library)
 {

@@ -128,6 +128,9 @@ public:
     
     void calcScales(SceneScaleType scaleType, float &mainScale, float &additionalScale) const;
     
+    static void setPlaySound(bool value);
+    static bool getPlaySound();
+    
 CC_CONSTRUCTOR_ACCESS:
     CCBXReader(const std::string &rootPath, CCBReaderParams *params, NodeLoader *rootNodeLoader);
     virtual ~CCBXReader();
@@ -135,6 +138,7 @@ CC_CONSTRUCTOR_ACCESS:
 private:
     static CCBReaderParams* createParams(const std::string &rootPath);
     static Map<std::string,CCBReaderParams*> _paramsMap;
+    static bool _playSound;
     std::string _rootPath;
     NodeLoader *_rootNodeLoader;
     CCBReaderParams *_params;
