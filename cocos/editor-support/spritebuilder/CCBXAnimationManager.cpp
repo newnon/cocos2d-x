@@ -52,10 +52,7 @@ public:
     virtual CCBSoundEffect* clone() const override;
     virtual CCBSoundEffect* reverse() const override;
     
-    static void setSoundEnabled(bool enabled);
-    
 private:
-    static bool _enabled;
     std::string _soundFile;
     float _pitch, _pan, _gain;
 };
@@ -1084,13 +1081,6 @@ void CCBSetSpriteFrame::update(float time)
  CCBSoundEffect
  ************************************************************/
 
-bool CCBSoundEffect::_enabled = true;
-    
-void CCBSoundEffect::setSoundEnabled(bool enabled)
-{
-    _enabled = enabled;
-}
-
 CCBSoundEffect* CCBSoundEffect::actionWithSoundFile(const std::string &filename, float pitch, float pan, float gain) {
   CCBSoundEffect* pRet = new (std::nothrow) CCBSoundEffect();
   if (pRet != nullptr && pRet->initWithSoundFile(filename, pitch, pan, gain))
@@ -1134,7 +1124,7 @@ CCBSoundEffect* CCBSoundEffect::reverse() const
 
 void CCBSoundEffect::update(float time)
 {
-    if(_enabled)
+    if(CCBXReader::getPlaySound())
         CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(_soundFile.c_str());
 }
 
