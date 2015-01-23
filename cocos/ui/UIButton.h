@@ -242,13 +242,27 @@ public:
     
     State getState() const { return _state; }
     
+    void setHorizontalPadding(float padding);
+    void setVerticalPadding(float padding);
+    
+    void setOffsets(float left, float top, float right, float bottom);
+    void setLeftOffset(float left);
+    float getLeftOffset() const;
+    void setTopOffset(float top);
+    float getTopOffset() const;
+    void setRightOffset(float right);
+    float getRightOffset() const;
+    void setBottomOffset(float bottom);
+    float getBottomOffset() const;
+    
+    bool hitTest(const Vec2 &pt) override;
+    
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
     virtual bool init(const std::string& normalImage,
                       const std::string& selectedImage = "",
                       const std::string& disableImage = "",
                       TextureResType texType = TextureResType::LOCAL);
-
 
 protected:
     virtual void initRenderer() override;
@@ -272,6 +286,7 @@ protected:
     void updateDisplayedColor(const Color3B& parentColor) override;
    
     virtual Size getNormalSize() const;
+    
 protected:
     Scale9Sprite* _buttonNormalRenderer;
     Scale9Sprite* _buttonClickedRenderer;
@@ -324,6 +339,17 @@ protected:
     GLubyte _normalTitleOpacity;
     GLubyte _pressedTitleOpacity;
     GLubyte _disabledTitleOpacity;
+    
+    float _verticalPadding;
+    float _horizontalPadding;
+    
+    float _leftOffsets;
+    float _topOffsets;
+    float _rightOffsets;
+    float _bottomOffsets;
+    
+    TextHAlignment _hAlignment;
+    TextVAlignment _vAlignment;
 
 private:
     enum class FontType

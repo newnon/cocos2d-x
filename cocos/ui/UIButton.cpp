@@ -87,7 +87,15 @@ _pressedTitleColor(Color3B::WHITE),
 _disabledTitleColor(Color3B::WHITE),
 _normalTitleOpacity(255),
 _pressedTitleOpacity(255),
-_disabledTitleOpacity(255)
+_disabledTitleOpacity(255),
+_verticalPadding(0),
+_horizontalPadding(0),
+_leftOffsets(0.0f),
+_topOffsets(0.0f),
+_rightOffsets(0.0f),
+_bottomOffsets(0),
+_hAlignment(TextHAlignment::CENTER),
+_vAlignment(TextVAlignment::CENTER)
 {
     setTouchEnabled(true);
 }
@@ -426,6 +434,21 @@ void Button::setCapInsetsDisabledRenderer(const Rect &capInsets)
 const Rect& Button::getCapInsetsDisabledRenderer()const
 {
     return _capInsetsDisabled;
+}
+    
+bool Button::hitTest(const Vec2 &pt)
+{
+    Vec2 nsp = convertToNodeSpace(pt);
+    Rect bb;
+    bb.origin.x = _leftOffsets * _contentSize.width;
+    bb.origin.y = _topOffsets * _contentSize.height;
+    bb.size.width = _contentSize.width - bb.origin.x - _rightOffsets * _contentSize.width;
+    bb.size.height = _contentSize.height - bb.origin.y - _bottomOffsets * _contentSize.height;
+    if (bb.containsPoint(nsp))
+    {
+        return true;
+    }
+    return false;
 }
     
 static Color3B multiplyColors(const Color3B& color1, const Color3B& color2)
@@ -805,6 +828,8 @@ void Button::updateDisplayedColor(const Color3B& parentColor)
 void Button::updateTitleLocation()
 {
     _titleRenderer->setPosition(_contentSize.width * 0.5f, _contentSize.height * 0.5f);
+    const Size &size = getContentSize();
+    _titleRenderer->setDimensions(size.width - _horizontalPadding * 2,size.height - _verticalPadding * 2);
 }
 
 void Button::updateContentSize()
@@ -1271,6 +1296,64 @@ GLubyte Button::getDisabledTitleOpacity() const
     return _disabledTitleOpacity;
 }
 
+void Button::setHorizontalPadding(float padding)
+{
+    _horizontalPadding = padding;
+}
+    
+void Button::setVerticalPadding(float padding)
+{
+    _verticalPadding = padding;
+}
+    
+void Button::setOffsets(float left, float top, float right, float bottom)
+{
+    _leftOffsets = left;
+    _topOffsets = top;
+    _rightOffsets = right;
+    _bottomOffsets = bottom;
+}
+
+void Button::setLeftOffset(float left)
+{
+    _leftOffsets = left;
+}
+
+float Button::getLeftOffset() const
+{
+    return _leftOffsets;
+}
+
+void Button::setTopOffset(float top)
+{
+    _topOffsets = top;
+}
+
+float Button::getTopOffset() const
+{
+    return _topOffsets;
+}
+
+void Button::setRightOffset(float right)
+{
+    _rightOffsets = right;
+}
+
+float Button::getRightOffset() const
+{
+    return _rightOffsets;
+}
+
+void Button::setBottomOffset(float bottom)
+{
+    _bottomOffsets = bottom;
+}
+
+float Button::getBottomOffset() const
+{
+    return _bottomOffsets;
+}
+    
 void Button::copySpecialProperties(Widget *widget)
 {
     Button* button = dynamic_cast<Button*>(widget);

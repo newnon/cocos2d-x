@@ -31,6 +31,7 @@ protected:
 
 private:
     cocos2d::Rect _margins;
+    cocos2d::Rect _offset;
     cocos2d::Color4B _outlineColor;
     cocos2d::Color4B _shadowColor;
     float _outlineWidth;
@@ -56,6 +57,8 @@ private:
     std::string _label;
     std::string _font;
     FloatScaleDescription _fontSize;
+    FloatScaleDescription _horizPadding;
+    FloatScaleDescription _vertPadding;
     TextHAlignment _textHAlignment;
     TextVAlignment _textVAlignment;
     
