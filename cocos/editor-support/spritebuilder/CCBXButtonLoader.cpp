@@ -146,8 +146,8 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
     ui::Button *button = dynamic_cast<ui::Button*>(node);
     if(button)
     {
-        button->setPressedActionEnabled(_zoomOnClick!=1.0f);
-        button->setZoomScale(_zoomOnClick);
+        button->setPressedActionEnabled(true);
+        button->setZoomScale(_zoomOnClick - 1.0);
         button->setNormalTitleColor(_normalLabelColor);
         button->setNormalBackgroundColor(_normalBackgroundColor);
         button->setNormalTitleOpacity(_normalLabelOpacity);
