@@ -59,10 +59,8 @@ CCBXReader* CCBXReader::createFromData(const Data &data, const std::string &root
     return ret;
 }
     
-void CCBXReader::calcScales(SceneScaleType scaleType, float &mainScale, float &additionalScale) const
+void CCBXReader::calcScales(SceneScaleType scaleType, const Size &designResolution, float designScale, float &mainScale, float &additionalScale)
 {
-    const Size &designResolution = _params->getDesignResolution();
-    float designScale = _params->getDesignResolutionScale();
     if(scaleType == SceneScaleType::NONE)
     {
         mainScale = 1.0f;
@@ -123,6 +121,11 @@ void CCBXReader::calcScales(SceneScaleType scaleType, float &mainScale, float &a
         }
     }
 }
+    
+void CCBXReader::calcScales(SceneScaleType scaleType, float &mainScale, float &additionalScale) const
+{
+    CCBXReader::calcScales(scaleType, _params->getDesignResolution(), _params->getDesignResolutionScale(), mainScale, additionalScale);
+}
 
     
 Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
@@ -130,6 +133,12 @@ Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType, 
     float mainScale = 1.0f;
     float additionalScale = 1.0f;
     calcScales(scaleType, mainScale, additionalScale);
+    Node * ret = _rootNodeLoader->createNode(Director::getInstance()->getWinSize(), mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
+    return ret;
+}
+    
+Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, float mainScale, float additionalScale, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
+{
     Node * ret = _rootNodeLoader->createNode(Director::getInstance()->getWinSize(), mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
     return ret;
 }
