@@ -347,9 +347,6 @@ protected:
     float _topOffsets;
     float _rightOffsets;
     float _bottomOffsets;
-    
-    TextHAlignment _hAlignment;
-    TextVAlignment _vAlignment;
 
 private:
     enum class FontType
