@@ -2037,7 +2037,7 @@ bool Image::initWithWebpData(const unsigned char * data, ssize_t dataLen)
         if (WebPGetFeatures(static_cast<const uint8_t*>(data), dataLen, &config.input) != VP8_STATUS_OK) break;
         if (config.input.width == 0 || config.input.height == 0) break;
         
-        config.output.colorspace = MODE_RGBA;
+        config.output.colorspace = MODE_rgbA;
         _renderFormat = Texture2D::PixelFormat::RGBA8888;
         _width    = config.input.width;
         _height   = config.input.height;
@@ -2057,14 +2057,7 @@ bool Image::initWithWebpData(const unsigned char * data, ssize_t dataLen)
             break;
         }
         
-        if (config.input.has_alpha)
-        {
-            premultipliedAlpha();
-        }
-        else
-        {
-            _hasPremultipliedAlpha = false;
-        }
+        _hasPremultipliedAlpha = true;
         
         ret = true;
 	} while (0);
