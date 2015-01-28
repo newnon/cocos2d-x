@@ -31,7 +31,7 @@ void SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
     sprite->setFlippedY(_flipped.second);
 }
 
-SpriteLoader::SpriteLoader():_flipped(false, false), _blendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED)
+SpriteLoader::SpriteLoader():_flipped(false, false), _blendFunc(BlendFunc::ALPHA_PREMULTIPLIED)
 {
     
 }
