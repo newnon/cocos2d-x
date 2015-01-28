@@ -124,6 +124,9 @@ public:
     static float getResolutionScale();
     static void setResolutionScale(float scale);
     
+    static CCBXReader* addToCache(const std::string &pCCBFileName, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr);
+    static bool removeFromCache(const std::string &pCCBFileName, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr);
+    
     const std::string& getRootPath();
     
     CCBReaderParams* getParams() const;
@@ -141,6 +144,7 @@ CC_CONSTRUCTOR_ACCESS:
 private:
     static CCBReaderParams* createParams(const std::string &rootPath);
     static Map<std::string,CCBReaderParams*> _paramsMap;
+    static Map<std::string,CCBXReader*> _cache;
     static bool _playSound;
     std::string _rootPath;
     NodeLoader *_rootNodeLoader;
