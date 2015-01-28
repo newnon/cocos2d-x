@@ -476,15 +476,14 @@ void Button::onPressStateChangedToNormal()
     
     if (_pressedTextureLoaded)
     {
+        _buttonNormalRenderer->setColor(realBackgroundColor);
+        _buttonNormalRenderer->setOpacity(realBackgroundOpacity);
         if (_pressedActionEnabled)
         {
             _buttonNormalRenderer->stopAllActions();
             _buttonClickedRenderer->stopAllActions();
             FiniteTimeAction *backZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _normalTextureScaleXInSize, _normalTextureScaleYInSize);
-            FiniteTimeAction *backColorAction = TintTo::create(ZOOM_ACTION_TIME_STEP, realBackgroundColor.r, realBackgroundColor.g, realBackgroundColor.b);
-            FiniteTimeAction *backOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realBackgroundOpacity);
-            Action *backSpawn = Spawn::create(backZoomAction, backColorAction, backOpacityAction, NULL);
-            _buttonNormalRenderer->runAction(backSpawn);
+            _buttonNormalRenderer->runAction(backZoomAction);
             _buttonClickedRenderer->setScale(_pressedTextureScaleXInSize, _pressedTextureScaleYInSize);
             
             _titleRenderer->stopAllActions();
@@ -527,8 +526,28 @@ void Button::onPressStateChangedToNormal()
         }
         _buttonNormalRenderer->setColor(realBackgroundColor);
         _buttonNormalRenderer->setOpacity(realBackgroundOpacity);
-        _titleRenderer->setColor(realTitleColor);
-        _titleRenderer->setOpacity(realTitleOpacity);
+        if (_pressedActionEnabled)
+        {
+            _buttonNormalRenderer->stopAllActions();
+            FiniteTimeAction *backZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _normalTextureScaleXInSize, _normalTextureScaleYInSize);
+            _buttonNormalRenderer->runAction(backZoomAction);
+            
+            _titleRenderer->stopAllActions();
+            FiniteTimeAction *titleZoomAction;
+            if (_unifySize)
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1, 1);
+            else
+                titleZoomAction = backZoomAction->clone();
+            FiniteTimeAction *titleColorAction = TintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
+            FiniteTimeAction *titleOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realTitleOpacity);
+            Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, NULL);
+            _titleRenderer->runAction(titleSpawn);
+        }
+        else
+        {
+            _titleRenderer->setColor(realTitleColor);
+            _titleRenderer->setOpacity(realTitleOpacity);
+        }
     }
 }
 
@@ -547,15 +566,15 @@ void Button::onPressStateChangedToPressed()
         _buttonNormalRenderer->setVisible(false);
         _buttonClickedRenderer->setVisible(true);
         
+        _buttonClickedRenderer->setColor(realBackgroundColor);
+        _buttonClickedRenderer->setOpacity(realBackgroundOpacity);
+        
         if (_pressedActionEnabled)
         {
             _buttonNormalRenderer->stopAllActions();
             _buttonClickedRenderer->stopAllActions();
             FiniteTimeAction *backZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _pressedTextureScaleXInSize + _zoomScale, _pressedTextureScaleYInSize + _zoomScale);
-            FiniteTimeAction *backColorAction = TintTo::create(ZOOM_ACTION_TIME_STEP, realBackgroundColor.r, realBackgroundColor.g, realBackgroundColor.b);
-            FiniteTimeAction *backOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realBackgroundOpacity);
-            Action *backSpawn = Spawn::create(backZoomAction, backColorAction, backOpacityAction, NULL);
-            _buttonClickedRenderer->runAction(backSpawn);
+            _buttonClickedRenderer->runAction(backZoomAction);
             _buttonNormalRenderer->setScale(_pressedTextureScaleXInSize + _zoomScale, _pressedTextureScaleYInSize + _zoomScale);
             
             _titleRenderer->stopAllActions();
@@ -568,6 +587,11 @@ void Button::onPressStateChangedToPressed()
             FiniteTimeAction *titleOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realTitleOpacity);
             Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, NULL);
             _titleRenderer->runAction(titleSpawn);
+        }
+        else
+        {
+            _titleRenderer->setColor(realTitleColor);
+            _titleRenderer->setOpacity(realTitleOpacity);
         }
     }
     else
@@ -594,8 +618,28 @@ void Button::onPressStateChangedToPressed()
         //_buttonNormalRenderer->setColor(Color3B::GRAY);
         _buttonNormalRenderer->setColor(realBackgroundColor);
         _buttonNormalRenderer->setOpacity(realBackgroundOpacity);
-        _titleRenderer->setColor(realTitleColor);
-        _titleRenderer->setOpacity(realTitleOpacity);
+        if (_pressedActionEnabled)
+        {
+            _buttonNormalRenderer->stopAllActions();
+            FiniteTimeAction *backZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _pressedTextureScaleXInSize + _zoomScale, _pressedTextureScaleYInSize + _zoomScale);
+            _buttonNormalRenderer->runAction(backZoomAction);
+            
+            _titleRenderer->stopAllActions();
+            FiniteTimeAction *titleZoomAction;
+            if (_unifySize)
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1 + _zoomScale, 1 + _zoomScale);
+            else
+                titleZoomAction = backZoomAction->clone();
+            FiniteTimeAction *titleColorAction = TintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
+            FiniteTimeAction *titleOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realTitleOpacity);
+            Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, NULL);
+            _titleRenderer->runAction(titleSpawn);
+        }
+        else
+        {
+            _titleRenderer->setColor(realTitleColor);
+            _titleRenderer->setOpacity(realTitleOpacity);
+        }
     }
 }
 
