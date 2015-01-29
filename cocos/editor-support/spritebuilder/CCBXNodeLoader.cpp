@@ -202,8 +202,19 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
         ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode);
     if(!ret)
         return nullptr;
-    setProperties(ret, parentSize, mainScale, additionalScale);
-    setCallbacks(ret, owner, rootNode);
+    
+    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, defaultAnimationCallback))
+        return nullptr;
+
+    return ret;
+}
+    
+bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback)
+{
+    if(!node)
+        return false;
+    setProperties(node, parentSize, mainScale, additionalScale);
+    setCallbacks(node, owner, rootNode);
     if(!_memberVarAssignmentName.empty())
     {
         switch (_memberVarAssignmentType) {
@@ -212,26 +223,26 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
                 break;
                 
             case TargetType::DOCUMENT_ROOT:
+            {
+                CCBXReaderOwner *rootOwner = dynamic_cast<CCBXReaderOwner*>(rootNode);
+                if(rootOwner)
                 {
-                    CCBXReaderOwner *rootOwner = dynamic_cast<CCBXReaderOwner*>(rootNode);
-                    if(rootOwner)
+                    if(!rootOwner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
                     {
-                        if(!rootOwner->onAssignCCBMemberVariable(_memberVarAssignmentName, ret))
-                        {
-                            CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
-                        }
-                    }
-                    else
-                    {
-                        CCLOG("assigment document_root but root node is not CCBXReaderOwner for name:%s", _memberVarAssignmentName.c_str());
+                        CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
                     }
                 }
+                else
+                {
+                    CCLOG("assigment document_root but root node is not CCBXReaderOwner for name:%s", _memberVarAssignmentName.c_str());
+                }
+            }
                 break;
                 
             case TargetType::OWNER:
                 if(owner)
                 {
-                    if(!owner->onAssignCCBMemberVariable(_memberVarAssignmentName, ret))
+                    if(!owner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
                     {
                         CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
                     }
@@ -253,33 +264,33 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
     
     if(!rootNode)
     {
-        rootNode = ret;
+        rootNode = node;
     }
     
     if(manager == nullptr)
     {
-        manager = new CCBAnimationManager(mainScale, additionalScale, ret ,owner);
+        manager = new CCBAnimationManager(mainScale, additionalScale, node ,owner);
         manager->setSequences(_sequences);
         manager->setAutoPlaySequenceId(_autoPlaySequenceId);
-        ret->setUserObject(manager);
+        node->setUserObject(manager);
         manager->release();
     }
     for(const auto &it:_baseValues)
     {
-        manager->setBaseValue(it.second, ret, it.first);
+        manager->setBaseValue(it.second, node, it.first);
     }
-    setAnimation(ret, manager);
+    setAnimation(node, manager);
 #if CC_USE_PHYSICS
     if(_physicsLoader)
-        ret->setPhysicsBody(_physicsLoader->createBody(ret));
+        node->setPhysicsBody(_physicsLoader->createBody(node));
 #endif
     for(auto child:_children)
     {
-        ret->addChild(child->createNode(ret->getContentSize(), mainScale, additionalScale, owner, manager, rootNode));
+        node->addChild(child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode));
     }
     if(rootNode)
     {
-        if (ret && _autoPlaySequenceId != -1)
+        if (node && _autoPlaySequenceId != -1)
         {
             // Auto play animations
             manager->runAnimationsForSequenceIdTweenDuration(_autoPlaySequenceId, 0, defaultAnimationCallback);
@@ -289,8 +300,8 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
             rootNode->scheduleOnce([rootNode,defaultAnimationCallback](float) { defaultAnimationCallback(rootNode, AnimationCompleteType::COMPLETED); }, 0, "defaultAnimationCallback");
         }
     }
-
-    return ret;
+    
+    return node;
 }
 
 void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
