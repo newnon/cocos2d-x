@@ -1,5 +1,6 @@
 #include "CCBXWidgetLoader.h"
 #include "ui/UIWidget.h"
+#include "SimpleAudioEngine.h"
 
 NS_CC_BEGIN
 namespace spritebuilder {
@@ -7,6 +8,7 @@ namespace spritebuilder {
 static std::string PROPERTY_ENABLED("userInteractionEnabled");
 static std::string PROPERTY_CLICK("block");
 static std::string PROPERTY_TOUCH("blockTouch");
+static std::string PROPERTY_SOUND("sound");
     
 WidgetLoader *WidgetLoader::create()
 {
@@ -69,13 +71,6 @@ void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNo
                 break;
         }
     }
-    else
-    {
-        if(_click.type != TargetType::NONE)
-        {
-            CCLOG("callback name set but no assigment type for name:%s", _click.name.c_str());
-        }
-    }
     
     if(!_touch.name.empty())
     {
@@ -116,18 +111,23 @@ void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNo
                 break;
         }
     }
-    else
-    {
-        if(_touch.type != TargetType::NONE)
-        {
-            CCLOG("variable name set but no assigment type for name:%s", _touch.name.c_str());
-        }
-    }
     
     ui::Widget *widget = dynamic_cast<ui::Widget*>(node);
-    if(widget && click)
+    if(widget)
     {
-        widget->addClickEventListener(click);
+        std::string sound = _sound;
+        if(!sound.empty() && click)
+        {
+            widget->addClickEventListener([click, sound](Ref* ref){ CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str()); click(ref);});
+        }
+        else if(!sound.empty())
+        {
+            widget->addClickEventListener([sound](Ref* ref){ CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str());});
+        }
+        else if(click)
+        {
+            widget->addClickEventListener(click);
+        }
     }
     if(widget && touch)
     {
@@ -171,6 +171,15 @@ void WidgetLoader::onHandlePropTypeCheck(const std::string &propertyName, bool i
         _enabled = value;
     } else {
         NodeLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
+    }
+}
+    
+void WidgetLoader::onHandlePropTypeSoundFile(const std::string &propertyName, bool isExtraProp, const std::string &value)
+{
+    if(propertyName == PROPERTY_SOUND){
+        _sound = value;
+    } else {
+        WidgetLoader::onHandlePropTypeSoundFile(propertyName, isExtraProp, value);
     }
 }
 

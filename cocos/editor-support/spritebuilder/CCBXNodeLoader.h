@@ -188,6 +188,7 @@ public:
     virtual void onHandlePropTypeTouchCallback(const std::string &propertyName, bool isExtraProp, const CallbackDescription &value);
     virtual void onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, NodeLoader *value);
     virtual void onHandlePropTypeFloatXY(const std::string &propertyName, bool isExtraProp, const Vec2 &value);
+    virtual void onHandlePropTypeSoundFile(const std::string &propertyName, bool isExtraProp, const std::string &value);
     
 CC_CONSTRUCTOR_ACCESS:
     NodeLoader();

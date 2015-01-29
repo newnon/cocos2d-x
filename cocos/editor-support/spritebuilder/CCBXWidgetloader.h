@@ -21,11 +21,13 @@ protected:
     virtual void onHandlePropTypeClickCallback(const std::string &propertyName, bool isExtraProp, const CallbackDescription &value) override;
     virtual void onHandlePropTypeTouchCallback(const std::string &propertyName, bool isExtraProp, const CallbackDescription &value) override;
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
+    virtual void onHandlePropTypeSoundFile(const std::string &propertyName, bool isExtraProp, const std::string &value) override;
     virtual void setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode) override;
     
 private:
     CallbackDescription _touch;
     CallbackDescription _click;
+    std::string _sound;
     bool _enabled;
 };
 

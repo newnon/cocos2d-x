@@ -209,7 +209,10 @@ private:
         FLOAT_SCALE,
         FLOAT_XY,
         COLOR4,
-        CCB_FILE_NAME
+        NODE_REFERENCE,
+        FLOAT_CHECK,
+        EFFECT_CONTROL,
+        SOUND_FILE,
     };
     
     
@@ -761,7 +764,7 @@ private:
     
     NodeLoader *parsePropTypeCCBFile(const NodeLoaderLibrary *library)
     {
-        std::string ccbFileName = /*getCCBRootPath() + */readCachedString();
+        std::string ccbFileName = _rootPath + readCachedString();
         
         if(ccbFileName.empty())
             return nullptr;
@@ -837,14 +840,9 @@ private:
         return ret;
     }
     
-    std::string parsePropTypeCCBFileName()
+    std::string parsePropTypeSoundFile()
     {
-        std::string ccbFileName = /*ccbReader->getCCBRootPath() + */readCachedString();
-        
-        /* Change path extension to .ccbi. */
-        std::string ccbFileWithoutPathExtension = deletePathExtension(ccbFileName.c_str());
-        ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
-        
+        std::string ccbFileName = _rootPath + readCachedString();
         return ccbFileName;
     }
 
@@ -1112,6 +1110,12 @@ private:
                         baseValues.emplace(propertyName, Value(colorMap));
                     }
                     loader->onHandlePropTypeColor4(propertyName, isExtraProp, color4B);
+                    break;
+                }
+                case PropertyType::SOUND_FILE:
+                {
+                    std::string sound = parsePropTypeSoundFile();
+                    loader->onHandlePropTypeSoundFile(propertyName, isExtraProp, sound);
                     break;
                 }
                 default:

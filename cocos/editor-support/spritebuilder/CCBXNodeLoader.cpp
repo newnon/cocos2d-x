@@ -609,6 +609,11 @@ void NodeLoader::onHandlePropTypeFloatXY(const std::string &propertyName, bool i
         ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
     }
 }
+    
+void NodeLoader::onHandlePropTypeSoundFile(const std::string &propertyName, bool isExtraProp, const std::string &value)
+{
+    ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
+}
 
     
 }
