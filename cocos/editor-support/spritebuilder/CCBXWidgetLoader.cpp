@@ -118,11 +118,18 @@ void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNo
         std::string sound = _sound;
         if(!sound.empty() && click)
         {
-            widget->addClickEventListener([click, sound](Ref* ref){ CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str()); click(ref);});
+            widget->addClickEventListener([click, sound](Ref* ref){
+                if(CCBXReader::getPlaySound())
+                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str());
+                click(ref);
+            });
         }
         else if(!sound.empty())
         {
-            widget->addClickEventListener([sound](Ref* ref){ CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str());});
+            widget->addClickEventListener([sound](Ref* ref){
+                if(CCBXReader::getPlaySound())
+                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str());
+            });
         }
         else if(click)
         {
