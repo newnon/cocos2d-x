@@ -144,7 +144,9 @@ else()
 endif()
 
 if(MINGW)
-  #add_definitions(-DGLEW_STATIC)
+  add_definitions(-DGLEW_STATIC)
+  add_definitions(-DCURL_STATICLIB)
+  add_definitions(-DAL_LIBTYPE_STATIC)
   add_definitions(-D__SSIZE_T)
 
   if(CLANG)
@@ -281,6 +283,7 @@ else()
 endif()
 
 cocos_find_package(PNG PNG REQUIRED)
+cocos_find_package(LIBLZMA LIBLZMA)
 cocos_find_package(TIFF TIFF REQUIRED)
 cocos_find_package(WEBSOCKETS WEBSOCKETS REQUIRED)
 cocos_find_package(CURL CURL REQUIRED)
