@@ -1,4 +1,4 @@
-#include "CCBXScrollViewLoader.h"
+#include "CCBXScrollListViewLoader.h"
 #include "ui/UIScrollView.h"
 
 NS_CC_BEGIN
@@ -6,27 +6,27 @@ namespace spritebuilder {
     
 static std::string PROPERTY_DIRECTION("direction");
 static std::string PROPERTY_BOUNCES("bounces");
-static std::string PROPERTY_CONTENTNODE("contentNode");
+static std::string PROPERTY_TEMPLATE("template");
 static std::string PROPERTY_VERTICALSCROLLENABLED("verticalScrollEnabled");
 static std::string PROPERTY_HORIZONTALSCROLLENABLED("horizontalScrollEnabled");
 static std::string PROPERTY_PAGINGENABLED("pagingEnabled");
 static std::string PROPERTY_CLIPCONTENT("clipContent");
     
-ScrollViewLoader *ScrollViewLoader::create()
+ScrollListViewLoader *ScrollListViewLoader::create()
 {
-    ScrollViewLoader *ret = new ScrollViewLoader();
+    ScrollListViewLoader *ret = new ScrollListViewLoader();
     ret->autorelease();
     return ret;
 }
 
-Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     ui::ScrollView *scrollView = ui::ScrollView::create();
     scrollView->setClippingType(ui::Layout::ClippingType::SCISSOR);
     return scrollView;
 }
 
-void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
     ui::ScrollView *scrollView = static_cast<ui::ScrollView*>(node);
     ui::ScrollView::Direction direction = ui::ScrollView::Direction::NONE;
@@ -48,24 +48,24 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
     }
 }
 
-ScrollViewLoader::ScrollViewLoader():_clipping(false),_bounce(false),_file(nullptr)
+ScrollListViewLoader::ScrollListViewLoader():_clipping(false),_bounce(false),_file(nullptr)
 {
     
 }
     
-ScrollViewLoader::~ScrollViewLoader()
+ScrollListViewLoader::~ScrollListViewLoader()
 {
     CC_SAFE_RELEASE(_file);
 }
     
-void ScrollViewLoader::onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value)
+void ScrollListViewLoader::onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value)
 {
     WidgetLoader::onHandlePropTypeSize(propertyName, isExtraProp, value);
 }
 
-void ScrollViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, NodeLoader *value)
+void ScrollListViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, NodeLoader *value)
 {
-    if(propertyName == PROPERTY_CONTENTNODE) {
+    if(propertyName == PROPERTY_TEMPLATE) {
         _file = value;
         CC_SAFE_RETAIN(_file);
     } else {
@@ -73,7 +73,7 @@ void ScrollViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, 
     }
 }
     
-void ScrollViewLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
+void ScrollListViewLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
 {
     if(propertyName == PROPERTY_CLIPCONTENT) {
         _clipping = value;

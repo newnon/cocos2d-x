@@ -1744,6 +1744,14 @@
 		A59003541A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */; };
 		A59003551A4433D500AF12A4 /* CCBXScissorsNodeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */; };
 		A59003561A4433D500AF12A4 /* CCBXScissorsNodeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */; };
+		A59470361A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59470341A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp */; };
+		A59470371A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59470341A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp */; };
+		A59470381A7F9DC2002DB024 /* CCBXScrollListViewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A59470351A7F9DC2002DB024 /* CCBXScrollListViewLoader.h */; };
+		A59470391A7F9DC2002DB024 /* CCBXScrollListViewLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A59470351A7F9DC2002DB024 /* CCBXScrollListViewLoader.h */; };
+		A594709D1A7FD77B002DB024 /* CCScrollListView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A594709B1A7FD77B002DB024 /* CCScrollListView.cpp */; };
+		A594709E1A7FD77B002DB024 /* CCScrollListView.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A594709B1A7FD77B002DB024 /* CCScrollListView.cpp */; };
+		A594709F1A7FD77B002DB024 /* CCScrollListView.h in Headers */ = {isa = PBXBuildFile; fileRef = A594709C1A7FD77B002DB024 /* CCScrollListView.h */; };
+		A59470A01A7FD77B002DB024 /* CCScrollListView.h in Headers */ = {isa = PBXBuildFile; fileRef = A594709C1A7FD77B002DB024 /* CCScrollListView.h */; };
 		A5B57CE21A3B919900CCBDB4 /* CCBXAnimationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B57CAC1A3B919900CCBDB4 /* CCBXAnimationManager.cpp */; };
 		A5B57CE31A3B919900CCBDB4 /* CCBXAnimationManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5B57CAC1A3B919900CCBDB4 /* CCBXAnimationManager.cpp */; };
 		A5B57CE41A3B919900CCBDB4 /* CCBXAnimationManager.h in Headers */ = {isa = PBXBuildFile; fileRef = A5B57CAD1A3B919900CCBDB4 /* CCBXAnimationManager.h */; };
@@ -2992,6 +3000,10 @@
 		A559DC8B193E543A006072B5 /* CCPhysicsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhysicsNode.h; sourceTree = "<group>"; };
 		A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXScissorsNodeLoader.cpp; path = spritebuilder/CCBXScissorsNodeLoader.cpp; sourceTree = "<group>"; };
 		A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXScissorsNodeLoader.h; path = spritebuilder/CCBXScissorsNodeLoader.h; sourceTree = "<group>"; };
+		A59470341A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXScrollListViewLoader.cpp; path = spritebuilder/CCBXScrollListViewLoader.cpp; sourceTree = "<group>"; };
+		A59470351A7F9DC2002DB024 /* CCBXScrollListViewLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXScrollListViewLoader.h; path = spritebuilder/CCBXScrollListViewLoader.h; sourceTree = "<group>"; };
+		A594709B1A7FD77B002DB024 /* CCScrollListView.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCScrollListView.cpp; path = spritebuilder/CCScrollListView.cpp; sourceTree = "<group>"; };
+		A594709C1A7FD77B002DB024 /* CCScrollListView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCScrollListView.h; path = spritebuilder/CCScrollListView.h; sourceTree = "<group>"; };
 		A5B57CAC1A3B919900CCBDB4 /* CCBXAnimationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXAnimationManager.cpp; path = spritebuilder/CCBXAnimationManager.cpp; sourceTree = "<group>"; };
 		A5B57CAD1A3B919900CCBDB4 /* CCBXAnimationManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXAnimationManager.h; path = spritebuilder/CCBXAnimationManager.h; sourceTree = "<group>"; };
 		A5B57CAE1A3B919900CCBDB4 /* CCBXButtonLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXButtonLoader.cpp; path = spritebuilder/CCBXButtonLoader.cpp; sourceTree = "<group>"; };
@@ -5286,6 +5298,10 @@
 				A5B57CCF1A3B919900CCBDB4 /* CCBXScale9SpriteLoader.h */,
 				A5B57CD01A3B919900CCBDB4 /* CCBXScrollViewLoader.cpp */,
 				A5B57CD11A3B919900CCBDB4 /* CCBXScrollViewLoader.h */,
+				A594709B1A7FD77B002DB024 /* CCScrollListView.cpp */,
+				A594709C1A7FD77B002DB024 /* CCScrollListView.h */,
+				A59470341A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp */,
+				A59470351A7F9DC2002DB024 /* CCBXScrollListViewLoader.h */,
 				A5B57CD21A3B919900CCBDB4 /* CCBXSequence.cpp */,
 				A5B57CD31A3B919900CCBDB4 /* CCBXSequence.h */,
 				A5B57CD41A3B919900CCBDB4 /* CCBXSequenceProperty.cpp */,
@@ -5457,6 +5473,7 @@
 				ED9C6A9618599AD8000A5232 /* CCNodeGrid.h in Headers */,
 				15AE18A719AAD33D00C27E9E /* CCScrollViewLoader.h in Headers */,
 				15AE184819AAD2F700C27E9E /* cocos3d.h in Headers */,
+				A59470381A7F9DC2002DB024 /* CCBXScrollListViewLoader.h in Headers */,
 				50ABBEC31925AB6F00A911A9 /* CCVector.h in Headers */,
 				1A57008B180BC5A10088DEC7 /* CCActionProgressTimer.h in Headers */,
 				382384151A259092002C4610 /* NodeReaderProtocol.h in Headers */,
@@ -5734,6 +5751,7 @@
 				15AE188219AAD33D00C27E9E /* CCBReader.h in Headers */,
 				1A570356180BD0B00088DEC7 /* ioapi.h in Headers */,
 				15AE191819AAD35000C27E9E /* CCSpriteFrameCacheHelper.h in Headers */,
+				A594709F1A7FD77B002DB024 /* CCScrollListView.h in Headers */,
 				15AE1BA219AADFDF00C27E9E /* UILayoutParameter.h in Headers */,
 				50ABBE331925AB6F00A911A9 /* CCConfiguration.h in Headers */,
 				15AE199519AAD39600C27E9E /* LayoutReader.h in Headers */,
@@ -5929,6 +5947,7 @@
 				292DB16219B461CA00A80320 /* ExtensionDeprecated.h in Headers */,
 				50ABBD961925AB4100A911A9 /* CCGLProgramState.h in Headers */,
 				A5B57CE51A3B919900CCBDB4 /* CCBXAnimationManager.h in Headers */,
+				A59470391A7F9DC2002DB024 /* CCBXScrollListViewLoader.h in Headers */,
 				46A171061807CECB005B8026 /* CCPhysicsWorld.h in Headers */,
 				A5B57D2D1A3B919900CCBDB4 /* CCBXScrollViewLoader.h in Headers */,
 				50ABBDB41925AB4100A911A9 /* ccShaders.h in Headers */,
@@ -5943,6 +5962,7 @@
 				15B3707B19EE414C00ABE682 /* AssetsManagerEx.h in Headers */,
 				15AE1B9119AADA9A00C27E9E /* UIWidget.h in Headers */,
 				50ABC0041926664800A911A9 /* CCLock-apple.h in Headers */,
+				A59470A01A7FD77B002DB024 /* CCScrollListView.h in Headers */,
 				B29A7DFE19EE1B7700872B35 /* IkConstraintData.h in Headers */,
 				382384401A259140002C4610 /* SingleNodeReader.h in Headers */,
 				15AE1A4019AAD3D500C27E9E /* b2Collision.h in Headers */,
@@ -6925,6 +6945,7 @@
 				50ABBE451925AB6F00A911A9 /* CCEvent.cpp in Sources */,
 				50ABBE611925AB6F00A911A9 /* CCEventListenerAcceleration.cpp in Sources */,
 				50ABBD9F1925AB4100A911A9 /* CCGroupCommand.cpp in Sources */,
+				A59470361A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp in Sources */,
 				15AE1A8E19AAD40300C27E9E /* b2RopeJoint.cpp in Sources */,
 				A5B57D4A1A3B919900CCBDB4 /* SpriteBuilder.cpp in Sources */,
 				50ABBD871925AB4100A911A9 /* CCCustomCommand.cpp in Sources */,
@@ -6960,6 +6981,7 @@
 				15AE1A8419AAD40300C27E9E /* b2Joint.cpp in Sources */,
 				50ABBD601925AB0000A911A9 /* Vec4.cpp in Sources */,
 				50ABC05F1926664800A911A9 /* CCApplication-mac.mm in Sources */,
+				A594709D1A7FD77B002DB024 /* CCScrollListView.cpp in Sources */,
 				B29A7E2119EE1B7700872B35 /* PolygonBatch.cpp in Sources */,
 				15AE1A9219AAD40300C27E9E /* b2WheelJoint.cpp in Sources */,
 				B29594B41926D5EC003EEF37 /* CCMeshCommand.cpp in Sources */,
@@ -7211,6 +7233,7 @@
 				B29A7DDE19EE1B7700872B35 /* BoneData.c in Sources */,
 				B375107E1823ACA100B3BA6A /* CCPhysicsContactInfo_chipmunk.cpp in Sources */,
 				15AE19AA19AAD39700C27E9E /* ListViewReader.cpp in Sources */,
+				A59470371A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp in Sources */,
 				1A5701C8180BCB5A0088DEC7 /* CCLabelTextFormatter.cpp in Sources */,
 				1A5701CC180BCB5A0088DEC7 /* CCLabelTTF.cpp in Sources */,
 				382384291A2590F9002C4610 /* NodeReader.cpp in Sources */,
@@ -7385,6 +7408,7 @@
 				15AE196319AAD35100C27E9E /* CCTransformHelp.cpp in Sources */,
 				15AE19A819AAD39700C27E9E /* LayoutReader.cpp in Sources */,
 				1A01C68B18F57BE800EFE3A6 /* CCDeprecated.cpp in Sources */,
+				A594709E1A7FD77B002DB024 /* CCScrollListView.cpp in Sources */,
 				15AE195719AAD35100C27E9E /* CCInputDelegate.cpp in Sources */,
 				15AE1B8A19AADA9A00C27E9E /* UIImageView.cpp in Sources */,
 				50ABBD391925AB0000A911A9 /* CCAffineTransform.cpp in Sources */,
