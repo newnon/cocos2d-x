@@ -24,6 +24,7 @@ CCBXProgressTimerLoader.cpp \
 CCBXReaderParams.cpp \
 CCBXScale9SpriteLoader.cpp \
 CCBXScissorsNodeLoader.cpp \
+CCBXScrollListViewLoader.cpp \
 CCBXScrollViewLoader.cpp \
 CCBXSequence.cpp \
 CCBXSequenceProperty.cpp \
@@ -32,6 +33,7 @@ CCBXSpriteLoader.cpp \
 CCBXTextFieldLoader.cpp \
 CCBXTextLoader.cpp \
 CCBXWidgetLoader.cpp \
+CCScrollListView.cpp \
 SpriteBuilder.cpp
 
 LOCAL_EXPORT_C_INCLUDES := $(LOCAL_PATH)/..

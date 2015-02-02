@@ -23,6 +23,7 @@ set(COCOS_SB_SRC
   editor-support/spritebuilder/CCBXReaderParams.cpp
   editor-support/spritebuilder/CCBXScale9SpriteLoader.cpp
   editor-support/spritebuilder/CCBXScissorsNodeLoader.cpp
+  editor-support/spritebuilder/CCBXScrollListViewLoader.cpp
   editor-support/spritebuilder/CCBXScrollViewLoader.cpp
   editor-support/spritebuilder/CCBXSequence.cpp
   editor-support/spritebuilder/CCBXSequenceProperty.cpp
@@ -31,6 +32,7 @@ set(COCOS_SB_SRC
   editor-support/spritebuilder/CCBXTextFieldLoader.cpp
   editor-support/spritebuilder/CCBXTextLoader.cpp
   editor-support/spritebuilder/CCBXWidgetLoader.cpp
+  editor-support/spritebuilder/CCScrollListView.cpp
   editor-support/spritebuilder/SpriteBuilder.cpp
 )
 

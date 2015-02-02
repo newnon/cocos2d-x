@@ -4,11 +4,8 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_CONTAINER("container");
 static std::string PROPERTY_DIRECTION("direction");
-static std::string PROPERTY_CLIPSTOBOUNDS("clipsToBounds");
 static std::string PROPERTY_BOUNCES("bounces");
-static std::string PROPERTY_SCALE("scale");
 static std::string PROPERTY_CONTENTNODE("contentNode");
 static std::string PROPERTY_VERTICALSCROLLENABLED("verticalScrollEnabled");
 static std::string PROPERTY_HORIZONTALSCROLLENABLED("horizontalScrollEnabled");
