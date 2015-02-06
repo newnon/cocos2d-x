@@ -401,6 +401,21 @@ const Rect& Button::getCapInsetsDisabledRenderer()const
     return _capInsetsDisabled;
 }
     
+bool Button::hitTest(const Vec2 &pt)
+{
+    Vec2 nsp = convertToNodeSpace(pt);
+    Rect bb;
+    bb.origin.x = _leftOffsets * _contentSize.width;
+    bb.origin.y = _topOffsets * _contentSize.height;
+    bb.size.width = _contentSize.width - bb.origin.x - _rightOffsets * _contentSize.width;
+    bb.size.height = _contentSize.height - bb.origin.y - _bottomOffsets * _contentSize.height;
+    if (bb.containsPoint(nsp))
+    {
+        return true;
+    }
+    return false;
+}
+    
 static Color3B multiplyColors(const Color3B& color1, const Color3B& color2)
 {
     return Color3B(color1.r * color2.r/255.0,color1.g * color2.g/255.0,color1.b * color2.b/255.0);
@@ -1323,6 +1338,11 @@ Size Button::getNormalSize() const
     float height = titleSize.height > imageSize.height ? titleSize.height : imageSize.height;
 
     return Size(width,height);
+}
+    
+Size Button::getNormalTextureSize() const
+{
+    return _normalTextureSize;
 }
 
 }
