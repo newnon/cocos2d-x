@@ -35,9 +35,9 @@ public:
 #if CC_USE_PHYSICS
         body->setDynamic(dynamic);
         
-        if(setMass)
+        if(dynamic && setMass)
             body->setMass(mass);
-        if(setMoment)
+        if(dynamic && setMoment)
             body->setMoment(moment);
         
         body->setCategoryBitmask(categoryBitmask);
@@ -1334,8 +1334,8 @@ private:
                         
                         for (int i = 0; i < numPoints; i++)
                         {
-                            float x = this->readFloat();
-                            float y = this->readFloat() ;
+                            float x = this->readFloat() * CCBXReader::getResolutionScale();
+                            float y = this->readFloat() * CCBXReader::getResolutionScale() ;
                             
                             polygons[j].push_back(Point(x, y));
                         }
@@ -1345,10 +1345,10 @@ private:
                 }
                 else if (bodyShape == 1)
                 {
-                    float x = this->readFloat();
-                    float y = this->readFloat();
+                    float x = this->readFloat() * CCBXReader::getResolutionScale();
+                    float y = this->readFloat() * CCBXReader::getResolutionScale();
                     
-                    physicsLoader = ShapeCircleLoader::create(Vec2(x, y), cornerRadius);
+                    physicsLoader = ShapeCircleLoader::create(Vec2(x, y), cornerRadius * CCBXReader::getResolutionScale());
                 }
             }
             
@@ -1368,6 +1368,10 @@ private:
             float mass = setMass?readFloat():0.0f;
             bool setMoment = readBool();
             float moment = setMoment?readFloat():0.0f;
+            
+            unsigned categoryBitmask = readInt(true);
+            unsigned contactTestBitmask = readInt(true);
+            unsigned collisionBitmask = readInt(true);
             
             Vect velocity;
             velocity.x = readFloat();
@@ -1390,6 +1394,9 @@ private:
                 physicsLoader->mass = mass;
                 physicsLoader->setMoment = setMoment;
                 physicsLoader->moment = moment;
+                physicsLoader->categoryBitmask = categoryBitmask;
+                physicsLoader->contactTestBitmask = contactTestBitmask;
+                physicsLoader->collisionBitmask = collisionBitmask;
                 physicsLoader->velocity = velocity;
                 physicsLoader->velocityLimit = velocityLimit;
                 physicsLoader->angularVelocity = angularVelocity;
