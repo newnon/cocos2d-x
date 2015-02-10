@@ -1,3 +1,4 @@
+
 //
 //  CCBXReader.cpp
 //  cocos2d_libs
@@ -108,14 +109,20 @@ public:
         ret->autorelease();
         return ret;
     }
-    virtual PhysicsBody* createBody(const Node* node) const
+    virtual PhysicsBody* createBody(const Node* node) const override
     {
 #if CC_USE_PHYSICS
-        //Point physicsOffset = Point(-node->getContentSize().width * node->getAnchorPoint().x, -node->getContentSize().height * node->getAnchorPoint().y);
+        const Size &size = node->getContentSize();
         PhysicsBody *ret =  PhysicsBody::create();
         for (size_t i=0; i < _polygons.size(); i++)
         {
-            ret->addShape(PhysicsShapePolygon::create(&_polygons[i].front(), (int)_polygons[i].size(), PHYSICSBODY_MATERIAL_DEFAULT));
+            std::vector<Point> polygon;
+            polygon.reserve(_polygons[i].size());
+            for(size_t j=0;j<_polygons[i].size();++j)
+            {
+                polygon.push_back(Point(_polygons[i][j].x * CCBXReader::getResolutionScale() - size.width/2, _polygons[i][j].y * CCBXReader::getResolutionScale() - size.height/2));
+            }
+            ret->addShape(PhysicsShapePolygon::create(&polygon.front(), (int)polygon.size(), PHYSICSBODY_MATERIAL_DEFAULT));
         }
         setParams(ret);
         return ret;
@@ -140,11 +147,11 @@ public:
         ret->autorelease();
         return ret;
     }
-    virtual PhysicsBody* createBody(const Node* node) const
+    virtual PhysicsBody* createBody(const Node* node) const override
     {
 #if CC_USE_PHYSICS
-        //Point physicsOffset = Point(-node->getContentSize().width * node->getAnchorPoint().x, -node->getContentSize().height * node->getAnchorPoint().y);
-        PhysicsBody* ret = PhysicsBody::createCircle(_radius, PHYSICSBODY_MATERIAL_DEFAULT, _center);
+        const Size &size = node->getContentSize();
+        PhysicsBody* ret = PhysicsBody::createCircle(_radius * CCBXReader::getResolutionScale(), PHYSICSBODY_MATERIAL_DEFAULT, Vec2(_center.x * CCBXReader::getResolutionScale() - size.width/2, _center.y * CCBXReader::getResolutionScale() - size.height/2));
         setParams(ret);
         return ret;
 #else
@@ -1334,8 +1341,8 @@ private:
                         
                         for (int i = 0; i < numPoints; i++)
                         {
-                            float x = this->readFloat() * CCBXReader::getResolutionScale();
-                            float y = this->readFloat() * CCBXReader::getResolutionScale() ;
+                            float x = this->readFloat();
+                            float y = this->readFloat();
                             
                             polygons[j].push_back(Point(x, y));
                         }
@@ -1345,10 +1352,10 @@ private:
                 }
                 else if (bodyShape == 1)
                 {
-                    float x = this->readFloat() * CCBXReader::getResolutionScale();
-                    float y = this->readFloat() * CCBXReader::getResolutionScale();
+                    float x = this->readFloat();
+                    float y = this->readFloat();
                     
-                    physicsLoader = ShapeCircleLoader::create(Vec2(x, y), cornerRadius * CCBXReader::getResolutionScale());
+                    physicsLoader = ShapeCircleLoader::create(Vec2(x, y), cornerRadius);
                 }
             }
             
