@@ -1274,9 +1274,23 @@ void Node::visit()
     visit(renderer, parentTransform, true);
 }
 
+const Mat4& Node::getNodeToPhysicsTransform() const
+{
+    return _physicsModelViewTransform;
+}
+
 uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFlags)
 {
 #if CC_USE_PHYSICS
+    if(parentFlags & FLAGS_DIRTY_MASK)
+    {
+        _physicsModelViewTransform = Mat4::IDENTITY;
+        
+        for (const Node *p = this->getParent(); p != nullptr && dynamic_cast<const PhysicsNode*>(p) == nullptr; p = p->getParent())
+        {
+            _physicsModelViewTransform = p->getNodeToParentTransform() * _physicsModelViewTransform;
+        }
+    }
     if (_physicsBody && _updateTransformFromPhysics)
     {
         updateTransformFromPhysics(parentTransform, parentFlags);
@@ -2063,7 +2077,8 @@ void Node::setPhysicsBody(PhysicsBody* body)
 void Node::updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t parentFlags, float parentScaleX, float parentScaleY)
 {
     _updateTransformFromPhysics = false;
-    auto flags = processParentFlags(parentTransform, parentFlags);
+    Mat4 temp = getNodeToPhysicsTransform();
+    auto flags = processParentFlags(temp, parentFlags);
     _updateTransformFromPhysics = true;
     auto scaleX = parentScaleX * _scaleX;
     auto scaleY = parentScaleY * _scaleY;
@@ -2085,7 +2100,7 @@ void Node::updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t pare
 
     for (auto node : _children)
     {
-        node->updatePhysicsBodyTransform(_modelViewTransform, flags, scaleX, scaleY);
+        node->updatePhysicsBodyTransform(this->transform(temp), flags, scaleX, scaleY);
     }
 }
 
@@ -2093,12 +2108,13 @@ void Node::updateTransformFromPhysics(const Mat4& parentTransform, uint32_t pare
 {
     auto& newPosition = _physicsBody->getPosition();
     auto& recordedPosition = _physicsBody->_recordedPosition;
+    
     if (parentFlags || recordedPosition.x != newPosition.x || recordedPosition.y != newPosition.y)
     {
         recordedPosition = newPosition;
         Vec3 vec3(newPosition.x, newPosition.y, 0);
         Vec3 ret;
-        parentTransform.getInversed().transformPoint(vec3, &ret);
+        getNodeToPhysicsTransform().getInversed().transformPoint(vec3, &ret);
         setPosition(ret.x, ret.y);
     }
     _physicsRotation = _physicsBody->getRotation();

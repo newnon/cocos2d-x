@@ -1555,6 +1555,8 @@ public:
     void updateTransformFromPhysics(const Mat4& parentTransform, uint32_t parentFlags);
 
     virtual void updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t parentFlags, float parentScaleX, float parentScaleY);
+    
+    const Mat4 &getNodeToPhysicsTransform() const;
 #endif
     
     // overrides
@@ -1721,6 +1723,7 @@ protected:
     float _physicsRotation;
     bool _physicsTransformDirty;
     bool _updateTransformFromPhysics;
+    Mat4 _physicsModelViewTransform;
 #endif
     
     // opacity controls

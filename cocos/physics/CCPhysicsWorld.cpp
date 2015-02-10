@@ -825,7 +825,10 @@ void PhysicsWorld::update(float delta, bool userCall/* = false*/)
 
     if(_updateBodyTransform || !_delayAddBodies.empty())
     {
-        _physicsNode->updatePhysicsBodyTransform(_physicsNode->getNodeToParentTransform(), 0, 1.0f, 1.0f);
+        for (auto node : _physicsNode->getChildren())
+        {
+            node->updatePhysicsBodyTransform(Mat4(), 0, 1.0f, 1.0f);
+        }
         updateBodies();
         _updateBodyTransform = false;
     }
