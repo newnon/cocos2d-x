@@ -141,12 +141,13 @@ public:
     static void setPlaySound(bool value);
     static bool getPlaySound();
     
+    static CCBReaderParams* createParams(const std::string &rootPath);
+    
 CC_CONSTRUCTOR_ACCESS:
     CCBXReader(const std::string &rootPath, CCBReaderParams *params, NodeLoader *rootNodeLoader);
     virtual ~CCBXReader();
     
 private:
-    static CCBReaderParams* createParams(const std::string &rootPath);
     static Map<std::string,CCBReaderParams*> _paramsMap;
     static Map<std::string,CCBXReader*> _cache;
     static bool _playSound;
