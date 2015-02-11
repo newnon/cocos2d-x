@@ -47,12 +47,12 @@ public:
         
         if(dynamic)
         {
-            body->setVelocity(velocity);
-            body->setVelocityLimit(velocityLimit);
-            body->setAngularVelocity(angularVelocity);
-            body->setAngularVelocityLimit(angularVelocityLimit);
-            body->setLinearDamping(linearDamping);
-            body->setAngularDamping(angularDamping);
+            body->setVelocity(velocity * CCBXReader::getResolutionScale());
+            body->setVelocityLimit(velocityLimit * CCBXReader::getResolutionScale());
+            body->setAngularVelocity(angularVelocity * CCBXReader::getResolutionScale());
+            body->setAngularVelocityLimit(angularVelocityLimit * CCBXReader::getResolutionScale());
+            body->setLinearDamping(linearDamping * CCBXReader::getResolutionScale());
+            body->setAngularDamping(angularDamping * CCBXReader::getResolutionScale());
         }
         
         if (dynamic)

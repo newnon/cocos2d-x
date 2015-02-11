@@ -29,7 +29,7 @@ void PhysicsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize,
     PhysicsNode *physicsNode = dynamic_cast<PhysicsNode*>(node);
     if(physicsNode)
     {
-        physicsNode->getPhysicsWorld()->setGravity(_gravity);
+        physicsNode->getPhysicsWorld()->setGravity(Vec2(_gravity.x * CCBXReader::getResolutionScale(), _gravity.y * CCBXReader::getResolutionScale()));
     }
 #endif
 }
