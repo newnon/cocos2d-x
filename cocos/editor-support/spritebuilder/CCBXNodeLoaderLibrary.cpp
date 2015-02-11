@@ -85,7 +85,7 @@ void NodeLoaderLibrary::registerDefaultLoaders()
     _loaders.emplace("CCPhysicsNode", NodeLoaderCreateFuntion(&PhysicsNodeLoader::create));
     _loaders.emplace("CCBFile", NodeLoaderCreateFuntion(&FileLoader::create));
     
-    _loaders.emplace("CCBWidget", NodeLoaderCreateFuntion(&WidgetLoader::create));
+    _loaders.emplace("CCWidget", NodeLoaderCreateFuntion(&WidgetLoader::create));
     _loaders.emplace("CCButton", NodeLoaderCreateFuntion(&ButtonLoader::create));
     _loaders.emplace("CCText", NodeLoaderCreateFuntion(&TextLoader::create));
     _loaders.emplace("CCLayoutBox", NodeLoaderCreateFuntion(&LayoutBoxLoader::create));
