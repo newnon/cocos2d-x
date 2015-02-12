@@ -6,7 +6,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class PhysicsNodeLoader : public NodeLoader {
+class CC_DLL PhysicsNodeLoader : public NodeLoader {
 public:
     
     static PhysicsNodeLoader *create();

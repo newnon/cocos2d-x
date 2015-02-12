@@ -6,7 +6,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class ImageViewLoader : public WidgetLoader {
+class CC_DLL ImageViewLoader : public WidgetLoader {
 public:
     
     static ImageViewLoader *create();

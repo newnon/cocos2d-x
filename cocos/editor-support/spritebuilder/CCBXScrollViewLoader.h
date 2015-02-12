@@ -8,7 +8,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class ScrollViewLoader : public WidgetLoader {
+class CC_DLL ScrollViewLoader : public WidgetLoader {
 public:
     
     static ScrollViewLoader *create();

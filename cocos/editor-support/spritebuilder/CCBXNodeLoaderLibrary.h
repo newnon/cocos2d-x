@@ -19,7 +19,7 @@ namespace spritebuilder {
     
 class NodeLoader;
 
-class NodeLoaderLibrary : public Ref
+class CC_DLL NodeLoaderLibrary : public Ref
 {
 public:
     typedef std::function<NodeLoader *()> NodeLoaderCreateFuntion;

@@ -9,7 +9,7 @@ namespace spritebuilder {
 /* Forward declaration. */
 class CCBReader;
 
-class SliderLoader : public WidgetLoader {
+class CC_DLL SliderLoader : public WidgetLoader {
 public:
     
     static SliderLoader *create();

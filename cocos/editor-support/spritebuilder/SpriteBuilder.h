@@ -39,7 +39,7 @@ typedef std::function<void(Ref*, ui::WidgetTouchEventType)> ccReaderTouchCallbac
 typedef std::function<void(Ref*)> ccReaderClickCallback;
 typedef std::function<void(Node*)> ccReaderEventCallback;
 
-class CCBXReaderOwner
+class CC_DLL CCBXReaderOwner
 {
 public:
     virtual bool onAssignCCBMemberVariable(const std::string &memberVariableName, Node* node) { return false; }
@@ -110,7 +110,7 @@ class CCBReaderParams;
     
 typedef std::function<Node*(const Size &parentSize, float mainScale, float additionalScale)> CreateNodeFunction;
 
-class CCBXReader : public Ref
+class CC_DLL CCBXReader : public Ref
 {
 public:
     
@@ -118,11 +118,9 @@ public:
     static CCBXReader* createFromData(const Data &data, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr);
     
     Node *createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType = SceneScaleType::NONE, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
-    
     Node *createNode(CCBXReaderOwner *pOwner, float mainScale, float additionalScale, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     
     bool loadNode(Node * node, CCBXReaderOwner *pOwner, SceneScaleType scaleType = SceneScaleType::NONE, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
-    
     bool loadNode(Node * node, CCBXReaderOwner *pOwner, float mainScale, float additionalScale, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     
     static float getResolutionScale();

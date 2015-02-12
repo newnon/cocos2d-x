@@ -20,7 +20,7 @@ class PhysicsBody;
 
 namespace spritebuilder {
     
-class PhysicsBodyLoader : public Ref
+class CC_DLL PhysicsBodyLoader : public Ref
 {
 public:
     virtual PhysicsBody* createBody(const Node* node) const = 0;
@@ -140,7 +140,7 @@ class CCBSequenceProperty;
 class CCBAnimationManager;
 class CCBSequence;
 
-class NodeLoader : public Ref
+class CC_DLL NodeLoader : public Ref
 {
 public:
     static NodeLoader *create();

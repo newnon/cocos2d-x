@@ -8,7 +8,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class LabelTTFLoader : public NodeLoader {
+class CC_DLL LabelTTFLoader : public NodeLoader {
 public:
     
     static LabelTTFLoader *create();

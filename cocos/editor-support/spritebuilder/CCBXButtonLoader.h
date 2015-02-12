@@ -6,7 +6,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class ButtonLoader : public WidgetLoader {
+class CC_DLL ButtonLoader : public WidgetLoader {
 public:
     
     static ButtonLoader *create();

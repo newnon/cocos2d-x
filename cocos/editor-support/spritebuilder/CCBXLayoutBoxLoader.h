@@ -9,7 +9,7 @@ namespace spritebuilder {
 /* Forward declaration. */
 class CCBReader;
 
-class LayoutBoxLoader : public WidgetLoader {
+class CC_DLL LayoutBoxLoader : public WidgetLoader {
 public:
     
     static LayoutBoxLoader *create();

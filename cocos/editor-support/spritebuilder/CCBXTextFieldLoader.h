@@ -8,7 +8,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class TextFieldLoader : public WidgetLoader {
+class CC_DLL TextFieldLoader : public WidgetLoader {
 public:
     
     static TextFieldLoader *create();

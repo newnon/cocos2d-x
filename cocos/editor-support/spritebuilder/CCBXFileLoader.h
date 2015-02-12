@@ -6,7 +6,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class FileLoader : public NodeLoader {
+class CC_DLL FileLoader : public NodeLoader {
 public:
     static FileLoader *create();
     virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) override;

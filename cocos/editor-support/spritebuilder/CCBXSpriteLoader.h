@@ -6,7 +6,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class SpriteLoader : public NodeLoader {
+class CC_DLL SpriteLoader : public NodeLoader {
 public:
     
     static SpriteLoader *create();

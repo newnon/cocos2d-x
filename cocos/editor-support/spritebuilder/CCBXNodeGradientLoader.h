@@ -6,7 +6,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-class NodeGradientLoader : public NodeColorLoader {
+class CC_DLL NodeGradientLoader : public NodeColorLoader {
 public:
     static NodeGradientLoader *create();
     virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) override;

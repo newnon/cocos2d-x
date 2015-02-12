@@ -10,7 +10,7 @@ NS_CC_BEGIN
 namespace spritebuilder {
 
 
-class ParticleSystemQuadLoader : public NodeLoader {
+class CC_DLL ParticleSystemQuadLoader : public NodeLoader {
 public:
     
     static ParticleSystemQuadLoader *create();

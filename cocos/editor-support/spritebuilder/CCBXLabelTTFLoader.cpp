@@ -64,12 +64,12 @@ LabelTTFLoader::LabelTTFLoader()
     :_blendFunc(BlendFunc::ALPHA_PREMULTIPLIED)
     ,_outlineColor(0,0,0,0)
     ,_shadowColor(0,0,0,0)
-    ,_outlineWidth{0,0.0f}
-    ,_shadowBlurRadius{0,0.0f}
-    ,_shadowOffset{PositionReferenceCorner::TOPLEFT,PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)}
+	,_outlineWidth(FloatScaleDescription{0, 0.0f})
+	,_shadowBlurRadius(FloatScaleDescription{0, 0.0f})
+	,_shadowOffset(PositionDescription{PositionReferenceCorner::TOPLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
     ,_textHAlignment(TextHAlignment::LEFT)
     ,_textVAlignment(TextVAlignment::TOP)
-    ,_dimensions{SizeUnit::POINTS, SizeUnit::POINTS, {0,0}}
+	,_dimensions(SizeDescription{SizeUnit::POINTS, SizeUnit::POINTS, {0, 0}})
     ,_fontColor(Color4B::WHITE)
 {
     

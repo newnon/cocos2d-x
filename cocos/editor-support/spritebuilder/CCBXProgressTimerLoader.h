@@ -8,7 +8,7 @@ NS_CC_BEGIN
 
 namespace spritebuilder {
 
-class ProgressTimerLoader : public NodeLoader {
+class CC_DLL ProgressTimerLoader : public NodeLoader {
 public:
     
     static ProgressTimerLoader *create();

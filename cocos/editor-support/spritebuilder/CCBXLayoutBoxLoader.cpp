@@ -32,7 +32,7 @@ void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, f
     }
 }
 
-LayoutBoxLoader::LayoutBoxLoader():_spacing{0,0},_clipping(false)
+LayoutBoxLoader::LayoutBoxLoader() :_spacing(FloatScaleDescription{0, 0}), _clipping(false)
 {
     
 }

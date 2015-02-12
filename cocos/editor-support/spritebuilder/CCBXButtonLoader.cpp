@@ -190,8 +190,8 @@ ButtonLoader::ButtonLoader()
     ,_disabledBackgroundOpacity(255)
     ,_textHAlignment(TextHAlignment::CENTER)
     ,_textVAlignment(TextVAlignment::CENTER)
-    ,_horizPadding{0,0.0f}
-    ,_vertPadding{0,0.0f}
+    ,_horizPadding(FloatScaleDescription{0, 0.0f})
+    ,_vertPadding(FloatScaleDescription{0, 0.0f})
 {
     
 }

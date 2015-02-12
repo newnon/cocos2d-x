@@ -8,7 +8,7 @@ NS_CC_BEGIN
 
 namespace spritebuilder {
 
-class LoadingBarLoader : public WidgetLoader {
+class CC_DLL LoadingBarLoader : public WidgetLoader {
 public:
     
     static LoadingBarLoader *create();

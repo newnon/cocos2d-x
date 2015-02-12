@@ -301,7 +301,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
         }
     }
     
-    return node;
+    return true;
 }
 
 void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
@@ -391,12 +391,12 @@ void NodeLoader::setNodeSequences(const std::unordered_map<int, Map<std::string,
 }
     
 NodeLoader::NodeLoader()
-    :_position{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0,0)}
+    :_position(PositionDescription{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
     ,_anchorPointLoaded(false)
     ,_anchorPoint(0,0)
     ,_sizeLoaded(false)
-    ,_size{SizeUnit::POINTS, SizeUnit::POINTS ,Size(0,0)}
-    ,_scale{0,1.0f,1.0f}
+	,_size(SizeDescription{SizeUnit::POINTS, SizeUnit::POINTS, Size(0, 0)})
+	,_scale(ScaleDescription{0, 1.0f, 1.0f})
     ,_opacity(255)
     ,_rotation(0)
     ,_skew(0,0)
@@ -409,7 +409,6 @@ NodeLoader::NodeLoader()
     ,_physicsLoader(nullptr)
     ,_autoPlaySequenceId(-1)
 {
-        
 }
 
 NodeLoader::~NodeLoader()
