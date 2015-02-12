@@ -21,8 +21,8 @@ Node *ScissorsNodeLoader::createNodeInstance(const Size &parentSize, float mainS
 void ScissorsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
     ui::Layout *layout = dynamic_cast<ui::Layout*>(node);
-    layout->setClippingEnabled(true);
     layout->setClippingType(ui::Layout::ClippingType::SCISSOR);
+    layout->setClippingEnabled(true);
 }
 
 ScissorsNodeLoader::ScissorsNodeLoader()
