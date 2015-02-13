@@ -439,6 +439,16 @@ public:
         return tintTo;
     }
     
+    void startWithTarget(Node *target)
+    {
+        ActionInterval::startWithTarget(target);
+        if (_target)
+        {
+            Label* label = dynamic_cast<Label*>(target);
+            _from = label ? Color3B(label->getTextColor()): _target->getColor();
+        }
+    }
+    
     static TextTintTo* create(float duration, const Color3B& color)
     {
         return create(duration, color.r, color.g, color.b);
