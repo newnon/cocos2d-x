@@ -30,7 +30,7 @@ THE SOFTWARE.
 #include <ctype.h>
 
 #include "base/CCData.h"
-#include "base/ccConfig.h" // CC_USE_JPEG, CC_USE_TIFF, CC_USE_WEBP
+#include "base/ccConfig.h" // CC_USE_JPEG, CC_USE_TIFF, CC_USE_WEBP, CC_USE_BPG
 
 extern "C"
 {
@@ -74,6 +74,12 @@ extern "C"
 #if CC_USE_WEBP
 #include "decode.h"
 #endif // CC_USE_WEBP
+
+#if CC_USE_BPG
+extern "C" {
+#include "libbpg.h"
+}
+#endif // CC_USE_BPG
 
 #include "base/ccMacros.h"
 #include "CCCommon.h"
@@ -569,6 +575,9 @@ bool Image::initWithImageData(const unsigned char * data, ssize_t dataLen)
         case Format::WEBP:
             ret = initWithWebpData(unpackedData, unpackedLen);
             break;
+        case Format::BPG:
+            ret = initWithBPGData(unpackedData, unpackedLen);
+            break;
         case Format::PVR:
             ret = initWithPVRData(unpackedData, unpackedLen);
             break;
@@ -693,6 +702,18 @@ bool Image::isWebp(const unsigned char * data, ssize_t dataLen)
         && memcmp(static_cast<const unsigned char*>(data) + 8, WEBP_WEBP, 4) == 0;
 }
 
+bool Image::isBpg(const unsigned char * data, ssize_t dataLen)
+{
+    if (dataLen <= 12)
+    {
+        return false;
+    }
+    
+    static const char* BPG_BPG = "BPG˚";
+    
+    return memcmp(data, BPG_BPG, 4) == 0;
+}
+
 bool Image::isPvr(const unsigned char * data, ssize_t dataLen)
 {
     if (static_cast<size_t>(dataLen) < sizeof(PVRv2TexHeader) || static_cast<size_t>(dataLen) < sizeof(PVRv3TexHeader))
@@ -723,6 +744,10 @@ Image::Format Image::detectFormat(const unsigned char * data, ssize_t dataLen)
     else if (isWebp(data, dataLen))
     {
         return Format::WEBP;
+    }
+    else if (isBpg(data, dataLen))
+    {
+        return Format::BPG;
     }
     else if (isPvr(data, dataLen))
     {
@@ -2035,19 +2060,19 @@ bool Image::initWithWebpData(const unsigned char * data, ssize_t dataLen)
         if (WebPGetFeatures(static_cast<const uint8_t*>(data), dataLen, &config.input) != VP8_STATUS_OK) break;
         if (config.input.width == 0 || config.input.height == 0) break;
         
-        config.output.colorspace = MODE_rgbA;
-        _renderFormat = Texture2D::PixelFormat::RGBA8888;
+        config.output.colorspace = config.input.has_alpha?MODE_rgbA:MODE_RGB;
+        _renderFormat = config.input.has_alpha?Texture2D::PixelFormat::RGBA8888:Texture2D::PixelFormat::RGB888;
         _width    = config.input.width;
         _height   = config.input.height;
         
-        //webp already have premultipliedAlpha
-        _hasPremultipliedAlpha = true;
+        //we ask webp to give data with premultiplied alpha
+        _hasPremultipliedAlpha = config.input.has_alpha;
         
-        _dataLen = _width * _height * 4;
+        _dataLen = _width * _height * (config.input.has_alpha?4:3);
         _data = static_cast<unsigned char*>(malloc(_dataLen * sizeof(unsigned char)));
         
         config.output.u.RGBA.rgba = static_cast<uint8_t*>(_data);
-        config.output.u.RGBA.stride = _width * 4;
+        config.output.u.RGBA.stride = _width * (config.input.has_alpha?4:3);
         config.output.u.RGBA.size = _dataLen;
         config.output.is_external_memory = 1;
         
@@ -2066,6 +2091,67 @@ bool Image::initWithWebpData(const unsigned char * data, ssize_t dataLen)
     CCLOG("webp is not enabled, please enable it in ccConfig.h");
     return false;
 #endif // CC_USE_WEBP
+}
+
+bool Image::initWithBPGData(const unsigned char * data, ssize_t dataLen)
+{
+#if CC_USE_BPG
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+    CCLOG("WEBP image format not supported on WinRT or WP8");
+#else
+    do
+    {
+        BPGDecoderContext *img = bpg_decoder_open();
+        
+        if (bpg_decoder_decode(img, data, static_cast<int>(dataLen)) < 0) {
+            bpg_decoder_close(img);
+            return false;
+        }
+        
+        BPGImageInfo img_info;
+        
+        bpg_decoder_get_info(img, &img_info);
+        
+        _renderFormat = img_info.has_alpha?Texture2D::PixelFormat::RGBA8888:Texture2D::PixelFormat::RGB888;
+        _width = img_info.width;
+        _height = img_info.height;
+        _hasPremultipliedAlpha = img_info.has_alpha;
+        
+        int lineSize = _width * img_info.has_alpha?4:3;
+        
+        _dataLen = lineSize * _height;
+        
+        if (bpg_decoder_start(img, img_info.has_alpha?BPG_OUTPUT_FORMAT_RGBA32:BPG_OUTPUT_FORMAT_RGB24) < 0)
+        {
+            bpg_decoder_close(img);
+            return false;
+        }
+        
+        _data = static_cast<unsigned char*>(malloc(_dataLen * sizeof(unsigned char)));
+        
+        for (int y = 0; y < _height; y++) {
+            if(bpg_decoder_get_line(img, _data + lineSize * y) < 0)
+            {
+                free(_data);
+                _data = nullptr;
+                bpg_decoder_close(img);
+                return false;
+            }
+        }
+        
+        bpg_decoder_close(img);
+        
+        if(_renderFormat == Texture2D::PixelFormat::RGBA8888)
+            premultipliedAlpha();
+        
+    } while (0);
+#endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) || (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT)
+    return true;
+#else
+    CCLOG("webp is not enabled, please enable it in ccConfig.h");
+    return false;
+#endif // CC_USE_BPG
 }
 
 

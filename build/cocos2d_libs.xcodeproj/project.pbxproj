@@ -1771,6 +1771,8 @@
 		A559DC8D193E543A006072B5 /* CCPhysicsNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A559DC8A193E543A006072B5 /* CCPhysicsNode.cpp */; };
 		A559DC8E193E543A006072B5 /* CCPhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A559DC8B193E543A006072B5 /* CCPhysicsNode.h */; };
 		A559DC8F193E543A006072B5 /* CCPhysicsNode.h in Headers */ = {isa = PBXBuildFile; fileRef = A559DC8B193E543A006072B5 /* CCPhysicsNode.h */; };
+		A56F6E431A8F6C2100338319 /* libbpg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A56F6E151A8F64C000338319 /* libbpg.a */; };
+		A56F6E4F1A8F6FB200338319 /* libbpg.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A56F6E4E1A8F6FB200338319 /* libbpg.a */; };
 		A59003531A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */; };
 		A59003541A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */; };
 		A59003551A4433D500AF12A4 /* CCBXScissorsNodeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */; };
@@ -3053,6 +3055,8 @@
 		B20564AA1A6E5744001C1B6E /* ccShader_PositionColorTextureAsPointsize.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_PositionColorTextureAsPointsize.vert; sourceTree = "<group>"; };
 		A559DC8A193E543A006072B5 /* CCPhysicsNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCPhysicsNode.cpp; sourceTree = "<group>"; };
 		A559DC8B193E543A006072B5 /* CCPhysicsNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCPhysicsNode.h; sourceTree = "<group>"; };
+		A56F6E151A8F64C000338319 /* libbpg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libbpg.a; sourceTree = "<group>"; };
+		A56F6E4E1A8F6FB200338319 /* libbpg.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libbpg.a; path = ../external/bpg/prebuilt/ios/libbpg.a; sourceTree = "<group>"; };
 		A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXScissorsNodeLoader.cpp; path = spritebuilder/CCBXScissorsNodeLoader.cpp; sourceTree = "<group>"; };
 		A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXScissorsNodeLoader.h; path = spritebuilder/CCBXScissorsNodeLoader.h; sourceTree = "<group>"; };
 		A5B57CAC1A3B919900CCBDB4 /* CCBXAnimationManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXAnimationManager.cpp; path = spritebuilder/CCBXAnimationManager.cpp; sourceTree = "<group>"; };
@@ -3251,6 +3255,7 @@
 				1A5703A1180BD22C0088DEC7 /* libtiff.a in Frameworks */,
 				1A5703B8180BD2780088DEC7 /* libwebp.a in Frameworks */,
 				1A57052B180BD31F0088DEC7 /* libfreetype.a in Frameworks */,
+				A56F6E431A8F6C2100338319 /* libbpg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3269,6 +3274,7 @@
 				29031E0919BFE8DE00EFA1DF /* libchipmunk.a in Frameworks */,
 				1A5703BB180BD2800088DEC7 /* libwebp.a in Frameworks */,
 				1A57052E180BD3280088DEC7 /* libfreetype.a in Frameworks */,
+				A56F6E4F1A8F6FB200338319 /* libbpg.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3733,6 +3739,7 @@
 		1A57033E180BD0490088DEC7 /* external */ = {
 			isa = PBXGroup;
 			children = (
+				A56F6E171A8F67D800338319 /* bpg */,
 				382383E11A258FA7002C4610 /* flatbuffers */,
 				1AC026971914068200FA920D /* ConvertUTF */,
 				46C02E0418E91123004B7456 /* xxhash */,
@@ -5342,6 +5349,40 @@
 				50FCEB8F18C72017004AD434 /* TextReader.h */,
 			);
 			path = TextReader;
+			sourceTree = "<group>";
+		};
+		A56F6E171A8F67D800338319 /* bpg */ = {
+			isa = PBXGroup;
+			children = (
+				A56F6E181A8F67EF00338319 /* prebuilt */,
+			);
+			name = bpg;
+			sourceTree = "<group>";
+		};
+		A56F6E181A8F67EF00338319 /* prebuilt */ = {
+			isa = PBXGroup;
+			children = (
+				A56F6E191A8F67F900338319 /* mac */,
+				A56F6E4D1A8F6F8E00338319 /* ios */,
+			);
+			name = prebuilt;
+			sourceTree = "<group>";
+		};
+		A56F6E191A8F67F900338319 /* mac */ = {
+			isa = PBXGroup;
+			children = (
+				A56F6E151A8F64C000338319 /* libbpg.a */,
+			);
+			name = mac;
+			path = ../external/bpg/prebuilt/mac;
+			sourceTree = "<group>";
+		};
+		A56F6E4D1A8F6F8E00338319 /* ios */ = {
+			isa = PBXGroup;
+			children = (
+				A56F6E4E1A8F6FB200338319 /* libbpg.a */,
+			);
+			name = ios;
 			sourceTree = "<group>";
 		};
 		A5B57CAB1A3B916A00CCBDB4 /* spritebuilder */ = {
@@ -7727,10 +7768,11 @@
 					"\"$(SRCROOT)/../external/websockets/prebuilt/mac\"",
 					"\"$(SRCROOT)/../external/chipmunk/prebuilt/mac\"",
 					"\"$(SRCROOT)/../external/curl/prebuilt/mac\"",
+					"\"$(SRCROOT)/../external/bpg/prebuilt/mac\"",
 				);
 				MACH_O_TYPE = staticlib;
 				OTHER_LDFLAGS = "";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../external/png/include/mac $(SRCROOT)/../external/tiff/include/mac $(SRCROOT)/../external/webp/include/mac $(SRCROOT)/../external/jpeg/include/mac $(SRCROOT)/../external/freetype2/include/mac $(SRCROOT)/../external/glfw3/include/mac $(SRCROOT)/../external/websockets/include/mac $(SRCROOT)/../external/chipmunk/include/chipmunk $(SRCROOT)/../external/curl/include/mac";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../external/png/include/mac $(SRCROOT)/../external/tiff/include/mac $(SRCROOT)/../external/webp/include/mac $(SRCROOT)/../external/jpeg/include/mac $(SRCROOT)/../external/freetype2/include/mac $(SRCROOT)/../external/glfw3/include/mac $(SRCROOT)/../external/websockets/include/mac $(SRCROOT)/../external/chipmunk/include/chipmunk $(SRCROOT)/../external/curl/include/mac $(SRCROOT)/../external/bpg/include/mac";
 			};
 			name = Debug;
 		};
@@ -7763,10 +7805,11 @@
 					"\"$(SRCROOT)/../external/websockets/prebuilt/mac\"",
 					"\"$(SRCROOT)/../external/chipmunk/prebuilt/mac\"",
 					"\"$(SRCROOT)/../external/curl/prebuilt/mac\"",
+					"\"$(SRCROOT)/../external/bpg/prebuilt/mac\"",
 				);
 				MACH_O_TYPE = staticlib;
 				OTHER_LDFLAGS = "";
-				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../external/png/include/mac $(SRCROOT)/../external/tiff/include/mac $(SRCROOT)/../external/webp/include/mac $(SRCROOT)/../external/jpeg/include/mac $(SRCROOT)/../external/freetype2/include/mac $(SRCROOT)/../external/glfw3/include/mac $(SRCROOT)/../external/websockets/include/mac $(SRCROOT)/../external/chipmunk/include/chipmunk $(SRCROOT)/../external/curl/include/mac";
+				USER_HEADER_SEARCH_PATHS = "$(inherited) $(SRCROOT)/../external/png/include/mac $(SRCROOT)/../external/tiff/include/mac $(SRCROOT)/../external/webp/include/mac $(SRCROOT)/../external/jpeg/include/mac $(SRCROOT)/../external/freetype2/include/mac $(SRCROOT)/../external/glfw3/include/mac $(SRCROOT)/../external/websockets/include/mac $(SRCROOT)/../external/chipmunk/include/chipmunk $(SRCROOT)/../external/curl/include/mac $(SRCROOT)/../external/bpg/include/mac";
 			};
 			name = Release;
 		};
@@ -7793,6 +7836,7 @@
 					"\"$(SRCROOT)/../external/curl/prebuilt/ios\"",
 					"\"$(SRCROOT)/../external/websockets/prebuilt/ios\"",
 					"\"$(SRCROOT)/../external/chipmunk/prebuilt/ios\"",
+					/Users/sergey/Documents/Projects/trainrunner/cocos2d/external/bpg/prebuilt/ios,
 				);
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -7825,6 +7869,7 @@
 					"\"$(SRCROOT)/../external/curl/prebuilt/ios\"",
 					"\"$(SRCROOT)/../external/websockets/prebuilt/ios\"",
 					"\"$(SRCROOT)/../external/chipmunk/prebuilt/ios\"",
+					/Users/sergey/Documents/Projects/trainrunner/cocos2d/external/bpg/prebuilt/ios,
 				);
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
