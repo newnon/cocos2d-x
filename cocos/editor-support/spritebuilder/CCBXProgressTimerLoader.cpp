@@ -4,14 +4,14 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_FLIP("flip");
-static std::string PROPERTY_SPRITEFRAME("spriteFrame");
-static std::string PROPERTY_BLENDFUNC("blendFunc");
-static std::string PROPERTY_TYPE("type");
-static std::string PROPERTY_MIDPOINT("midpoint");
-static std::string PROPERTY_BARCHANGERATE("barChangeRate");
-static std::string PROPERTY_PERCENTAGE("percentage");
-static std::string PROPERTY_REVERSEDIR("reverseDirection");
+static const std::string PROPERTY_FLIP("flip");
+static const std::string PROPERTY_SPRITEFRAME("spriteFrame");
+static const std::string PROPERTY_BLENDFUNC("blendFunc");
+static const std::string PROPERTY_TYPE("type");
+static const std::string PROPERTY_MIDPOINT("midpoint");
+static const std::string PROPERTY_BARCHANGERATE("barChangeRate");
+static const std::string PROPERTY_PERCENTAGE("percentage");
+static const std::string PROPERTY_REVERSEDIR("reverseDirection");
     
 ProgressTimerLoader *ProgressTimerLoader::create()
 {

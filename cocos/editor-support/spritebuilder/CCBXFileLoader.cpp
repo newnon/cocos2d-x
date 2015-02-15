@@ -4,7 +4,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_CCBFILE("ccbFile");
+static const std::string PROPERTY_CCBFILE("ccbFile");
     
 FileLoader *FileLoader::create()
 {

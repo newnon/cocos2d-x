@@ -4,29 +4,29 @@ NS_CC_BEGIN
 
 namespace spritebuilder {
 
-static std::string PROPERTY_EMITERMODE("emitterMode");
-static std::string PROPERTY_POSVAR("posVar");
-static std::string PROPERTY_EMISSIONRATE("emissionRate");
-static std::string PROPERTY_DURATION("duration");
-static std::string PROPERTY_TOTALPARTICLES("totalParticles");
-static std::string PROPERTY_LIFE("life");
-static std::string PROPERTY_STARTSIZE("startSize");
-static std::string PROPERTY_ENDSIZE("endSize");
-static std::string PROPERTY_STARTSPIN("startSpin");
-static std::string PROPERTY_ENDSPIN("endSpin");
-static std::string PROPERTY_ANGLE("angle");
-static std::string PROPERTY_STARTCOLOR("startColor");
-static std::string PROPERTY_ENDCOLOR("endColor");
-static std::string PROPERTY_BLENDFUNC("blendFunc");
-static std::string PROPERTY_GRAVITY("gravity");
-static std::string PROPERTY_SPEED("speed");
-static std::string PROPERTY_TANGENTIALACCEL("tangentialAccel");
-static std::string PROPERTY_RADIALACCEL("radialAccel");
-static std::string PROPERTY_TEXTURE("texture");
-static std::string PROPERTY_STARTRADIUS("startRadius");
-static std::string PROPERTY_ENDRADIUS("endRadius");
-static std::string PROPERTY_ROTATEPERSECOND("rotatePerSecond");
-static std::string PROPERTY_RESETONVISIBLE("resetOnVisibilityToggle");
+static const std::string PROPERTY_EMITERMODE("emitterMode");
+static const std::string PROPERTY_POSVAR("posVar");
+static const std::string PROPERTY_EMISSIONRATE("emissionRate");
+static const std::string PROPERTY_DURATION("duration");
+static const std::string PROPERTY_TOTALPARTICLES("totalParticles");
+static const std::string PROPERTY_LIFE("life");
+static const std::string PROPERTY_STARTSIZE("startSize");
+static const std::string PROPERTY_ENDSIZE("endSize");
+static const std::string PROPERTY_STARTSPIN("startSpin");
+static const std::string PROPERTY_ENDSPIN("endSpin");
+static const std::string PROPERTY_ANGLE("angle");
+static const std::string PROPERTY_STARTCOLOR("startColor");
+static const std::string PROPERTY_ENDCOLOR("endColor");
+static const std::string PROPERTY_BLENDFUNC("blendFunc");
+static const std::string PROPERTY_GRAVITY("gravity");
+static const std::string PROPERTY_SPEED("speed");
+static const std::string PROPERTY_TANGENTIALACCEL("tangentialAccel");
+static const std::string PROPERTY_RADIALACCEL("radialAccel");
+static const std::string PROPERTY_TEXTURE("texture");
+static const std::string PROPERTY_STARTRADIUS("startRadius");
+static const std::string PROPERTY_ENDRADIUS("endRadius");
+static const std::string PROPERTY_ROTATEPERSECOND("rotatePerSecond");
+static const std::string PROPERTY_RESETONVISIBLE("resetOnVisibilityToggle");
     
 class BuilderParticleSystemQuad: public ParticleSystemQuad
 {

@@ -7,8 +7,8 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_GRAVITY("gravity");
-static std::string PROPERTY_SLEEPTIMETHRESHOLD("sleepTimeThreshold");
+static const std::string PROPERTY_GRAVITY("gravity");
+static const std::string PROPERTY_SLEEPTIMETHRESHOLD("sleepTimeThreshold");
     
     
 PhysicsNodeLoader *PhysicsNodeLoader::create()

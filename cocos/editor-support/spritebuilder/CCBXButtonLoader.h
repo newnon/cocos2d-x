@@ -28,6 +28,7 @@ protected:
     virtual void onHandlePropTypeColor4(const std::string &propertyName, bool isExtraProp, const Color4B &value) override;
     virtual void onHandlePropTypePosition(const std::string &propertyName, bool isExtraProp, const PositionDescription &value) override;
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
+    virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
 
 private:
     cocos2d::Rect _margins;
@@ -61,6 +62,7 @@ private:
     FloatScaleDescription _vertPadding;
     TextHAlignment _textHAlignment;
     TextVAlignment _textVAlignment;
+    bool _adjustsFontSizeToFit;
     
     SpriteFrameDescription _normalSpriteFrame;
     SpriteFrameDescription _selectedSpriteFrame;

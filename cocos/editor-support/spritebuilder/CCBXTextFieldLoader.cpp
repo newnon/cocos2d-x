@@ -4,27 +4,27 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-static std::string PROPERTY_BLENDFUNC("blendFunc");
-static std::string PROPERTY_FONTNAME("fontName");
-static std::string PROPERTY_FONTSIZE("fontSize");
-static std::string PROPERTY_HORIZONTALALIGNMENT("horizontalAlignment");
-static std::string PROPERTY_VERTICALALIGNMENT("verticalAlignment");
-static std::string PROPERTY_STRING("string");
-static std::string PROPERTY_DIMENSIONS("dimensions");
+static const std::string PROPERTY_BLENDFUNC("blendFunc");
+static const std::string PROPERTY_FONTNAME("fontName");
+static const std::string PROPERTY_FONTSIZE("fontSize");
+static const std::string PROPERTY_HORIZONTALALIGNMENT("horizontalAlignment");
+static const std::string PROPERTY_VERTICALALIGNMENT("verticalAlignment");
+static const std::string PROPERTY_STRING("string");
+static const std::string PROPERTY_DIMENSIONS("dimensions");
 
-static std::string PROPERTY_FONTCOLOR("fontColor");
-static std::string PROPERTY_OUTLINECOLOR("outlineColor");
-static std::string PROPERTY_OUTLINEWIDTH("outlineWidth");
+static const std::string PROPERTY_FONTCOLOR("fontColor");
+static const std::string PROPERTY_OUTLINECOLOR("outlineColor");
+static const std::string PROPERTY_OUTLINEWIDTH("outlineWidth");
 
-static std::string PROPERTY_SHADOWCOLOR("shadowColor");
+static const std::string PROPERTY_SHADOWCOLOR("shadowColor");
 
-static std::string PROPERTY_SHADOWBLURRADIUS("shadowBlurRadius");
-static std::string PROPERTY_SHADOWWIDTH("shadowWidth");
+static const std::string PROPERTY_SHADOWBLURRADIUS("shadowBlurRadius");
+static const std::string PROPERTY_SHADOWWIDTH("shadowWidth");
 
-static std::string PROPERTY_SHADOWOFFSET("shadowOffset");
+static const std::string PROPERTY_SHADOWOFFSET("shadowOffset");
     
-static std::string PROPERTY_ADJUSTSFONTSIZETOFIT("adjustsFontSizeToFit");
-static std::string PROPERTY_CONTENTSIZE("contentSize");
+static const std::string PROPERTY_ADJUSTSFONTSIZETOFIT("adjustsFontSizeToFit");
+static const std::string PROPERTY_CONTENTSIZE("contentSize");
     
 TextFieldLoader *TextFieldLoader::create()
 {

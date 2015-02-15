@@ -5,10 +5,10 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_ENABLED("userInteractionEnabled");
-static std::string PROPERTY_CLICK("block");
-static std::string PROPERTY_TOUCH("blockTouch");
-static std::string PROPERTY_SOUND("sound");
+static const std::string PROPERTY_ENABLED("userInteractionEnabled");
+static const std::string PROPERTY_CLICK("block");
+static const std::string PROPERTY_TOUCH("blockTouch");
+static const std::string PROPERTY_SOUND("sound");
     
 WidgetLoader *WidgetLoader::create()
 {

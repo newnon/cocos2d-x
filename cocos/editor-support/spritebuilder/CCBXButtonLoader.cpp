@@ -5,62 +5,64 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-static std::string PROPERTY_ZOOMONCLICK("zoomOnClick");
-static std::string PROPERTY_LABELANCHORPOINT("labelAnchorPoint");
-static std::string PROPERTY_PREFERREDSIZE("preferredSize");
-static std::string PROPERTY_CONTENTSIZE("contentSize");
-static std::string PROPERTY_MAXSIZE("maxSize");
+static const std::string PROPERTY_ZOOMONCLICK("zoomOnClick");
+static const std::string PROPERTY_LABELANCHORPOINT("labelAnchorPoint");
+static const std::string PROPERTY_PREFERREDSIZE("preferredSize");
+static const std::string PROPERTY_CONTENTSIZE("contentSize");
+static const std::string PROPERTY_MAXSIZE("maxSize");
     
-static std::string PROPERTY_BACKGROUNDSPRITEFRAME_NORMAL("backgroundSpriteFrame|Normal");
-static std::string PROPERTY_BACKGROUNDSPRITEFRAME_HIGHLIGHTED("backgroundSpriteFrame|Highlighted");
-static std::string PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED("backgroundSpriteFrame|Disabled");
+static const std::string PROPERTY_BACKGROUNDSPRITEFRAME_NORMAL("backgroundSpriteFrame|Normal");
+static const std::string PROPERTY_BACKGROUNDSPRITEFRAME_HIGHLIGHTED("backgroundSpriteFrame|Highlighted");
+static const std::string PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED("backgroundSpriteFrame|Disabled");
     
-static std::string PROPERTY_BACKGROUNDOPACITY_NORMAL("backgroundOpacity|Normal");
-static std::string PROPERTY_BACKGROUNDOPACITY_HIGHLIGHTED("backgroundOpacity|Highlighted");
-static std::string PROPERTY_BACKGROUNDOPACITY_DISABLED("backgroundOpacity|Disabled");
+static const std::string PROPERTY_BACKGROUNDOPACITY_NORMAL("backgroundOpacity|Normal");
+static const std::string PROPERTY_BACKGROUNDOPACITY_HIGHLIGHTED("backgroundOpacity|Highlighted");
+static const std::string PROPERTY_BACKGROUNDOPACITY_DISABLED("backgroundOpacity|Disabled");
     
-static std::string PROPERTY_LABELOPACITY_NORMAL("labelOpacity|Normal");
-static std::string PROPERTY_LABELOPACITY_HIGHLIGHTED("labelOpacity|Highlighted");
-static std::string PROPERTY_LABELOPACITY_DISABLED("labelOpacity|Disabled");
+static const std::string PROPERTY_LABELOPACITY_NORMAL("labelOpacity|Normal");
+static const std::string PROPERTY_LABELOPACITY_HIGHLIGHTED("labelOpacity|Highlighted");
+static const std::string PROPERTY_LABELOPACITY_DISABLED("labelOpacity|Disabled");
     
-static std::string PROPERTY_TITLE("title");
+static const std::string PROPERTY_TITLE("title");
     
-static std::string PROPERTY_TITLECOLOR_NORMAL("labelColor|Normal");
-static std::string PROPERTY_TITLECOLOR_HIGHLIGHTED("labelColor|Highlighted");
-static std::string PROPERTY_TITLECOLOR_DISABLED("labelColor|Disabled");
+static const std::string PROPERTY_TITLECOLOR_NORMAL("labelColor|Normal");
+static const std::string PROPERTY_TITLECOLOR_HIGHLIGHTED("labelColor|Highlighted");
+static const std::string PROPERTY_TITLECOLOR_DISABLED("labelColor|Disabled");
     
-static std::string PROPERTY_BACKGROUNDCOLOR_NORMAL("backgroundColor|Normal");
-static std::string PROPERTY_BACKGROUNDCOLOR_HIGHLIGHTED("backgroundColor|Highlighted");
-static std::string PROPERTY_BACKGROUNDCOLOR_DISABLED("backgroundColor|Disabled");
+static const std::string PROPERTY_BACKGROUNDCOLOR_NORMAL("backgroundColor|Normal");
+static const std::string PROPERTY_BACKGROUNDCOLOR_HIGHLIGHTED("backgroundColor|Highlighted");
+static const std::string PROPERTY_BACKGROUNDCOLOR_DISABLED("backgroundColor|Disabled");
     
-static std::string PROPERTY_HORIZONTALPADDING("horizontalPadding");
-static std::string PROPERTY_VERTICALPADDING("verticalPadding");
+static const std::string PROPERTY_HORIZONTALPADDING("horizontalPadding");
+static const std::string PROPERTY_VERTICALPADDING("verticalPadding");
     
-static std::string PROPERTY_HORIZONTALALIGMENT("horizontalAlignment");
-static std::string PROPERTY_VERTICALALIGMENT("verticalAlignment");
+static const std::string PROPERTY_HORIZONTALALIGMENT("horizontalAlignment");
+static const std::string PROPERTY_VERTICALALIGMENT("verticalAlignment");
     
-static std::string PROPERTY_FONTNAME("fontName");
-static std::string PROPERTY_FONTSIZE("fontSize");
+static const std::string PROPERTY_FONTNAME("fontName");
+static const std::string PROPERTY_FONTSIZE("fontSize");
     
-static std::string PROPERTY_FONTCOLOR("fontColor");
-static std::string PROPERTY_OUTLINECOLOR("outlineColor");
-static std::string PROPERTY_OUTLINEWIDTH("outlineWidth");
+static const std::string PROPERTY_ADJUSTS_FONT_SIZE_TO_FIT("adjustsFontSizeToFit");
     
-static std::string PROPERTY_SHADOWBLURRADIUS("shadowBlurRadius");
-static std::string PROPERTY_SHADOWWIDTH("shadowWidth");
-static std::string PROPERTY_SHADOWCOLOR("shadowColor");
+static const std::string PROPERTY_FONTCOLOR("fontColor");
+static const std::string PROPERTY_OUTLINECOLOR("outlineColor");
+static const std::string PROPERTY_OUTLINEWIDTH("outlineWidth");
     
-static std::string PROPERTY_SHADOWOFFSET("shadowOffset");
+static const std::string PROPERTY_SHADOWBLURRADIUS("shadowBlurRadius");
+static const std::string PROPERTY_SHADOWWIDTH("shadowWidth");
+static const std::string PROPERTY_SHADOWCOLOR("shadowColor");
     
-static std::string PROPERTY_MARGIN_LEFT("marginLeft");
-static std::string PROPERTY_MARGIN_TOP("marginTop");
-static std::string PROPERTY_MARGIN_RIGHT("marginRight");
-static std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
+static const std::string PROPERTY_SHADOWOFFSET("shadowOffset");
     
-static std::string PROPERTY_OFFSET_LEFT("offsetLeft");
-static std::string PROPERTY_OFFSET_TOP("offsetTop");
-static std::string PROPERTY_OFFSET_RIGHT("offsetRight");
-static std::string PROPERTY_OFFSET_BOTTOM("offsetBottom");
+static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
+static const std::string PROPERTY_MARGIN_TOP("marginTop");
+static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
+static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
+    
+static const std::string PROPERTY_OFFSET_LEFT("offsetLeft");
+static const std::string PROPERTY_OFFSET_TOP("offsetTop");
+static const std::string PROPERTY_OFFSET_RIGHT("offsetRight");
+static const std::string PROPERTY_OFFSET_BOTTOM("offsetBottom");
     
 ButtonLoader *ButtonLoader::create()
 {
@@ -192,6 +194,7 @@ ButtonLoader::ButtonLoader()
     ,_textVAlignment(TextVAlignment::CENTER)
     ,_horizPadding(FloatScaleDescription{0, 0.0f})
     ,_vertPadding(FloatScaleDescription{0, 0.0f})
+    ,_adjustsFontSizeToFit(false)
 {
     
 }
@@ -354,231 +357,15 @@ void ButtonLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyNam
         WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
 }
-
-
-/*void ButtonLoader::onStarPropertiesParsing(cocos2d::Node * pNode, CCBReader * ccbReader)
-{
-    _margins=Rect::ZERO;
-    _outlineColor = Color4B(0,0,0,0);
-    _shadowColor = Color4B(0,0,0,0);
-    _outlineWidth = 0.0f;
-    _shadowBlurRadius = 0.0f;
-    _shadowOffset = Vec2(0,0);
-}
-
-void ButtonLoader::onEndPropertiesParsing(cocos2d::Node * pNode, CCBReader * ccbReader)
-{
-    ((ButtonControl *)pNode)->setCapInsets(Rect(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y));
-    if (_outlineColor.a > 0 && _outlineWidth > 0)
-        ((ButtonControl *)pNode)->getLabel()->enableOutline(_outlineColor, _outlineWidth);
-    if (_shadowColor.a > 0)
-        ((ButtonControl *)pNode)->getLabel()->enableShadow(_shadowColor, _shadowOffset, _shadowBlurRadius);
-}
     
-void ButtonLoader::onHandlePropTypeIntegerLabeled(cocos2d::Node * pNode, cocos2d::Node * pParent, const char* pPropertyName, int pIntegerLabeled, CCBReader * ccbReader)
+void ButtonLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
 {
-    if(propertyName == PROPERTY_HORIZONTALALIGMENT) == 0){
-        ((ButtonControl *)pNode)->setHorizontalAlignment(static_cast<TextHAlignment>(pIntegerLabeled));
-    } else if(strcmp(pPropertyName, PROPERTY_VERTICALALIGMENT) == 0) {
-        ((ButtonControl *)pNode)->setVerticalAlignment(static_cast<TextVAlignment>(pIntegerLabeled));
+    if(propertyName == PROPERTY_ADJUSTS_FONT_SIZE_TO_FIT){
+        _adjustsFontSizeToFit = value;
     } else {
-        ControlLoader::onHandlePropTypeIntegerLabeled(pNode, pParent, pPropertyName, pIntegerLabeled, ccbReader);
+        WidgetLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
     }
 }
-
-void ButtonLoader::onHandlePropTypeCheck(Node * pNode, Node * pParent, const char * pPropertyName, bool pCheck, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_ZOOMWHENHIGHLIGHTED) == 0){
-        ((ButtonControl *)pNode)->setZoomWhenHighlighted(pCheck);
-    } else if(strcmp(pPropertyName, PROPERTY_TOGGLESSELECTEDSTATE) == 0) {
-        ((ButtonControl *)pNode)->setTogglesSelectedState(pCheck);
-    } else {
-        ControlLoader::onHandlePropTypeCheck(pNode, pParent, pPropertyName, pCheck, ccbReader);
-    }
-}
-
-void ButtonLoader::onHandlePropTypeString(Node * pNode, Node * pParent, const char * pPropertyName, const char * pString, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_TITLE) == 0) {
-        ((ButtonControl *)pNode)->setTitle(pString);
-
-    } else {
-        ControlLoader::onHandlePropTypeString(pNode, pParent, pPropertyName, pString, ccbReader);
-    }
-}
-
-void ButtonLoader::onHandlePropTypeText(Node * pNode, Node * pParent, const char * pPropertyName, const char * pString, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_TITLE) == 0) {
-        ((ButtonControl *)pNode)->setTitle(pString);
-    } else {
-        ControlLoader::onHandlePropTypeString(pNode, pParent, pPropertyName, pString, ccbReader);
-    }
-}
-
-void ButtonLoader::onHandlePropTypeFontTTF(Node * pNode, Node * pParent, const char * pPropertyName, const char * pFontTTF, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_FONTNAME) == 0) {
-        ((ButtonControl *)pNode)->setFontName(pFontTTF);
-    } else {
-        ControlLoader::onHandlePropTypeFontTTF(pNode, pParent, pPropertyName, pFontTTF, ccbReader);
-    }
-}
-    
-void ButtonLoader::onHandlePropTypeFloat(cocos2d::Node * pNode, cocos2d::Node * pParent, const char* pPropertyName, float pFloat, CCBReader * ccbReader)
-{
-    if(strcmp(pPropertyName, PROPERTY_MARGIN_LEFT) == 0) {
-        _margins.origin.x = pFloat;
-    } else if(strcmp(pPropertyName, PROPERTY_MARGIN_TOP) == 0) {
-        _margins.origin.y = pFloat;
-    } else if(strcmp(pPropertyName, PROPERTY_MARGIN_RIGHT) == 0) {
-        _margins.size.width = pFloat;
-    } else if(strcmp(pPropertyName, PROPERTY_MARGIN_BOTTOM) == 0) {
-        _margins.size.height = pFloat;
-    } else if(strcmp(pPropertyName, PROPERTY_OFFSET_LEFT) == 0) {
-        ((ButtonControl *)pNode)->setLeftOffset(pFloat);
-    } else if(strcmp(pPropertyName, PROPERTY_OFFSET_TOP) == 0) {
-        ((ButtonControl *)pNode)->setTopOffset(pFloat);
-    } else if(strcmp(pPropertyName, PROPERTY_OFFSET_RIGHT) == 0) {
-        ((ButtonControl *)pNode)->setRightOffset(pFloat);
-    } else if(strcmp(pPropertyName, PROPERTY_OFFSET_BOTTOM) == 0) {
-        ((ButtonControl *)pNode)->setBottomOffset(pFloat);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDOPACITY_NORMAL) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundOpacity(pFloat*255, Control::State::NORMAL);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDOPACITY_HIGHLIGHTED) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundOpacity(pFloat*255, Control::State::HIGH_LIGHTED);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDOPACITY_DISABLED) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundOpacity(pFloat*255, Control::State::DISABLED);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDOPACITY_SELECTED) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundOpacity(pFloat*255, Control::State::SELECTED);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDOPACITY_HIHGLIGHTED_SELECTED) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundOpacity(pFloat*255, Control::State::SELECTED_HIGH_LIGHTED);
-    } else if(strcmp(pPropertyName, PROPERTY_LABELOPACITY_NORMAL) == 0) {
-        ((ButtonControl *)pNode)->setLabelOpacity(pFloat*255, Control::State::NORMAL);
-    } else if(strcmp(pPropertyName, PROPERTY_LABELOPACITY_HIGHLIGHTED) == 0) {
-        ((ButtonControl *)pNode)->setLabelOpacity(pFloat*255, Control::State::HIGH_LIGHTED);
-    } else if(strcmp(pPropertyName, PROPERTY_LABELOPACITY_DISABLED) == 0) {
-        ((ButtonControl *)pNode)->setLabelOpacity(pFloat*255, Control::State::DISABLED);
-    } else if(strcmp(pPropertyName, PROPERTY_LABELOPACITY_SELECTED) == 0) {
-        ((ButtonControl *)pNode)->setLabelOpacity(pFloat*255, Control::State::SELECTED);
-    } else if(strcmp(pPropertyName, PROPERTY_LABELOPACITY_HIHGLIGHTED_SELECTED) == 0) {
-        ((ButtonControl *)pNode)->setLabelOpacity(pFloat*255, Control::State::SELECTED_HIGH_LIGHTED);
-    } else {
-        ControlLoader::onHandlePropTypeFloat(pNode, pParent, pPropertyName, pFloat, ccbReader);
-    }
-}
-
-void ButtonLoader::onHandlePropTypeFloatScale(Node * pNode, Node * pParent, const char * pPropertyName, float pFloatScale, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_FONTSIZE) == 0) {
-        ((ButtonControl *)pNode)->setFontSize(pFloatScale);
-    } else if(strcmp(pPropertyName, PROPERTY_HORIZONTALPADDING) == 0) {
-        ((ButtonControl *)pNode)->setHorizontalPadding(pFloatScale);
-    } else if(strcmp(pPropertyName, PROPERTY_VERTICALPADDING) == 0) {
-        ((ButtonControl *)pNode)->setVerticalPadding(pFloatScale);
-    } else if(strcmp(pPropertyName, PROPERTY_OUTLINEWIDTH) == 0) {
-        _outlineWidth = pFloatScale;
-    } else if(strcmp(pPropertyName, PROPERTY_SHADOWBLURRADIUS) == 0) {
-        _shadowBlurRadius = pFloatScale;
-    } else {
-        ControlLoader::onHandlePropTypeFloatScale(pNode, pParent, pPropertyName, pFloatScale, ccbReader);
-    }
-}
-
-void ButtonLoader::onHandlePropTypePoint(Node * pNode, Node * pParent, const char * pPropertyName, const Point &pPoint, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_LABELANCHORPOINT) == 0) {
-        //((Button *)pNode)->setLabelAnchorPoint(pPoint);
-    } else {
-        ControlLoader::onHandlePropTypePoint(pNode, pParent, pPropertyName, pPoint, ccbReader);
-    }
-}
-
-void ButtonLoader::onHandlePropTypeSize(Node * pNode, Node * pParent, const char * pPropertyName, const Size &pSize, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_PREFERREDSIZE) == 0) {
-        ((ButtonControl *)pNode)->setPreferredSize(pSize);
-    } else if(strcmp(pPropertyName, PROPERTY_MAXSIZE) == 0) {
-        ((ButtonControl *)pNode)->setMaxSize(pSize);
-    } else {
-        ControlLoader::onHandlePropTypeSize(pNode, pParent, pPropertyName, pSize, ccbReader);
-    }
-}
-
-void ButtonLoader::onHandlePropTypeSpriteFrame(Node * pNode, Node * pParent, const char * pPropertyName, SpriteFrame * pSpriteFrame, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_BACKGROUNDSPRITEFRAME_NORMAL) == 0) {
-        if(pSpriteFrame != NULL) {
-            ((ButtonControl *)pNode)->setBackgroundSpriteFrame(pSpriteFrame, Control::State::NORMAL);
-        }
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDSPRITEFRAME_HIGHLIGHTED) == 0) {
-        if(pSpriteFrame != NULL) {
-            ((ButtonControl *)pNode)->setBackgroundSpriteFrame(pSpriteFrame, Control::State::HIGH_LIGHTED);
-        }
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED) == 0) {
-        if(pSpriteFrame != NULL) {
-            ((ButtonControl *)pNode)->setBackgroundSpriteFrame(pSpriteFrame, Control::State::DISABLED);
-        }
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDSPRITEFRAME_SELECTED) == 0) {
-        if(pSpriteFrame != NULL) {
-            ((ButtonControl *)pNode)->setBackgroundSpriteFrame(pSpriteFrame, Control::State::SELECTED);
-        }
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDSPRITEFRAME_HIHGLIGHTED_SELECTED) == 0) {
-        if(pSpriteFrame != NULL) {
-            ((ButtonControl *)pNode)->setBackgroundSpriteFrame(pSpriteFrame, Control::State::SELECTED_HIGH_LIGHTED);
-        }
-    } else {
-        ControlLoader::onHandlePropTypeSpriteFrame(pNode, pParent, pPropertyName, pSpriteFrame, ccbReader);
-    }
-}
-    
-void ButtonLoader::onHandlePropTypeBlock(cocos2d::Node * pNode, cocos2d::Node * pParent, const char * pPropertyName, BlockData * pBlockData, CCBReader * ccbReader)
-{
-    if(strcmp(pPropertyName, PROPERTY_BLOCK) == 0) {
-        if(pBlockData)
-            ((ButtonControl *)pNode)->setCallback( std::bind( pBlockData->mSELMenuHandler, pBlockData->_target, std::placeholders::_1) );
-    } else {
-        NodeLoader::onHandlePropTypeBlock(pNode, pParent, pPropertyName, pBlockData, ccbReader);
-    }
-}
-    
-void ButtonLoader::onHandlePropTypeColor4(Node * pNode, Node * pParent, const char * pPropertyName, const Color4B &pColor4B, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_FONTCOLOR) == 0){
-		((ButtonControl *)pNode)->getLabel()->setTextColor(pColor4B);
-    } else if(strcmp(pPropertyName, PROPERTY_OUTLINECOLOR) == 0){
-        _outlineColor = pColor4B;
-    } else if(strcmp(pPropertyName, PROPERTY_SHADOWCOLOR) == 0){
-        _shadowColor = pColor4B;
-    } else {
-        ControlLoader::onHandlePropTypeColor4(pNode, pParent, pPropertyName, pColor4B, ccbReader);
-    }
-}
-
-void ButtonLoader::onHandlePropTypeColor3(Node * pNode, Node * pParent, const char * pPropertyName, const Color3B &pColor3B, CCBReader * ccbReader) {
-    if(strcmp(pPropertyName, PROPERTY_TITLECOLOR_NORMAL) == 0) {
-        ((ButtonControl *)pNode)->setLabelColor(pColor3B, Control::State::NORMAL);
-    } else if(strcmp(pPropertyName, PROPERTY_TITLECOLOR_HIGHLIGHTED) == 0) {
-        ((ButtonControl *)pNode)->setLabelColor(pColor3B, Control::State::HIGH_LIGHTED);
-    } else if(strcmp(pPropertyName, PROPERTY_TITLECOLOR_DISABLED) == 0) {
-        ((ButtonControl *)pNode)->setLabelColor(pColor3B, Control::State::DISABLED);
-    } else if(strcmp(pPropertyName, PROPERTY_TITLECOLOR_SELECTED) == 0) {
-        ((ButtonControl *)pNode)->setLabelColor(pColor3B, Control::State::SELECTED);
-    } else if(strcmp(pPropertyName, PROPERTY_TITLECOLOR_HIHGLIGHTED_SELECTED) == 0) {
-        ((ButtonControl *)pNode)->setLabelColor(pColor3B, Control::State::SELECTED_HIGH_LIGHTED);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDCOLOR_NORMAL) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundColor(pColor3B, Control::State::NORMAL);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDCOLOR_HIGHLIGHTED) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundColor(pColor3B, Control::State::HIGH_LIGHTED);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDCOLOR_DISABLED) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundColor(pColor3B, Control::State::DISABLED);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDCOLOR_SELECTED) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundColor(pColor3B, Control::State::SELECTED);
-    } else if(strcmp(pPropertyName, PROPERTY_BACKGROUNDCOLOR_HIHGLIGHTED_SELECTED) == 0) {
-        ((ButtonControl *)pNode)->setBackgroundColor(pColor3B, Control::State::SELECTED_HIGH_LIGHTED);
-    } else {
-        ControlLoader::onHandlePropTypeColor3(pNode, pParent, pPropertyName, pColor3B, ccbReader);
-    }
-}
-    
-void ButtonLoader::onHandlePropTypePosition(Node * pNode, Node * pParent, const char* pPropertyName, const Point &pPosition, CCBReader * pCCBReader) {
-    if(strcmp(pPropertyName, PROPERTY_SHADOWOFFSET) == 0) {
-        _shadowOffset = pPosition;
-    } else {
-        NodeLoader::onHandlePropTypePosition(pNode, pParent, pPropertyName, pPosition, pCCBReader);
-    }
-}*/
 
 }
 

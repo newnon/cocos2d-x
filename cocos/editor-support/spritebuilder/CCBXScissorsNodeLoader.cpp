@@ -4,8 +4,8 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_SPACING("spacing");
-static std::string PROPERTY_DIRECTION("direction");
+static const std::string PROPERTY_SPACING("spacing");
+static const std::string PROPERTY_DIRECTION("direction");
     
     
 ScissorsNodeLoader *ScissorsNodeLoader::create()

@@ -4,13 +4,13 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_DIRECTION("direction");
-static std::string PROPERTY_BOUNCES("bounces");
-static std::string PROPERTY_CONTENTNODE("contentNode");
-static std::string PROPERTY_VERTICALSCROLLENABLED("verticalScrollEnabled");
-static std::string PROPERTY_HORIZONTALSCROLLENABLED("horizontalScrollEnabled");
-static std::string PROPERTY_PAGINGENABLED("pagingEnabled");
-static std::string PROPERTY_CLIPCONTENT("clipContent");
+static const std::string PROPERTY_DIRECTION("direction");
+static const std::string PROPERTY_BOUNCES("bounces");
+static const std::string PROPERTY_CONTENTNODE("contentNode");
+static const std::string PROPERTY_VERTICALSCROLLENABLED("verticalScrollEnabled");
+static const std::string PROPERTY_HORIZONTALSCROLLENABLED("horizontalScrollEnabled");
+static const std::string PROPERTY_PAGINGENABLED("pagingEnabled");
+static const std::string PROPERTY_CLIPCONTENT("clipContent");
     
 ScrollViewLoader *ScrollViewLoader::create()
 {

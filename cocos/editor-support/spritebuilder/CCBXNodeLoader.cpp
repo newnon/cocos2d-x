@@ -172,19 +172,19 @@ Size getAbsoluteSize(float mainScale, float additionalScale, const Size &content
 
 #define ASSERT_FAIL_UNEXPECTED_PROPERTY(PROPERTY) log("Unexpected property: '%s'!\n", PROPERTY.c_str()); assert(false)
 
-static std::string PROPERTY_POSITION("position");
-static std::string PROPERTY_CONTENTSIZE("contentSize");
-static std::string PROPERTY_SKEW("skew");
-static std::string PROPERTY_ANCHORPOINT("anchorPoint");
-static std::string PROPERTY_SCALE("scale");
-static std::string PROPERTY_ROTATION("rotation");
-static std::string PROPERTY_TAG("tag");
-static std::string PROPERTY_VISIBLE("visible");
-static std::string PROPERTY_NAME("name");
-static std::string PROPERTY_COLOR("color");
-static std::string PROPERTY_CASCADECOLOR("cascadeColorEnabled");
-static std::string PROPERTY_OPACITY("opacity");
-static std::string PROPERTY_CASCADEOPACITY("cascadeOpacityEnabled");
+static const std::string PROPERTY_POSITION("position");
+static const std::string PROPERTY_CONTENTSIZE("contentSize");
+static const std::string PROPERTY_SKEW("skew");
+static const std::string PROPERTY_ANCHORPOINT("anchorPoint");
+static const std::string PROPERTY_SCALE("scale");
+static const std::string PROPERTY_ROTATION("rotation");
+static const std::string PROPERTY_TAG("tag");
+static const std::string PROPERTY_VISIBLE("visible");
+static const std::string PROPERTY_NAME("name");
+static const std::string PROPERTY_COLOR("color");
+static const std::string PROPERTY_CASCADECOLOR("cascadeColorEnabled");
+static const std::string PROPERTY_OPACITY("opacity");
+static const std::string PROPERTY_CASCADEOPACITY("cascadeOpacityEnabled");
 
 NodeLoader *NodeLoader::create()
 {

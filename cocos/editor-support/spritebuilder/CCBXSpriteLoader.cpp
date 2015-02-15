@@ -4,9 +4,9 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_SPRITEFRAME("spriteFrame");
-static std::string PROPERTY_BLENDFUNC("blendFunc");
-static std::string PROPERTY_FLIP("flip");
+static const std::string PROPERTY_SPRITEFRAME("spriteFrame");
+static const std::string PROPERTY_BLENDFUNC("blendFunc");
+static const std::string PROPERTY_FLIP("flip");
 
 SpriteLoader *SpriteLoader::create()
 {

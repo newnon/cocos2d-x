@@ -4,12 +4,12 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-static std::string PROPERTY_STARTCOLOR("startColor");
-static std::string PROPERTY_ENDCOLOR("endColor");
-static std::string PROPERTY_STARTOPACITY("startOpacity");
-static std::string PROPERTY_ENDOPACITY("endOpacity");
-static std::string PROPERTY_VECTOR("vector");
-static std::string PROPERTY_BLENDFUNC("blendFunc");
+static const std::string PROPERTY_STARTCOLOR("startColor");
+static const std::string PROPERTY_ENDCOLOR("endColor");
+static const std::string PROPERTY_STARTOPACITY("startOpacity");
+static const std::string PROPERTY_ENDOPACITY("endOpacity");
+static const std::string PROPERTY_VECTOR("vector");
+static const std::string PROPERTY_BLENDFUNC("blendFunc");
     
 NodeGradientLoader *NodeGradientLoader::create()
 {

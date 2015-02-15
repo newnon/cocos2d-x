@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <functional>
 
 #include "2d/CCNode.h"
 #include "base/CCValue.h"
@@ -48,6 +49,62 @@ public:
     virtual ccReaderTouchCallback onResolveCCBTouchSelector(const std::string &selectorName, Node* node) { return ccReaderTouchCallback(); }
     virtual ccReaderEventCallback onResolveCCBCallFuncSelector(const std::string &selectorName, Node* node) { return ccReaderEventCallback(); };
     virtual ~CCBXReaderOwner() {};
+};
+    
+class CC_DLL CCBXReaderOwnerHelper:public CCBXReaderOwner
+{
+public:
+    
+    CCBXReaderOwnerHelper(const std::function<bool(const std::string&, Node*)> &onAssignCCBMemberVariable = nullptr,
+                          const std::function<bool(const std::string&, const Value&)> &onAssignCCBCustomProperty = nullptr,
+                          const std::function<ccReaderClickCallback(const std::string&, Node*)> &onResolveCCBClickSelector = nullptr,
+                          const std::function<ccReaderTouchCallback(const std::string&, Node*)> &onResolveCCBTouchSelector = nullptr,
+                          const std::function<ccReaderEventCallback(const std::string&, Node*)> &onResolveCCBCallFuncSelector = nullptr)
+        :onAssignCCBMemberVariableFunction(onAssignCCBMemberVariable)
+        ,onAssignCCBCustomPropertyFunction(onAssignCCBCustomProperty)
+        ,onResolveCCBClickSelectorFunction(onResolveCCBClickSelector)
+        ,onResolveCCBTouchSelectorFunction(onResolveCCBTouchSelector)
+        ,onResolveCCBCallFuncSelectorFunction(onResolveCCBCallFuncSelector){}
+    
+    virtual bool onAssignCCBMemberVariable(const std::string &memberVariableName, Node* node){
+        if(onAssignCCBMemberVariableFunction)
+            return onAssignCCBMemberVariableFunction(memberVariableName, node);
+        else
+            return false;
+    }
+    virtual bool onAssignCCBCustomProperty(const std::string &memberVariableName, const Value& value){
+        if(onAssignCCBCustomPropertyFunction)
+            return onAssignCCBCustomPropertyFunction(memberVariableName, value);
+        else
+            return false;
+    }
+
+    virtual ccReaderClickCallback onResolveCCBClickSelector(const std::string &selectorName, Node* node){
+        if(onResolveCCBClickSelectorFunction)
+            return onResolveCCBClickSelectorFunction(selectorName, node);
+        else
+            return ccReaderClickCallback();
+    }
+
+    virtual ccReaderTouchCallback onResolveCCBTouchSelector(const std::string &selectorName, Node* node){
+        if(onResolveCCBTouchSelectorFunction)
+            return onResolveCCBTouchSelectorFunction(selectorName, node);
+        else
+            return ccReaderTouchCallback();
+    }
+
+    virtual ccReaderEventCallback onResolveCCBCallFuncSelector(const std::string &selectorName, Node* node){
+        if(onResolveCCBCallFuncSelectorFunction)
+            return onResolveCCBCallFuncSelectorFunction(selectorName, node);
+        else
+            return ccReaderEventCallback();
+    }
+
+    std::function<bool(const std::string&, Node*)> onAssignCCBMemberVariableFunction;
+    std::function<bool(const std::string&, const Value&)> onAssignCCBCustomPropertyFunction;
+    std::function<ccReaderClickCallback(const std::string&, Node*)> onResolveCCBClickSelectorFunction;
+    std::function<ccReaderTouchCallback(const std::string&, Node*)> onResolveCCBTouchSelectorFunction;
+    std::function<ccReaderEventCallback(const std::string&, Node*)> onResolveCCBCallFuncSelectorFunction;
     
 };
     

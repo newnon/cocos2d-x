@@ -4,9 +4,9 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_SPACING("spacing");
-static std::string PROPERTY_DIRECTION("direction");
-static std::string PROPERTY_CLIPCONTENT("clipContent");
+static const std::string PROPERTY_SPACING("spacing");
+static const std::string PROPERTY_DIRECTION("direction");
+static const std::string PROPERTY_CLIPCONTENT("clipContent");
     
     
 LayoutBoxLoader *LayoutBoxLoader::create()

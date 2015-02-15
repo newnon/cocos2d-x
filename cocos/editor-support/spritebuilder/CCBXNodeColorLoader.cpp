@@ -4,7 +4,7 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_BLENDFUNC("blendFunc");
+static const std::string PROPERTY_BLENDFUNC("blendFunc");
     
 NodeColorLoader *NodeColorLoader::create()
 {

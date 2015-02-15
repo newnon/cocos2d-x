@@ -3,11 +3,11 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-static std::string PROPERTY_FLIP("flip");
-static std::string PROPERTY_SPRITEFRAME("spriteFrame");
-static std::string PROPERTY_BLENDFUNC("blendFunc");
-static std::string PROPERTY_DIRECTION("direction");
-static std::string PROPERTY_PERCENTAGE("percentage");
+static const std::string PROPERTY_FLIP("flip");
+static const std::string PROPERTY_SPRITEFRAME("spriteFrame");
+static const std::string PROPERTY_BLENDFUNC("blendFunc");
+static const std::string PROPERTY_DIRECTION("direction");
+static const std::string PROPERTY_PERCENTAGE("percentage");
     
 LoadingBarLoader *LoadingBarLoader::create()
 {
