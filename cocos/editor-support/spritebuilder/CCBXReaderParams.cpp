@@ -84,7 +84,7 @@ bool CCBReaderParams::loadLocalization(const std::string &path)
         for(const auto &language : activeLanguages->second.asValueVector())
             languages.insert(language.asString());
         if(languages.find(_curentLanguage) == languages.end())
-            _curentLanguage = *languages.begin();
+            _curentLanguage = activeLanguages->second.asValueVector()[0].asString();
     }
     auto translations = translationDict.find("translations");
     if (translations != translationDict.end()) {
