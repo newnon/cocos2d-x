@@ -67,6 +67,7 @@ _normalTextureScaleXInSize(1.0f),
 _normalTextureScaleYInSize(1.0f),
 _pressedTextureScaleXInSize(1.0f),
 _pressedTextureScaleYInSize(1.0f),
+_titleScale(1.0f),
 _normalTextureLoaded(false),
 _pressedTextureLoaded(false),
 _disabledTextureLoaded(false),
@@ -522,7 +523,7 @@ void Button::onPressStateChangedToNormal()
             _titleRenderer->stopAllActions();
             FiniteTimeAction *titleZoomAction;
             if (_unifySize)
-                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1, 1);
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale, _titleScale);
             else
                 titleZoomAction = backZoomAction->clone();
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
@@ -553,8 +554,8 @@ void Button::onPressStateChangedToNormal()
             }
             else
             {
-                _titleRenderer->setScaleX(_normalTextureScaleXInSize);
-                _titleRenderer->setScaleY(_normalTextureScaleYInSize);
+                _titleRenderer->setScaleX(_titleScale);
+                _titleRenderer->setScaleY(_titleScale);
             }
         }
         _buttonNormalRenderer->setColor(realBackgroundColor);
@@ -568,7 +569,7 @@ void Button::onPressStateChangedToNormal()
             _titleRenderer->stopAllActions();
             FiniteTimeAction *titleZoomAction;
             if (_unifySize)
-                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1, 1);
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale, _titleScale);
             else
                 titleZoomAction = backZoomAction->clone();
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
@@ -615,7 +616,7 @@ void Button::onPressStateChangedToPressed()
             _titleRenderer->stopAllActions();
             FiniteTimeAction *titleZoomAction;
             if (_unifySize)
-                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1 + _zoomScale, 1 + _zoomScale);
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale * (1.0f + _zoomScale), _titleScale + (1.0f * _zoomScale));
             else
                 titleZoomAction = backZoomAction->clone();
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
@@ -646,8 +647,8 @@ void Button::onPressStateChangedToPressed()
             }
             else
             {
-                _titleRenderer->setScaleX(_normalTextureScaleXInSize + _zoomScale);
-                _titleRenderer->setScaleY(_normalTextureScaleYInSize + _zoomScale);
+                _titleRenderer->setScaleX(_titleScale * (1.0f + _zoomScale));
+                _titleRenderer->setScaleY(_titleScale * (1.0f + _zoomScale));
             }
         }
         //_buttonNormalRenderer->setColor(Color3B::GRAY);
@@ -662,7 +663,7 @@ void Button::onPressStateChangedToPressed()
             _titleRenderer->stopAllActions();
             FiniteTimeAction *titleZoomAction;
             if (_unifySize)
-                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1 + _zoomScale, 1 + _zoomScale);
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale * (1.0f + _zoomScale), _titleScale * (1.0f + _zoomScale));
             else
                 titleZoomAction = backZoomAction->clone();
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
@@ -767,8 +768,6 @@ void Button::updateDisplayedColor(const Color3B& parentColor)
 void Button::updateTitleLocation()
 {
     _titleRenderer->setPosition(_contentSize.width * 0.5f, _contentSize.height * 0.5f);
-    const Size &size = getContentSize();
-    _titleRenderer->setDimensions(size.width - _horizontalPadding * 2,size.height - _verticalPadding * 2);
 }
 
 void Button::updateContentSize()
@@ -822,6 +821,60 @@ void Button::adaptRenderers()
         disabledTextureScaleChangedWithSize();
         _disabledTextureAdaptDirty = false;
     }
+    
+    Size contentSize = getContentSize();
+    Size paddedLabelSize = Size(contentSize.width - _horizontalPadding * 2, contentSize.height -  _verticalPadding * 2);
+    _titleRenderer->setScale(1.0f);
+    if(_adjustsFontSizeToFit && paddedLabelSize.width && paddedLabelSize.height)
+    {
+        _titleRenderer->setDimensions(paddedLabelSize.width, 0);
+        Size textureSize = _titleRenderer->getContentSize();
+        if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
+        {
+            _titleRenderer->setScale(1.0f);
+            return;
+        }
+        if(textureSize.height>paddedLabelSize.height)
+        {
+            float startScale = 1.0;
+            float endScale = 1.0;
+            do
+            {
+                _titleRenderer->setDimensions(paddedLabelSize.width * (endScale * 2.0), 0);
+                startScale = endScale;
+                endScale = endScale*2;
+            }while (_titleRenderer->getContentSize().height>paddedLabelSize.height * endScale);
+            
+            float midScale;
+            for(int i=0;i<4;++i)
+            {
+                midScale = (startScale + endScale) / 2.0f;
+                _titleRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
+                if(_titleRenderer->getContentSize().height>paddedLabelSize.height * midScale)
+                {
+                    startScale = midScale;
+                }
+                else
+                {
+                    endScale = midScale;
+                }
+            }
+            float realScale = endScale * 1.05;
+            _titleRenderer->setDimensions(paddedLabelSize.width * realScale, paddedLabelSize.height * realScale);
+            _titleRenderer->getContentSize();
+            float labelScale = 1.0f/realScale;
+            _titleRenderer->setScale(labelScale);
+            _titleScale = labelScale;
+        }
+    }
+    else
+    {
+        _titleRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
+        _titleRenderer->getContentSize();
+        _titleRenderer->setScale(_normalTextureScaleXInSize);
+        _titleScale = _normalTextureScaleXInSize;
+    }
+    updateTitleLocation();
 }
 
 Size Button::getVirtualRendererSize() const

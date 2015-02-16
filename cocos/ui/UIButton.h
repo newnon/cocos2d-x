@@ -319,6 +319,7 @@ protected:
     float _normalTextureScaleYInSize;
     float _pressedTextureScaleXInSize;
     float _pressedTextureScaleYInSize;
+    float _titleScale;
     
     State _state;
     
