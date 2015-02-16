@@ -340,7 +340,7 @@ void Text::labelScaleChangedWithSize()
                 }while (_labelRenderer->getContentSize().height>paddedLabelSize.height * endScale);
                 
                 float midScale;
-                for(int i=0;i<8;++i)
+                for(int i=0;i<4;++i)
                 {
                     midScale = (startScale + endScale) / 2.0f;
                     _labelRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
@@ -353,7 +353,7 @@ void Text::labelScaleChangedWithSize()
                         endScale = midScale;
                     }
                 }
-                float realScale = endScale;
+                float realScale = endScale * 1.05;
                 _labelRenderer->setDimensions(paddedLabelSize.width * realScale, paddedLabelSize.height * realScale);
                 _labelRenderer->getContentSize();
                 float labelScale = 1.0f/realScale;
