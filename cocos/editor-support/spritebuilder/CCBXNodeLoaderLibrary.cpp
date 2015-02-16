@@ -90,7 +90,7 @@ void NodeLoaderLibrary::registerDefaultLoaders()
     _loaders.emplace("CCButton", NodeLoaderCreateFuntion(&ButtonLoader::create));
     _loaders.emplace("CCText", NodeLoaderCreateFuntion(&TextLoader::create));
     _loaders.emplace("CCLayoutBox", NodeLoaderCreateFuntion(&LayoutBoxLoader::create));
-    _loaders.emplace("CCImageView", NodeLoaderCreateFuntion(&ImageViewLoader::create));
+    _loaders.emplace("CCImage", NodeLoaderCreateFuntion(&ImageViewLoader::create));
     _loaders.emplace("CCLoadingBar", NodeLoaderCreateFuntion(&LoadingBarLoader::create));
     _loaders.emplace("CCScrollView", NodeLoaderCreateFuntion(&ScrollViewLoader::create));
     _loaders.emplace("CCTextField", NodeLoaderCreateFuntion(&TextFieldLoader::create));

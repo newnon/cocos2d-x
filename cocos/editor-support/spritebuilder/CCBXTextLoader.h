@@ -35,12 +35,16 @@ private:
     cocos2d::Color4B _shadowColor;
     FloatScaleDescription _outlineWidth;
     FloatScaleDescription _shadowBlurRadius;
-    cocos2d::Size _shadowOffset;
+    PositionDescription _shadowOffset;
     std::string _label;
     std::string _font;
     FloatScaleDescription _fontSize;
     TextHAlignment _textHAlignment;
     TextVAlignment _textVAlignment;
+    BlendFunc _blendFunc;
+    Color4B _fontColor;
+    SizeDescription _dimensions;
+    bool _adjustsFontSizeToFit;
 };
 
 }

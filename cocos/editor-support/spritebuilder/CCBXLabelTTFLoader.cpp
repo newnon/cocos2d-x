@@ -24,7 +24,6 @@ static const std::string PROPERTY_SHADOWWIDTH("shadowWidth");
 
 static const std::string PROPERTY_SHADOWOFFSET("shadowOffset");
     
-static const std::string PROPERTY_ADJUSTSFONTSIZETOFIT("adjustsFontSizeToFit");
 static const std::string PROPERTY_CONTENTSIZE("contentSize");
     
 LabelTTFLoader *LabelTTFLoader::create()
@@ -37,9 +36,9 @@ LabelTTFLoader *LabelTTFLoader::create()
 Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     Label *label = nullptr;
-//    if (FileUtils::getInstance()->isFileExist(_font))
-//        label = Label::createWithTTF(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type), getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize), _textHAlignment, _textVAlignment);
-//    else
+    if (FileUtils::getInstance()->isFileExist(_font))
+        label = Label::createWithTTF(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type), getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize), _textHAlignment, _textVAlignment);
+    else
         label = Label::createWithSystemFont(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type), getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize), _textHAlignment, _textVAlignment);
     return label;
 }
@@ -57,7 +56,6 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
         label->enableShadow(_shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
     if(_fontColor != Color4B::WHITE)
         label->setTextColor(_fontColor);
-    
 }
 
 LabelTTFLoader::LabelTTFLoader()
@@ -78,15 +76,6 @@ LabelTTFLoader::LabelTTFLoader()
 LabelTTFLoader::~LabelTTFLoader()
 {
     
-}
-    
-void LabelTTFLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
-{
-    if(propertyName == PROPERTY_ADJUSTSFONTSIZETOFIT){
-        //((Label *)pNode)->setTextColor(pColor4B);
-    } else {
-        NodeLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
-    }
 }
     
 void LabelTTFLoader::onHandlePropTypeColor4(const std::string &propertyName, bool isExtraProp, const Color4B &value)

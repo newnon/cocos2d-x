@@ -165,7 +165,7 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
         button->setDisabledTitleOpacity(_disabledLabelOpacity);
         button->setDisabledBackgroundOpacity(_disabledBackgroundOpacity);
         
-        button->getTitleRenderer()->setSystemFontName(_font);
+        button->setTitleFontName(_font);
         button->setTitleFontSize(getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
         button->getTitleRenderer()->setVerticalAlignment(_textVAlignment);
         button->getTitleRenderer()->setHorizontalAlignment(_textHAlignment);
