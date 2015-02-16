@@ -166,12 +166,14 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
         button->setDisabledBackgroundOpacity(_disabledBackgroundOpacity);
         
         button->setTitleFontName(_font);
+        //button->getTitleRenderer()->setSystemFontName(_font);
         button->setTitleFontSize(getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
         button->getTitleRenderer()->setVerticalAlignment(_textVAlignment);
         button->getTitleRenderer()->setHorizontalAlignment(_textHAlignment);
         button->setHorizontalPadding(getAbsoluteScale(mainScale, additionalScale, _horizPadding.scale, _horizPadding.type));
         button->setVerticalPadding(getAbsoluteScale(mainScale, additionalScale, _vertPadding.scale, _vertPadding.type));
         button->setOffsets(_offset.origin.x, _offset.origin.y, _offset.size.width, _offset.size.height);
+        button->setAdjustsFontSizeToFit(_adjustsFontSizeToFit);
         button->setTitleText(_label);
     }
 }

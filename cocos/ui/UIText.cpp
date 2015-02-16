@@ -43,7 +43,8 @@ _fontSize(10),
 _onSelectedScaleOffset(0.5),
 _labelRenderer(nullptr),
 _labelRendererAdaptDirty(true),
-_type(Type::SYSTEM)
+_type(Type::SYSTEM),
+_adjustsFontSizeToFit(false)
 {
 }
 
@@ -307,27 +308,76 @@ Node* Text::getVirtualRenderer()
 
 void Text::labelScaleChangedWithSize()
 {
+    Size paddedLabelSize = getContentSize();
     if (_ignoreSize)
     {
         _labelRenderer->setDimensions(0,0);
         _labelRenderer->setScale(1.0f);
         _normalScaleValueX = _normalScaleValueY = 1.0f;
+        setContentSize(_labelRenderer->getContentSize());
     }
     else
     {
-        _labelRenderer->setDimensions(_contentSize.width,_contentSize.height);
-        Size textureSize = _labelRenderer->getContentSize();
-        if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
+        _labelRenderer->setScale(1.0f);
+        if(_adjustsFontSizeToFit && paddedLabelSize.width && paddedLabelSize.height)
         {
-            _labelRenderer->setScale(1.0f);
-            return;
+            _labelRenderer->setDimensions(paddedLabelSize.width, 0);
+            Size textureSize = _labelRenderer->getContentSize();
+            if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
+            {
+                _labelRenderer->setScale(1.0f);
+                return;
+            }
+            if(textureSize.height>paddedLabelSize.height)
+            {
+                float startScale = 1.0;
+                float endScale = 1.0;
+                do
+                {
+                    _labelRenderer->setDimensions(paddedLabelSize.width * (endScale * 2.0), 0);
+                    startScale = endScale;
+                    endScale = endScale*2;
+                }while (_labelRenderer->getContentSize().height>paddedLabelSize.height * endScale);
+                
+                float midScale;
+                for(int i=0;i<8;++i)
+                {
+                    midScale = (startScale + endScale) / 2.0f;
+                    _labelRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
+                    if(_labelRenderer->getContentSize().height>paddedLabelSize.height * midScale)
+                    {
+                        startScale = midScale;
+                    }
+                    else
+                    {
+                        endScale = midScale;
+                    }
+                }
+                float realScale = endScale;
+                _labelRenderer->setDimensions(paddedLabelSize.width * realScale, paddedLabelSize.height * realScale);
+                _labelRenderer->getContentSize();
+                float labelScale = 1.0f/realScale;
+                _labelRenderer->setScale(labelScale);
+                _normalScaleValueX = labelScale;
+                _normalScaleValueY = labelScale;
+            }
         }
-        float scaleX = _contentSize.width / textureSize.width;
-        float scaleY = _contentSize.height / textureSize.height;
-        _labelRenderer->setScaleX(scaleX);
-        _labelRenderer->setScaleY(scaleY);
-        _normalScaleValueX = scaleX;
-        _normalScaleValueY = scaleY;
+        else
+        {
+            _labelRenderer->setDimensions(_contentSize.width,_contentSize.height);
+            Size textureSize = _labelRenderer->getContentSize();
+            if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
+            {
+                _labelRenderer->setScale(1.0f);
+                return;
+            }
+            float scaleX = _contentSize.width / textureSize.width;
+            float scaleY = _contentSize.height / textureSize.height;
+            _labelRenderer->setScaleX(scaleX);
+            _labelRenderer->setScaleY(scaleY);
+            _normalScaleValueX = scaleX;
+            _normalScaleValueY = scaleY;
+        }
     }
     _labelRenderer->setPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
 }
@@ -356,6 +406,16 @@ void Text::enableGlow(const Color4B& glowColor)
 void Text::disableEffect()
 {
     _labelRenderer->disableEffect();
+}
+    
+void Text::setAdjustsFontSizeToFit(bool value)
+{
+    _adjustsFontSizeToFit = value;
+}
+
+bool Text::getAdjustsFontSizeToFit() const
+{
+    return _adjustsFontSizeToFit;
 }
 
 Widget* Text::createCloneInstance()

@@ -26,6 +26,7 @@ void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
 {
     ui::Widget *widget = dynamic_cast<ui::Widget*>(node);
     widget->setEnabled(_enabled);
+    widget->ignoreContentAdaptWithSize(false);
 }
     
 void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode)

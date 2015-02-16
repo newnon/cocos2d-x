@@ -201,6 +201,10 @@ public:
     float getTitleFontSize() const;
     void setTitleFontName(const std::string& fontName);
     const std::string& getTitleFontName() const;
+    
+    void setAdjustsFontSizeToFit(bool value);
+    bool getAdjustsFontSizeToFit() const;
+    
     /** When user pressed the button, the button will zoom to a scale.
      * The final scale of the button  equals (button original scale + _zoomScale)
      * @since v3.3
@@ -360,6 +364,7 @@ private:
     std::string _fontName;
     int _fontSize;
     FontType _type;
+    bool _adjustsFontSizeToFit;
 };
 
 }

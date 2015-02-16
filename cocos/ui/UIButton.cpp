@@ -94,7 +94,8 @@ _horizontalPadding(0),
 _leftOffsets(0.0f),
 _topOffsets(0.0f),
 _rightOffsets(0.0f),
-_bottomOffsets(0)
+_bottomOffsets(0),
+_adjustsFontSizeToFit(false)
 {
     setTouchEnabled(true);
 }
@@ -1061,6 +1062,16 @@ Label* Button::getTitleRenderer()const
 const std::string& Button::getTitleFontName() const
 {
     return _fontName;
+}
+
+void Button::setAdjustsFontSizeToFit(bool value)
+{
+    _adjustsFontSizeToFit = value;
+}
+    
+bool Button::getAdjustsFontSizeToFit() const
+{
+    return _adjustsFontSizeToFit;
 }
     
 std::string Button::getDescription() const

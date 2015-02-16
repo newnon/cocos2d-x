@@ -41,7 +41,10 @@ Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, fl
 
 void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
     ui::Text *text = static_cast<ui::Text*>(node);
+    if(_dimensions.size.width == 0 || _dimensions.size.height == 0)
+        text->ignoreContentAdaptWithSize(true);
     //label->setBlendFunc(_blendFunc);
     float outlineWidth = getAbsoluteScale(mainScale, additionalScale, _outlineWidth.scale, _outlineWidth.type);
     float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, _shadowBlurRadius.scale, _shadowBlurRadius.type);
@@ -52,6 +55,10 @@ void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float 
         text->enableShadow(_shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
     if(_fontColor != Color4B::WHITE)
         text->setTextColor(_fontColor);
+    text->setTextHorizontalAlignment(_textHAlignment);
+    text->setTextVerticalAlignment(_textVAlignment);
+    text->setTextAreaSize(getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize));
+    text->setAdjustsFontSizeToFit(_adjustsFontSizeToFit);
 }
 
 TextLoader::TextLoader()
