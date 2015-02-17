@@ -524,9 +524,9 @@ void Button::onPressStateChangedToNormal()
             _titleRenderer->stopAllActions();
             FiniteTimeAction *titleZoomAction;
             if (_unifySize)
-                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale, _titleScale);
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1.0f, 1.0f);
             else
-                titleZoomAction = backZoomAction->clone();
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale, _titleScale);
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
             FiniteTimeAction *titleOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realTitleOpacity);
             Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, NULL);
@@ -570,9 +570,9 @@ void Button::onPressStateChangedToNormal()
             _titleRenderer->stopAllActions();
             FiniteTimeAction *titleZoomAction;
             if (_unifySize)
-                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale, _titleScale);
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1.0f, 1.0f);
             else
-                titleZoomAction = backZoomAction->clone();
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale, _titleScale);
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
             FiniteTimeAction *titleOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realTitleOpacity);
             Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, NULL);
@@ -617,9 +617,9 @@ void Button::onPressStateChangedToPressed()
             _titleRenderer->stopAllActions();
             FiniteTimeAction *titleZoomAction;
             if (_unifySize)
-                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale * (1.0f + _zoomScale), _titleScale + (1.0f * _zoomScale));
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1.0f + _zoomScale, 1.0f + _zoomScale);
             else
-                titleZoomAction = backZoomAction->clone();
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale * (1.0f + _zoomScale), _titleScale + (1.0f * _zoomScale));
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
             FiniteTimeAction *titleOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realTitleOpacity);
             Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, NULL);
@@ -664,9 +664,9 @@ void Button::onPressStateChangedToPressed()
             _titleRenderer->stopAllActions();
             FiniteTimeAction *titleZoomAction;
             if (_unifySize)
-                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale * (1.0f + _zoomScale), _titleScale * (1.0f + _zoomScale));
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, 1.0f + _zoomScale, 1.0f + _zoomScale);
             else
-                titleZoomAction = backZoomAction->clone();
+                titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale * (1.0f + _zoomScale), _titleScale + (1.0f * _zoomScale));
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
             FiniteTimeAction *titleOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realTitleOpacity);
             Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, NULL);
@@ -700,6 +700,7 @@ void Button::onPressStateChangedToDisabled()
     _buttonClickedRenderer->setScale(_pressedTextureScaleXInSize, _pressedTextureScaleYInSize);
     _titleRenderer->setTextColor(Color4B(multiplyColors(_disabledTitleColor, _displayedColor)));
     _titleRenderer->setOpacity(multiplyOpacity(_disabledTitleOpacity, _displayedOpacity));
+    _titleRenderer->setScale(_titleScale);
 }
     
 void Button::updateDisplayedOpacity(GLubyte parentOpacity)
