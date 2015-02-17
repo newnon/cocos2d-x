@@ -74,6 +74,7 @@ _disabledTextureLoaded(false),
 _normalTextureAdaptDirty(true),
 _pressedTextureAdaptDirty(true),
 _disabledTextureAdaptDirty(true),
+_titileAdaptDirty(true),
 _fontName("Thonburi"),
 _fontSize(10),
 _type(FontType::SYSTEM),
@@ -796,10 +797,10 @@ void Button::updateContentSize()
 void Button::onSizeChanged()
 {
     Widget::onSizeChanged();
-    updateTitleLocation();
     _normalTextureAdaptDirty = true;
     _pressedTextureAdaptDirty = true;
     _disabledTextureAdaptDirty = true;
+    _titileAdaptDirty = true;
 }
     
 void Button::adaptRenderers()
@@ -821,66 +822,70 @@ void Button::adaptRenderers()
         disabledTextureScaleChangedWithSize();
         _disabledTextureAdaptDirty = false;
     }
-    
-    Size contentSize = getContentSize();
-    Size paddedLabelSize = Size(contentSize.width - _horizontalPadding * 2, contentSize.height -  _verticalPadding * 2);
-    _titleRenderer->setScale(1.0f);
-    if(_adjustsFontSizeToFit && paddedLabelSize.width && paddedLabelSize.height)
+    if(_titileAdaptDirty)
     {
-        _titleRenderer->setDimensions(paddedLabelSize.width, 0);
-        Size textureSize = _titleRenderer->getContentSize();
-        if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
+        Size contentSize = getContentSize();
+        Size paddedLabelSize = Size(contentSize.width - _horizontalPadding * 2, contentSize.height -  _verticalPadding * 2);
+        _titleRenderer->setScale(1.0f);
+        if(_adjustsFontSizeToFit && paddedLabelSize.width && paddedLabelSize.height)
         {
-            _titleRenderer->setScale(1.0f);
-            return;
-        }
-        if(textureSize.height>paddedLabelSize.height)
-        {
-            float startScale = 1.0;
-            float endScale = 1.0;
-            do
+            _titleRenderer->setDimensions(paddedLabelSize.width, 0);
+            Size textureSize = _titleRenderer->getContentSize();
+            if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
             {
-                _titleRenderer->setDimensions(paddedLabelSize.width * (endScale * 2.0), 0);
-                startScale = endScale;
-                endScale = endScale*2;
-            }while (_titleRenderer->getContentSize().height>paddedLabelSize.height * endScale);
-            
-            float midScale;
-            for(int i=0;i<4;++i)
-            {
-                midScale = (startScale + endScale) / 2.0f;
-                _titleRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
-                if(_titleRenderer->getContentSize().height>paddedLabelSize.height * midScale)
-                {
-                    startScale = midScale;
-                }
-                else
-                {
-                    endScale = midScale;
-                }
+                _titleRenderer->setScale(1.0f);
+                _titileAdaptDirty = false;
+                return;
             }
-            float realScale = endScale * 1.05;
-            _titleRenderer->setDimensions(paddedLabelSize.width * realScale, paddedLabelSize.height * realScale);
-            _titleRenderer->getContentSize();
-            float labelScale = 1.0f/realScale;
-            _titleRenderer->setScale(labelScale);
-            _titleScale = labelScale;
+            if(textureSize.height>paddedLabelSize.height)
+            {
+                float startScale = 1.0;
+                float endScale = 1.0;
+                do
+                {
+                    _titleRenderer->setDimensions(paddedLabelSize.width * (endScale * 2.0), 0);
+                    startScale = endScale;
+                    endScale = endScale*2;
+                }while (_titleRenderer->getContentSize().height>paddedLabelSize.height * endScale);
+                
+                float midScale;
+                for(int i=0;i<4;++i)
+                {
+                    midScale = (startScale + endScale) / 2.0f;
+                    _titleRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
+                    if(_titleRenderer->getContentSize().height>paddedLabelSize.height * midScale)
+                    {
+                        startScale = midScale;
+                    }
+                    else
+                    {
+                        endScale = midScale;
+                    }
+                }
+                float realScale = endScale * 1.05;
+                _titleRenderer->setDimensions(paddedLabelSize.width * realScale, paddedLabelSize.height * realScale);
+                _titleRenderer->getContentSize();
+                float labelScale = 1.0f/realScale;
+                _titleRenderer->setScale(labelScale);
+                _titleScale = labelScale;
+            }
+            else
+            {
+                _titleRenderer->setScale(1.0f);
+                _titleRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
+                _titleScale = 1.0f;
+            }
         }
         else
         {
-            _titleRenderer->setScale(1.0f);
             _titleRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
-            _titleScale = 1.0f;
+            _titleRenderer->getContentSize();
+            _titleRenderer->setScale(_normalTextureScaleXInSize);
+            _titleScale = _normalTextureScaleXInSize;
         }
+        updateTitleLocation();
+        _titileAdaptDirty = false;
     }
-    else
-    {
-        _titleRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
-        _titleRenderer->getContentSize();
-        _titleRenderer->setScale(_normalTextureScaleXInSize);
-        _titleScale = _normalTextureScaleXInSize;
-    }
-    updateTitleLocation();
 }
 
 Size Button::getVirtualRendererSize() const
@@ -1042,6 +1047,7 @@ void Button::setTitleText(const std::string& text)
     }
     _titleRenderer->setString(text);
     updateContentSize();
+    _titileAdaptDirty = true;
 }
 
 const std::string& Button::getTitleText() const
@@ -1074,6 +1080,7 @@ void Button::setTitleFontSize(float size)
     }
     updateContentSize();
     _fontSize = size;
+    _titileAdaptDirty = true;
 }
 
 float Button::getTitleFontSize() const
@@ -1111,6 +1118,7 @@ void Button::setTitleFontName(const std::string& fontName)
     }
     _fontName = fontName;
     this->updateContentSize();
+    _titileAdaptDirty = true;
 }
     
 Label* Button::getTitleRenderer()const

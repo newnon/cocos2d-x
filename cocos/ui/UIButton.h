@@ -330,6 +330,7 @@ protected:
     bool _normalTextureAdaptDirty;
     bool _pressedTextureAdaptDirty;
     bool _disabledTextureAdaptDirty;
+    bool _titileAdaptDirty;
     
     Color3B _normalBackgroundColor;
     Color3B _pressedBackgroundColor;
