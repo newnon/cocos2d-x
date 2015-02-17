@@ -328,7 +328,7 @@ void Text::labelScaleChangedWithSize()
                 _labelRenderer->setScale(1.0f);
                 return;
             }
-            if(textureSize.height>paddedLabelSize.height)
+            if(textureSize.height>paddedLabelSize.height || textureSize.width>paddedLabelSize.width)
             {
                 float startScale = 1.0;
                 float endScale = 1.0;
@@ -337,14 +337,14 @@ void Text::labelScaleChangedWithSize()
                     _labelRenderer->setDimensions(paddedLabelSize.width * (endScale * 2.0), 0);
                     startScale = endScale;
                     endScale = endScale*2;
-                }while (_labelRenderer->getContentSize().height>paddedLabelSize.height * endScale);
+                }while (_labelRenderer->getContentSize().height>paddedLabelSize.height * endScale || _labelRenderer->getContentSize().width>paddedLabelSize.width * endScale);
                 
                 float midScale;
                 for(int i=0;i<4;++i)
                 {
                     midScale = (startScale + endScale) / 2.0f;
                     _labelRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
-                    if(_labelRenderer->getContentSize().height>paddedLabelSize.height * midScale)
+                    if(_labelRenderer->getContentSize().height>paddedLabelSize.height * midScale || _labelRenderer->getContentSize().width>paddedLabelSize.width * midScale)
                     {
                         startScale = midScale;
                     }

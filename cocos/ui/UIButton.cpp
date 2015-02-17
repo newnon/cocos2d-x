@@ -822,6 +822,7 @@ void Button::adaptRenderers()
         disabledTextureScaleChangedWithSize();
         _disabledTextureAdaptDirty = false;
     }
+    
     if(_titileAdaptDirty)
     {
         Size contentSize = getContentSize();
@@ -837,7 +838,7 @@ void Button::adaptRenderers()
                 _titileAdaptDirty = false;
                 return;
             }
-            if(textureSize.height>paddedLabelSize.height)
+            if(textureSize.height>paddedLabelSize.height || textureSize.width>paddedLabelSize.width)
             {
                 float startScale = 1.0;
                 float endScale = 1.0;
@@ -846,14 +847,14 @@ void Button::adaptRenderers()
                     _titleRenderer->setDimensions(paddedLabelSize.width * (endScale * 2.0), 0);
                     startScale = endScale;
                     endScale = endScale*2;
-                }while (_titleRenderer->getContentSize().height>paddedLabelSize.height * endScale);
+                }while (_titleRenderer->getContentSize().height>paddedLabelSize.height * endScale || _titleRenderer->getContentSize().width>paddedLabelSize.width * endScale);
                 
                 float midScale;
                 for(int i=0;i<4;++i)
                 {
                     midScale = (startScale + endScale) / 2.0f;
                     _titleRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
-                    if(_titleRenderer->getContentSize().height>paddedLabelSize.height * midScale)
+                    if(_titleRenderer->getContentSize().height>paddedLabelSize.height * midScale || _titleRenderer->getContentSize().width>paddedLabelSize.width * midScale)
                     {
                         startScale = midScale;
                     }
