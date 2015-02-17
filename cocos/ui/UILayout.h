@@ -77,7 +77,9 @@ public:
         ABSOLUTE,
         VERTICAL,
         HORIZONTAL,
-        RELATIVE
+        RELATIVE,
+        VERTICAL_AUTO,
+        HORIZONTAL_AUTO,
     };
     
     enum class ClippingType

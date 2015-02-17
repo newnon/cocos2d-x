@@ -235,7 +235,7 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
     }
     else
     {
-        Widget::visit(renderer, parentTransform, parentFlags);
+        ProtectedNode::visit(renderer, parentTransform, parentFlags);
     }
 }
     
@@ -718,6 +718,29 @@ void Layout::supplyTheLayoutParameterLackToChild(Widget *child)
             }
             break;
         }
+        case Type::HORIZONTAL_AUTO:
+        {
+            LinearLayoutParameter* layoutParameter = dynamic_cast<LinearLayoutParameter*>(child->getLayoutParameter());
+            if (!layoutParameter)
+            {
+                LinearLayoutParameter *parameter = LinearLayoutParameter::create();
+                parameter->setGravity(LinearLayoutParameter::LinearGravity::CENTER_VERTICAL);
+                child->setLayoutParameter(parameter);
+            }
+            break;
+        }
+        case Type::VERTICAL_AUTO:
+        {
+            LinearLayoutParameter* layoutParameter = dynamic_cast<LinearLayoutParameter*>(child->getLayoutParameter());
+            if (!layoutParameter)
+            {
+                LinearLayoutParameter *parameter = LinearLayoutParameter::create();
+                parameter->setGravity(LinearLayoutParameter::LinearGravity::CENTER_HORIZONTAL);
+                child->setLayoutParameter(parameter);
+            }
+            break;
+        }
+
         default:
             break;
     }
@@ -1011,6 +1034,12 @@ LayoutManager* Layout::createLayoutManager()
             break;
         case Type::RELATIVE:
             exe = RelativeLayoutManager::create();
+            break;
+        case Type::VERTICAL_AUTO:
+            exe = LinearVerticalAutoLayoutManager::create();
+            break;
+        case Type::HORIZONTAL_AUTO:
+            exe = LinearHorizontalAutoLayoutManager::create();
             break;
         default:
             break;

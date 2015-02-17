@@ -25,9 +25,9 @@ void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, f
     if(layout)
     {
         if(_direction == Horizontal)
-            layout->setLayoutType(ui::Layout::Type::HORIZONTAL);
+            layout->setLayoutType(ui::Layout::Type::HORIZONTAL_AUTO);
         else
-            layout->setLayoutType(ui::Layout::Type::VERTICAL);
+            layout->setLayoutType(ui::Layout::Type::VERTICAL_AUTO);
         layout->setSpacing(getAbsoluteScale(mainScale, additionalScale, _spacing.scale, _spacing.type));
     }
 }
