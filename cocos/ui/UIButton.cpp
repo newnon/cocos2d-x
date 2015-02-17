@@ -866,6 +866,12 @@ void Button::adaptRenderers()
             _titleRenderer->setScale(labelScale);
             _titleScale = labelScale;
         }
+        else
+        {
+            _titleRenderer->setScale(1.0f);
+            _titleRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
+            _titleScale = 1.0f;
+        }
     }
     else
     {

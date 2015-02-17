@@ -361,6 +361,13 @@ void Text::labelScaleChangedWithSize()
                 _normalScaleValueX = labelScale;
                 _normalScaleValueY = labelScale;
             }
+            else
+            {
+                _labelRenderer->setScale(1.0f);
+                _labelRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
+                _normalScaleValueX = 1.0f;
+                _normalScaleValueY = 1.0f;
+            }
         }
         else
         {
