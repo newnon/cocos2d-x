@@ -21,6 +21,7 @@ Node *LayoutBoxLoader::createNodeInstance(const Size &parentSize, float mainScal
 }
 void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
     ui::Layout *layout = dynamic_cast<ui::Layout*>(node);
     if(layout)
     {

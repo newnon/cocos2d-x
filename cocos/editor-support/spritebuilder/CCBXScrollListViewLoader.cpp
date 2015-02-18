@@ -27,6 +27,7 @@ Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mai
 
 void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
     ScrollListView *scrollView = static_cast<ScrollListView*>(node);
     scrollView->setBounceEnabled(_bounce);
     scrollView->setClippingEnabled(_clipping);

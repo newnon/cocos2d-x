@@ -28,6 +28,7 @@ Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainSca
 
 void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
     ui::ScrollView *scrollView = static_cast<ui::ScrollView*>(node);
     ui::ScrollView::Direction direction = ui::ScrollView::Direction::NONE;
     if(_horizontalScrollEnabled && _verticalScrollEnabled)

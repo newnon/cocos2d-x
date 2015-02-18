@@ -20,6 +20,7 @@ Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, 
 }
 void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
     ui::Slider *slider = dynamic_cast<ui::Slider*>(node);
 }
 

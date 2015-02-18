@@ -145,6 +145,7 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
 
 void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
     ui::Button *button = dynamic_cast<ui::Button*>(node);
     if(button)
     {

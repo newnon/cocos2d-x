@@ -41,6 +41,7 @@ Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScal
 
 void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
 }
 
 TextFieldLoader::TextFieldLoader()
