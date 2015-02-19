@@ -1274,26 +1274,16 @@ void Node::visit()
     visit(renderer, parentTransform, true);
 }
 
-const Mat4& Node::getNodeToPhysicsTransform() const
-{
-    return _physicsModelViewTransform;
-}
-
 uint32_t Node::processParentFlags(const Mat4& parentTransform, uint32_t parentFlags)
 {
 #if CC_USE_PHYSICS
-    if(parentFlags & FLAGS_DIRTY_MASK)
+    if (_physicsBody && _physicsBody->getWorld() && _updateTransformFromPhysics)
     {
-        _physicsModelViewTransform = Mat4::IDENTITY;
-        
-        for (const Node *p = this->getParent(); p != nullptr && dynamic_cast<const PhysicsNode*>(p) == nullptr; p = p->getParent())
-        {
-            _physicsModelViewTransform = p->getNodeToParentTransform() * _physicsModelViewTransform;
-        }
-    }
-    if (_physicsBody && _updateTransformFromPhysics)
-    {
-        updateTransformFromPhysics(parentTransform, parentFlags);
+        Node &physicsNode =  _physicsBody->getWorld()->getPhysicsNode();
+        Mat4 mat = physicsNode._modelViewTransform;
+        mat.inverse();
+        mat.multiply(parentTransform);
+        updateTransformFromPhysics(mat, parentFlags);
     }
 #endif
     if(_usingNormalizedPosition)
@@ -2077,8 +2067,7 @@ void Node::setPhysicsBody(PhysicsBody* body)
 void Node::updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t parentFlags, float parentScaleX, float parentScaleY)
 {
     _updateTransformFromPhysics = false;
-    Mat4 temp = getNodeToPhysicsTransform();
-    auto flags = processParentFlags(temp, parentFlags);
+    auto flags = processParentFlags(parentTransform, parentFlags);
     _updateTransformFromPhysics = true;
     auto scaleX = parentScaleX * _scaleX;
     auto scaleY = parentScaleY * _scaleY;
@@ -2097,10 +2086,10 @@ void Node::updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t pare
         _physicsBody->setScale(scaleX / _physicsScaleStartX, scaleY / _physicsScaleStartY);
         _physicsBody->setRotation(_physicsRotation);
     }
-
+    
     for (auto node : _children)
     {
-        node->updatePhysicsBodyTransform(this->transform(temp), flags, scaleX, scaleY);
+        node->updatePhysicsBodyTransform(this->transform(parentTransform), flags, scaleX, scaleY);
     }
 }
 
@@ -2108,13 +2097,12 @@ void Node::updateTransformFromPhysics(const Mat4& parentTransform, uint32_t pare
 {
     auto& newPosition = _physicsBody->getPosition();
     auto& recordedPosition = _physicsBody->_recordedPosition;
-    
     if (parentFlags || recordedPosition.x != newPosition.x || recordedPosition.y != newPosition.y)
     {
         recordedPosition = newPosition;
         Vec3 vec3(newPosition.x, newPosition.y, 0);
         Vec3 ret;
-        getNodeToPhysicsTransform().getInversed().transformPoint(vec3, &ret);
+        parentTransform.getInversed().transformPoint(vec3, &ret);
         setPosition(ret.x, ret.y);
     }
     _physicsRotation = _physicsBody->getRotation();
@@ -2123,23 +2111,61 @@ void Node::updateTransformFromPhysics(const Mat4& parentTransform, uint32_t pare
 
 PhysicsNode* Node::getPhysicsNode() const
 {
-    if(!_parent)
+    if (!_parent)
+    {
         return nullptr;
-    
-    return _parent->getPhysicsNode();
+    }
+    else if(_physicsBody && _physicsBody->getWorld())
+    {
+        return &_physicsBody->getWorld()->getPhysicsNode();
+    }
+    else
+    {
+        return _parent->getPhysicsNode();
+    }
 }
 
 Vec2 Node::convertToPhysicsSpace(const Vec2& nodePoint) const
 {
-    if(_physicsBody)
+    Mat4 tmp = getNodeToPhysicsTransform();
+    Vec3 vec3(nodePoint.x, nodePoint.y, 0);
+    Vec3 ret;
+    tmp.transformPoint(vec3,&ret);
+    return Vec2(ret.x, ret.y);
+}
+
+Vec2 Node::convertFromPhysicsSpace(const Vec2& physicsPoint) const
+{
+    Mat4 tmp = getPhysicsToNodeTransform();
+    Vec3 vec3(physicsPoint.x, physicsPoint.y, 0);
+    Vec3 ret;
+    tmp.transformPoint(vec3,&ret);
+    return Vec2(ret.x, ret.y);
+}
+
+Mat4 Node::getNodeToPhysicsTransform() const
+{
+    if(_physicsBody && _physicsBody->getWorld())
     {
         PhysicsNode &physicsNode = _physicsBody->getWorld()->getPhysicsNode();
-        return physicsNode.convertToNodeSpace(convertToWorldSpace(nodePoint));
+        
+        Mat4 t(this->getNodeToParentTransform());
+        
+        for (Node *p = _parent; p != nullptr && p != &physicsNode; p = p->getParent())
+        {
+            t = p->getNodeToParentTransform() * t;
+        }
+        return t;
     }
     else
     {
-        return convertToWorldSpace(nodePoint);
+        return getNodeToWorldTransform();
     }
+}
+
+Mat4 Node::getPhysicsToNodeTransform() const
+{
+    return getNodeToPhysicsTransform().getInversed();
 }
 
 #endif //CC_USE_PHYSICS

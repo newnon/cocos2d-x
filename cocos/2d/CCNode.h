@@ -1552,11 +1552,25 @@ public:
      */
     Vec2 convertToPhysicsSpace(const Vec2& nodePoint) const;
     
+    /**
+     * Converts a Vec2 to node (local) space coordinates. The result is in Points.
+     */
+    Vec2 convertFromPhysicsSpace(const Vec2& physicsPoint) const;
+    
+    /**
+     * Returns the physics transform matrix. The matrix is in Pixels.
+     */
+    Mat4 getNodeToPhysicsTransform() const;
+    
+    /**
+     * Returns the inverse physics transform matrix. The matrix is in Pixels.
+     */
+    Mat4 getPhysicsToNodeTransform() const;
+    
     void updateTransformFromPhysics(const Mat4& parentTransform, uint32_t parentFlags);
 
     virtual void updatePhysicsBodyTransform(const Mat4& parentTransform, uint32_t parentFlags, float parentScaleX, float parentScaleY);
     
-    const Mat4 &getNodeToPhysicsTransform() const;
 #endif
     
     // overrides
@@ -1723,7 +1737,6 @@ protected:
     float _physicsRotation;
     bool _physicsTransformDirty;
     bool _updateTransformFromPhysics;
-    Mat4 _physicsModelViewTransform;
 #endif
     
     // opacity controls

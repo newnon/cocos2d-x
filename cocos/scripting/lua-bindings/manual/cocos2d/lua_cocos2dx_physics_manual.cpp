@@ -1578,7 +1578,8 @@ int register_all_cocos2dx_physics_manual(lua_State* tolua_S)
     {
         lua_pushstring(tolua_S,"getScene");
         lua_pushcfunction(tolua_S, lua_cocos2dx_physics_PhysicsWorld_getPhysicsNode );
-        lua_pushstring(tolua_S,"getNode");
+        lua_rawset(tolua_S,-3);
+        lua_pushstring(tolua_S,"getPhysicsNode");
         lua_pushcfunction(tolua_S, lua_cocos2dx_physics_PhysicsWorld_getPhysicsNode );
         lua_rawset(tolua_S,-3);
         lua_pushstring(tolua_S,"queryPoint");
