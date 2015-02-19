@@ -58,6 +58,9 @@ namespace CocosDenshion {
             methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID);
             methodInfo.env->DeleteLocalRef(methodInfo.classID);
         }
+        
+        void SimpleAudioEngine::configure(AudioManagerMode mode) {
+        }
 
         void AndroidJavaEngine::preloadBackgroundMusic(const char* pszFilePath) {
             std::string fullPath = CocosDenshion::android::getFullPathWithoutAssetsPrefix(pszFilePath);
