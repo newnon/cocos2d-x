@@ -282,7 +282,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
     setAnimation(node, manager);
 #if CC_USE_PHYSICS
     if(_physicsLoader)
-        node->setPhysicsBody(_physicsLoader->createBody(node));
+        node->setPhysicsBody(_physicsLoader->createBody(node), true);
 #endif
     for(auto child:_children)
     {

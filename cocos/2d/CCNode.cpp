@@ -2018,7 +2018,7 @@ void Node::removeAllComponents()
 
 // MARK: Physics
 
-void Node::setPhysicsBody(PhysicsBody* body)
+void Node::setPhysicsBody(PhysicsBody* body, bool ignoreScale)
 {
     if (_physicsBody == body)
     {
@@ -2052,8 +2052,16 @@ void Node::setPhysicsBody(PhysicsBody* body)
         }
 
         _physicsBody = body;
-        _physicsScaleStartX = _scaleX;
-        _physicsScaleStartY = _scaleY;
+        if(ignoreScale)
+        {
+            _physicsScaleStartX = 1.0f;
+            _physicsScaleStartY = 1.0f;
+        }
+        else
+        {
+            _physicsScaleStartX = _scaleX;
+            _physicsScaleStartY = _scaleY;
+        }
 
         PhysicsNode* physicsNode = getPhysicsNode();
         if (physicsNode && physicsNode->getPhysicsWorld())
@@ -2145,22 +2153,15 @@ Vec2 Node::convertFromPhysicsSpace(const Vec2& physicsPoint) const
 
 Mat4 Node::getNodeToPhysicsTransform() const
 {
-    if(_physicsBody && _physicsBody->getWorld())
+    PhysicsNode *physicsNode = getPhysicsNode();
+    
+    Mat4 t(this->getNodeToParentTransform());
+    
+    for (Node *p = _parent; p != nullptr && p != physicsNode; p = p->getParent())
     {
-        PhysicsNode &physicsNode = _physicsBody->getWorld()->getPhysicsNode();
-        
-        Mat4 t(this->getNodeToParentTransform());
-        
-        for (Node *p = _parent; p != nullptr && p != &physicsNode; p = p->getParent())
-        {
-            t = p->getNodeToParentTransform() * t;
-        }
-        return t;
+        t = p->getNodeToParentTransform() * t;
     }
-    else
-    {
-        return getNodeToWorldTransform();
-    }
+    return t;
 }
 
 Mat4 Node::getPhysicsToNodeTransform() const
