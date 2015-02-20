@@ -33,6 +33,7 @@
 #include "math/CCGeometry.h"
 #include "physics/CCPhysicsBody.h"
 #include <list>
+#include <set>
 
 struct cpSpace;
 
@@ -171,6 +172,8 @@ public:
      */
     void step(float delta);
     
+    static const std::set<PhysicsWorld*>& getAllWorlds();
+    
 protected:
     static PhysicsWorld* construct(PhysicsNode& physicsNode);
     bool init(PhysicsNode& scene);
@@ -213,6 +216,7 @@ protected:
     PhysicsDebugDraw* _debugDraw;
     int _debugDrawMask;
     
+    static std::set<PhysicsWorld*> _worlds;
     
     Vector<PhysicsBody*> _delayAddBodies;
     Vector<PhysicsBody*> _delayRemoveBodies;
@@ -253,6 +257,7 @@ protected:
     PhysicsWorld& _world;
     
     friend class PhysicsWorld;
+    friend class PhysicsNode;
 };
 extern const float CC_DLL PHYSICS_INFINITY;
 

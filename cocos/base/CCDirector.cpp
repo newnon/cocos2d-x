@@ -288,10 +288,13 @@ void Director::drawScene()
     if (_runningScene)
     {
 #if CC_USE_PHYSICS
-        auto physicsWorld = _runningScene->getPhysicsWorld();
-        if (physicsWorld && physicsWorld->isAutoStep())
+        const std::set<PhysicsWorld*>& worlds = PhysicsWorld::getAllWorlds();
+        for(PhysicsWorld* physicsWorld : worlds)
         {
-            physicsWorld->update(_deltaTime, false);
+            if(physicsWorld->isAutoStep() && physicsWorld->getPhysicsNode().getScene() == _runningScene)
+            {
+                physicsWorld->update(_deltaTime, false);
+            }
         }
 #endif
         //clear draw stats
@@ -302,9 +305,12 @@ void Director::drawScene()
         
         _eventDispatcher->dispatchEvent(_eventAfterVisit);
 #if CC_USE_PHYSICS
-        if(physicsWorld)
+        for(PhysicsWorld* physicsWorld : worlds)
         {
-            physicsWorld->_updateBodyTransform = false;
+            if(physicsWorld->isAutoStep() && physicsWorld->getPhysicsNode().getScene() == _runningScene)
+            {
+                physicsWorld->_updateBodyTransform = false;
+            }
         }
 #endif
     }

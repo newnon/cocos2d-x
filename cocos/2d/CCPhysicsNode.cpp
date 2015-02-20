@@ -107,6 +107,54 @@ void PhysicsNode::update(float delta)
     }
 }
 
+void PhysicsNode::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags)
+{
+    // quick return if not visible. children won't be drawn.
+    if (!_visible || !isVisitableByVisitingCamera())
+    {
+        return;
+    }
+    
+    uint32_t flags = processParentFlags(parentTransform, parentFlags);
+    
+    // IMPORTANT:
+    // To ease the migration to v3.0, we still support the Mat4 stack,
+    // but it is deprecated and your code should not rely on it
+    Director* director = Director::getInstance();
+    CCASSERT(nullptr != director, "Director is null when seting matrix stack");
+    director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
+    
+    int i = 0;      // used by _children
+    
+    sortAllChildren();
+    
+    // draw children zOrder < 0
+    for( ; i < _children.size(); i++ )
+    {
+        auto node = _children.at(i);
+        
+        if ( node && node->getLocalZOrder() < 0 )
+            node->visit(renderer, _modelViewTransform, flags);
+        else
+            break;
+    }
+    
+    // draw self
+    if (isVisitableByVisitingCamera())
+        this->draw(renderer, _modelViewTransform, flags);
+    
+    // draw children zOrder >= 0
+    for(auto it=_children.cbegin()+i; it != _children.cend(); ++it)
+        (*it)->visit(renderer, _modelViewTransform, flags);
+
+    // draw _debugDraw  
+    if(_physicsWorld && _physicsWorld->_debugDraw)
+        reinterpret_cast<Node*>(_physicsWorld->_debugDraw->_drawNode)->visit(renderer, _modelViewTransform, flags);
+    
+    director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+}
+
 bool PhysicsNode::initWithPhysics()
 {
     bool ret = false;
@@ -118,7 +166,6 @@ bool PhysicsNode::initWithPhysics()
         this->setContentSize(director->getWinSize());
         CC_BREAK_IF(! (_physicsWorld = PhysicsWorld::construct(*this)));
         
-        this->scheduleUpdate();
         // success
         g_physicsNodeCount += 1;
         ret = true;

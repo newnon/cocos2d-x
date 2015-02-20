@@ -43,6 +43,9 @@ public:
 
     using Node::addChild;
     virtual std::string getDescription() const override;
+    
+    virtual void visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags) override;
+    using Node::visit;
 
 CC_CONSTRUCTOR_ACCESS:
     PhysicsNode();

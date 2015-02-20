@@ -51,6 +51,7 @@ const int PhysicsWorld::DEBUGDRAW_SHAPE = 0x01;
 const int PhysicsWorld::DEBUGDRAW_JOINT = 0x02;
 const int PhysicsWorld::DEBUGDRAW_CONTACT = 0x04;
 const int PhysicsWorld::DEBUGDRAW_ALL = DEBUGDRAW_SHAPE | DEBUGDRAW_JOINT | DEBUGDRAW_CONTACT;
+std::set<PhysicsWorld*> PhysicsWorld::_worlds;
 
 namespace
 {
@@ -889,11 +890,12 @@ PhysicsWorld::PhysicsWorld()
 , _debugDrawMask(DEBUGDRAW_NONE)
 , _updateBodyTransform(false)
 {
-    
+    _worlds.insert(this);
 }
 
 PhysicsWorld::~PhysicsWorld()
 {
+    _worlds.erase(this);
     removeAllJoints(true);
     removeAllBodies();
     if (_cpSpace)
@@ -903,17 +905,22 @@ PhysicsWorld::~PhysicsWorld()
     CC_SAFE_DELETE(_debugDraw);
 }
 
+const std::set<PhysicsWorld*>& PhysicsWorld::getAllWorlds()
+{
+    return _worlds;
+}
+
 PhysicsDebugDraw::PhysicsDebugDraw(PhysicsWorld& world)
 : _drawNode(nullptr)
 , _world(world)
 {
     _drawNode = DrawNode::create();
-    _world.getPhysicsNode().addChild(_drawNode);
+    _drawNode->retain();
 }
 
 PhysicsDebugDraw::~PhysicsDebugDraw()
 {
-    _drawNode->removeFromParent();
+    _drawNode->release();
     _drawNode = nullptr;
 }
 
