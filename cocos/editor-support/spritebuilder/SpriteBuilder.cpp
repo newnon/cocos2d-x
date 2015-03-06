@@ -84,7 +84,7 @@ CCBXReader* CCBXReader::createFromData(const Data &data, const std::string &root
     return ret;
 }
     
-void CCBXReader::calcScales(SceneScaleType scaleType, const Size &designResolution, float designScale, float &mainScale, float &additionalScale)
+void CCBXReader::calcScales(SceneScaleType scaleType, const Size &parentSize, const Size &designResolution, float designScale, float &mainScale, float &additionalScale)
 {
     if(scaleType == SceneScaleType::NONE)
     {
@@ -97,8 +97,8 @@ void CCBXReader::calcScales(SceneScaleType scaleType, const Size &designResoluti
     }
     else
     {
-        float resolutionAspectX = Director::getInstance()->getWinSize().width / getResolutionScale();
-        float resolutionAspectY = Director::getInstance()->getWinSize().height / getResolutionScale();
+        float resolutionAspectX = parentSize.width / getResolutionScale();
+        float resolutionAspectY = parentSize.height / getResolutionScale();
         
         float designAspectX = designResolution.width / designScale;
         float designAspectY = designResolution.height / designScale;
@@ -147,39 +147,60 @@ void CCBXReader::calcScales(SceneScaleType scaleType, const Size &designResoluti
     }
 }
     
-void CCBXReader::calcScales(SceneScaleType scaleType, float &mainScale, float &additionalScale) const
+void CCBXReader::calcScales(SceneScaleType scaleType, const Size &parentSize, float &mainScale, float &additionalScale) const
 {
-    CCBXReader::calcScales(scaleType, _params->getDesignResolution(), _params->getDesignResolutionScale(), mainScale, additionalScale);
+    CCBXReader::calcScales(scaleType, parentSize, _params->getDesignResolution(), _params->getDesignResolutionScale(), mainScale, additionalScale);
 }
 
     
 Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
 {
-    float mainScale = 1.0f;
-    float additionalScale = 1.0f;
-    calcScales(scaleType, mainScale, additionalScale);
-    Node * ret = _rootNodeLoader->createNode(Director::getInstance()->getWinSize(), mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
-    return ret;
+    return createNode(pOwner, Director::getInstance()->getWinSize(), scaleType, createNodeFunction, defaultAnimationCallback);
 }
     
 Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, float mainScale, float additionalScale, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
 {
-    Node * ret = _rootNodeLoader->createNode(Director::getInstance()->getWinSize(), mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
+    return createNode(pOwner, Director::getInstance()->getWinSize(), mainScale, additionalScale, createNodeFunction, defaultAnimationCallback);
+}
+    
+Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, const Size& parentSize, SceneScaleType scaleType, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
+{
+    float mainScale = 1.0f;
+    float additionalScale = 1.0f;
+    calcScales(scaleType, parentSize, mainScale, additionalScale);
+    Node * ret = _rootNodeLoader->createNode(parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
+    return ret;
+}
+
+Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, const Size& parentSize, float mainScale, float additionalScale, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
+{
+    Node * ret = _rootNodeLoader->createNode(parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
     return ret;
 }
     
 bool CCBXReader::loadNode(Node * node, CCBXReaderOwner *pOwner, SceneScaleType scaleType, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
 {
-    float mainScale = 1.0f;
-    float additionalScale = 1.0f;
-    calcScales(scaleType, mainScale, additionalScale);
-    return _rootNodeLoader->loadNode(node, Director::getInstance()->getWinSize(), mainScale, additionalScale, pOwner, nullptr, nullptr, defaultAnimationCallback);
+    return loadNode(node, pOwner, Director::getInstance()->getWinSize(), scaleType, defaultAnimationCallback);
 }
 
 bool CCBXReader::loadNode(Node * node, CCBXReaderOwner *pOwner, float mainScale, float additionalScale, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
 {
-    return _rootNodeLoader->loadNode(node, Director::getInstance()->getWinSize(), mainScale, additionalScale, pOwner, nullptr, nullptr, defaultAnimationCallback);
+    return loadNode(node, pOwner, Director::getInstance()->getWinSize(), mainScale, additionalScale, defaultAnimationCallback);
 }
+    
+bool CCBXReader::loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& parentSize, SceneScaleType scaleType, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
+{
+    float mainScale = 1.0f;
+    float additionalScale = 1.0f;
+    calcScales(scaleType, parentSize, mainScale, additionalScale);
+    return _rootNodeLoader->loadNode(node, parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, defaultAnimationCallback);
+}
+
+bool CCBXReader::loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& parentSize, float mainScale, float additionalScale, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
+{
+    return _rootNodeLoader->loadNode(node, parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, defaultAnimationCallback);
+}
+
 
 float CCBXReader::getResolutionScale()
 {
