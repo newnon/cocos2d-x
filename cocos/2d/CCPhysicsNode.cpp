@@ -110,7 +110,7 @@ void PhysicsNode::update(float delta)
 void PhysicsNode::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
     // quick return if not visible. children won't be drawn.
-    if (!_visible || !isVisitableByVisitingCamera())
+    if (!_visible)
     {
         return;
     }
@@ -120,39 +120,48 @@ void PhysicsNode::visit(Renderer* renderer, const Mat4 &parentTransform, uint32_
     // IMPORTANT:
     // To ease the migration to v3.0, we still support the Mat4 stack,
     // but it is deprecated and your code should not rely on it
-    Director* director = Director::getInstance();
-    CCASSERT(nullptr != director, "Director is null when seting matrix stack");
-    director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
-    director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
+    _director->pushMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    _director->loadMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW, _modelViewTransform);
     
-    int i = 0;      // used by _children
+    bool visibleByCamera = isVisitableByVisitingCamera();
     
-    sortAllChildren();
+    int i = 0;
     
-    // draw children zOrder < 0
-    for( ; i < _children.size(); i++ )
+    if(!_children.empty())
     {
-        auto node = _children.at(i);
+        sortAllChildren();
+        // draw children zOrder < 0
+        for( ; i < _children.size(); i++ )
+        {
+            auto node = _children.at(i);
+            
+            if (node && node->_localZOrder < 0)
+                node->visit(renderer, _modelViewTransform, flags);
+            else
+                break;
+        }
+        // self draw
+        if (visibleByCamera)
+            this->draw(renderer, _modelViewTransform, flags);
         
-        if ( node && node->getLocalZOrder() < 0 )
-            node->visit(renderer, _modelViewTransform, flags);
-        else
-            break;
+        for(auto it=_children.cbegin()+i; it != _children.cend(); ++it)
+            (*it)->visit(renderer, _modelViewTransform, flags);
+    }
+    else if (visibleByCamera)
+    {
+        this->draw(renderer, _modelViewTransform, flags);
     }
     
-    // draw self
-    if (isVisitableByVisitingCamera())
-        this->draw(renderer, _modelViewTransform, flags);
-    
-    // draw children zOrder >= 0
-    for(auto it=_children.cbegin()+i; it != _children.cend(); ++it)
-        (*it)->visit(renderer, _modelViewTransform, flags);
-
     // draw _debugDraw  
     if(_physicsWorld && _physicsWorld->_debugDraw)
         reinterpret_cast<Node*>(_physicsWorld->_debugDraw->_drawNode)->visit(renderer, _modelViewTransform, flags);
     
-    director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    _director->popMatrix(MATRIX_STACK_TYPE::MATRIX_STACK_MODELVIEW);
+    
+    // FIX ME: Why need to set _orderOfArrival to 0??
+    // Please refer to https://github.com/cocos2d/cocos2d-x/pull/6920
+    // reset for next frame
+    // _orderOfArrival = 0;
 }
 
 bool PhysicsNode::initWithPhysics()
