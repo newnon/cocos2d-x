@@ -7,6 +7,11 @@ namespace spritebuilder {
     
 static const std::string PROPERTY_SPRITEFRAME("spriteFrame");
 static const std::string PROPERTY_BLENDFUNC("blendFunc");
+    
+static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
+static const std::string PROPERTY_MARGIN_TOP("marginTop");
+static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
+static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
 
 ImageViewLoader *ImageViewLoader::create()
 {
@@ -17,14 +22,26 @@ ImageViewLoader *ImageViewLoader::create()
 
 Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
+    Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
+    
     ui::ImageView *imageView = ui::ImageView::create();
     switch(_spriteFrame.type)
     {
         case SpriteFrameDescription::TextureResType::LOCAL:
-            imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
+            {
+                Size size = _spriteFrame.spriteFrame->getOriginalSize();
+                Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
+                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
+                imageView->setCapInsets(realMargins);
+            }
             break;
         case SpriteFrameDescription::TextureResType::PLIST:
-            imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
+            {
+                Size size = _spriteFrame.spriteFrame->getOriginalSize();
+                Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
+                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
+                imageView->setCapInsets(realMargins);
+            }
             break;
         default:
             break;
@@ -58,6 +75,21 @@ void ImageViewLoader::onHandlePropTypeSpriteFrame(const std::string &propertyNam
         _spriteFrame = value;
     } else {
         WidgetLoader::onHandlePropTypeSpriteFrame(propertyName, isExtraProp, value);
+    }
+}
+    
+void ImageViewLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
+{
+    if(propertyName == PROPERTY_MARGIN_LEFT) {
+        _margins.origin.x = value;
+    } else if(propertyName == PROPERTY_MARGIN_TOP) {
+        _margins.origin.y = value;
+    } else if(propertyName == PROPERTY_MARGIN_RIGHT) {
+        _margins.size.width = value;
+    } else if(propertyName == PROPERTY_MARGIN_BOTTOM) {
+        _margins.size.height = value;
+    } else {
+        WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
     }
 }
 
