@@ -328,7 +328,7 @@ namespace ui {
         float height = _originalSize.height;
         
         Vec2 offsetPosition(ceilf(_offset.x + (_originalSize.width - _spriteRect.size.width) / 2),
-                ceilf(_offset.y + (_originalSize.height - _spriteRect.size.height) / 2));
+                ceilf(-_offset.y + (_originalSize.height - _spriteRect.size.height) / 2));
         
         // If there is no specified center region
         if ( _capInsetsInternal.equals(Rect::ZERO) )
@@ -508,15 +508,15 @@ namespace ui {
         {
             float offsetX = (rotatedCenterBounds.origin.x + rotatedCenterBounds.size.height/2) - (rotatedCenterBoundsOriginal.origin.x + rotatedCenterBoundsOriginal.size.height/2);
             float offsetY = (rotatedCenterBoundsOriginal.origin.y + rotatedCenterBoundsOriginal.size.width/2)- (rotatedCenterBounds.origin.y + rotatedCenterBounds.size.width/2);
-            _centerOffset.x = -offsetY;
-            _centerOffset.y = -offsetX;
+            _centerOffset.x = offsetY;
+            _centerOffset.y = offsetX;
         }
         else
         {
             float offsetX = (rotatedCenterBounds.origin.x + rotatedCenterBounds.size.width/2) - (rotatedCenterBoundsOriginal.origin.x + rotatedCenterBoundsOriginal.size.width/2);
             float offsetY = (rotatedCenterBoundsOriginal.origin.y + rotatedCenterBoundsOriginal.size.height/2)- (rotatedCenterBounds.origin.y + rotatedCenterBounds.size.height/2);
             _centerOffset.x = offsetX;
-            _centerOffset.y = -offsetY;
+            _centerOffset.y = offsetY;
         }
         
         // Centre
