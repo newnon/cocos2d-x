@@ -42,6 +42,7 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.opengl.GLSurfaceView;
@@ -330,6 +331,8 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
 
         // ...add to FrameLayout
         mFrameLayout.addView(this.mGLSurfaceView);
+        
+        mFrameLayout.setVisibility(View.INVISIBLE);
 
         // Switch to supported OpenGL (ARGB888) mode on emulator
         if (isAndroidEmulator())
@@ -364,6 +367,10 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
       }
       Log.d(TAG, "isEmulator=" + isEmulator);
       return isEmulator;
+   }
+   
+   public void onNativeInit() {
+	   mFrameLayout.setVisibility(View.VISIBLE);
    }
 
     // ===========================================================
