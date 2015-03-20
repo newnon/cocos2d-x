@@ -96,7 +96,7 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
     
     if(particle)
     {
-        particle->setPosVar(_posVar);
+        particle->setPosVar(_posVar * CCBXReader::getResolutionScale());
         
         particle->setEmissionRate(_emissionRate);
         particle->setDuration(_duration);
