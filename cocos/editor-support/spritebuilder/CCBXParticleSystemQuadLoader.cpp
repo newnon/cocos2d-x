@@ -102,10 +102,10 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
         particle->setDuration(_duration);
         particle->setLife(_life.x);
         particle->setLifeVar(_life.y);
-        particle->setStartSize(_startSize.x);
-        particle->setStartSizeVar(_startSize.y);
-        particle->setEndSize(_endSize.x);
-        particle->setEndSizeVar(_endSize.y);
+        particle->setStartSize(_startSize.x * CCBXReader::getResolutionScale());
+        particle->setStartSizeVar(_startSize.y * CCBXReader::getResolutionScale());
+        particle->setEndSize(_endSize.x * CCBXReader::getResolutionScale());
+        particle->setEndSizeVar(_endSize.y * CCBXReader::getResolutionScale());
         particle->setStartSpin(_startSpin.x);
         particle->setStartSpinVar(_startSpin.y);
         particle->setEndSpin(_endSpin.x);
