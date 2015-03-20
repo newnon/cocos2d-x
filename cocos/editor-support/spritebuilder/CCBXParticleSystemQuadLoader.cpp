@@ -119,19 +119,19 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
         switch(_emitterMode)
         {
             case ParticleSystem::Mode::GRAVITY:
-                particle->setTangentialAccel(_tangentialAccel.x);
-                particle->setTangentialAccelVar(_tangentialAccel.y);
-                particle->setRadialAccel(_radialAccel.x);
-                particle->setRadialAccelVar(_radialAccel.y);
-                particle->setGravity(_gravity);
-                particle->setSpeed(_speed.x);
-                particle->setSpeedVar(_speed.y);
+                particle->setTangentialAccel(_tangentialAccel.x * CCBXReader::getResolutionScale());
+                particle->setTangentialAccelVar(_tangentialAccel.y * CCBXReader::getResolutionScale());
+                particle->setRadialAccel(_radialAccel.x * CCBXReader::getResolutionScale());
+                particle->setRadialAccelVar(_radialAccel.y * CCBXReader::getResolutionScale());
+                particle->setGravity(_gravity * CCBXReader::getResolutionScale());
+                particle->setSpeed(_speed.x * CCBXReader::getResolutionScale());
+                particle->setSpeedVar(_speed.y * CCBXReader::getResolutionScale());
                 break;
             case ParticleSystem::Mode::RADIUS:
-                particle->setStartRadius(_startRadius.x);
-                particle->setStartRadiusVar(_startRadius.y);
-                particle->setEndRadius(_endRadius.x);
-                particle->setEndRadiusVar(_endRadius.y);
+                particle->setStartRadius(_startRadius.x * CCBXReader::getResolutionScale());
+                particle->setStartRadiusVar(_startRadius.y * CCBXReader::getResolutionScale());
+                particle->setEndRadius(_endRadius.x * CCBXReader::getResolutionScale());
+                particle->setEndRadiusVar(_endRadius.y * CCBXReader::getResolutionScale());
                 particle->setRotatePerSecond(_rotatePerSecond.x);
                 particle->setRotatePerSecondVar(_rotatePerSecond.y);
                 break;
