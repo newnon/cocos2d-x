@@ -44,7 +44,7 @@ class CC_DLL CCBXReaderOwner
 {
 public:
     virtual bool onAssignCCBMemberVariable(const std::string &memberVariableName, Node* node) { return false; }
-    virtual bool onAssignCCBCustomProperty(const std::string &memberVariableName, const Value& value) { return false; }
+    virtual bool onAssignCCBCustomProperty(const std::string &customPropertyName, const Value& value) { return false; }
     virtual ccReaderClickCallback onResolveCCBClickSelector(const std::string &selectorName, Node* node) { return ccReaderClickCallback(); }
     virtual ccReaderTouchCallback onResolveCCBTouchSelector(const std::string &selectorName, Node* node) { return ccReaderTouchCallback(); }
     virtual ccReaderEventCallback onResolveCCBCallFuncSelector(const std::string &selectorName, Node* node) { return ccReaderEventCallback(); };
@@ -72,9 +72,9 @@ public:
         else
             return false;
     }
-    virtual bool onAssignCCBCustomProperty(const std::string &memberVariableName, const Value& value){
+    virtual bool onAssignCCBCustomProperty(const std::string &customPropertyName, const Value& value){
         if(onAssignCCBCustomPropertyFunction)
-            return onAssignCCBCustomPropertyFunction(memberVariableName, value);
+            return onAssignCCBCustomPropertyFunction(customPropertyName, value);
         else
             return false;
     }
@@ -111,27 +111,52 @@ public:
 #define CCBX_MEMBERVARIABLEASSIGNER_GLUE(MEMBERVARIABLENAME, MEMBERVARIABLE) \
     if(cocos2d::spritebuilder::membervariableAssign(MEMBERVARIABLENAME, memberVariableName, MEMBERVARIABLE, node)) {\
         return true; \
-}
+    }
     
 #define CCBX_MEMBERVARIABLEASSIGNER_GLUE_VECTOR(MEMBERVARIABLENAME, MEMBERVARIABLE) \
     if(cocos2d::spritebuilder::membervariableAssignVector(MEMBERVARIABLENAME, memberVariableName, MEMBERVARIABLE, node)) {\
         return true; \
-}
+    }
+    
+#define CCBX_MEMBERVARIABLEASSIGNER_GLUE_SIMPLE(MEMBERVARIABLENAME) \
+    if(cocos2d::spritebuilder::membervariableAssign(#MEMBERVARIABLENAME, memberVariableName, _##MEMBERVARIABLENAME, node)) {\
+        return true; \
+    }
+    
+#define CCBX_MEMBERVARIABLEASSIGNER_GLUE_VECTOR_SIMPLE(MEMBERVARIABLENAME) \
+    if(cocos2d::spritebuilder::membervariableAssignVector(#MEMBERVARIABLENAME, memberVariableName, _##MEMBERVARIABLENAME, node)) {\
+        return true; \
+    }
 
 #define CCBX_SELECTORRESOLVER_CLICK_GLUE(TARGET, SELECTORNAME, METHOD) \
     if(selectorName == SELECTORNAME) { \
         return std::bind(&METHOD, TARGET, std::placeholders::_1); \
-}
+    }
+    
+#define CCBX_SELECTORRESOLVER_CLICK_GLUE_SIMPLE(SELECTORNAME) \
+    if(selectorName == #SELECTORNAME) { \
+        return [this](Ref* ref){ this->SELECTORNAME(ref); }; \
+    }
     
 #define CCBX_SELECTORRESOLVER_TOUCH_GLUE(TARGET, SELECTORNAME, METHOD) \
     if(selectorName == SELECTORNAME) { \
         return std::bind(&METHOD, TARGET, std::placeholders::_1, std::placeholders::_2); \
-}
+    }
+    
+#define CCBX_SELECTORRESOLVER_TOUCH_GLUE_SIMPLE(SELECTORNAME) \
+    if(selectorName == #SELECTORNAME) { \
+        return [this](Ref* ref, ui::WidgetTouchEventType type){ this->SELECTORNAME(ref, type); }; \
+    }
     
 #define CCBX_SELECTORRESOLVER_EVENT_GLUE(TARGET, SELECTORNAME, METHOD) \
     if(selectorName == SELECTORNAME) { \
         return std::bind(&METHOD, TARGET, std::placeholders::_1); \
-}
+    }
+    
+#define CCBX_SELECTORRESOLVER_EVENT_GLUE_SIMPLE(SELECTORNAME) \
+    if(selectorName == #SELECTORNAME) { \
+        return [this](Node* node){ this->SELECTORNAME(node); }; \
+    }
     
 template <class T>
 inline bool membervariableAssign(const std::string &name, const std::string &memberVariableName, T *&variable, Node* node)
