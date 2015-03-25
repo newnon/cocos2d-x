@@ -88,6 +88,12 @@ extern "C"
 #include "android/CCFileUtils-android.h"
 #endif
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
+#include "SDL/SDL.h"
+#include "SDL/SDL_image.h"
+#include "emscripten.h"
+#endif
+
 #define CC_GL_ATC_RGB_AMD                                          0x8C92
 #define CC_GL_ATC_RGBA_EXPLICIT_ALPHA_AMD                          0x8C93
 #define CC_GL_ATC_RGBA_INTERPOLATED_ALPHA_AMD                      0x87EE
@@ -478,21 +484,22 @@ Image::~Image()
         CC_SAFE_FREE(_data);
 }
 
+
 bool Image::initWithImageFile(const std::string& path)
 {
     bool ret = false;
     _filePath = FileUtils::getInstance()->fullPathForFilename(path);
 
 #ifdef EMSCRIPTEN
-    // Emscripten includes a re-implementation of SDL that uses HTML5 canvas
-    // operations underneath. Consequently, loading images via IMG_Load (an SDL
-    // API) will be a lot faster than running libpng et al as compiled with
-    // Emscripten.
-    SDL_Surface *iSurf = IMG_Load(fullPath.c_str());
-
+//    // Emscripten includes a re-implementation of SDL that uses HTML5 canvas
+//    // operations underneath. Consequently, loading images via IMG_Load (an SDL
+//    // API) will be a lot faster than running libpng et al as compiled with
+//    // Emscripten.
+    SDL_Surface *iSurf = IMG_Load(_filePath.c_str());
+//
     int size = 4 * (iSurf->w * iSurf->h);
     ret = initWithRawData((const unsigned char*)iSurf->pixels, size, iSurf->w, iSurf->h, 8, true);
-
+//
     unsigned int *tmp = (unsigned int *)_data;
     int nrPixels = iSurf->w * iSurf->h;
     for(int i = 0; i < nrPixels; i++)

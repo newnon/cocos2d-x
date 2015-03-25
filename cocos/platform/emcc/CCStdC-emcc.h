@@ -23,25 +23,41 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#ifndef __PLATFORM_CCGL_H__
-#define __PLATFORM_CCGL_H__
+#ifndef __CC_STD_C_H__
+#define __CC_STD_C_H__
 
 #include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-#include "platform/mac/CCGL-mac.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-#include "platform/ios/CCGL-ios.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-#include "platform/android/CCGL-android.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-#include "platform/win32/CCGL-win32.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WP8 || CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
-#include "platform/winrt/CCGL.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-#include "platform/linux/CCGL-linux.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-#include "platform/emcc/CCGL-emcc.h"
-#endif
+#include "platform/CCPlatformMacros.h"
 
-#endif /* __PLATFORM_CCPLATFORMDEFINE_H__*/
+#include <float.h>
+#include <math.h>
+#include <string.h>
+#include <stdarg.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <sys/time.h>
+#include <stdint.h>
+#include <limits.h>
+
+#include <functional>
+
+#ifndef MIN
+#define MIN(x,y) (((x) > (y)) ? (y) : (x))
+#endif  // MIN
+
+#ifndef MAX
+#define MAX(x,y) (((x) < (y)) ? (y) : (x))
+#endif  // MAX
+
+// some function linux do not have
+#define tanf tan
+#define sqrtf sqrt
+#define cosf cos
+#define sinf sin
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+
+#endif  // __CC_STD_C_H__

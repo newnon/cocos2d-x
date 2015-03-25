@@ -40,6 +40,8 @@ THE SOFTWARE.
 #include "platform/winrt/CCPlatformDefine-winrt.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "platform/linux/CCPlatformDefine-linux.h"
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
+#include "platform/emcc/CCPlatformDefine-emcc.h"
 #endif
 
 #endif /* __PLATFORM_CCPLATFORMDEFINE_H__*/
