@@ -143,6 +143,11 @@ CCBAnimationManager::CCBAnimationManager(float mainScale, float additionalScale,
 {
     init();
 }
+    
+CCBAnimationManager *CCBAnimationManager::fromNode(Node *node)
+{
+    return dynamic_cast<CCBAnimationManager*>(node->getUserObject());
+}
 
 bool CCBAnimationManager::init()
 {
