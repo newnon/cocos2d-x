@@ -30,6 +30,7 @@ import javax.microedition.khronos.egl.EGLDisplay;
 import org.cocos2dx.lib.Cocos2dxHelper.Cocos2dxHelperListener;
 import com.chukong.cocosplay.client.CocosPlayClient;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -42,9 +43,9 @@ import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager.OnActivityResultListener;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.opengl.GLSurfaceView;
 
 public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelperListener {
     // ===========================================================
@@ -344,6 +345,11 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     
     public Cocos2dxGLSurfaceView onCreateView() {
         Cocos2dxGLSurfaceView glSurfaceView = new Cocos2dxGLSurfaceView(this);
+        
+        if (Build.VERSION.SDK_INT >= 11)
+        {
+        	hideSystemUI(mFrameLayout);
+        }
         //this line is need on some device if we specify an alpha bits
         if(this.mGLContextAttrs[3] > 0) glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
 
@@ -351,6 +357,30 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         glSurfaceView.setEGLConfigChooser(chooser);
 
         return glSurfaceView;
+    }
+    
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus)
+    {
+        super.onWindowFocusChanged(hasFocus);
+        if (hasFocus && Build.VERSION.SDK_INT >= 11)
+        {
+            hideSystemUI(mFrameLayout);
+        }
+    }
+    
+    @SuppressLint("NewApi") private static void hideSystemUI(FrameLayout frameLayout)
+    {
+        // Set the IMMERSIVE flag.
+        // Set the content to appear under the system bars so that the content
+        // doesn't resize when the system bars hide and show.
+    	frameLayout.setSystemUiVisibility(
+                Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_LAYOUT_STABLE 
+                | Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                | Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                | Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
     }
 
    private final static boolean isAndroidEmulator() {
