@@ -47,7 +47,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
-import android.opengl.GLSurfaceView;
 
 public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelperListener {
     // ===========================================================
@@ -306,6 +305,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
 
 
     protected FrameLayout mFrameLayout = null;
+    private FrameLayout mFrameLayout2 = null;
     // ===========================================================
     // Methods
     // ===========================================================
@@ -317,6 +317,9 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
                                        ViewGroup.LayoutParams.MATCH_PARENT);
         mFrameLayout = new FrameLayout(this);
         mFrameLayout.setLayoutParams(framelayout_params);
+        mFrameLayout2 = new FrameLayout(this);
+        mFrameLayout2.setLayoutParams(framelayout_params);
+        mFrameLayout.addView(mFrameLayout2);
 
         // Cocos2dxEditText layout
         ViewGroup.LayoutParams edittext_layout_params =
@@ -326,15 +329,14 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         edittext.setLayoutParams(edittext_layout_params);
 
         // ...add to FrameLayout
-        mFrameLayout.addView(edittext);
+        mFrameLayout2.addView(edittext);
 
         // Cocos2dxGLSurfaceView
         this.mGLSurfaceView = this.onCreateView();
 
         // ...add to FrameLayout
-        mFrameLayout.addView(this.mGLSurfaceView);
-        
-        //mFrameLayout.setVisibility(View.INVISIBLE);
+        mFrameLayout2.addView(this.mGLSurfaceView);
+        mFrameLayout2.setVisibility(View.INVISIBLE);
 
         // Switch to supported OpenGL (ARGB888) mode on emulator
         if (isAndroidEmulator())
@@ -352,7 +354,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         
         if (Build.VERSION.SDK_INT >= 11)
         {
-        	hideSystemUI(glSurfaceView);
+        	hideSystemUI(mFrameLayout);
         }
         //this line is need on some device if we specify an alpha bits
         if(this.mGLContextAttrs[3] > 0) glSurfaceView.getHolder().setFormat(PixelFormat.TRANSLUCENT);
@@ -369,16 +371,16 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus && Build.VERSION.SDK_INT >= 11)
         {
-            hideSystemUI(mGLSurfaceView);
+            hideSystemUI(mFrameLayout);
         }
     }
     
-    @SuppressLint("NewApi") private static void hideSystemUI(Cocos2dxGLSurfaceView glSurfaceView)
+    @SuppressLint("NewApi") private static void hideSystemUI(FrameLayout frameLayout)
     {
         // Set the IMMERSIVE flag.
         // Set the content to appear under the system bars so that the content
         // doesn't resize when the system bars hide and show.
-    	glSurfaceView.setSystemUiVisibility(
+    	frameLayout.setSystemUiVisibility(
                 Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_LAYOUT_STABLE 
                 | Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 | Cocos2dxGLSurfaceView.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
@@ -401,7 +403,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
    }
    
    public void onNativeInit() {
-	   //mFrameLayout.setVisibility(View.VISIBLE);
+	   mFrameLayout2.setVisibility(View.VISIBLE);
    }
 
     // ===========================================================
