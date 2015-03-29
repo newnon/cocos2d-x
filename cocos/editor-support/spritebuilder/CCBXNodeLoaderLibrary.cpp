@@ -66,7 +66,8 @@ NodeLoader *NodeLoaderLibrary::createNodeLoader(const std::string &name) const
 
 void NodeLoaderLibrary::registerNodeLoader(const std::string &name, const NodeLoaderCreateFuntion &func)
 {
-    
+    _loaders.erase(name);
+    _loaders.emplace(name, func);
 }
 
 NodeLoaderLibrary::NodeLoaderLibrary()
