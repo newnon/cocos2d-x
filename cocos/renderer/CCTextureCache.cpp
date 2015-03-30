@@ -41,12 +41,6 @@ THE SOFTWARE.
 
 #include "deprecated/CCString.h"
 
-
-#ifdef EMSCRIPTEN
-#include <emscripten/emscripten.h>
-#include "platform/emscripten/CCTextureCacheEmscripten.h"
-#endif // EMSCRIPTEN
-
 using namespace std;
 
 NS_CC_BEGIN

@@ -31,7 +31,9 @@ THE SOFTWARE.
 #include "2d/CCNode.h"
 #include "base/CCProtocols.h"
 #include "renderer/CCCustomCommand.h"
-
+#ifdef EMSCRIPTEN
+#include "2d/CCGLBufferedNode.h"
+#endif // EMSCRIPTEN
 
 NS_CC_BEGIN
 
@@ -59,6 +61,9 @@ All features from Node are valid, plus the following new features:
 - It can receive Accelerometer input
 */
 class CC_DLL Layer : public Node
+#ifdef EMSCRIPTEN
+, public GLBufferedNode
+#endif // EMSCRIPTEN
 {
 public:    
     /** creates a fullscreen black layer */

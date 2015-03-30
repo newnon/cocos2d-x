@@ -238,6 +238,13 @@ THE SOFTWARE.
 	#include "platform/winrt/CCPrecompiledShaders.h"
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_WP8
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
+    #include "platform/desktop/CCGLViewImpl-desktop.h"
+    #include "platform/emcc/CCApplication-emcc.h"
+    #include "platform/emcc/CCGL-emcc.h"
+    #include "platform/emcc/CCStdC-emcc.h"
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_MAC
+
 // script_support
 #include "base/CCScriptSupport.h"
 

@@ -34,7 +34,7 @@ THE SOFTWARE.
 #include "math/CCGeometry.h"
 #include "base/ccTypes.h"
 #ifdef EMSCRIPTEN
-#include "CCGLBufferedNode.h"
+#include "2d/CCGLBufferedNode.h"
 #endif // EMSCRIPTEN
 
 NS_CC_BEGIN

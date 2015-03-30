@@ -114,6 +114,14 @@ elseif(LINUX)
 elseif(ANDROID)
   ADD_DEFINITIONS (-DUSE_FILE32API)
   set(PLATFORM_FOLDER android)
+elseif(EMSCRIPTEN)
+  ADD_DEFINITIONS(-DLINUX)
+  set(PLATFORM_FOLDER emcc)
+  set(USE_WEBP OFF)
+  set(USE_CHIPMUNK OFF)
+  set(USE_ZLIB 1)
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -s USE_ZLIB=1 -s USE_SDL=2")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -s USE_ZLIB=1 -s USE_SDL=2")
 else()
   message( FATAL_ERROR "Unsupported platform, CMake will exit" )
 endif()
@@ -151,7 +159,7 @@ if(USE_PREBUILT_LIBS)
 endif()
 
 # GLFW3 used on Mac, Windows and Linux desktop platforms
-if(LINUX OR MACOSX OR WINDOWS)
+if(LINUX OR MACOSX OR WINDOWS OR EMSCRIPTEN)
   cocos_find_package(OpenGL OPENGL REQUIRED)
 
   if(LINUX OR WINDOWS)
@@ -177,7 +185,7 @@ if(LINUX OR MACOSX OR WINDOWS)
     # because FindOpenAL.cmake set include dir for '#include <al.h>' for portability (not for '#include <AL/al.h>'
     set(OPENAL_DEFINITIONS "-DOPENAL_PLAIN_INCLUDES")
   endif()
-endif(LINUX OR MACOSX OR WINDOWS)
+endif(LINUX OR MACOSX OR WINDOWS OR EMSCRIPTEN)
 
 # Freetype required on all platforms
 cocos_find_package(Freetype FREETYPE REQUIRED)
@@ -227,8 +235,10 @@ endif()
 message(STATUS "TinyXML2 include dirs: ${TinyXML2_INCLUDE_DIRS}")
 
 # libjpeg
+if(NOT EMSCRIPTEN)
 cocos_find_package(JPEG JPEG REQUIRED)
 cocos_find_package(ZLIB ZLIB REQUIRED)
+endif()
 
 # minizip (we try to migrate to minizip from https://github.com/nmoinvaz/minizip)
 # only msys2 currently provides package for this variant, all other
@@ -251,10 +261,12 @@ else()
   add_definitions(-DMINIZIP_FROM_SYSTEM)
 endif()
 
+if(NOT EMSCRIPTEN)
 cocos_find_package(PNG PNG REQUIRED)
 cocos_find_package(TIFF TIFF REQUIRED)
 cocos_find_package(WEBSOCKETS WEBSOCKETS REQUIRED)
 cocos_find_package(CURL CURL REQUIRED)
+endif()
 
 # flatbuffers (not prebuilded, exists as source)
 # TODO: for now we can't use upstream flatbuffers because these files:
@@ -285,11 +297,14 @@ add_subdirectory(cocos)
 # build cpp tests
 if(BUILD_CPP_TESTS)
   add_subdirectory(tests/cpp-empty-test)
+if(NOT EMSCRIPTEN)
   add_subdirectory(tests/cpp-tests)
+endif()
 endif(BUILD_CPP_TESTS)
 
 ## Scripting
 if(BUILD_LUA_LIBS)
+if(NOT EMSCRIPTEN)
     add_subdirectory(cocos/scripting/lua-bindings)
 
   # build lua tests
@@ -297,5 +312,5 @@ if(BUILD_LUA_LIBS)
     add_subdirectory(tests/lua-tests/project)
     add_subdirectory(tests/lua-empty-test/project)
   endif(BUILD_LUA_TESTS)
-
+endif()
 endif(BUILD_LUA_LIBS)

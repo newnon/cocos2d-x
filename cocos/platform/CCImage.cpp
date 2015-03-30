@@ -54,7 +54,17 @@ extern "C"
     }
 #endif
 #endif
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
+#define CC_USE_PNG 0
+#define CC_USE_JPEG 0
+#define CC_USE_TIFF 0
+#define CC_USE_WEBP 0
+#endif
+    
+#if CC_USE_PNG
 #include "png.h"
+#endif
     
 #if CC_USE_TIFF
 #include "tiffio.h"
@@ -71,7 +81,7 @@ extern "C"
 #include "base/pvr.h"
 #include "base/TGAlib.h"
 
-#if (CC_TARGET_PLATFORM != CC_PLATFORM_WP8) && (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT)
+#if (CC_TARGET_PLATFORM != CC_PLATFORM_WP8) && (CC_TARGET_PLATFORM != CC_PLATFORM_WINRT )&& (CC_TARGET_PLATFORM != CC_PLATFORM_EMSCRIPTEN)
 #if CC_USE_WEBP
 #include "decode.h"
 #endif // CC_USE_WEBP
@@ -408,7 +418,7 @@ namespace
 //atittc struct end
 
 //////////////////////////////////////////////////////////////////////////
-
+#if CC_USE_PNG
 namespace
 {
     typedef struct 
@@ -433,6 +443,7 @@ namespace
         }
     }
 }
+#endif
 
 Texture2D::PixelFormat getDevicePixelFormat(Texture2D::PixelFormat format)
 {
@@ -924,6 +935,7 @@ bool Image::initWithJpgData(const unsigned char * data, ssize_t dataLen)
 
 bool Image::initWithPngData(const unsigned char * data, ssize_t dataLen)
 {
+#if CC_USE_PNG
     // length of bytes to check if it is a valid png file
 #define PNGSIGSIZE  8
     bool ret = false;
@@ -1070,6 +1082,9 @@ bool Image::initWithPngData(const unsigned char * data, ssize_t dataLen)
         png_destroy_read_struct(&png_ptr, (info_ptr) ? &info_ptr : 0, 0);
     }
     return ret;
+#else
+    return false;
+#endif
 }
 
 #if CC_USE_TIFF
@@ -2146,6 +2161,7 @@ bool Image::saveToFile(const std::string& filename, bool isToRGB)
 
 bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
 {
+#if CC_USE_PNG
     bool ret = false;
     do 
     {
@@ -2287,6 +2303,9 @@ bool Image::saveImageToPNG(const std::string& filePath, bool isToRGB)
         ret = true;
     } while (0);
     return ret;
+#else
+    return false;
+#endif
 }
 bool Image::saveImageToJPG(const std::string& filePath)
 {
