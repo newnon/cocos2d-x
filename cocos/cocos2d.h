@@ -239,7 +239,7 @@ THE SOFTWARE.
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_WP8
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
-    #include "platform/desktop/CCGLViewImpl-desktop.h"
+    #include "platform/emcc/CCGLViewImpl-emcc.h"
     #include "platform/emcc/CCApplication-emcc.h"
     #include "platform/emcc/CCGL-emcc.h"
     #include "platform/emcc/CCStdC-emcc.h"
