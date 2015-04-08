@@ -36,11 +36,6 @@ public:
 #if CC_USE_PHYSICS
         body->setDynamic(dynamic);
         
-        if(dynamic && setMass)
-            body->setMass(mass);
-        if(dynamic && setMoment)
-            body->setMoment(moment);
-        
         body->setCategoryBitmask(categoryBitmask);
         body->setContactTestBitmask(contactTestBitmask);
         body->setCollisionBitmask(collisionBitmask);
@@ -67,6 +62,11 @@ public:
             it->setFriction(friction);
             it->setRestitution(elasticity);
         }
+        
+        if(dynamic && setMass)
+            body->setMass(mass);
+        if(dynamic && setMoment)
+            body->setMoment(moment);
 #endif
     }
     
