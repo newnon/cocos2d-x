@@ -349,10 +349,16 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         setContentView(mFrameLayout);
     }
     
+    //override it to control hide of android UI 
+    public boolean isUiHiden()
+    {
+        return true;
+    }
+    
     public Cocos2dxGLSurfaceView onCreateView() {
         Cocos2dxGLSurfaceView glSurfaceView = new Cocos2dxGLSurfaceView(this);
         
-        if (Build.VERSION.SDK_INT >= 11)
+        if (isUiHiden() && Build.VERSION.SDK_INT >= 11)
         {
         	hideSystemUI(mFrameLayout);
         }
@@ -369,7 +375,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     public void onWindowFocusChanged(boolean hasFocus)
     {
         super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && Build.VERSION.SDK_INT >= 11)
+        if (isUiHiden() && hasFocus && Build.VERSION.SDK_INT >= 11)
         {
             hideSystemUI(mFrameLayout);
         }
