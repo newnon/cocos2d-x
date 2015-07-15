@@ -12,7 +12,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectName>libcocos2d</ProjectName>
-    <ProjectGuid>{98A51BA8-FC3A-415B-AC8F-8C7BD464E93E}</ProjectGuid>
+    <ProjectGuid>{BE464E18-B7E2-4DFC-96DE-294FFFBE344B}</ProjectGuid>
     <RootNamespace>cocos2d-x.win32</RootNamespace>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
@@ -565,6 +565,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\chipmunk\prebuilt\win32\release-lib\*.*
     <ClCompile Include="..\editor-support\spritebuilder\CCBXReaderParams.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXScale9SpriteLoader.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXScissorsNodeLoader.cpp" />
+    <ClCompile Include="..\editor-support\spritebuilder\CCBXScrollListViewLoader.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXScrollViewLoader.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXSequence.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXSequenceProperty.cpp" />
@@ -573,6 +574,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\chipmunk\prebuilt\win32\release-lib\*.*
     <ClCompile Include="..\editor-support\spritebuilder\CCBXTextFieldLoader.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXTextLoader.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXWidgetLoader.cpp" />
+    <ClCompile Include="..\editor-support\spritebuilder\CCScrollListView.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\SpriteBuilder.cpp" />
     <ClCompile Include="..\math\CCAffineTransform.cpp" />
     <ClCompile Include="..\math\CCGeometry.cpp" />
@@ -1154,6 +1156,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\chipmunk\prebuilt\win32\release-lib\*.*
     <ClInclude Include="..\editor-support\spritebuilder\CCBXReaderParams.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXScale9SpriteLoader.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXScissorsNodeLoader.h" />
+    <ClInclude Include="..\editor-support\spritebuilder\CCBXScrollListViewLoader.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXScrollViewLoader.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXSequence.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXSequenceProperty.h" />

@@ -1885,6 +1885,12 @@
     <ClCompile Include="..\editor-support\spritebuilder\CCBXSequenceProperty.cpp">
       <Filter>spritebuilder\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\editor-support\spritebuilder\CCBXScrollListViewLoader.cpp">
+      <Filter>spritebuilder\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\editor-support\spritebuilder\CCScrollListView.cpp">
+      <Filter>spritebuilder\Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\physics\CCPhysicsBody.h">
@@ -3683,6 +3689,9 @@
       <Filter>spritebuilder\Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\editor-support\spritebuilder\SpriteBuilder.h">
+      <Filter>spritebuilder\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\editor-support\spritebuilder\CCBXScrollListViewLoader.h">
       <Filter>spritebuilder\Header Files</Filter>
     </ClInclude>
   </ItemGroup>
