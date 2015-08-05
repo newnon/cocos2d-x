@@ -33,6 +33,7 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
                 imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
                 imageView->setCapInsets(realMargins);
+                imageView->ignoreContentAdaptWithSize(false);
             }
             break;
         case SpriteFrameDescription::TextureResType::PLIST:
@@ -41,6 +42,7 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
                 imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
                 imageView->setCapInsets(realMargins);
+                imageView->ignoreContentAdaptWithSize(false);
             }
             break;
         default:
