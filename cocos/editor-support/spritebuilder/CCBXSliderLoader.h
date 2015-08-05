@@ -23,8 +23,13 @@ CC_CONSTRUCTOR_ACCESS:
 protected:
     virtual void onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value) override;
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
+    virtual void onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value) override;
     
 private:
+    SpriteFrameDescription _backGround;
+    SpriteFrameDescription _handleNormal;
+    SpriteFrameDescription _handleDisabled;
+    SpriteFrameDescription _handleHiglihted;
 };
 
 }

@@ -6,6 +6,10 @@ namespace spritebuilder {
     
 static const std::string PROPERTY_SPACING("spacing");
 static const std::string PROPERTY_DIRECTION("direction");
+static const std::string PROPERTY_BACKGROUND("backgroundSpriteFrame|Normal");
+static const std::string PROPERTY_HANDLE_NORMAL("handleSpriteFrame|Normal");
+static const std::string PROPERTY_HANDLE_HIGHLIGHTED("handleSpriteFrame|Highlighted");
+static const std::string PROPERTY_HANDLE_DISABLED("handleSpriteFrame|Disabled");
     
     
 SliderLoader *SliderLoader::create()
@@ -16,12 +20,74 @@ SliderLoader *SliderLoader::create()
 }
 Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    return ui::Slider::create();
+    ui::Slider *slider = ui::Slider::create();
+    switch(_backGround.type)
+    {
+        case SpriteFrameDescription::TextureResType::LOCAL:
+        {
+            slider->loadBarTexture(_backGround.path, ui::Widget::TextureResType::LOCAL);
+        }
+            break;
+        case SpriteFrameDescription::TextureResType::PLIST:
+        {
+            slider->loadBarTexture(_backGround.path, ui::Widget::TextureResType::PLIST);
+        }
+            break;
+        default:
+            break;
+    };
+    switch(_handleNormal.type)
+    {
+        case SpriteFrameDescription::TextureResType::LOCAL:
+        {
+            slider->loadSlidBallTextureNormal(_handleNormal.path, ui::Widget::TextureResType::LOCAL);
+        }
+            break;
+        case SpriteFrameDescription::TextureResType::PLIST:
+        {
+            slider->loadSlidBallTextureNormal(_handleNormal.path, ui::Widget::TextureResType::PLIST);
+        }
+            break;
+        default:
+            break;
+    };
+    switch(_handleDisabled.type)
+    {
+        case SpriteFrameDescription::TextureResType::LOCAL:
+        {
+            slider->loadSlidBallTextureDisabled(_handleDisabled.path, ui::Widget::TextureResType::LOCAL);
+        }
+            break;
+        case SpriteFrameDescription::TextureResType::PLIST:
+        {
+            slider->loadSlidBallTextureDisabled(_handleDisabled.path, ui::Widget::TextureResType::PLIST);
+        }
+            break;
+        default:
+            break;
+    };
+    switch(_handleHiglihted.type)
+    {
+        case SpriteFrameDescription::TextureResType::LOCAL:
+        {
+            slider->loadSlidBallTexturePressed(_handleHiglihted.path, ui::Widget::TextureResType::LOCAL);
+        }
+            break;
+        case SpriteFrameDescription::TextureResType::PLIST:
+        {
+            slider->loadSlidBallTexturePressed(_handleHiglihted.path, ui::Widget::TextureResType::PLIST);
+        }
+            break;
+        default:
+            break;
+    };
+    return slider;
+
 }
 void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
-    ui::Slider *slider = dynamic_cast<ui::Slider*>(node);
+    //WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    //ui::Slider *slider = dynamic_cast<ui::Slider*>(node);
 }
 
 SliderLoader::SliderLoader()
@@ -32,6 +98,21 @@ SliderLoader::SliderLoader()
 SliderLoader::~SliderLoader()
 {
     
+}
+    
+void SliderLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value)
+{
+    if(propertyName == PROPERTY_BACKGROUND) {
+        _backGround = value;
+    } else if(propertyName == PROPERTY_HANDLE_NORMAL) {
+        _handleNormal = value;
+    } else if(propertyName == PROPERTY_HANDLE_HIGHLIGHTED) {
+        _handleHiglihted = value;
+    } else if(propertyName == PROPERTY_HANDLE_DISABLED) {
+        _handleDisabled = value;
+    } else {
+        WidgetLoader::onHandlePropTypeSpriteFrame(propertyName, isExtraProp, value);
+    }
 }
     
 void SliderLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
