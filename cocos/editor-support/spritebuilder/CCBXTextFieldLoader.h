@@ -33,8 +33,8 @@ protected:
     virtual void onHandlePropTypeInteger(const std::string &propertyName, bool isExtraProp, int value) override;
     
 private:
-    cocos2d::Color3B _fontColor;
-    cocos2d::Color3B _placeholderFontColor;
+    cocos2d::Color3B _fontColor = cocos2d::Color3B::WHITE;
+    cocos2d::Color3B _placeholderFontColor = cocos2d::Color3B::WHITE;
     FloatScaleDescription _fontSize;
     std::string _label;
     std::string _placeholder;

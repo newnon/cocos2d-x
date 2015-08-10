@@ -29,7 +29,8 @@ TextFieldLoader *TextFieldLoader::create()
 
 Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    ui::TextField *textField = ui::TextField::create(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
+    ui::TextField *textField = ui::TextField::create(_placeholder, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
+    textField->setString(_label);
     textField->setTextVerticalAlignment(_textVAlignment);
     textField->setTextHorizontalAlignment(_textHAlignment);
     textField->setTextColor(Color4B(_fontColor));
