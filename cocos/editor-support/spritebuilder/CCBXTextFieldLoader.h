@@ -20,6 +20,7 @@ CC_CONSTRUCTOR_ACCESS:
     ~TextFieldLoader();
 
 protected:
+    virtual void onHandlePropTypeColor3(const std::string &propertyName, bool isExtraProp, const Color3B &value) override;
     virtual void onHandlePropTypeColor4(const std::string &propertyName, bool isExtraProp, const Color4B &value) override;
     virtual void onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const BlendFunc &value) override;
     virtual void onHandlePropTypeFontTTF(const std::string &propertyName, bool isExtraProp, const std::string &value) override;
@@ -29,18 +30,19 @@ protected:
     virtual void onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value) override;
     virtual void onHandlePropTypePosition(const std::string &propertyName, bool isExtraProp, const PositionDescription &value) override;
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
+    virtual void onHandlePropTypeInteger(const std::string &propertyName, bool isExtraProp, int value) override;
     
 private:
-    cocos2d::Color4B _outlineColor;
-    cocos2d::Color4B _shadowColor;
-    FloatScaleDescription _outlineWidth;
-    FloatScaleDescription _shadowBlurRadius;
-    cocos2d::Size _shadowOffset;
-    std::string _label;
-    std::string _font;
+    cocos2d::Color3B _fontColor;
+    cocos2d::Color3B _placeholderFontColor;
     FloatScaleDescription _fontSize;
+    std::string _label;
+    std::string _placeholder;
+    std::string _font;
     TextHAlignment _textHAlignment;
     TextVAlignment _textVAlignment;
+    int _maxLength = 0;
+    bool _password = false;
 };
 
 }
