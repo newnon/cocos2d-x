@@ -37,7 +37,7 @@ void NDKHelper::printSelectorList() {
     for (unsigned int i = 0; i < NDKHelper::selectorList.size(); ++i) {
         string s = NDKHelper::selectorList[i].getGroup();
         s.append(NDKHelper::selectorList[i].getName());
-        CCLog(s.c_str());
+        CCLog("%s", s.c_str());
     }
 }
 
@@ -100,7 +100,7 @@ extern "C"
         jsonMethodParams = json_object_get(root, __CALLED_METHOD_PARAMS__);
         
         // Just to see on the log screen if messages are propogating properly
-        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, jsonCharArray);
+        __android_log_print(ANDROID_LOG_DEBUG, LOG_TAG, "%s", jsonCharArray);
         
         NDKHelper::handleMessage(jsonMethodName, jsonMethodParams);
         json_decref(root);
