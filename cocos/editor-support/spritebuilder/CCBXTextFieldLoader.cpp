@@ -67,9 +67,9 @@ void TextFieldLoader::onHandlePropTypeCheck(const std::string &propertyName, boo
 void TextFieldLoader::onHandlePropTypeColor3(const std::string &propertyName, bool isExtraProp, const Color3B &value)
 {
     if(propertyName == PROPERTY_PLACEHOLDERFONTCOLOR) {
-        _fontColor = value;
-    } else if(propertyName == PROPERTY_FONTCOLOR) {
         _placeholderFontColor = value;
+    } else if(propertyName == PROPERTY_FONTCOLOR) {
+        _fontColor = value;
     } else {
         WidgetLoader::onHandlePropTypeColor3(propertyName, isExtraProp, value);
     }
