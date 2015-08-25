@@ -496,6 +496,11 @@ void Device::setKeepScreenOn(bool value)
     [[UIApplication sharedApplication] setIdleTimerDisabled:(BOOL)value];
 }
 
+std::string Device::getDevideUID()
+{
+    return [[[[UIDevice currentDevice] identifierForVendor] UUIDString] UTF8String];
+}
+
 NS_CC_END
 
 #endif // CC_PLATFORM_IOS

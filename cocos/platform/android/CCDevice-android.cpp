@@ -172,6 +172,23 @@ void Device::setKeepScreenOn(bool value)
     setKeepScreenOnJni(value);
 }
 
+std::string Device::getDevideUID()
+{
+	std::string ret;
+    JniMethodInfo methodInfo;
+    if (JniHelper::getStaticMethodInfo(methodInfo, "android/provider/Settings$Secure", "getString",
+	   "(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;"))
+    {
+	    jstring jstr = methodInfo.env->NewStringUTF("android_id");
+	    if(methodInfo.env->CallStaticObjectMethod(methodInfo.classID, methodInfo.methodID, jstr))
+        {
+        	ret = JniHelper::jstring2string(jstr);
+        }
+        methodInfo.env->DeleteLocalRef(jstr);
+    }
+    return ret;
+}
+
 NS_CC_END
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID

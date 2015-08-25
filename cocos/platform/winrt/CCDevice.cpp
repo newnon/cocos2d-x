@@ -207,6 +207,12 @@ void Device::setKeepScreenOn(bool value)
 {
 }
 
+std::string Device::getDevideUID()
+{
+	std::string ret;
+    return ret;
+}
+
 NS_CC_END
 
 #endif // (CC_TARGET_PLATFORM == CC_PLATFORM_WINRT) ||  (CC_TARGET_PLATFORM == CC_PLATFORM_WP8) 
