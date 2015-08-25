@@ -41,6 +41,8 @@ import android.os.IBinder;
 import android.os.ParcelFileDescriptor;
 import android.os.Vibrator;
 import android.preference.PreferenceManager.OnActivityResultListener;
+import android.provider.Settings;
+import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
@@ -238,6 +240,10 @@ public class Cocos2dxHelper {
     
     public static String getDeviceModel(){
         return Build.MODEL;
+    }
+    
+    public static String getDeviceUID(){
+        return Secure.getString(sActivity.getContentResolver(), Secure.ANDROID_ID);
     }
 
     public static AssetManager getAssetManager() {
