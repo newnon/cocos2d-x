@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include <vector>
 #include "base/CCRef.h"
 #include "math/CCGeometry.h"
 
@@ -22,6 +23,7 @@ public:
     void setLanguage(const std::string &language);
     const std::string &getLanguage() const;
     const std::string &getLocalizedString(const std::string &key) const;
+    std::vector<std::string> getLanguagesList() const;
     
 CC_CONSTRUCTOR_ACCESS:
     CCBReaderParams();

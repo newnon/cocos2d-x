@@ -25,6 +25,17 @@ CCBReaderParams::CCBReaderParams():_curentLanguage(Application::getInstance()->g
 CCBReaderParams::~CCBReaderParams() {
 }
     
+std::vector<std::string> CCBReaderParams::getLanguagesList() const
+{
+    std::vector<std::string> ret;
+    ret.reserve(_languages.size());
+    for(const auto &pair: _languages)
+    {
+        ret.push_back(pair.first);
+    }
+    return ret;
+}
+    
 bool CCBReaderParams::initWithPath(const std::string &path)
 {
     if(!loadParams(path))
