@@ -174,18 +174,21 @@ void Device::setKeepScreenOn(bool value)
 
 std::string Device::getDevideUID()
 {
-	std::string ret;
-    JniMethodInfo methodInfo;
-    if (JniHelper::getStaticMethodInfo(methodInfo, "android/provider/Settings$Secure", "getString",
-	   "(Landroid/content/ContentResolver;Ljava/lang/String;)Ljava/lang/String;"))
+    std::string ret;
+	
+	JniMethodInfo methodInfo;
+	if (! JniHelper::getStaticMethodInfo(methodInfo, "org/cocos2dx/lib/Cocos2dxActivity", "getDevideUID",
+	   "()Ljava/lang/String;"))
     {
-	    jstring jstr = methodInfo.env->NewStringUTF("android_id");
-	    if(methodInfo.env->CallStaticObjectMethod(methodInfo.classID, methodInfo.methodID, jstr))
-        {
-        	ret = JniHelper::jstring2string(jstr);
-        }
-        methodInfo.env->DeleteLocalRef(jstr);
+        CCLOG("%s %d: error to get methodInfo", __FILE__, __LINE__);
+        return ret;
     }
+    
+    jstring str = (jstring)methodInfo.env->CallStaticObjectMethod(methodInfo.classID, methodInfo.methodID);
+    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+    ret = JniHelper::jstring2string(str);
+    methodInfo.env->DeleteLocalRef(str);
+
     return ret;
 }
 

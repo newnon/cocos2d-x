@@ -28,6 +28,7 @@ import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLDisplay;
 
 import org.cocos2dx.lib.Cocos2dxHelper.Cocos2dxHelperListener;
+
 import com.chukong.cocosplay.client.CocosPlayClient;
 
 import android.annotation.SuppressLint;
@@ -42,6 +43,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Message;
 import android.preference.PreferenceManager.OnActivityResultListener;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -403,6 +405,10 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
    
    public void onNativeInit() {
 	   mFrameLayout2.setVisibility(View.VISIBLE);
+   }
+   
+   public final String getDevideUID() {
+	   return Secure.getString(sContext.getContentResolver(), Secure.ANDROID_ID); 
    }
 
     // ===========================================================
