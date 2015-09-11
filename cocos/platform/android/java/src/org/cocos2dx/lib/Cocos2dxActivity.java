@@ -407,7 +407,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
 	   mFrameLayout2.setVisibility(View.VISIBLE);
    }
    
-   public final String getDevideUID() {
+   public static String getDevideUID() {
 	   return Secure.getString(sContext.getContentResolver(), Secure.ANDROID_ID); 
    }
 
