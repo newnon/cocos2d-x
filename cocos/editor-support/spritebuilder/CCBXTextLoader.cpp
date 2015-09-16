@@ -39,9 +39,9 @@ Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, fl
     return text;
 }
 
-void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
     ui::Text *text = static_cast<ui::Text*>(node);
     if(_dimensions.size.width == 0 || _dimensions.size.height == 0)
         text->ignoreContentAdaptWithSize(true);

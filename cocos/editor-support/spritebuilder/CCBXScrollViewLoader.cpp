@@ -26,9 +26,9 @@ Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainSca
     return scrollView;
 }
 
-void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
     ui::ScrollView *scrollView = static_cast<ui::ScrollView*>(node);
     ui::ScrollView::Direction direction = ui::ScrollView::Direction::NONE;
     if(_horizontalScrollEnabled && _verticalScrollEnabled)
@@ -42,7 +42,7 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
     scrollView->setDirection(direction);
     if(_file)
     {
-        Node *childNode = _file->createNode(parentSize, mainScale, additionalScale);
+        Node *childNode = _file->createNode(parentSize, mainScale, additionalScale, owner);
         scrollView->setInnerContainerSize(childNode->getContentSize());
         scrollView->getInnerContainer()->addChild(childNode);
         scrollView->setEnabled(true);

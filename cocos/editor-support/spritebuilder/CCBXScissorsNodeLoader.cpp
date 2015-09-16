@@ -18,9 +18,9 @@ Node *ScissorsNodeLoader::createNodeInstance(const Size &parentSize, float mainS
 {
     return ui::Layout::create();
 }
-void ScissorsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void ScissorsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
     ui::Layout *layout = dynamic_cast<ui::Layout*>(node);
     layout->setClippingType(ui::Layout::ClippingType::SCISSOR);
     layout->setClippingEnabled(true);

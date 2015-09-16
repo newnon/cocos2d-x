@@ -51,7 +51,7 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
     return imageView;
 }
 
-void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
 }
 

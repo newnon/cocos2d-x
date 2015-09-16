@@ -23,7 +23,7 @@ Node *PhysicsNodeLoader::createNodeInstance(const Size &parentSize, float mainSc
     return PhysicsNode::create();
 }
     
-void PhysicsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void PhysicsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
 #if CC_USE_PHYSICS
     PhysicsNode *physicsNode = dynamic_cast<PhysicsNode*>(node);

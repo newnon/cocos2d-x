@@ -44,9 +44,9 @@ Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScal
     return textField;
 }
 
-void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
 }
 
 TextFieldLoader::TextFieldLoader()

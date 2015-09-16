@@ -25,9 +25,9 @@ Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mai
     return scrollListView;
 }
 
-void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
     ScrollListView *scrollView = static_cast<ScrollListView*>(node);
     scrollView->setBounceEnabled(_bounce);
     scrollView->setClippingEnabled(_clipping);

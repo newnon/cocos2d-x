@@ -84,7 +84,7 @@ Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, 
     return slider;
 
 }
-void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     //WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
     //ui::Slider *slider = dynamic_cast<ui::Slider*>(node);

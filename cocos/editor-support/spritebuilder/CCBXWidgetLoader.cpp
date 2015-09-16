@@ -22,7 +22,7 @@ Node *WidgetLoader::createNodeInstance(const Size &parentSize, float mainScale, 
     return ui::Widget::create();
 }
     
-void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     ui::Widget *widget = dynamic_cast<ui::Widget*>(node);
     widget->setEnabled(_enabled);

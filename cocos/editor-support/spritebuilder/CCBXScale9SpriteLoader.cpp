@@ -28,7 +28,7 @@ Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainS
     return sprite;
 }
 
-void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     ui::Scale9Sprite *sprite = static_cast<ui::Scale9Sprite*>(node);
     sprite->setBlendFunc(_blendFunc);

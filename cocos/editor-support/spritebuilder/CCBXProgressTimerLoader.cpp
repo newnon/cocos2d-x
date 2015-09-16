@@ -25,7 +25,7 @@ Node *ProgressTimerLoader::createNodeInstance(const Size &parentSize, float main
     return ProgressTimer::create(_spriteFrame.spriteFrame?Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame):Sprite::create());
 }
 
-void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     ProgressTimer *progressTimer = static_cast<ProgressTimer*>(node);
     progressTimer->setBarChangeRate(_barChangeRate);

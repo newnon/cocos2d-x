@@ -23,7 +23,7 @@ Node *SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, 
     return sprite;
 }
 
-void SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     Sprite *sprite = static_cast<Sprite*>(node);
     sprite->setBlendFunc(_blendFunc);

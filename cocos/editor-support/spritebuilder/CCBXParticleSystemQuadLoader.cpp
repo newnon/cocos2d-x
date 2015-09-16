@@ -87,7 +87,7 @@ Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float
     return BuilderParticleSystemQuad::createWithTotalParticles(_totalParticles);
 }
     
-void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     BuilderParticleSystemQuad *particle = static_cast<BuilderParticleSystemQuad*>(node);
     

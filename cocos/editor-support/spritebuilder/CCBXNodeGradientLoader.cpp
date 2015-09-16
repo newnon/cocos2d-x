@@ -27,9 +27,9 @@ Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainS
     return layer;
 }
 
-void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
     LayerGradient *layerColor = static_cast<LayerGradient*>(node);
     layerColor->setStartColor(_startColor);
     layerColor->setEndColor(_endColor);

@@ -13,7 +13,7 @@ public:
     
     static ScrollViewLoader *create();
     virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) override;
-    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale) override;
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) override;
     
 CC_CONSTRUCTOR_ACCESS:
     ScrollViewLoader();

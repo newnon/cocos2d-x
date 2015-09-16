@@ -213,7 +213,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
 {
     if(!node)
         return false;
-    setProperties(node, parentSize, mainScale, additionalScale);
+    setProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
     setCallbacks(node, owner, rootNode);
     if(!_memberVarAssignmentName.empty())
     {
@@ -304,7 +304,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
     return true;
 }
 
-void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     node->setVisible(_visible);
     node->setPosition(getAbsolutePosition(mainScale, additionalScale, _position.pos, _position.referenceCorner, _position.xUnits , _position.yUnits, parentSize));
@@ -324,7 +324,7 @@ void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainSca
     node->setOpacity(_opacity);
     node->setSkewX(_skew.x);
     node->setSkewY(_skew.y);
-    setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
 }
     
 void NodeLoader::setAnimation(Node* node, CCBAnimationManager *manager)
@@ -337,7 +337,7 @@ Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, fl
     return Node::create();
 }
     
-void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     
 }

@@ -22,7 +22,7 @@ Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScal
     return layer;
 }
 
-void NodeColorLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void NodeColorLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     LayerColor *layerColor = static_cast<LayerColor*>(node);
     layerColor->setBlendFunc(_blendFunc);

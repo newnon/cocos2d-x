@@ -33,9 +33,9 @@ Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainSca
     return loadingBar;
 }
 
-void LoadingBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void LoadingBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
     ui::LoadingBar *loadingBar = static_cast<ui::LoadingBar*>(node);
     loadingBar->setDirection(_direction);
 }

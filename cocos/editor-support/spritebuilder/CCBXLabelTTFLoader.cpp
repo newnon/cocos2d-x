@@ -43,7 +43,7 @@ Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale
     return label;
 }
 
-void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale)
+void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
     Label *label = static_cast<Label*>(node);
     //label->setBlendFunc(_blendFunc);
