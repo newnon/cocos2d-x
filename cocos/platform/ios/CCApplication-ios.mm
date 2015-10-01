@@ -139,6 +139,15 @@ Application::Platform Application::getTargetPlatform()
     }
 }
 
+std::string Application::getVersion()
+{
+    NSString *version = [[NSBundle mainBundle] objectForInfoDictionaryKey:@"CFBundleShortVersionString"];
+    if(version)
+        return [version UTF8String];
+    else
+        return "unknown";
+}
+
 bool Application::openURL(const std::string &url)
 {
     NSString* msg = [NSString stringWithCString:url.c_str() encoding:NSUTF8StringEncoding];

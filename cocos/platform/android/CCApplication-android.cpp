@@ -195,6 +195,11 @@ LanguageType Application::getCurrentLanguage()
     return ret;
 }
 
+std::string Application::getVersion()
+{
+    return getVersionNameJNI();
+}
+
 Application::Platform Application::getTargetPlatform()
 {
     return Platform::OS_ANDROID;

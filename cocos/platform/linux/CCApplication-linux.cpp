@@ -265,6 +265,11 @@ LanguageType Application::getCurrentLanguage()
     return ret;
 }
 
+std::string Application::getVersion()
+{
+    return "unknown";
+}
+
 NS_CC_END
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX

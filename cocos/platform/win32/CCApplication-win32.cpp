@@ -212,6 +212,11 @@ const char * Application::getCurrentLanguageCode()
     return code;
 }
 
+std::string Application::getVersion()
+{
+    return "unknown";
+}
+
 Application::Platform Application::getTargetPlatform()
 {
     return Platform::OS_WINDOWS;
