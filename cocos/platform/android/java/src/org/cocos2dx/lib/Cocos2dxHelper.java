@@ -37,6 +37,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
@@ -152,6 +154,17 @@ public class Cocos2dxHelper {
 
     public static String getCurrentLanguage() {
         return Locale.getDefault().getLanguage();
+    }
+    
+    public static String getVersionName() {
+		try {
+			PackageInfo pInfo = sActivity.getPackageManager().getPackageInfo(sPackageName, 0);
+			return pInfo.versionName;
+		} catch (NameNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return "unknown";
+		}
     }
     
     public static String getDeviceModel(){

@@ -144,6 +144,14 @@ public:
      * @lua NA
      */
     virtual bool openURL(const std::string &url) = 0;
+    
+    /**
+     @brief get application version from system
+     @return string representation of application version
+     * @js NA
+     * @lua NA
+     */
+    virtual std::string getVersion() = 0;
 };
 
 // end of platform group
