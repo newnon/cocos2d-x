@@ -11,6 +11,11 @@ static const std::string PROPERTY_HANDLE_NORMAL("handleSpriteFrame|Normal");
 static const std::string PROPERTY_HANDLE_HIGHLIGHTED("handleSpriteFrame|Highlighted");
 static const std::string PROPERTY_HANDLE_DISABLED("handleSpriteFrame|Disabled");
     
+static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
+static const std::string PROPERTY_MARGIN_TOP("marginTop");
+static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
+static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
+    
     
 SliderLoader *SliderLoader::create()
 {
@@ -20,17 +25,26 @@ SliderLoader *SliderLoader::create()
 }
 Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
 {
+    Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
     ui::Slider *slider = ui::Slider::create();
     switch(_backGround.type)
     {
         case SpriteFrameDescription::TextureResType::LOCAL:
         {
+            Size size = _backGround.spriteFrame->getOriginalSize();
+            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
             slider->loadBarTexture(_backGround.path, ui::Widget::TextureResType::LOCAL);
+            slider->setCapInsetsBarRenderer(realMargins);
+            slider->setScale9Enabled(!realMargins.size.equals(size) || realMargins.origin != Vec2::ZERO);
         }
             break;
         case SpriteFrameDescription::TextureResType::PLIST:
         {
+            Size size = _backGround.spriteFrame->getOriginalSize();
+            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
             slider->loadBarTexture(_backGround.path, ui::Widget::TextureResType::PLIST);
+            slider->setCapInsetsBarRenderer(realMargins);
+            slider->setScale9Enabled(!realMargins.size.equals(size) || realMargins.origin != Vec2::ZERO);
         }
             break;
         default:
@@ -115,6 +129,21 @@ void SliderLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, 
     }
 }
     
+void SliderLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
+{
+    if(propertyName == PROPERTY_MARGIN_LEFT) {
+        _margins.origin.x = value;
+    } else if(propertyName == PROPERTY_MARGIN_TOP) {
+        _margins.origin.y = value;
+    } else if(propertyName == PROPERTY_MARGIN_RIGHT) {
+        _margins.size.width = value;
+    } else if(propertyName == PROPERTY_MARGIN_BOTTOM) {
+        _margins.size.height = value;
+    } else {
+        WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
+    }
+}
+    
 void SliderLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
 {
     if(propertyName == PROPERTY_SPACING) {
@@ -122,8 +151,8 @@ void SliderLoader::onHandlePropTypeFloatScale(const std::string &propertyName, b
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
     }
-
 }
+    
 void SliderLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if(propertyName == PROPERTY_DIRECTION) {
