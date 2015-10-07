@@ -25,6 +25,7 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
     Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
     
     ui::ImageView *imageView = ui::ImageView::create();
+    imageView->ignoreContentAdaptWithSize(false);
     switch(_spriteFrame.type)
     {
         case SpriteFrameDescription::TextureResType::LOCAL:

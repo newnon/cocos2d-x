@@ -27,6 +27,7 @@ Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, 
 {
     Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
     ui::Slider *slider = ui::Slider::create();
+    slider->ignoreContentAdaptWithSize(false);
     switch(_backGround.type)
     {
         case SpriteFrameDescription::TextureResType::LOCAL:
