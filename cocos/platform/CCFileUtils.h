@@ -301,7 +301,13 @@ public:
      *  @return  The path that can be write/read a file in
      */
     virtual std::string getWritablePath() const = 0;
-    
+
+    /**
+     *  Gets the cache path.
+     *  @return  The path that can be write/read a file in
+     */
+    virtual std::string getCachePath() const = 0;
+
     /**
      *  Set writable/cache path.
      */
