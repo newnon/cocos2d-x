@@ -928,6 +928,11 @@ const std::string& FileUtils::getDefaultResourceRootPath() const
     return _defaultResRootPath;
 }
 
+void FileUtils::setCachePath(const std::string& cachePath)
+{
+    _cachePath = cachePath;
+}
+
 void FileUtils::setDefaultResourceRootPath(const std::string& path)
 {
     if (_defaultResRootPath != path)

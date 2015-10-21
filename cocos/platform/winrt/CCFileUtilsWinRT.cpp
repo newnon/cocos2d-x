@@ -462,6 +462,12 @@ std::vector<std::string> CCFileUtilsWinRT::listFiles(const std::string& dirPath)
     return files;
 }
 
+string CCFileUtilsWinRT::getCachePath() const
+{
+	auto tempFolderPath = Windows::Storage::ApplicationData::Current->TemporaryFolder->Path;
+	return convertPathFormatToUnixStyle(std::string(PlatformStringToString(tempFolderPath)) + '\\');
+}
+
 string CCFileUtilsWinRT::getAppPath()
 {
     Windows::ApplicationModel::Package^ package = Windows::ApplicationModel::Package::Current;
