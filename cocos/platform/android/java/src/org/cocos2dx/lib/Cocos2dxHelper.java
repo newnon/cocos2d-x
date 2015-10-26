@@ -43,6 +43,8 @@ import android.content.res.AssetManager;
 import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager.OnActivityResultListener;
+import android.provider.Settings;
+import android.provider.Settings.Secure;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.WindowManager;
@@ -176,6 +178,10 @@ public class Cocos2dxHelper {
     
     public static String getDeviceModel(){
         return Build.MODEL;
+    }
+    
+    public static String getDevideUID(){
+        return Secure.getString(sActivity.getContentResolver(), Secure.ANDROID_ID);
     }
 
     public static AssetManager getAssetManager() {
