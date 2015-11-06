@@ -34,12 +34,17 @@ namespace spritebuilder {
     
 NodeLoaderLibrary *NodeLoaderLibrary::create()
 {
-    return nullptr;
+    NodeLoaderLibrary *ret = new(std::nothrow) NodeLoaderLibrary();
+    ret->autorelease();
+    return ret;
 }
 
 NodeLoaderLibrary *NodeLoaderLibrary::createDefault()
 {
-    return nullptr;
+    NodeLoaderLibrary *ret = new(std::nothrow) NodeLoaderLibrary();
+    ret->autorelease();
+    ret->registerDefaultLoaders();
+    return ret;
 }
 
 
@@ -66,7 +71,7 @@ NodeLoader *NodeLoaderLibrary::createNodeLoader(const std::string &name) const
 
 void NodeLoaderLibrary::registerNodeLoader(const std::string &name, const NodeLoaderCreateFuntion &func)
 {
-    
+    _loaders.emplace(name, func);
 }
 
 NodeLoaderLibrary::NodeLoaderLibrary()
