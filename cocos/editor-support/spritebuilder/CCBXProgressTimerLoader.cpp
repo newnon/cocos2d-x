@@ -20,12 +20,12 @@ ProgressTimerLoader *ProgressTimerLoader::create()
     return ret;
 }
 
-Node *ProgressTimerLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *ProgressTimerLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     return ProgressTimer::create(_spriteFrame.spriteFrame?Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame):Sprite::create());
 }
 
-void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ProgressTimer *progressTimer = static_cast<ProgressTimer*>(node);
     progressTimer->setBarChangeRate(_barChangeRate);

@@ -33,6 +33,7 @@ enum class TargetType {
     NONE = 0,
     DOCUMENT_ROOT = 1,
     OWNER = 2,
+    PARENT_OWNER = 3,
 };
 
     

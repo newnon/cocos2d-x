@@ -193,7 +193,7 @@ NodeLoader *NodeLoader::create()
     return ret;
 }
     
-Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback)
+Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback)
 {
     Node *ret;
     if(createNodeFunction)
@@ -203,18 +203,67 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
     if(!ret)
         return nullptr;
     
-    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, defaultAnimationCallback))
+    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, parentOwner, defaultAnimationCallback))
         return nullptr;
 
     return ret;
 }
     
-bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback)
+bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback)
 {
     if(!node)
         return false;
     setProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
-    setCallbacks(node, owner, rootNode);
+    setCallbacks(node, owner, rootNode, parentOwner);
+    setVariables(node, owner, rootNode, parentOwner);
+    
+    if(!rootNode)
+    {
+        rootNode = node;
+    }
+    
+    if(manager == nullptr)
+    {
+        manager = new CCBAnimationManager(mainScale, additionalScale, node ,owner);
+        manager->setSequences(_sequences);
+        manager->setAutoPlaySequenceId(_autoPlaySequenceId);
+        node->setUserObject(manager);
+        manager->release();
+    }
+    for(const auto &it:_baseValues)
+    {
+        manager->setBaseValue(it.second, node, it.first);
+    }
+    setAnimation(node, manager);
+#if CC_USE_PHYSICS
+    if(_physicsLoader)
+        node->setPhysicsBody(_physicsLoader->createBody(node), true);
+#endif
+    CCBXReaderOwner *newParentOwner = dynamic_cast<CCBXReaderOwner*>(node);
+    if(newParentOwner)
+        parentOwner = newParentOwner;
+    for(auto child:_children)
+    {
+        node->addChild(child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode, parentOwner));
+    }
+    if(rootNode)
+    {
+        if (node && _autoPlaySequenceId != -1)
+        {
+            // Auto play animations
+            manager->runAnimationsForSequenceIdTweenDuration(_autoPlaySequenceId, 0, defaultAnimationCallback);
+        }
+        else if (defaultAnimationCallback)
+        {
+            rootNode->scheduleOnce([rootNode,defaultAnimationCallback](float) { defaultAnimationCallback(rootNode, AnimationCompleteType::COMPLETED); }, 0, "defaultAnimationCallback");
+        }
+    }
+    
+    return true;
+}
+    
+void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner)
+{
     if(!_memberVarAssignmentName.empty())
     {
         switch (_memberVarAssignmentType) {
@@ -252,6 +301,20 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
                     CCLOG("assigment type owner but no owner for name:%s", _memberVarAssignmentName.c_str());
                 }
                 break;
+                
+            case TargetType::PARENT_OWNER:
+                if(parentOwner)
+                {
+                    if(!parentOwner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
+                    {
+                        CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
+                    }
+                }
+                else
+                {
+                    CCLOG("assigment type owner but no parent owner for name:%s", _memberVarAssignmentName.c_str());
+                }
+                break;
         }
     }
     else
@@ -261,50 +324,9 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
             CCLOG("variable name set but no assigment type for name:%s", _memberVarAssignmentName.c_str());
         }
     }
-    
-    if(!rootNode)
-    {
-        rootNode = node;
-    }
-    
-    if(manager == nullptr)
-    {
-        manager = new CCBAnimationManager(mainScale, additionalScale, node ,owner);
-        manager->setSequences(_sequences);
-        manager->setAutoPlaySequenceId(_autoPlaySequenceId);
-        node->setUserObject(manager);
-        manager->release();
-    }
-    for(const auto &it:_baseValues)
-    {
-        manager->setBaseValue(it.second, node, it.first);
-    }
-    setAnimation(node, manager);
-#if CC_USE_PHYSICS
-    if(_physicsLoader)
-        node->setPhysicsBody(_physicsLoader->createBody(node), true);
-#endif
-    for(auto child:_children)
-    {
-        node->addChild(child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode));
-    }
-    if(rootNode)
-    {
-        if (node && _autoPlaySequenceId != -1)
-        {
-            // Auto play animations
-            manager->runAnimationsForSequenceIdTweenDuration(_autoPlaySequenceId, 0, defaultAnimationCallback);
-        }
-        else if (defaultAnimationCallback)
-        {
-            rootNode->scheduleOnce([rootNode,defaultAnimationCallback](float) { defaultAnimationCallback(rootNode, AnimationCompleteType::COMPLETED); }, 0, "defaultAnimationCallback");
-        }
-    }
-    
-    return true;
 }
 
-void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     node->setVisible(_visible);
     node->setPosition(getAbsolutePosition(mainScale, additionalScale, _position.pos, _position.referenceCorner, _position.xUnits , _position.yUnits, parentSize));
@@ -324,7 +346,7 @@ void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainSca
     node->setOpacity(_opacity);
     node->setSkewX(_skew.x);
     node->setSkewY(_skew.y);
-    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
+    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
 }
     
 void NodeLoader::setAnimation(Node* node, CCBAnimationManager *manager)
@@ -332,17 +354,17 @@ void NodeLoader::setAnimation(Node* node, CCBAnimationManager *manager)
     manager->addNode(node, _nodeSequences);
 }
 
-Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     return Node::create();
 }
     
-void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     
 }
     
-void NodeLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode)
+void NodeLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner)
 {
     
 }

@@ -27,7 +27,7 @@ TextFieldLoader *TextFieldLoader::create()
     return ret;
 }
 
-Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::TextField *textField = ui::TextField::create(_placeholder, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
     textField->setString(_label);
@@ -44,9 +44,9 @@ Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScal
     return textField;
 }
 
-void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
 }
 
 TextFieldLoader::TextFieldLoader()

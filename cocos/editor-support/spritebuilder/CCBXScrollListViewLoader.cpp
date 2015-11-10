@@ -18,16 +18,16 @@ ScrollListViewLoader *ScrollListViewLoader::create()
     return ret;
 }
 
-Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ScrollListView *scrollListView = ScrollListView::create(_file);
     scrollListView->setClippingType(ui::Layout::ClippingType::SCISSOR);
     return scrollListView;
 }
 
-void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
     ScrollListView *scrollView = static_cast<ScrollListView*>(node);
     scrollView->setBounceEnabled(_bounce);
     scrollView->setClippingEnabled(_clipping);

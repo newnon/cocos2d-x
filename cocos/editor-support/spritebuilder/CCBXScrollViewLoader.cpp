@@ -19,16 +19,16 @@ ScrollViewLoader *ScrollViewLoader::create()
     return ret;
 }
 
-Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::ScrollView *scrollView = ui::ScrollView::create();
     scrollView->setClippingType(ui::Layout::ClippingType::SCISSOR);
     return scrollView;
 }
 
-void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
     ui::ScrollView *scrollView = static_cast<ui::ScrollView*>(node);
     ui::ScrollView::Direction direction = ui::ScrollView::Direction::NONE;
     if(_horizontalScrollEnabled && _verticalScrollEnabled)

@@ -168,13 +168,13 @@ Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, const Size& parentSize, Sc
     float mainScale = 1.0f;
     float additionalScale = 1.0f;
     calcScales(scaleType, parentSize, mainScale, additionalScale);
-    Node * ret = _rootNodeLoader->createNode(parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
+    Node * ret = _rootNodeLoader->createNode(parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
     return ret;
 }
 
 Node *CCBXReader::createNode(CCBXReaderOwner *pOwner, const Size& parentSize, float mainScale, float additionalScale, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
 {
-    Node * ret = _rootNodeLoader->createNode(parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
+    Node * ret = _rootNodeLoader->createNode(parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, nullptr, createNodeFunction, defaultAnimationCallback);
     return ret;
 }
     
@@ -193,12 +193,12 @@ bool CCBXReader::loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& pare
     float mainScale = 1.0f;
     float additionalScale = 1.0f;
     calcScales(scaleType, parentSize, mainScale, additionalScale);
-    return _rootNodeLoader->loadNode(node, parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, defaultAnimationCallback);
+    return _rootNodeLoader->loadNode(node, parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, nullptr, defaultAnimationCallback);
 }
 
 bool CCBXReader::loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& parentSize, float mainScale, float additionalScale, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback) const
 {
-    return _rootNodeLoader->loadNode(node, parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, defaultAnimationCallback);
+    return _rootNodeLoader->loadNode(node, parentSize, mainScale, additionalScale, pOwner, nullptr, nullptr, nullptr, defaultAnimationCallback);
 }
 
 

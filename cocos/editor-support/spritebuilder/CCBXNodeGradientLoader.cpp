@@ -18,7 +18,7 @@ NodeGradientLoader *NodeGradientLoader::create()
     return ret;
 }
 
-Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     LayerGradient *layer = LayerGradient::create();
     layer->ignoreAnchorPointForPosition(false);
@@ -27,9 +27,9 @@ Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainS
     return layer;
 }
 
-void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
+    NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
     LayerGradient *layerColor = static_cast<LayerGradient*>(node);
     layerColor->setStartColor(_startColor);
     layerColor->setEndColor(_endColor);

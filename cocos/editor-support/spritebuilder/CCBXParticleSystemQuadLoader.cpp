@@ -82,12 +82,12 @@ ParticleSystemQuadLoader *ParticleSystemQuadLoader::create()
     return ret;
 }
     
-Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     return BuilderParticleSystemQuad::createWithTotalParticles(_totalParticles);
 }
     
-void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     BuilderParticleSystemQuad *particle = static_cast<BuilderParticleSystemQuad*>(node);
     

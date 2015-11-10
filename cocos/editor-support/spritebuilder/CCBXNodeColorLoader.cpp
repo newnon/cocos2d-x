@@ -13,7 +13,7 @@ NodeColorLoader *NodeColorLoader::create()
     return ret;
 }
 
-Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     LayerColor *layer = LayerColor::create();
     layer->ignoreAnchorPointForPosition(false);
@@ -22,7 +22,7 @@ Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScal
     return layer;
 }
 
-void NodeColorLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void NodeColorLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     LayerColor *layerColor = static_cast<LayerColor*>(node);
     layerColor->setBlendFunc(_blendFunc);

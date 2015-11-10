@@ -23,7 +23,7 @@ SliderLoader *SliderLoader::create()
     ret->autorelease();
     return ret;
 }
-Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
     ui::Slider *slider = ui::Slider::create();
@@ -99,7 +99,7 @@ Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, 
     return slider;
 
 }
-void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     //WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
     //ui::Slider *slider = dynamic_cast<ui::Slider*>(node);

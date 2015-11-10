@@ -13,10 +13,10 @@ FileLoader *FileLoader::create()
     return ret;
 }
 
-Node *FileLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *FileLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     if(_file)
-        return _file->createNode(parentSize, mainScale, additionalScale, owner, nullptr, nullptr);
+        return _file->createNode(parentSize, mainScale, additionalScale, owner, nullptr, nullptr, rootOwner);
     else
         return nullptr;
 }

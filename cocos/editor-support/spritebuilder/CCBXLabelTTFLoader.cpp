@@ -33,7 +33,7 @@ LabelTTFLoader *LabelTTFLoader::create()
     return ret;
 }
 
-Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     Label *label = nullptr;
     if (FileUtils::getInstance()->isFileExist(_font))
@@ -43,7 +43,7 @@ Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale
     return label;
 }
 
-void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     Label *label = static_cast<Label*>(node);
     //label->setBlendFunc(_blendFunc);

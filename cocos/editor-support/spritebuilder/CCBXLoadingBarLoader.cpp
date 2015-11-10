@@ -16,7 +16,7 @@ LoadingBarLoader *LoadingBarLoader::create()
     return ret;
 }
 
-Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::LoadingBar *loadingBar = ui::LoadingBar::create();
     switch(_spriteFrame.type)
@@ -33,9 +33,9 @@ Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainSca
     return loadingBar;
 }
 
-void LoadingBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void LoadingBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
     ui::LoadingBar *loadingBar = static_cast<ui::LoadingBar*>(node);
     loadingBar->setDirection(_direction);
 }

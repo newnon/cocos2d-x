@@ -15,7 +15,7 @@ SpriteLoader *SpriteLoader::create()
     return ret;
 }
 
-Node *SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     Sprite *sprite = Sprite::create();
     if(_spriteFrame.spriteFrame)
@@ -23,7 +23,7 @@ Node *SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, 
     return sprite;
 }
 
-void SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     Sprite *sprite = static_cast<Sprite*>(node);
     sprite->setBlendFunc(_blendFunc);

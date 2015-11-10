@@ -144,14 +144,16 @@ class CC_DLL NodeLoader : public Ref
 {
 public:
     static NodeLoader *create();
-    Node *createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr, CCBAnimationManager *manager = nullptr, Node *rootNode = nullptr, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr);
-    bool loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr, CCBAnimationManager *manager = nullptr, Node *rootNode = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr);
-    void setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode);
+    Node *createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr, CCBAnimationManager *manager = nullptr, Node *rootNode = nullptr, CCBXReaderOwner *parentOwner = nullptr, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr);
+    bool loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr,CCBAnimationManager *manager = nullptr, Node *parentOwner = nullptr, CCBXReaderOwner *rootOwner = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr);
+    void setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr);
     void setAnimation(Node* node, CCBAnimationManager *manager);
     
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode);
-    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode);
-    virtual void setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode);
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr);
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr);
+    virtual void setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner);
+    virtual void setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner);
+    
     
     void setMemberVarAssignment(TargetType type, const std::string &name);
     void setPhysicsLoader(PhysicsBodyLoader *loader);

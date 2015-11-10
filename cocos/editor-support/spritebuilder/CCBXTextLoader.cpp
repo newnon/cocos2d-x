@@ -33,15 +33,15 @@ TextLoader *TextLoader::create()
     return ret;
 }
 
-Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::Text *text = ui::Text::create(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
     return text;
 }
 
-void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
     ui::Text *text = static_cast<ui::Text*>(node);
     if(_dimensions.size.width == 0 || _dimensions.size.height == 0)
         text->ignoreContentAdaptWithSize(true);

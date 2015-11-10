@@ -18,12 +18,12 @@ PhysicsNodeLoader *PhysicsNodeLoader::create()
     return ret;
 }
     
-Node *PhysicsNodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *PhysicsNodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     return PhysicsNode::create();
 }
     
-void PhysicsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void PhysicsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
 #if CC_USE_PHYSICS
     PhysicsNode *physicsNode = dynamic_cast<PhysicsNode*>(node);

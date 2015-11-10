@@ -17,19 +17,19 @@ WidgetLoader *WidgetLoader::create()
     return ret;
 }
     
-Node *WidgetLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *WidgetLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     return ui::Widget::create();
 }
     
-void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::Widget *widget = dynamic_cast<ui::Widget*>(node);
     widget->setEnabled(_enabled);
     widget->ignoreContentAdaptWithSize(false);
 }
     
-void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode)
+void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner)
 {
     ccReaderClickCallback click;
     ccReaderTouchCallback touch;
@@ -70,6 +70,20 @@ void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNo
                     CCLOG("assigment type owner but no owner for name:%s", _click.name.c_str());
                 }
                 break;
+                
+            case TargetType::PARENT_OWNER:
+                if(parentOwner)
+                {
+                    if(!(click = parentOwner->onResolveCCBClickSelector(_click.name, node)))
+                    {
+                        CCLOG("callback not assigned for name:%s", _click.name.c_str());
+                    }
+                }
+                else
+                {
+                    CCLOG("assigment type owner but no parent owner for name:%s", _click.name.c_str());
+                }
+                break;
         }
     }
     
@@ -101,6 +115,20 @@ void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNo
                 if(owner)
                 {
                     if(!(touch = owner->onResolveCCBTouchSelector(_touch.name, node)))
+                    {
+                        CCLOG("variable not assigned for name:%s", _touch.name.c_str());
+                    }
+                }
+                else
+                {
+                    CCLOG("assigment type owner but no owner for name:%s", _touch.name.c_str());
+                }
+                break;
+                
+            case TargetType::PARENT_OWNER:
+                if(parentOwner)
+                {
+                    if(!(touch = parentOwner->onResolveCCBTouchSelector(_touch.name, node)))
                     {
                         CCLOG("variable not assigned for name:%s", _touch.name.c_str());
                     }

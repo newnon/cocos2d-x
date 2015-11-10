@@ -19,7 +19,7 @@ Scale9SpriteLoader *Scale9SpriteLoader::create()
     return ret;
 }
 
-Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::Scale9Sprite *sprite = _spriteFrame.spriteFrame?ui::Scale9Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame.get()):ui::Scale9Sprite::create();
     Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
@@ -28,7 +28,7 @@ Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainS
     return sprite;
 }
 
-void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode)
+void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::Scale9Sprite *sprite = static_cast<ui::Scale9Sprite*>(node);
     sprite->setBlendFunc(_blendFunc);
