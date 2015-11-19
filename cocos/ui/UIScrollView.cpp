@@ -310,7 +310,10 @@ void ScrollView::autoScrollChildren(float dt)
         if (nowSpeed <= 0.0f)
         {
             stopAutoScrollChildren();
-            checkNeedBounce();
+            if (!checkNeedBounce() && _eventCallback)
+            {
+                _eventCallback(this, EventType::SCROLL_STOP);
+            }
         }
         else
         {
@@ -321,7 +324,10 @@ void ScrollView::autoScrollChildren(float dt)
             if (!scrollChildren(offsetX, offsetY))
             {
                 stopAutoScrollChildren();
-                checkNeedBounce();
+                if (!checkNeedBounce() && _eventCallback)
+                {
+                    _eventCallback(this, EventType::SCROLL_STOP);
+                }
             }
         }
     }

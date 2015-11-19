@@ -75,7 +75,8 @@ public:
         BOUNCE_TOP,
         BOUNCE_BOTTOM,
         BOUNCE_LEFT,
-        BOUNCE_RIGHT
+        BOUNCE_RIGHT,
+        SCROLL_STOP
     };
     typedef std::function<void(Ref*, EventType)> ccScrollViewCallback;
    
