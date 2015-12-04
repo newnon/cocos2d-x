@@ -293,7 +293,7 @@ public:
      * @see `LabelEffect`
      */
     void disableEffect(LabelEffect effect);
-
+    
     /**
     * Return whether the shadow effect is enabled.
     */
@@ -323,6 +323,9 @@ public:
     */
     Color4B getEffectColor() const;
 
+    void setAdjustsFontSizeToFit(bool value);
+    bool getAdjustsFontSizeToFit() const;
+
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
     virtual bool init(const std::string& textContent,
@@ -350,6 +353,7 @@ protected:
     Label* _labelRenderer;
     bool _labelRendererAdaptDirty;
     Type _type;
+    bool _adjustsFontSizeToFit;
 };
 
 }
