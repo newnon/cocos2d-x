@@ -264,6 +264,18 @@ public:
      * @since v3.3
      */
     float getZoomScale()const;
+    
+    /**
+     * Sets image internal scale.
+     * @return internal image scale.
+     */
+    void setImageScale(float scale);
+    
+    /**
+     * Get image internal scale.
+     * @param scale image internal scale
+     */
+    float getImageScale() const;
 
     Sprite* getSlidBallNormalRenderer() const;
     Sprite* getSlidBallPressedRenderer() const;
@@ -360,6 +372,8 @@ protected:
     std::string _slidBallNormalTextureFile;
     std::string _slidBallPressedTextureFile;
     std::string _slidBallDisabledTextureFile;
+    
+    float _imageScale;
 };
 
 }

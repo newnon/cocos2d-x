@@ -294,7 +294,7 @@ public:
      * @see `LabelEffect`
      */
     void disableEffect(LabelEffect effect);
-
+    
     /**
     * Return whether the shadow effect is enabled.
     */
@@ -330,6 +330,12 @@ public:
      */
     virtual Sprite * getLetter(int lettetIndex);
 
+    void setLabelWordWrap(bool value);
+    bool getLabelWordWrap() const;
+    
+    void setOverflow(int value);
+    int getOverflow() const;
+
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
     virtual bool init(const std::string& textContent,
@@ -357,6 +363,9 @@ protected:
     Label* _labelRenderer;
     bool _labelRendererAdaptDirty;
     Type _type;
+
+    bool _wordWrapLabel;
+    int _overflowLabel;
 };
 
 }
