@@ -294,6 +294,9 @@ public:
      */
     void disableEffect(LabelEffect effect);
 
+    void setAdjustsFontSizeToFit(bool value);
+    bool getAdjustsFontSizeToFit() const;
+
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
     virtual bool init(const std::string& textContent,
@@ -321,6 +324,7 @@ protected:
     Label* _labelRenderer;
     bool _labelRendererAdaptDirty;
     Type _type;
+    bool _adjustsFontSizeToFit;
 };
 
 }
