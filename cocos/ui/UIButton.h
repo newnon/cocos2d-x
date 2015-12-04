@@ -51,6 +51,13 @@ class CC_GUI_DLL Button : public Widget
     DECLARE_CLASS_GUI_INFO
 
 public:
+    
+    enum class State
+    {
+        NORMAL,
+        PRESSED,
+        DISABLED
+    };
 
     /**
      * Default constructor.
@@ -73,26 +80,26 @@ public:
     /**
      * Create a button with custom textures.
      * @param normalImage normal state texture name.
-     * @param selectedImage  selected state texture name.
+     * @param pressedImage  pressed state texture name.
      * @param disableImage disabled state texture name.
      * @param texType    @see `TextureResType`
      * @return a Button instance.
      */
     static Button* create(const std::string& normalImage,
-                          const std::string& selectedImage = "",
-                          const std::string& disableImage = "",
+                          const std::string& pressedImage = "",
+                          const std::string& disabledImage = "",
                           TextureResType texType = TextureResType::LOCAL);
 
     /**
      * Load textures for button.
      *
      * @param normal    normal state texture name.
-     * @param selected    selected state texture name.
+     * @param pressed    pressed state texture name.
      * @param disabled    disabled state texture name.
      * @param texType    @see `TextureResType`
      */
     void loadTextures(const std::string& normal,
-                      const std::string& selected,
+                      const std::string& pressed,
                       const std::string& disabled = "",
                       TextureResType texType = TextureResType::LOCAL);
 
@@ -107,10 +114,10 @@ public:
     /**
      * Load selected state texture for button.
      *
-     * @param selected    selected state texture.
+     * @param pressed    selected state texture.
      * @param texType    @see `TextureResType`
      */
-    void loadTexturePressed(const std::string& selected, TextureResType texType = TextureResType::LOCAL);
+    void loadTexturePressed(const std::string& pressed, TextureResType texType = TextureResType::LOCAL);
 
     /**
      * Load disabled state texture for button.
@@ -269,7 +276,6 @@ public:
     /** returns the current Label being used */
     Label* getTitleLabel() const;
 
-
     /** @brief When user pressed the button, the button will zoom to a scale.
      * The final scale of the button  equals (button original scale + _zoomScale)
      * @since v3.3
@@ -284,6 +290,24 @@ public:
     float getZoomScale()const;
     
     /**
+     * Sets image internal scale.
+     * @return internal image scale.
+     */
+    void setImageScale(float scale);
+    
+    /**
+     * Get image internal scale.
+     * @param scale image internal scale
+     */
+    float getImageScale() const;
+    
+    void setLabelWordWrap(bool value);
+    bool getLabelWordWrap() const;
+    
+    void setOverflow(int value);
+    int getOverflow() const;
+    
+    /**
      * @brief Return the nine-patch sprite of normal state
      * @return the nine-patch sprite of normal state
      * @since v3.9
@@ -291,11 +315,11 @@ public:
     Scale9Sprite* getRendererNormal() const { return _buttonNormalRenderer; }
     
     /**
-     * @brief Return the nine-patch sprite of clicked state
-     * @return the nine-patch sprite of clicked state
+     * @brief Return the nine-patch sprite of pressed state
+     * @return the nine-patch sprite of pressed state
      * @since v3.9
      */
-    Scale9Sprite* getRendererClicked() const { return _buttonClickedRenderer; }
+    Scale9Sprite* getRendererPressed() const { return _buttonPressedRenderer; }
     
     /**
      * @brief Return the nine-patch sprite of disabled state
@@ -303,7 +327,7 @@ public:
      * @since v3.9
      */
     Scale9Sprite* getRendererDisabled() const { return _buttonDisabledRenderer; }
-
+    
     void resetNormalRender();
     void resetPressedRender();
     void resetDisabledRender();
@@ -311,6 +335,59 @@ public:
     ResourceData getNormalFile();
     ResourceData getPressedFile();
     ResourceData getDisabledFile();
+
+    void setNormalBackgroundColor(const Color3B &color);
+    const Color3B& getNormalBackgroundColor() const;
+    void setPressedBackgroundColor(const Color3B &color);
+    const Color3B& getPressedBackgroundColor() const;
+    void setDisabledBackgroundColor(const Color3B &color);
+    const Color3B& getDisabledBackgroundColor() const;
+    
+    void setNormalBackgroundOpacity(GLubyte opacity);
+    GLubyte getNormalBackgroundOpacity() const;
+    void setPressedBackgroundOpacity(GLubyte opacity);
+    GLubyte getPressedBackgroundOpacity() const;
+    void setDisabledBackgroundOpacity(GLubyte opacity);
+    GLubyte getDisabledBackgroundOpacity() const;
+    
+    void setNormalTitleColor(const Color3B &color);
+    const Color3B& getNormalTitleColor() const;
+    void setPressedTitleColor(const Color3B &color);
+    const Color3B& getPressedTitleColor() const;
+    void setDisabledTitleColor(const Color3B &color);
+    const Color3B& getDisabledTitleColor() const;
+    
+    void setNormalTitleOpacity(GLubyte opacity);
+    GLubyte getNormalTitleOpacity() const;
+    void setPressedTitleOpacity(GLubyte opacity);
+    GLubyte getPressedTitleOpacity() const;
+    void setDisabledTitleOpacity(GLubyte opacity);
+    GLubyte getDisabledTitleOpacity() const;
+    
+    State getState() const { return _state; }
+    
+    void setPaddingPadding(float left, float top, float right, float bottom);
+    
+    void setLeftPadding(float padding);
+    float getLeftPadding();
+    void setRightPadding(float padding);
+    float getRightPadding();
+    void setTopPadding(float padding);
+    float getTopPadding();
+    void setBottomPadding(float padding);
+    float getBottomPadding();
+    
+    void setOffsets(float left, float top, float right, float bottom);
+    void setLeftOffset(float left);
+    float getLeftOffset() const;
+    void setTopOffset(float top);
+    float getTopOffset() const;
+    void setRightOffset(float right);
+    float getRightOffset() const;
+    void setBottomOffset(float bottom);
+    float getBottomOffset() const;
+    
+    virtual bool hitTest(const Vec2 &pt, const Camera* camera, Vec3 *p) const override;
 
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
@@ -346,13 +423,24 @@ protected:
 
     virtual Widget* createCloneInstance() override;
     virtual void copySpecialProperties(Widget* model) override;
+    
+    void updateDisplayedOpacity(GLubyte parentOpacity) override;
+    void updateDisplayedColor(const Color3B& parentColor) override;
+    
+    void updateFontName();
+    void updateFontSize();
+    void updateTextColor();
+    void updateTextOpacity();
 
     virtual Size getNormalSize() const;
 protected:
     Scale9Sprite* _buttonNormalRenderer;
-    Scale9Sprite* _buttonClickedRenderer;
+    Scale9Sprite* _buttonPressedRenderer;
     Scale9Sprite* _buttonDisabledRenderer;
+    Node* _buttonRenderer;
     Label* _titleRenderer;
+    
+    float _imageScale;
 
     float _zoomScale;
     bool _prevIgnoreSize;
@@ -367,19 +455,59 @@ protected:
     Size _pressedTextureSize;
     Size _disabledTextureSize;
 
+    float _normalTextureScaleXInSize;
+    float _normalTextureScaleYInSize;
+    float _pressedTextureScaleXInSize;
+    float _pressedTextureScaleYInSize;
+
+    float _titleScale;
+    State _state;
+
     bool _normalTextureLoaded;
     bool _pressedTextureLoaded;
     bool _disabledTextureLoaded;
+    
     bool _normalTextureAdaptDirty;
     bool _pressedTextureAdaptDirty;
     bool _disabledTextureAdaptDirty;
-
+    
     std::string _normalFileName;
-    std::string _clickedFileName;
+    std::string _pressedFileName;
     std::string _disabledFileName;
     TextureResType _normalTexType;
     TextureResType _pressedTexType;
     TextureResType _disabledTexType;
+    
+    bool _titileAdaptDirty;
+    
+    Color3B _normalBackgroundColor;
+    Color3B _pressedBackgroundColor;
+    Color3B _disabledBackgroundColor;
+    
+    GLubyte _normalBackgroundOpacity;
+    GLubyte _pressedBackgroundOpacity;
+    GLubyte _disabledBackgroundOpacity;
+
+    Color3B _normalTitleColor;
+    Color3B _pressedTitleColor;
+    Color3B _disabledTitleColor;
+    
+    GLubyte _normalTitleOpacity;
+    GLubyte _pressedTitleOpacity;
+    GLubyte _disabledTitleOpacity;
+    
+    float _leftPadding;
+    float _rightPadding;
+    float _topPadding;
+    float _bottomPadding;
+    
+    float _leftOffsets;
+    float _topOffsets;
+    float _rightOffsets;
+    float _bottomOffsets;
+    
+    TextHAlignment _hAlignment;
+    TextVAlignment _vAlignment;
 
 private:
     enum class FontType
@@ -392,6 +520,8 @@ private:
     int _fontSize;
     FontType _type;
     std::string _fontName;
+    bool _wordWrapLabel;
+    int _overflowLabel;
 };
 
 }
