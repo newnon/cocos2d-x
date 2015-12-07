@@ -61,7 +61,7 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
 LabelTTFLoader::LabelTTFLoader()
     :_blendFunc(BlendFunc::ALPHA_PREMULTIPLIED)
     ,_outlineColor(0,0,0,0)
-    ,_shadowColor(0,0,0,0)
+    ,_shadowColor(0,0,0,127)
 	,_outlineWidth(FloatScaleDescription{0, 0.0f})
 	,_shadowBlurRadius(FloatScaleDescription{0, 0.0f})
 	,_shadowOffset(PositionDescription{PositionReferenceCorner::TOPLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})

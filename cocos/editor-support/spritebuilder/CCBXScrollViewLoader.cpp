@@ -49,7 +49,7 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
     }
 }
 
-ScrollViewLoader::ScrollViewLoader():_clipping(false),_bounce(false),_file(nullptr)
+ScrollViewLoader::ScrollViewLoader():_clipping(true),_bounce(false),_file(nullptr), _verticalScrollEnabled(true), _horizontalScrollEnabled(true)
 {
     
 }
