@@ -29,8 +29,11 @@ protected:
 private:
     bool _horizontal;
     bool _clipping;
+    bool _inertial;
+    bool _scrollBar;
     bool _bounce;
     int _gravity;
+    int _magnetic;
     NodeLoader *_file;
 };
 

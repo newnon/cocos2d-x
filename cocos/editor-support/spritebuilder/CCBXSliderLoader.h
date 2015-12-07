@@ -25,13 +25,17 @@ protected:
     virtual void onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value) override;
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value) override;
+    virtual void onHandlePropTypeInteger(const std::string &propertyName, bool isExtraProp, int value) override;
     
 private:
-    SpriteFrameDescription _backGround;
+    SpriteFrameDescription _background;
+    SpriteFrameDescription _progress;
     SpriteFrameDescription _handleNormal;
     SpriteFrameDescription _handleDisabled;
     SpriteFrameDescription _handleHiglihted;
     cocos2d::Rect _margins;
+    float _zoomScale;
+    int _maxPercent;
 };
 
 }

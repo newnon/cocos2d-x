@@ -8,8 +8,11 @@ static const std::string PROPERTY_DIRECTION("direction");
 static const std::string PROPERTY_BOUNCES("bounces");
 static const std::string PROPERTY_TEMPLATE("template");
 static const std::string PROPERTY_GRAVITY("gravity");
+static const std::string PROPERTY_MAGNETIC("magnetic");
 static const std::string PROPERTY_CLIPCONTENT("clipContent");
 static const std::string PROPERTY_HORIZONRAL("horizontal");
+static const std::string PROPERTY_INERTIAL_SCROLL("inertialScroll");
+static const std::string PROPERTY_SCROLL_BAR_ENABLED("scrollBarEnabled");
     
 ScrollListViewLoader *ScrollListViewLoader::create()
 {
@@ -33,9 +36,12 @@ void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSi
     scrollView->setClippingEnabled(_clipping);
     scrollView->setDirection(_horizontal?ScrollListView::Direction::HORIZONTAL:ScrollListView::Direction::VERTICAL);
     scrollView->setGravity(static_cast<cocos2d::ui::ListView::Gravity>(_gravity));
+    scrollView->setMagneticType(static_cast<cocos2d::ui::ListView::MagneticType>(_magnetic));
+    scrollView->setInertiaScrollEnabled(_inertial);
+    scrollView->setScrollBarEnabled(_scrollBar);
 }
 
-ScrollListViewLoader::ScrollListViewLoader():_horizontal(false),_clipping(false),_bounce(false),_file(nullptr),_gravity(0)
+ScrollListViewLoader::ScrollListViewLoader():_horizontal(false),_clipping(true),_bounce(false),_file(nullptr),_gravity(0), _magnetic(0),_inertial(true),_scrollBar(false)
 {
     
 }
@@ -64,6 +70,8 @@ void ScrollListViewLoader::onHandlePropTypeIntegerLabeled(const std::string &pro
 {
     if(propertyName == PROPERTY_GRAVITY) {
         _gravity = value;
+    } else if(propertyName == PROPERTY_MAGNETIC) {
+        _magnetic = value;
     } else {
         WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
@@ -73,6 +81,10 @@ void ScrollListViewLoader::onHandlePropTypeCheck(const std::string &propertyName
 {
     if(propertyName == PROPERTY_CLIPCONTENT) {
         _clipping = value;
+    } else if(propertyName == PROPERTY_INERTIAL_SCROLL) {
+        _inertial = value;
+    } else if(propertyName == PROPERTY_SCROLL_BAR_ENABLED) {
+        _scrollBar = value;
     } else if(propertyName == PROPERTY_BOUNCES) {
         _bounce = value;
     } else if(propertyName == PROPERTY_HORIZONRAL) {
