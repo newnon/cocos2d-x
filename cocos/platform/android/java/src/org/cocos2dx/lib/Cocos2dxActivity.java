@@ -351,6 +351,11 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
     	Log.d(TAG, "onWindowFocusChanged() hasFocus=" + hasFocus);
         super.onWindowFocusChanged(hasFocus);
         
+        if (hasFocus && Build.VERSION.SDK_INT >= 11)
+        {
+            hideSystemUI(mFrameLayout);
+        }
+        
         this.hasFocus = hasFocus;
         resumeIfHasFocus();
     }
@@ -463,16 +468,6 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         glSurfaceView.setEGLConfigChooser(chooser);
 
         return glSurfaceView;
-    }
-    
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus)
-    {
-        super.onWindowFocusChanged(hasFocus);
-        if (hasFocus && Build.VERSION.SDK_INT >= 11)
-        {
-            hideSystemUI(mFrameLayout);
-        }
     }
     
     @SuppressLint("NewApi") private static void hideSystemUI(FrameLayout frameLayout)
