@@ -11,6 +11,8 @@ static const std::string PROPERTY_VERTICALSCROLLENABLED("verticalScrollEnabled")
 static const std::string PROPERTY_HORIZONTALSCROLLENABLED("horizontalScrollEnabled");
 static const std::string PROPERTY_PAGINGENABLED("pagingEnabled");
 static const std::string PROPERTY_CLIPCONTENT("clipContent");
+static const std::string PROPERTY_INERTIAL_SCROLL("inertialScroll");
+static const std::string PROPERTY_SCROLL_BAR_ENABLED("scrollBarEnabled");
     
 ScrollViewLoader *ScrollViewLoader::create()
 {
@@ -47,9 +49,11 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
         scrollView->getInnerContainer()->addChild(childNode);
         scrollView->setEnabled(true);
     }
+    scrollView->setInertiaScrollEnabled(_inertial);
+    scrollView->setScrollBarEnabled(_scrollBar);
 }
 
-ScrollViewLoader::ScrollViewLoader():_clipping(true),_bounce(false),_file(nullptr), _verticalScrollEnabled(true), _horizontalScrollEnabled(true)
+ScrollViewLoader::ScrollViewLoader():_clipping(true),_bounce(false),_file(nullptr), _verticalScrollEnabled(true), _horizontalScrollEnabled(true),_inertial(true),_scrollBar(false)
 {
     
 }
@@ -78,6 +82,10 @@ void ScrollViewLoader::onHandlePropTypeCheck(const std::string &propertyName, bo
 {
     if(propertyName == PROPERTY_CLIPCONTENT) {
         _clipping = value;
+    } else if(propertyName == PROPERTY_INERTIAL_SCROLL) {
+        _inertial = value;
+    } else if(propertyName == PROPERTY_SCROLL_BAR_ENABLED) {
+        _scrollBar = value;
     } else if(propertyName == PROPERTY_BOUNCES) {
         _bounce = value;
     } else if(propertyName == PROPERTY_VERTICALSCROLLENABLED) {

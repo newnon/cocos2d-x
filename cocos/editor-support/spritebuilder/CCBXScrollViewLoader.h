@@ -29,6 +29,8 @@ private:
     bool _horizontalScrollEnabled;
     bool _clipping;
     bool _bounce;
+    bool _inertial;
+    bool _scrollBar;
     NodeLoader *_file;
 };
 
