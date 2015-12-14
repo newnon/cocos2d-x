@@ -584,6 +584,11 @@ protected:
      * Writable path.
      */
     std::string _writablePath;
+    
+    /**
+     * Cache path.
+     */
+    std::string _cachePath;
 
     /**
      *  The singleton pointer of FileUtils.
