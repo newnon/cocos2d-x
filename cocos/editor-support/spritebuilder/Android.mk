@@ -7,6 +7,7 @@ LOCAL_MODULE_FILENAME := libspritebuilder
 
 LOCAL_SRC_FILES := CCBXAnimationManager.cpp \
 CCBXButtonLoader.cpp \
+CCBXEditBoxLoader.cpp \
 CCBXFileLoader.cpp \
 CCBXImageViewLoader.cpp \
 CCBXKeyframe.cpp \

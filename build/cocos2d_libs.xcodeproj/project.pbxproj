@@ -1905,6 +1905,10 @@
 		A0E749F81BA8FD7F001A8332 /* UIEditBoxImpl-common.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A0E749F51BA8FD7F001A8332 /* UIEditBoxImpl-common.cpp */; };
 		A0E749F91BA8FD7F001A8332 /* UIEditBoxImpl-common.h in Headers */ = {isa = PBXBuildFile; fileRef = A0E749F61BA8FD7F001A8332 /* UIEditBoxImpl-common.h */; };
 		A0E749FA1BA8FD7F001A8332 /* UIEditBoxImpl-common.h in Headers */ = {isa = PBXBuildFile; fileRef = A0E749F61BA8FD7F001A8332 /* UIEditBoxImpl-common.h */; };
+		A521EF271C1AE31800918650 /* CCBXEditBoxLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A521EF251C1AE31800918650 /* CCBXEditBoxLoader.cpp */; };
+		A521EF281C1AE31800918650 /* CCBXEditBoxLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A521EF251C1AE31800918650 /* CCBXEditBoxLoader.cpp */; };
+		A521EF291C1AE31800918650 /* CCBXEditBoxLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A521EF261C1AE31800918650 /* CCBXEditBoxLoader.h */; };
+		A521EF2A1C1AE31800918650 /* CCBXEditBoxLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A521EF261C1AE31800918650 /* CCBXEditBoxLoader.h */; };
 		A59003531A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */; };
 		A59003541A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */; };
 		A59003551A4433D500AF12A4 /* CCBXScissorsNodeLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */; };
@@ -4823,6 +4827,8 @@
 		A07A4D641783777C0073F6A7 /* libcocos2d iOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libcocos2d iOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		A0E749F51BA8FD7F001A8332 /* UIEditBoxImpl-common.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "UIEditBoxImpl-common.cpp"; sourceTree = "<group>"; };
 		A0E749F61BA8FD7F001A8332 /* UIEditBoxImpl-common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIEditBoxImpl-common.h"; sourceTree = "<group>"; };
+		A521EF251C1AE31800918650 /* CCBXEditBoxLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXEditBoxLoader.cpp; path = spritebuilder/CCBXEditBoxLoader.cpp; sourceTree = "<group>"; };
+		A521EF261C1AE31800918650 /* CCBXEditBoxLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXEditBoxLoader.h; path = spritebuilder/CCBXEditBoxLoader.h; sourceTree = "<group>"; };
 		A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXScissorsNodeLoader.cpp; path = spritebuilder/CCBXScissorsNodeLoader.cpp; sourceTree = "<group>"; };
 		A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXScissorsNodeLoader.h; path = spritebuilder/CCBXScissorsNodeLoader.h; sourceTree = "<group>"; };
 		A59470341A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXScrollListViewLoader.cpp; path = spritebuilder/CCBXScrollListViewLoader.cpp; sourceTree = "<group>"; };
@@ -8122,6 +8128,8 @@
 				A5B57CAD1A3B919900CCBDB4 /* CCBXAnimationManager.h */,
 				A5B57CAE1A3B919900CCBDB4 /* CCBXButtonLoader.cpp */,
 				A5B57CAF1A3B919900CCBDB4 /* CCBXButtonLoader.h */,
+				A521EF251C1AE31800918650 /* CCBXEditBoxLoader.cpp */,
+				A521EF261C1AE31800918650 /* CCBXEditBoxLoader.h */,
 				A5B57CB01A3B919900CCBDB4 /* CCBXFileLoader.cpp */,
 				A5B57CB11A3B919900CCBDB4 /* CCBXFileLoader.h */,
 				A5B57CB21A3B919900CCBDB4 /* CCBXImageViewLoader.cpp */,
@@ -9796,6 +9804,7 @@
 				15FB20951AE7C57D00C31518 /* cdt.h in Headers */,
 				B665E3541AA80A6500DDB1C5 /* CCPUOnQuotaObserver.h in Headers */,
 				B6DD2FDF1B04825B00E47F5F /* DetourObstacleAvoidance.h in Headers */,
+				A521EF291C1AE31800918650 /* CCBXEditBoxLoader.h in Headers */,
 				B6CAB4F11AF9AA1A00B9B856 /* Win32ThreadSupport.h in Headers */,
 				50643BE219BFCF1800EF68ED /* CCPlatformConfig.h in Headers */,
 				B29A7DF519EE1B7700872B35 /* Skeleton.h in Headers */,
@@ -11065,6 +11074,7 @@
 				B6CAB3761AF9AA1A00B9B856 /* btGjkEpa2.h in Headers */,
 				182C5CD91A98F30500C30D34 /* Sprite3DReader.h in Headers */,
 				50ABBE301925AB6F00A911A9 /* ccConfig.h in Headers */,
+				A521EF2A1C1AE31800918650 /* CCBXEditBoxLoader.h in Headers */,
 				B6DD2FE41B04825B00E47F5F /* DetourPathCorridor.h in Headers */,
 				15AE195819AAD35100C27E9E /* CCInputDelegate.h in Headers */,
 				B6CAB3281AF9AA1A00B9B856 /* btGImpactBvh.h in Headers */,
@@ -12203,6 +12213,7 @@
 				50ABBE231925AB6F00A911A9 /* base64.cpp in Sources */,
 				B665E3AA1AA80A6500DDB1C5 /* CCPURandomiserTranslator.cpp in Sources */,
 				15AE1B5D19AADA9900C27E9E /* UITextBMFont.cpp in Sources */,
+				A521EF271C1AE31800918650 /* CCBXEditBoxLoader.cpp in Sources */,
 				B6DD2FF51B04825B00E47F5F /* fastlz.c in Sources */,
 				B665E3561AA80A6500DDB1C5 /* CCPUOnQuotaObserverTranslator.cpp in Sources */,
 				382384361A259126002C4610 /* ProjectNodeReader.cpp in Sources */,
@@ -12452,6 +12463,7 @@
 				50ABBE6E1925AB6F00A911A9 /* CCEventListenerKeyboard.cpp in Sources */,
 				B665E2CB1AA80A6500DDB1C5 /* CCPUGravityAffectorTranslator.cpp in Sources */,
 				15AE18D719AAD33D00C27E9E /* CCScrollViewLoader.cpp in Sources */,
+				A521EF281C1AE31800918650 /* CCBXEditBoxLoader.cpp in Sources */,
 				50CB247C19D9C5A100687767 /* AudioEngine-inl.mm in Sources */,
 				15AE1AC819AAD40300C27E9E /* b2Joint.cpp in Sources */,
 				50ABBE461925AB6F00A911A9 /* CCEvent.cpp in Sources */,
