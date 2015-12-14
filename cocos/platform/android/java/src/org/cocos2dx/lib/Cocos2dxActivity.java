@@ -431,8 +431,6 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         edittext.setLayoutParams(edittext_layout_params);
 
 
-        mFrameLayout.addView(edittext);
-        // ...add to FrameLayout
         mFrameLayout2.addView(edittext);
 
         // Cocos2dxGLSurfaceView
