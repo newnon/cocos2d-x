@@ -9,6 +9,12 @@ static const std::string PROPERTY_BLENDFUNC("blendFunc");
 static const std::string PROPERTY_DIRECTION("direction");
 static const std::string PROPERTY_PERCENTAGE("percentage");
     
+    
+static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
+static const std::string PROPERTY_MARGIN_TOP("marginTop");
+static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
+static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
+    
 LoadingBarLoader *LoadingBarLoader::create()
 {
     LoadingBarLoader *ret = new LoadingBarLoader();
@@ -18,18 +24,31 @@ LoadingBarLoader *LoadingBarLoader::create()
 
 Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
+    Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
     ui::LoadingBar *loadingBar = ui::LoadingBar::create();
+    loadingBar->setAnchorPoint(Vec2(0.0f, 0.0f));
     switch(_spriteFrame.type)
     {
         case SpriteFrameDescription::TextureResType::LOCAL:
-            loadingBar->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
+            {
+                Size size = _spriteFrame.spriteFrame->getOriginalSize();
+                Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
+                loadingBar->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
+                loadingBar->setCapInsets(realMargins);
+            }
             break;
         case SpriteFrameDescription::TextureResType::PLIST:
-            loadingBar->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
+            {
+                Size size = _spriteFrame.spriteFrame->getOriginalSize();
+                Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
+                loadingBar->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
+                loadingBar->setCapInsets(realMargins);
+            }
             break;
         default:
             break;
     };
+    loadingBar->setPercent(_percentage);
     return loadingBar;
 }
 
@@ -85,100 +104,20 @@ void LoadingBarLoader::onHandlePropTypeIntegerLabeled(const std::string &propert
 
 void LoadingBarLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
 {
-    if (propertyName == PROPERTY_PERCENTAGE) {
+    if(propertyName == PROPERTY_MARGIN_LEFT) {
+        _margins.origin.x = value;
+    } else if(propertyName == PROPERTY_MARGIN_TOP) {
+        _margins.origin.y = value;
+    } else if(propertyName == PROPERTY_MARGIN_RIGHT) {
+        _margins.size.width = value;
+    } else if(propertyName == PROPERTY_MARGIN_BOTTOM) {
+        _margins.size.height = value;
+    } else if (propertyName == PROPERTY_PERCENTAGE) {
         _percentage = value;
     } else {
         WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
     }
 }
-    
-    
-/*void ProgressTimerLoader::onStarPropertiesParsing(cocos2d::Node * pNode, CCBReader * ccbReader)
-{
-    _percentage = 0.0f;
-}
-    
-void ProgressTimerLoader::onEndPropertiesParsing(cocos2d::Node * pNode, CCBReader * ccbReader)
-{
-    ((ProgressTimer *)pNode)->setPercentage(_percentage);
-}
-
-void ProgressTimerLoader::onHandlePropTypeSpriteFrame(Node * pNode, Node * pParent, const char * pPropertyName, SpriteFrame * pCCSpriteFrame, CCBReader * pCCBReader) {
-    if(strcmp(pPropertyName, PROPERTY_DISPLAYFRAME) == 0) {
-        if(pCCSpriteFrame != NULL) {
-            Sprite *temp=((ProgressTimer *)pNode)->getSprite();
-            temp->retain();
-            ((ProgressTimer *)pNode)->setSprite(NULL);
-			temp->setSpriteFrame(pCCSpriteFrame);
-            ((ProgressTimer *)pNode)->setSprite(temp);
-            temp->release();
-        } else {
-            CCLOG("ERROR: SpriteFrame NULL");
-        }
-    } else {
-        NodeLoader::onHandlePropTypeSpriteFrame(pNode, pParent, pPropertyName, pCCSpriteFrame, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeFlip(Node * pNode, Node * pParent, const char * pPropertyName, bool * pFlip, CCBReader * pCCBReader) {
-    if(strcmp(pPropertyName, PROPERTY_FLIP) == 0) {
-        ((ProgressTimer *)pNode)->getSprite()->setFlippedX(pFlip[0]);
-        ((ProgressTimer *)pNode)->getSprite()->setFlippedY(pFlip[1]);
-        ((ProgressTimer *)pNode)->setSprite(((ProgressTimer *)pNode)->getSprite());
-    } else {
-        NodeLoader::onHandlePropTypeFlip(pNode, pParent, pPropertyName, pFlip, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeBlendFunc(Node * pNode, Node * pParent, const char * pPropertyName, BlendFunc pCCBlendFunc, CCBReader * pCCBReader) {
-    if(strcmp(pPropertyName, PROPERTY_BLENDFUNC) == 0) {
-        ((ProgressTimer *)pNode)->getSprite()->setBlendFunc(pCCBlendFunc);
-    } else {
-        NodeLoader::onHandlePropTypeBlendFunc(pNode, pParent, pPropertyName, pCCBlendFunc, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeIntegerLabeled(Node *pNode, Node *pParent, const char *pPropertyName, int pIntegerLabeled, CCBReader *pCCBReader)
-{
-    if (strcmp(pPropertyName, PROPERTY_TYPE) == 0) {
-        ((ProgressTimer *)pNode)->setType((ProgressTimer::Type)pIntegerLabeled);
-    } else {
-        NodeLoader::onHandlePropTypeIntegerLabeled(pNode, pParent, pPropertyName, pIntegerLabeled, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypePoint(Node *pNode, Node *pParent, const char *pPropertyName, const Point &pPoint, CCBReader *pCCBReader)
-{
-    if (strcmp(pPropertyName, PROPERTY_MIDPOINT) == 0) {
-        ((ProgressTimer *)pNode)->setMidpoint(pPoint);
-    } else if (strcmp(pPropertyName, PROPERTY_BARCHANGERATE) == 0) {
-        ((ProgressTimer *)pNode)->setBarChangeRate(pPoint);
-    } else if (strcmp(pPropertyName, "anchorPoint") == 0) {
-        ((ProgressTimer *)pNode)->setAnchorPoint(pPoint);
-    }
-    else {
-        NodeLoader::onHandlePropTypePoint(pNode, pParent, pPropertyName, pPoint, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeFloat(Node *pNode, Node *pParent, const char *pPropertyName, float pFloat, CCBReader *pCCBReader)
-{
-    if (strcmp(pPropertyName, PROPERTY_PERCENTAGE) == 0) {
-        _percentage = pFloat;
-    } else {
-        NodeLoader::onHandlePropTypeFloat(pNode, pParent, pPropertyName, pFloat, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeCheck(Node *pNode, Node *pParent, const char *pPropertyName, bool pCheck, CCBReader *pCCBReader)
-{
-    if (strcmp(pPropertyName, PROPERTY_REVERSEDIR) == 0) {
-        ((ProgressTimer *)pNode)->setReverseDirection(pCheck);
-    }
-    else {
-        NodeLoader::onHandlePropTypeCheck(pNode, pParent, pPropertyName, pCheck, pCCBReader);
-    }
-}*/
 
 }
 

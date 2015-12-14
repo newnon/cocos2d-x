@@ -30,6 +30,7 @@ TextFieldLoader *TextFieldLoader::create()
 Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::TextField *textField = ui::TextField::create(_placeholder, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
+    textField->setAnchorPoint(Vec2(0.0f, 0.0f));
     textField->setString(_label);
     textField->setTextVerticalAlignment(_textVAlignment);
     textField->setTextHorizontalAlignment(_textHAlignment);

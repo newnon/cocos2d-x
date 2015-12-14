@@ -20,6 +20,7 @@ Node *SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, 
     Sprite *sprite = Sprite::create();
     if(_spriteFrame.spriteFrame)
         sprite->setSpriteFrame(_spriteFrame.spriteFrame);
+    sprite->setAnchorPoint(Vec2(0.0f, 0.0f));
     return sprite;
 }
 

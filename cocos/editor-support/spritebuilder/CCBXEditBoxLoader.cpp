@@ -40,7 +40,6 @@ EditBoxLoader *EditBoxLoader::create()
 
 Node *EditBoxLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    ui::EditBox *editBox = nullptr;
     Size editBoxSize(200,100);
     Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
     
@@ -51,8 +50,8 @@ Node *EditBoxLoader::createNodeInstance(const Size &parentSize, float mainScale,
     Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
     ui::Scale9Sprite *normalSprite = ui::Scale9Sprite::createWithSpriteFrame(_normalSpriteFrame.spriteFrame, realMargins);
     
-    editBox = ui::EditBox::create(editBoxSize, normalSprite);
-    
+    ui::EditBox *editBox = ui::EditBox::create(editBoxSize, normalSprite);
+    editBox->setAnchorPoint(Vec2(0.0f, 0.0f));
     editBox->setText(_label.c_str());
     editBox->setPlaceHolder(_placeholder.c_str());
     editBox->setMaxLength(_maxLength==0?INT_MAX:_maxLength);

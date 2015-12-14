@@ -17,7 +17,9 @@ LayoutBoxLoader *LayoutBoxLoader::create()
 }
 Node *LayoutBoxLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    return ui::Layout::create();
+    ui::Layout *layoutBox = ui::Layout::create();
+    layoutBox->setAnchorPoint(Vec2(0.0f, 0.0f));
+    return layoutBox;
 }
 
 void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
@@ -34,7 +36,7 @@ void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, f
     }
 }
 
-LayoutBoxLoader::LayoutBoxLoader() :_spacing(FloatScaleDescription{0, 0}), _clipping(false)
+    LayoutBoxLoader::LayoutBoxLoader() :_spacing(FloatScaleDescription{0, 0}), _clipping(false), _direction(LayoutBoxDirection::Horizontal)
 {
     
 }

@@ -1,5 +1,6 @@
 #include "CCBXProgressTimerLoader.h"
 #include "2d/CCSprite.h"
+#include "2d/CCProgressTimer.h"
 
 NS_CC_BEGIN
 namespace spritebuilder {
@@ -22,7 +23,9 @@ ProgressTimerLoader *ProgressTimerLoader::create()
 
 Node *ProgressTimerLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    return ProgressTimer::create(_spriteFrame.spriteFrame?Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame):Sprite::create());
+    ProgressTimer *progressTimer = ProgressTimer::create(_spriteFrame.spriteFrame?Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame):Sprite::create());
+    progressTimer->setAnchorPoint(Vec2(0.0f, 0.0f));
+    return progressTimer;
 }
 
 void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
@@ -30,7 +33,7 @@ void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSiz
     ProgressTimer *progressTimer = static_cast<ProgressTimer*>(node);
     progressTimer->setBarChangeRate(_barChangeRate);
     progressTimer->setMidpoint(_midpoint);
-    progressTimer->setType(_type);
+    progressTimer->setType(static_cast<ProgressTimer::Type>(_type));
     progressTimer->setPercentage(_percentage);
     progressTimer->getSprite()->setBlendFunc(_blendFunc);
 }
@@ -38,6 +41,7 @@ void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSiz
 ProgressTimerLoader:: ProgressTimerLoader()
     :_reverseDirection(false)
     ,_blendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED)
+    ,_type(0)
 {
     
 }
@@ -77,7 +81,7 @@ void ProgressTimerLoader::onHandlePropTypeFlip(const std::string &propertyName, 
 void ProgressTimerLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if (propertyName == PROPERTY_TYPE) {
-        _type =  static_cast<ProgressTimer::Type>(value);
+        _type = value;
     } else {
         NodeLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
@@ -112,94 +116,6 @@ void ProgressTimerLoader::onHandlePropTypeCheck(const std::string &propertyName,
         NodeLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
     }
 }
-    
-    
-/*void ProgressTimerLoader::onStarPropertiesParsing(cocos2d::Node * pNode, CCBReader * ccbReader)
-{
-    _percentage = 0.0f;
-}
-    
-void ProgressTimerLoader::onEndPropertiesParsing(cocos2d::Node * pNode, CCBReader * ccbReader)
-{
-    ((ProgressTimer *)pNode)->setPercentage(_percentage);
-}
-
-void ProgressTimerLoader::onHandlePropTypeSpriteFrame(Node * pNode, Node * pParent, const char * pPropertyName, SpriteFrame * pCCSpriteFrame, CCBReader * pCCBReader) {
-    if(strcmp(pPropertyName, PROPERTY_DISPLAYFRAME) == 0) {
-        if(pCCSpriteFrame != NULL) {
-            Sprite *temp=((ProgressTimer *)pNode)->getSprite();
-            temp->retain();
-            ((ProgressTimer *)pNode)->setSprite(NULL);
-			temp->setSpriteFrame(pCCSpriteFrame);
-            ((ProgressTimer *)pNode)->setSprite(temp);
-            temp->release();
-        } else {
-            CCLOG("ERROR: SpriteFrame NULL");
-        }
-    } else {
-        NodeLoader::onHandlePropTypeSpriteFrame(pNode, pParent, pPropertyName, pCCSpriteFrame, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeFlip(Node * pNode, Node * pParent, const char * pPropertyName, bool * pFlip, CCBReader * pCCBReader) {
-    if(strcmp(pPropertyName, PROPERTY_FLIP) == 0) {
-        ((ProgressTimer *)pNode)->getSprite()->setFlippedX(pFlip[0]);
-        ((ProgressTimer *)pNode)->getSprite()->setFlippedY(pFlip[1]);
-        ((ProgressTimer *)pNode)->setSprite(((ProgressTimer *)pNode)->getSprite());
-    } else {
-        NodeLoader::onHandlePropTypeFlip(pNode, pParent, pPropertyName, pFlip, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeBlendFunc(Node * pNode, Node * pParent, const char * pPropertyName, BlendFunc pCCBlendFunc, CCBReader * pCCBReader) {
-    if(strcmp(pPropertyName, PROPERTY_BLENDFUNC) == 0) {
-        ((ProgressTimer *)pNode)->getSprite()->setBlendFunc(pCCBlendFunc);
-    } else {
-        NodeLoader::onHandlePropTypeBlendFunc(pNode, pParent, pPropertyName, pCCBlendFunc, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeIntegerLabeled(Node *pNode, Node *pParent, const char *pPropertyName, int pIntegerLabeled, CCBReader *pCCBReader)
-{
-    if (strcmp(pPropertyName, PROPERTY_TYPE) == 0) {
-        ((ProgressTimer *)pNode)->setType((ProgressTimer::Type)pIntegerLabeled);
-    } else {
-        NodeLoader::onHandlePropTypeIntegerLabeled(pNode, pParent, pPropertyName, pIntegerLabeled, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypePoint(Node *pNode, Node *pParent, const char *pPropertyName, const Point &pPoint, CCBReader *pCCBReader)
-{
-    if (strcmp(pPropertyName, PROPERTY_MIDPOINT) == 0) {
-        ((ProgressTimer *)pNode)->setMidpoint(pPoint);
-    } else if (strcmp(pPropertyName, PROPERTY_BARCHANGERATE) == 0) {
-        ((ProgressTimer *)pNode)->setBarChangeRate(pPoint);
-    } else if (strcmp(pPropertyName, "anchorPoint") == 0) {
-        ((ProgressTimer *)pNode)->setAnchorPoint(pPoint);
-    }
-    else {
-        NodeLoader::onHandlePropTypePoint(pNode, pParent, pPropertyName, pPoint, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeFloat(Node *pNode, Node *pParent, const char *pPropertyName, float pFloat, CCBReader *pCCBReader)
-{
-    if (strcmp(pPropertyName, PROPERTY_PERCENTAGE) == 0) {
-        _percentage = pFloat;
-    } else {
-        NodeLoader::onHandlePropTypeFloat(pNode, pParent, pPropertyName, pFloat, pCCBReader);
-    }
-}
-
-void ProgressTimerLoader::onHandlePropTypeCheck(Node *pNode, Node *pParent, const char *pPropertyName, bool pCheck, CCBReader *pCCBReader)
-{
-    if (strcmp(pPropertyName, PROPERTY_REVERSEDIR) == 0) {
-        ((ProgressTimer *)pNode)->setReverseDirection(pCheck);
-    }
-    else {
-        NodeLoader::onHandlePropTypeCheck(pNode, pParent, pPropertyName, pCheck, pCCBReader);
-    }
-}*/
 
 }
 

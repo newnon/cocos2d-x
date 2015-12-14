@@ -36,6 +36,7 @@ TextLoader *TextLoader::create()
 Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::Text *text = ui::Text::create(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
+    text->setAnchorPoint(Vec2(0.0f, 0.0f));
     return text;
 }
 
@@ -43,6 +44,7 @@ void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float 
 {
     WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
     ui::Text *text = static_cast<ui::Text*>(node);
+    text->setAnchorPoint(Vec2(0.0f, 0.0f));
     if(_dimensions.size.width == 0 || _dimensions.size.height == 0)
         text->ignoreContentAdaptWithSize(true);
     //label->setBlendFunc(_blendFunc);

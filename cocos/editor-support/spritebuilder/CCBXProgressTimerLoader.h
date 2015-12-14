@@ -2,7 +2,6 @@
 #define _CCBX_CCPROGRESSTIMERLOADER_H_
 
 #include "CCBXNodeLoader.h"
-#include "2d/CCProgressTimer.h"
 
 NS_CC_BEGIN
 
@@ -32,7 +31,7 @@ protected:
 private:
     float _percentage;
     SpriteFrameDescription _spriteFrame;
-    ProgressTimer::Type _type;
+    int _type;
     cocos2d::Point _midpoint;
     cocos2d::Point _barChangeRate;
     BlendFunc _blendFunc;

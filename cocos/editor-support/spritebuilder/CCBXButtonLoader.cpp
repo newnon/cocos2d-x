@@ -75,6 +75,7 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
 {
     Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
     ui::Button *button = ui::Button::create();
+    button->setAnchorPoint(Vec2(0.0f, 0.0f));
     //button->setScale9Enabled(true);
     switch(_normalSpriteFrame.type)
     {

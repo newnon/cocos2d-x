@@ -26,6 +26,7 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
     
     ui::ImageView *imageView = ui::ImageView::create();
     imageView->ignoreContentAdaptWithSize(false);
+    imageView->setAnchorPoint(Vec2(0.0f, 0.0f));
     switch(_spriteFrame.type)
     {
         case SpriteFrameDescription::TextureResType::LOCAL:

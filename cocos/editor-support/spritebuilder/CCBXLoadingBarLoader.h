@@ -32,6 +32,7 @@ private:
     SpriteFrameDescription _spriteFrame;
     ui::LoadingBar::Direction _direction;
     std::pair<bool,bool> _flipped;
+    cocos2d::Rect _margins;
 };
     
 }

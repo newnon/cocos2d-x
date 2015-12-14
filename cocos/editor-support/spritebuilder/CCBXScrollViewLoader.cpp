@@ -24,6 +24,7 @@ ScrollViewLoader *ScrollViewLoader::create()
 Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     ui::ScrollView *scrollView = ui::ScrollView::create();
+    scrollView->setAnchorPoint(Vec2(0.0f, 0.0f));
     scrollView->setClippingType(ui::Layout::ClippingType::SCISSOR);
     return scrollView;
 }

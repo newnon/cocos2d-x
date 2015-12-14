@@ -19,7 +19,9 @@ WidgetLoader *WidgetLoader::create()
     
 Node *WidgetLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    return ui::Widget::create();
+    ui::Widget *widget = ui::Widget::create();
+    widget->setAnchorPoint(Vec2(0.0f, 0.0f));
+    return widget;
 }
     
 void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
