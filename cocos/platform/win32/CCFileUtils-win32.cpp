@@ -634,53 +634,58 @@ bool FileUtilsWin32::removeDirectory(const std::string& dirPath)
 
 string FileUtilsWin32::getCachePath() const
 {
+    if (_cachePath.length())
+    {
+        return _cachePath;
+    }
+
     // Get full path of executable, e.g. c:\Program Files (x86)\My Game Folder\MyGame.exe
-    char full_path[CC_MAX_PATH + 1];
-    ::GetModuleFileNameA(nullptr, full_path, CC_MAX_PATH + 1);
+    WCHAR full_path[CC_MAX_PATH + 1] = { 0 };
+    ::GetModuleFileName(nullptr, full_path, CC_MAX_PATH + 1);
 
     // Debug app uses executable directory; Non-debug app uses local app data directory
 //#ifndef _DEBUG
-        // Get filename of executable only, e.g. MyGame.exe
-        char *base_name = strrchr(full_path, '\\');
+    // Get filename of executable only, e.g. MyGame.exe
+    WCHAR *base_name = wcsrchr(full_path, '\\');
+    wstring retPath;
+    if(base_name)
+    {
+        WCHAR app_data_path[CC_MAX_PATH + 1];
 
-        if(base_name)
+        // Get local app data directory, e.g. C:\Documents and Settings\username\Local Settings\Application Data
+        if (SUCCEEDED(SHGetFolderPath(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, app_data_path)))
         {
-            char app_data_path[CC_MAX_PATH + 1];
+            wstring ret(app_data_path);
 
-            // Get local app data directory, e.g. C:\Documents and Settings\username\Local Settings\Application Data
-            if (SUCCEEDED(SHGetFolderPathA(nullptr, CSIDL_LOCAL_APPDATA, nullptr, SHGFP_TYPE_CURRENT, app_data_path)))
+            // Adding Temp folder, e.g. C:\Documents and Settings\username\Local Settings\Application Data\Temp
+            ret += L"\\Temp";
+
+            // Adding executable filename, e.g. C:\Documents and Settings\username\Local Settings\Application Data\Temp\MyGame.exe
+            ret += base_name;
+
+            // Remove ".exe" extension, e.g. C:\Documents and Settings\username\Local Settings\Application Data\Temp\MyGame
+            ret = ret.substr(0, ret.rfind(L"."));
+
+            ret += L"\\";
+
+            // Create directory
+            if (SUCCEEDED(SHCreateDirectoryEx(nullptr, ret.c_str(), nullptr)))
             {
-                string ret((char*)app_data_path);
-                
-                // Adding Temp folder, e.g. C:\Documents and Settings\username\Local Settings\Application Data\Temp
-                ret += "\\Temp";
-
-                // Adding executable filename, e.g. C:\Documents and Settings\username\Local Settings\Application Data\Temp\MyGame.exe
-                ret += base_name;
-
-                // Remove ".exe" extension, e.g. C:\Documents and Settings\username\Local Settings\Application Data\Temp\MyGame
-                ret = ret.substr(0, ret.rfind("."));
-
-                ret += "\\";
-
-                // Create directory
-                if (SUCCEEDED(SHCreateDirectoryExA(nullptr, ret.c_str(), nullptr)))
-                {
-                    return convertPathFormatToUnixStyle(ret);
-                }
+                retPath = ret;
             }
         }
+    }
+    if (retPath.empty())
 //#endif // not defined _DEBUG
+    {
+        // If fetching of local app data directory fails, use the executable one
+        retPath = full_path;
 
-    // If fetching of local app data directory fails, use the executable one
-    string ret((char*)full_path);
+        // remove xxx.exe
+        retPath = retPath.substr(0, retPath.rfind(L"\\") + 1);
+    }
 
-    // remove xxx.exe
-    ret =  ret.substr(0, ret.rfind("\\") + 1);
-
-    ret = convertPathFormatToUnixStyle(ret);
-
-    return ret;
+    return convertPathFormatToUnixStyle(StringWideCharToUtf8(retPath));
 }
 
 NS_CC_END
