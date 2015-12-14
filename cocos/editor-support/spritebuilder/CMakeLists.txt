@@ -6,6 +6,7 @@ endif()
 set(COCOS_SB_SRC
   editor-support/spritebuilder/CCBXAnimationManager.cpp
   editor-support/spritebuilder/CCBXButtonLoader.cpp
+  editor-support/spritebuilder/CCBXEditBoxLoader.cpp 
   editor-support/spritebuilder/CCBXFileLoader.cpp
   editor-support/spritebuilder/CCBXImageViewLoader.cpp
   editor-support/spritebuilder/CCBXKeyframe.cpp
