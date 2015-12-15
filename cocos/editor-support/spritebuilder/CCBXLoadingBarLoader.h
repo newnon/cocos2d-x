@@ -26,13 +26,14 @@ protected:
     virtual void onHandlePropTypeFlip(const std::string &propertyName, bool isExtraProp, const std::pair<bool,bool> &flip) override;
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value) override;
+    virtual void onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value) override;
     
 private:
     float _percentage;
     SpriteFrameDescription _spriteFrame;
     ui::LoadingBar::Direction _direction;
     std::pair<bool,bool> _flipped;
-    cocos2d::Rect _margins;
+    Vec4 _margins;
 };
     
 }

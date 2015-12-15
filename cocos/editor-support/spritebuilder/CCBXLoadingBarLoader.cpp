@@ -9,7 +9,7 @@ static const std::string PROPERTY_BLENDFUNC("blendFunc");
 static const std::string PROPERTY_DIRECTION("direction");
 static const std::string PROPERTY_PERCENTAGE("percentage");
     
-    
+static const std::string PROPERTY_MARGIN("margin");
 static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
 static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
@@ -24,7 +24,7 @@ LoadingBarLoader *LoadingBarLoader::create()
 
 Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
+    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     ui::LoadingBar *loadingBar = ui::LoadingBar::create();
     loadingBar->setAnchorPoint(Vec2(0.0f, 0.0f));
     switch(_spriteFrame.type)
@@ -101,17 +101,26 @@ void LoadingBarLoader::onHandlePropTypeIntegerLabeled(const std::string &propert
         WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
 }
+    
+void LoadingBarLoader::onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value)
+{
+    if(propertyName == PROPERTY_MARGIN) {
+        _margins = value;
+    } else {
+        NodeLoader::onHandlePropTypeOffsets(propertyName, isExtraProp, value);
+    }
+}
 
 void LoadingBarLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
 {
     if(propertyName == PROPERTY_MARGIN_LEFT) {
-        _margins.origin.x = value;
+        _margins.x = value;
     } else if(propertyName == PROPERTY_MARGIN_TOP) {
-        _margins.origin.y = value;
+        _margins.y = value;
     } else if(propertyName == PROPERTY_MARGIN_RIGHT) {
-        _margins.size.width = value;
+        _margins.z = value;
     } else if(propertyName == PROPERTY_MARGIN_BOTTOM) {
-        _margins.size.height = value;
+        _margins.w = value;
     } else if (propertyName == PROPERTY_PERCENTAGE) {
         _percentage = value;
     } else {

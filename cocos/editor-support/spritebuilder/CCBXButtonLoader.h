@@ -29,10 +29,11 @@ protected:
     virtual void onHandlePropTypePosition(const std::string &propertyName, bool isExtraProp, const PositionDescription &value) override;
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
+    virtual void onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value) override;
 
 private:
-    cocos2d::Rect _margins;
-    cocos2d::Rect _offset;
+    cocos2d::Vec4 _margins;
+    cocos2d::Vec4 _offset;
     cocos2d::Color4B _outlineColor;
     cocos2d::Color4B _shadowColor;
     float _outlineWidth;

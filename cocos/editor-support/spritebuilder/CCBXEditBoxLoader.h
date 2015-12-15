@@ -33,10 +33,11 @@ protected:
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
     virtual void onHandlePropTypeInteger(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value) override;
+    virtual void onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value) override;
     
 private:
-    cocos2d::Color4B _fontColor = cocos2d::Color4B::WHITE;
-    cocos2d::Color4B _placeholderFontColor = cocos2d::Color4B::WHITE;
+    Color4B _fontColor = Color4B::WHITE;
+    Color4B _placeholderFontColor = Color4B::WHITE;
     FloatScaleDescription _fontSize;
     FloatScaleDescription _placeholderFontSize;
     std::string _label;
@@ -45,7 +46,7 @@ private:
     std::string _placeholderFont;
     int _maxLength = 0;
     
-    cocos2d::Rect _margins;
+    Vec4 _margins;
     
     SpriteFrameDescription _normalSpriteFrame;
     

@@ -54,6 +54,9 @@ static const std::string PROPERTY_SHADOWCOLOR("shadowColor");
     
 static const std::string PROPERTY_SHADOWOFFSET("shadowOffset");
     
+static const std::string PROPERTY_MARGIN("margin");
+static const std::string PROPERTY_OFFSET("offset");
+    
 static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
 static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
@@ -73,7 +76,7 @@ ButtonLoader *ButtonLoader::create()
 
 Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
+    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     ui::Button *button = ui::Button::create();
     button->setAnchorPoint(Vec2(0.0f, 0.0f));
     //button->setScale9Enabled(true);
@@ -173,7 +176,7 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
         button->setTitleAlignment(_textHAlignment, _textVAlignment);
         button->setHorizontalPadding(getAbsoluteScale(mainScale, additionalScale, _horizPadding.scale, _horizPadding.type));
         button->setVerticalPadding(getAbsoluteScale(mainScale, additionalScale, _vertPadding.scale, _vertPadding.type));
-        button->setOffsets(_offset.origin.x, _offset.origin.y, _offset.size.width, _offset.size.height);
+        button->setOffsets(_offset.x, _offset.y, _offset.z, _offset.w);
         button->setAdjustsFontSizeToFit(_adjustsFontSizeToFit);
         button->setTitleText(_label);
     }
@@ -224,25 +227,36 @@ void ButtonLoader::onHandlePropTypeFontTTF(const std::string &propertyName, bool
         WidgetLoader::onHandlePropTypeFontTTF(propertyName, isExtraProp, value);
     }
 }
+    
+void ButtonLoader::onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value)
+{
+    if(propertyName == PROPERTY_MARGIN) {
+        _margins = value;
+    } else if(propertyName == PROPERTY_OFFSET) {
+        _offset = value;
+    } else {
+        WidgetLoader::onHandlePropTypeOffsets(propertyName, isExtraProp, value);
+    }
+}
 
 void ButtonLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
 {
     if(propertyName == PROPERTY_MARGIN_LEFT) {
-        _margins.origin.x = value;
+        _margins.x = value;
     } else if(propertyName == PROPERTY_MARGIN_TOP) {
-        _margins.origin.y = value;
+        _margins.y = value;
     } else if(propertyName == PROPERTY_MARGIN_RIGHT) {
-        _margins.size.width = value;
+        _margins.z = value;
     } else if(propertyName == PROPERTY_MARGIN_BOTTOM) {
-        _margins.size.height = value;
+        _margins.w = value;
     } else if(propertyName == PROPERTY_OFFSET_LEFT) {
-        _offset.origin.x = value;
+        _offset.x = value;
     } else if(propertyName == PROPERTY_OFFSET_TOP) {
-        _offset.origin.y = value;
+        _offset.y = value;
     } else if(propertyName == PROPERTY_OFFSET_RIGHT) {
-        _offset.size.width = value;
+        _offset.z = value;
     } else if(propertyName == PROPERTY_OFFSET_BOTTOM) {
-        _offset.size.height = value;
+        _offset.w = value;
     } else if(propertyName == PROPERTY_BACKGROUNDOPACITY_NORMAL) {
         float opacity = value * 255.0f;
         _normalBackgroundOpacity = (opacity<0.0f)?0:((opacity>255.0f)?255:static_cast<GLubyte>(opacity));

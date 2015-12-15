@@ -647,6 +647,11 @@ void NodeLoader::onHandlePropTypeSoundFile(const std::string &propertyName, bool
 {
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }
+    
+void NodeLoader::onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value)
+{
+    ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
+}
 
     
 }

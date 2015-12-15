@@ -25,6 +25,7 @@ static const std::string PROPERTY_INPUTFLAG("inputFlag");
     
 static const std::string PROPERTY_BACKGROUNDSPRITEFRAME("backgroundSpriteFrame");
     
+static const std::string PROPERTY_MARGIN("margin");
 static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
 static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
@@ -41,7 +42,7 @@ EditBoxLoader *EditBoxLoader::create()
 Node *EditBoxLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     Size editBoxSize(200,100);
-    Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
+    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     
     //noramal sprite frame must be set for EditBox
     assert(_normalSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE);
@@ -136,16 +137,25 @@ void EditBoxLoader::onHandlePropTypeText(const std::string &propertyName, bool i
     }
 }
     
+void EditBoxLoader::onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value)
+{
+    if(propertyName == PROPERTY_MARGIN) {
+        _margins = value;
+    } else {
+        NodeLoader::onHandlePropTypeOffsets(propertyName, isExtraProp, value);
+    }
+}
+    
 void EditBoxLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
 {
     if(propertyName == PROPERTY_MARGIN_LEFT) {
-        _margins.origin.x = value;
+        _margins.x = value;
     } else if(propertyName == PROPERTY_MARGIN_TOP) {
-        _margins.origin.y = value;
+        _margins.y = value;
     } else if(propertyName == PROPERTY_MARGIN_RIGHT) {
-        _margins.size.width = value;
+        _margins.z = value;
     } else if(propertyName == PROPERTY_MARGIN_BOTTOM) {
-        _margins.size.height = value;
+        _margins.w = value;
     } else {
         WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
     }

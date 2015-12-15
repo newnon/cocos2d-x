@@ -220,6 +220,7 @@ private:
         FLOAT_CHECK,
         EFFECT_CONTROL,
         SOUND_FILE,
+        OFFSETS,
     };
     
     
@@ -852,6 +853,16 @@ private:
         std::string ccbFileName = _rootPath + readCachedString();
         return ccbFileName;
     }
+    
+    Vec4 parsePropTypeOffsets()
+    {
+        Vec4 ret;
+        ret.x = readFloat();
+        ret.y = readFloat();
+        ret.z = readFloat();
+        ret.w = readFloat();
+        return ret;
+    }
 
     
     void parseProperties(NodeLoader * loader, const NodeLoaderLibrary *library, const std::set<std::string> &animatedProperties)
@@ -1123,6 +1134,12 @@ private:
                 {
                     std::string sound = parsePropTypeSoundFile();
                     loader->onHandlePropTypeSoundFile(propertyName, isExtraProp, sound);
+                    break;
+                }
+                case PropertyType::OFFSETS:
+                {
+                    Vec4 offsets = parsePropTypeOffsets();
+                    loader->onHandlePropTypeOffsets(propertyName, isExtraProp, offsets);
                     break;
                 }
                 default:

@@ -22,10 +22,11 @@ protected:
     virtual void onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const BlendFunc &value) override;
     virtual void onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value) override;
     virtual void onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value) override;
+    virtual void onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value) override;
 private:
     SizeDescription _size;
     SpriteFrameDescription _spriteFrame;
-    cocos2d::Rect _margins;
+    Vec4 _margins;
 };
 
 }

@@ -26,6 +26,7 @@ protected:
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value) override;
     virtual void onHandlePropTypeInteger(const std::string &propertyName, bool isExtraProp, int value) override;
+    virtual void onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value) override;
     
 private:
     SpriteFrameDescription _background;
@@ -33,7 +34,7 @@ private:
     SpriteFrameDescription _handleNormal;
     SpriteFrameDescription _handleDisabled;
     SpriteFrameDescription _handleHiglihted;
-    cocos2d::Rect _margins;
+    Vec4 _margins;
     float _zoomScale;
     int _maxPercent;
 };

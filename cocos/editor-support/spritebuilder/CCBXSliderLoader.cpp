@@ -12,6 +12,7 @@ static const std::string PROPERTY_HANDLE_NORMAL("handleSpriteFrame|Normal");
 static const std::string PROPERTY_HANDLE_HIGHLIGHTED("handleSpriteFrame|Highlighted");
 static const std::string PROPERTY_HANDLE_DISABLED("handleSpriteFrame|Disabled");
     
+static const std::string PROPERTY_MARGIN("margin");
 static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
 static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
@@ -28,7 +29,7 @@ SliderLoader *SliderLoader::create()
 }
 Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    Rect margin(_margins.origin.x,_margins.origin.y,1.0-_margins.size.width-_margins.origin.x,1.0-_margins.size.height-_margins.origin.y);
+    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     ui::Slider *slider = ui::Slider::create();
     slider->setAnchorPoint(Vec2(0.0f, 0.0f));
     slider->ignoreContentAdaptWithSize(false);
@@ -163,18 +164,27 @@ void SliderLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, 
     }
 }
     
+void SliderLoader::onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value)
+{
+    if(propertyName == PROPERTY_MARGIN) {
+        _margins = value;
+    } else {
+        NodeLoader::onHandlePropTypeOffsets(propertyName, isExtraProp, value);
+    }
+}
+    
 void SliderLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
 {
     if(propertyName == PROPERTY_MARGIN_LEFT) {
-        _margins.origin.x = value;
+        _margins.x = value;
     } else if(propertyName == PROPERTY_MARGIN_TOP) {
-        _margins.origin.y = value;
+        _margins.y = value;
     } else if(propertyName == PROPERTY_MARGIN_RIGHT) {
-        _margins.size.width = value;
+        _margins.z = value;
     } else if(propertyName == PROPERTY_MARGIN_BOTTOM) {
-        _margins.size.height = value;
+        _margins.w = value;
     } else if(propertyName == PROPERTY_ZOOM_SCALE) {
-        _margins.size.height = value;
+        _zoomScale = value;
     } else{
         WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
     }
