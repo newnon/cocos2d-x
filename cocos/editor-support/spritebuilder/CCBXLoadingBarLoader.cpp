@@ -61,6 +61,7 @@ void LoadingBarLoader::setSpecialProperties(Node* node, const Size &parentSize, 
     
 LoadingBarLoader::LoadingBarLoader()
     :_direction(ui::LoadingBar::Direction::LEFT)
+    ,_percentage(0)
 {
     
 }

@@ -42,6 +42,7 @@ ProgressTimerLoader:: ProgressTimerLoader()
     :_reverseDirection(false)
     ,_blendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED)
     ,_type(0)
+    ,_percentage(0)
 {
     
 }
