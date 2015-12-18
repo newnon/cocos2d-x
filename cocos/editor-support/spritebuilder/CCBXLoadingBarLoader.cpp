@@ -27,6 +27,7 @@ Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainSca
     Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     ui::LoadingBar *loadingBar = ui::LoadingBar::create();
     loadingBar->setAnchorPoint(Vec2(0.0f, 0.0f));
+    loadingBar->setScale9Enabled(true);
     switch(_spriteFrame.type)
     {
         case SpriteFrameDescription::TextureResType::LOCAL:
