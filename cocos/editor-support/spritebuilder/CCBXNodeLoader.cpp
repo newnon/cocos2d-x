@@ -260,6 +260,17 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
         }
     }
     
+    if(owner)
+    {
+        owner->onNodeLoaded();
+    }
+    else
+    {
+        CCBXReaderOwner *rootOwner = dynamic_cast<CCBXReaderOwner*>(rootNode);
+        if(rootOwner)
+            rootOwner->onNodeLoaded();
+    }
+    
     return true;
 }
     
