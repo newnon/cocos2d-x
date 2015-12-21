@@ -40,6 +40,7 @@ Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale
         label = Label::createWithTTF(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type), getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize), _textHAlignment, _textVAlignment);
     else
         label = Label::createWithSystemFont(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type), getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize), _textHAlignment, _textVAlignment);
+    label->setAnchorPoint(cocos2d::Vec2(0,0));
     return label;
 }
 
@@ -64,7 +65,7 @@ LabelTTFLoader::LabelTTFLoader()
     ,_shadowColor(0,0,0,127)
 	,_outlineWidth(FloatScaleDescription{0, 0.0f})
 	,_shadowBlurRadius(FloatScaleDescription{0, 0.0f})
-	,_shadowOffset(PositionDescription{PositionReferenceCorner::TOPLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
+	,_shadowOffset(PositionDescription{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
     ,_textHAlignment(TextHAlignment::LEFT)
     ,_textVAlignment(TextVAlignment::TOP)
 	,_dimensions(SizeDescription{SizeUnit::POINTS, SizeUnit::POINTS, {0, 0}})
