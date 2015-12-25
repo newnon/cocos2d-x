@@ -21,6 +21,7 @@ NodeGradientLoader *NodeGradientLoader::create()
 Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
     LayerGradient *layer = LayerGradient::create();
+    layer->setAnchorPoint(cocos2d::Vec2(0.0f, 0.0f));
     layer->ignoreAnchorPointForPosition(false);
     layer->setOpacity(255);
     layer->setColor(Color3B::WHITE);

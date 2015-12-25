@@ -16,7 +16,9 @@ ScissorsNodeLoader *ScissorsNodeLoader::create()
 }
 Node *ScissorsNodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    return ui::Layout::create();
+    ui::Layout *layout = ui::Layout::create();
+    layout->setAnchorPoint(cocos2d::Vec2(0.0f, 0.0f));
+    return layout;
 }
 void ScissorsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
