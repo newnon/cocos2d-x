@@ -86,8 +86,10 @@ _disabledTitleColor(Color3B::WHITE),
 _normalTitleOpacity(255),
 _pressedTitleOpacity(255),
 _disabledTitleOpacity(255),
-_verticalPadding(0),
-_horizontalPadding(0),
+_leftPadding(0),
+_rightPadding(0),
+_topPadding(0),
+_bottomPadding(0),
 _leftOffsets(0.0f),
 _topOffsets(0.0f),
 _rightOffsets(0.0f),
@@ -746,7 +748,7 @@ void Button::updateDisplayedColor(const Color3B& parentColor)
 void Button::updateTitleLocation()
 {
     if(_titleRenderer)
-        _titleRenderer->setPosition(_contentSize.width * 0.5f, _contentSize.height * 0.5f);
+        _titleRenderer->setPosition(_contentSize.width * 0.5f + (_leftPadding - _rightPadding)/2.0f, _contentSize.height * 0.5f + (_bottomPadding - _topPadding)/2.0f);
 }
 
 void Button::updateContentSize()
@@ -810,7 +812,7 @@ void Button::adaptRenderers()
         if(_titleRenderer)
         {
             Size contentSize = getContentSize();
-            Size paddedLabelSize = Size(contentSize.width - _horizontalPadding * 2, contentSize.height -  _verticalPadding * 2);
+            Size paddedLabelSize = Size(contentSize.width - (_leftPadding + _rightPadding), contentSize.height -  (_topPadding + _bottomPadding));
             _titleRenderer->setScale(1.0f);
             if(_adjustsFontSizeToFit && paddedLabelSize.width && paddedLabelSize.height)
             {
@@ -1427,15 +1429,58 @@ GLubyte Button::getDisabledTitleOpacity() const
 {
     return _disabledTitleOpacity;
 }
-
-void Button::setHorizontalPadding(float padding)
+    
+void Button::setPaddingPadding(float left, float top, float right, float bottom)
 {
-    _horizontalPadding = padding;
+    _leftPadding = left;
+    _rightPadding = right;
+    _topPadding = top;
+    _bottomPadding = bottom;
+    onSizeChanged();
 }
     
-void Button::setVerticalPadding(float padding)
+void Button::setLeftPadding(float padding)
 {
-    _verticalPadding = padding;
+    _leftPadding = padding;
+    onSizeChanged();
+}
+
+float Button::getLeftPadding()
+{
+    return _leftPadding;
+}
+
+void Button::setRightPadding(float padding)
+{
+    _rightPadding = padding;
+    onSizeChanged();
+}
+
+float Button::getRightPadding()
+{
+    return _rightPadding;
+}
+
+void Button::setTopPadding(float padding)
+{
+    _topPadding = padding;
+    onSizeChanged();
+}
+
+float Button::getTopPadding()
+{
+    return _topPadding;
+}
+
+void Button::setBottomPadding(float padding)
+{
+    _bottomPadding = padding;
+    onSizeChanged();
+}
+
+float Button::getBottomPadding()
+{
+    return _bottomPadding;
 }
     
 void Button::setOffsets(float left, float top, float right, float bottom)

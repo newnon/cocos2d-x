@@ -337,8 +337,16 @@ public:
     
     State getState() const { return _state; }
     
-    void setHorizontalPadding(float padding);
-    void setVerticalPadding(float padding);
+    void setPaddingPadding(float left, float top, float right, float bottom);
+    
+    void setLeftPadding(float padding);
+    float getLeftPadding();
+    void setRightPadding(float padding);
+    float getRightPadding();
+    void setTopPadding(float padding);
+    float getTopPadding();
+    void setBottomPadding(float padding);
+    float getBottomPadding();
     
     void setOffsets(float left, float top, float right, float bottom);
     void setLeftOffset(float left);
@@ -449,8 +457,10 @@ protected:
     GLubyte _pressedTitleOpacity;
     GLubyte _disabledTitleOpacity;
     
-    float _verticalPadding;
-    float _horizontalPadding;
+    float _leftPadding;
+    float _rightPadding;
+    float _topPadding;
+    float _bottomPadding;
     
     float _leftOffsets;
     float _topOffsets;

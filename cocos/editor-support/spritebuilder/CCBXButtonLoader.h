@@ -59,8 +59,12 @@ private:
     std::string _label;
     std::string _font;
     FloatScaleDescription _fontSize;
-    FloatScaleDescription _horizPadding;
-    FloatScaleDescription _vertPadding;
+    
+    FloatScaleDescription _leftPadding;
+    FloatScaleDescription _rightPadding;
+    FloatScaleDescription _topPadding;
+    FloatScaleDescription _bottomPadding;
+    
     TextHAlignment _textHAlignment;
     TextVAlignment _textVAlignment;
     bool _adjustsFontSizeToFit;

@@ -36,6 +36,11 @@ static const std::string PROPERTY_BACKGROUNDCOLOR_DISABLED("backgroundColor|Disa
 static const std::string PROPERTY_HORIZONTALPADDING("horizontalPadding");
 static const std::string PROPERTY_VERTICALPADDING("verticalPadding");
     
+static const std::string PROPERTY_LEFTPADDING("leftPadding");
+static const std::string PROPERTY_RIGHTPADDING("rightPadding");
+static const std::string PROPERTY_TOPPADDING("topPadding");
+static const std::string PROPERTY_BOTTOMPADDING("bottomPadding");
+    
 static const std::string PROPERTY_HORIZONTALALIGMENT("horizontalAlignment");
 static const std::string PROPERTY_VERTICALALIGMENT("verticalAlignment");
     
@@ -174,8 +179,10 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
         //button->getTitleRenderer()->setSystemFontName(_font);
         button->setTitleFontSize(getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
         button->setTitleAlignment(_textHAlignment, _textVAlignment);
-        button->setHorizontalPadding(getAbsoluteScale(mainScale, additionalScale, _horizPadding.scale, _horizPadding.type));
-        button->setVerticalPadding(getAbsoluteScale(mainScale, additionalScale, _vertPadding.scale, _vertPadding.type));
+        button->setPaddingPadding(getAbsoluteScale(mainScale, additionalScale, _leftPadding.scale, _leftPadding.type),
+                                  getAbsoluteScale(mainScale, additionalScale, _topPadding.scale, _topPadding.type),
+                                  getAbsoluteScale(mainScale, additionalScale, _rightPadding.scale, _rightPadding.type),
+                                  getAbsoluteScale(mainScale, additionalScale, _bottomPadding.scale, _bottomPadding.type));
         button->setOffsets(_offset.x, _offset.y, _offset.z, _offset.w);
         button->setAdjustsFontSizeToFit(_adjustsFontSizeToFit);
         button->setTitleText(_label);
@@ -198,8 +205,10 @@ ButtonLoader::ButtonLoader()
     ,_disabledBackgroundOpacity(255)
     ,_textHAlignment(TextHAlignment::CENTER)
     ,_textVAlignment(TextVAlignment::CENTER)
-    ,_horizPadding(FloatScaleDescription{0, 0.0f})
-    ,_vertPadding(FloatScaleDescription{0, 0.0f})
+    ,_leftPadding(FloatScaleDescription{0, 0.0f})
+    ,_rightPadding(FloatScaleDescription{0, 0.0f})
+    ,_topPadding(FloatScaleDescription{0, 0.0f})
+    ,_bottomPadding(FloatScaleDescription{0, 0.0f})
     ,_adjustsFontSizeToFit(false)
 {
     
@@ -287,9 +296,19 @@ void ButtonLoader::onHandlePropTypeFloatScale(const std::string &propertyName, b
     if(propertyName == PROPERTY_FONTSIZE) {
         _fontSize = value;
     } else if(propertyName == PROPERTY_HORIZONTALPADDING) {
-        _horizPadding = value;
+        _leftPadding = value;
+        _rightPadding = value;
     } else if(propertyName == PROPERTY_VERTICALPADDING) {
-        _vertPadding = value;
+        _topPadding = value;
+        _bottomPadding = value;
+    } else  if(propertyName == PROPERTY_LEFTPADDING) {
+        _leftPadding = value;
+    } else if(propertyName == PROPERTY_TOPPADDING) {
+        _topPadding = value;
+    } else  if(propertyName == PROPERTY_RIGHTPADDING) {
+        _rightPadding = value;
+    } else if(propertyName == PROPERTY_BOTTOMPADDING) {
+        _bottomPadding = value;
     } else if(propertyName == PROPERTY_OUTLINEWIDTH) {
         //_outlineWidth = pFloatScale;
     } else if(propertyName == PROPERTY_SHADOWBLURRADIUS) {
