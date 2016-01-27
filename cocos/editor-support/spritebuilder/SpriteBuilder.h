@@ -49,7 +49,7 @@ public:
     virtual ccReaderClickCallback onResolveCCBClickSelector(const std::string &selectorName, Node* node) { return ccReaderClickCallback(); }
     virtual ccReaderTouchCallback onResolveCCBTouchSelector(const std::string &selectorName, Node* node) { return ccReaderTouchCallback(); }
     virtual ccReaderEventCallback onResolveCCBCallFuncSelector(const std::string &selectorName, Node* node) { return ccReaderEventCallback(); };
-    virtual void onNodeLoaded() {}
+    virtual void onNodeLoaded(Node* node) {}
     virtual ~CCBXReaderOwner() {}
 };
     
