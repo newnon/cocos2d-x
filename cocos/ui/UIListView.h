@@ -400,7 +400,7 @@ protected:
     virtual void copySpecialProperties(Widget* model) override;
     virtual void copyClonedWidgetChildren(Widget* model) override;
     void selectedItemEvent(TouchEventType event);
-    virtual void interceptTouchEvent(Widget::TouchEventType event,Widget* sender,Touch* touch) override;
+    virtual bool interceptTouchEvent(Widget::TouchEventType event,Widget* sender,Touch* touch) override;
     
     virtual Vec2 getHowMuchOutOfBoundary(const Vec2& addition = Vec2::ZERO) override;
     

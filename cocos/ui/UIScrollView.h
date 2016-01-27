@@ -594,7 +594,7 @@ protected:
     virtual void handleMoveLogic(Touch *touch);
     virtual void handleReleaseLogic(Touch *touch);
 
-    virtual void interceptTouchEvent(Widget::TouchEventType event,Widget* sender,Touch *touch) override;
+    virtual bool interceptTouchEvent(Widget::TouchEventType event,Widget* sender,Touch *touch) override;
     
     void processScrollEvent(MoveDirection dir, bool bounce);
     void processScrollingEvent();
@@ -611,8 +611,6 @@ protected:
     float _bottomBoundary;
     float _leftBoundary;
     float _rightBoundary;
-
-    bool _bePressed;
 
     float _childFocusCancelOffsetInInch;
     
@@ -634,6 +632,8 @@ protected:
     bool _inertiaScrollEnabled;
 
     bool _bounceEnabled;
+    
+    bool _moved;
     
     Vec2 _outOfBoundaryAmount;
     bool _outOfBoundaryAmountDirty;

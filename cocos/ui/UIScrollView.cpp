@@ -56,7 +56,7 @@ _topBoundary(0.0f),
 _bottomBoundary(0.0f),
 _leftBoundary(0.0f),
 _rightBoundary(0.0f),
-_bePressed(false),
+_moved(false),
 _childFocusCancelOffsetInInch(MOVE_INCH),
 _touchMovePreviousTimestamp(0),
 _autoScrolling(false),
@@ -825,8 +825,9 @@ void ScrollView::gatherTouchMove(const Vec2& delta)
 
 void ScrollView::handlePressLogic(Touch *touch)
 {
-    _bePressed = true;
+    setHighlighted(true);
     _autoScrolling = false;
+    _moved = false;
     
     // Clear gathered touch move information
     {
@@ -847,17 +848,21 @@ void ScrollView::handlePressLogic(Touch *touch)
 
 void ScrollView::handleMoveLogic(Touch *touch)
 {
-    Vec3 currPt, prevPt;
-    if(!calculateCurrAndPrevTouchPoints(touch, &currPt, &prevPt))
+    if(isHighlighted())
     {
-        return;
+        _moved = true;
+        Vec3 currPt, prevPt;
+        if(!calculateCurrAndPrevTouchPoints(touch, &currPt, &prevPt))
+        {
+            return;
+        }
+        Vec3 delta3 = currPt - prevPt;
+        Vec2 delta(delta3.x, delta3.y);
+        scrollChildren(delta);
+        
+        // Gather touch move information for speed calculation
+        gatherTouchMove(delta);
     }
-    Vec3 delta3 = currPt - prevPt;
-    Vec2 delta(delta3.x, delta3.y);
-    scrollChildren(delta);
-    
-    // Gather touch move information for speed calculation
-    gatherTouchMove(delta);
 }
 
 void ScrollView::handleReleaseLogic(Touch *touch)
@@ -873,7 +878,8 @@ void ScrollView::handleReleaseLogic(Touch *touch)
         }
     }
 
-    _bePressed = false;
+    setHighlighted(false);
+    _moved = false;
     
     bool bounceBackStarted = startBounceBackIfNeeded();
     if(!bounceBackStarted && _inertiaScrollEnabled)
@@ -945,12 +951,13 @@ void ScrollView::update(float dt)
     }
 }
 
-void ScrollView::interceptTouchEvent(Widget::TouchEventType event, Widget *sender,Touch* touch)
+bool ScrollView::interceptTouchEvent(Widget::TouchEventType event, Widget *sender,Touch* touch)
 {
+    bool ret = false;
     if(!_touchEnabled)
     {
-        Layout::interceptTouchEvent(event, sender, touch);
-        return;
+        ret = Layout::interceptTouchEvent(event, sender, touch);
+        return ret;
     }
 
     Vec2 touchPoint = touch->getLocation();
@@ -958,6 +965,7 @@ void ScrollView::interceptTouchEvent(Widget::TouchEventType event, Widget *sende
     {
         case TouchEventType::BEGAN:
         {
+            Layout::interceptTouchEvent(event, sender, touch);
             _isInterceptTouch = true;
             _touchBeganPosition = touch->getLocation();
             handlePressLogic(touch);
@@ -982,10 +990,20 @@ void ScrollView::interceptTouchEvent(Widget::TouchEventType event, Widget *sende
                 default:
                     break;
             }
-            if (offsetInInch > _childFocusCancelOffsetInInch)
+            if(!_moved)
+            {
+                bool result = Layout::interceptTouchEvent(event, sender, touch);
+                if(result)
+                {
+                    setHighlighted(false);
+                }
+            }
+            
+            if (isHighlighted() && offsetInInch > _childFocusCancelOffsetInInch)
             {
                 sender->setHighlighted(false);
                 handleMoveLogic(touch);
+                ret = true;
             }
         }
         break;
@@ -993,6 +1011,7 @@ void ScrollView::interceptTouchEvent(Widget::TouchEventType event, Widget *sende
         case TouchEventType::CANCELED:
         case TouchEventType::ENDED:
         {
+            Layout::interceptTouchEvent(event, sender, touch);
             _touchEndPosition = touch->getLocation();
             handleReleaseLogic(touch);
             if (sender->isSwallowTouches())
@@ -1002,6 +1021,7 @@ void ScrollView::interceptTouchEvent(Widget::TouchEventType event, Widget *sende
         }
         break;
     }
+    return ret;
 }
 
 void ScrollView::processScrollEvent(MoveDirection dir, bool bounce)
@@ -1356,7 +1376,6 @@ void ScrollView::copySpecialProperties(Widget *widget)
         _bottomBoundary = scrollView->_bottomBoundary;
         _leftBoundary = scrollView->_leftBoundary;
         _rightBoundary = scrollView->_rightBoundary;
-        _bePressed = scrollView->_bePressed;
         _childFocusCancelOffsetInInch = scrollView->_childFocusCancelOffsetInInch;
         _touchMoveDisplacements = scrollView->_touchMoveDisplacements;
         _touchMoveTimeDeltas = scrollView->_touchMoveTimeDeltas;
