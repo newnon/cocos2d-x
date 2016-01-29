@@ -16,9 +16,9 @@
 NS_CC_BEGIN
 namespace spritebuilder {
     
-ScrollListView* ScrollListView::create(NodeLoader *templateLoader)
+    ScrollListView* ScrollListView::create(NodeLoader *templateLoader, float mainScale, float additionalScale)
 {
-    ScrollListView* widget = new (std::nothrow) ScrollListView(templateLoader);
+    ScrollListView* widget = new (std::nothrow) ScrollListView(templateLoader, mainScale, additionalScale);
     if (widget && widget->init())
     {
         widget->autorelease();
@@ -28,7 +28,7 @@ ScrollListView* ScrollListView::create(NodeLoader *templateLoader)
     return nullptr;
 }
 
-ScrollListView::ScrollListView(NodeLoader *templateLoader):_template(templateLoader)
+ScrollListView::ScrollListView(NodeLoader *templateLoader, float mainScale, float additionalScale):_template(templateLoader), _mainScale(mainScale), _additionalScale(additionalScale)
 {
     CC_SAFE_RETAIN(_template);
 }
@@ -41,7 +41,7 @@ ScrollListView::~ScrollListView()
 ui::Widget* ScrollListView::pushBackElement(spritebuilder::CCBXReaderOwner * owner)
 {
     ui::Widget *ret = ui::Widget::create();
-    _template->loadNode(ret, getContentSize(), 1.0f, 1.0f, owner);
+    _template->loadNode(ret, getContentSize(), _mainScale, _additionalScale, owner);
     pushBackCustomItem(ret);
     return ret;
 }
@@ -49,7 +49,7 @@ ui::Widget* ScrollListView::pushBackElement(spritebuilder::CCBXReaderOwner * own
 ui::Widget* ScrollListView::insertElement(ssize_t index, spritebuilder::CCBXReaderOwner * owner)
 {
     ui::Widget *ret = ui::Widget::create();
-    _template->loadNode(ret, getContentSize(), 1.0f, 1.0f, owner);
+    _template->loadNode(ret, getContentSize(), _mainScale, _additionalScale, owner);
     insertCustomItem(ret, index);
     return ret;
 }

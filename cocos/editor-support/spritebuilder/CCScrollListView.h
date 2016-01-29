@@ -11,7 +11,7 @@ namespace spritebuilder {
 class CC_DLL ScrollListView : public ui::ListView
 {
 public:
-    static ScrollListView *create(NodeLoader *templateLoader);
+    static ScrollListView *create(NodeLoader *templateLoader, float mainScale, float additionalScale);
     
     /**
      * Push back custom item into listview.
@@ -24,11 +24,13 @@ public:
     ui::Widget* insertElement(ssize_t index, spritebuilder::CCBXReaderOwner * owner);
     
 CC_CONSTRUCTOR_ACCESS:
-    ScrollListView(NodeLoader *templateLoader);
+    ScrollListView(NodeLoader *templateLoader, float mainScale, float additionalScale);
     ~ScrollListView();
     
 private:
     NodeLoader * _template;
+    float _mainScale = 1.0f;
+    float _additionalScale = 1.0f;
 };
 
 }

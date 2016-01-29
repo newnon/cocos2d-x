@@ -23,7 +23,7 @@ ScrollListViewLoader *ScrollListViewLoader::create()
 
 Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner)
 {
-    ScrollListView *scrollListView = ScrollListView::create(_file);
+    ScrollListView *scrollListView = ScrollListView::create(_file, mainScale, additionalScale);
     scrollListView->setAnchorPoint(Vec2(0.0f, 0.0f));
     scrollListView->setClippingType(ui::Layout::ClippingType::SCISSOR);
     return scrollListView;
