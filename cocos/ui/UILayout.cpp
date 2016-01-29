@@ -480,7 +480,7 @@ const Rect& Layout::getClippingRect()
             _clippingRect.origin.y = std::max(parentClippingRect.origin.y, worldPos.y);
             
             float right = std::min(parentClippingRect.origin.x + parentClippingRect.size.width, worldPos.x + scissorWidth);
-            float top = std::min(parentClippingRect.origin.y + parentClippingRect.size.height, worldPos.x + scissorHeight);
+            float top = std::min(parentClippingRect.origin.y + parentClippingRect.size.height, worldPos.y + scissorHeight);
             
             _clippingRect.size.width = std::max(0.0f, right - _clippingRect.origin.x);
             _clippingRect.size.height = std::max(0.0f, top - _clippingRect.origin.y);
