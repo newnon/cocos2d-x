@@ -1007,16 +1007,17 @@ bool Widget::isClippingParentContainsPoint(const Vec2 &pt)
     return true;
 }
 
-void Widget::interceptTouchEvent(cocos2d::ui::Widget::TouchEventType event, cocos2d::ui::Widget *sender, Touch *touch)
+bool Widget::interceptTouchEvent(cocos2d::ui::Widget::TouchEventType event, cocos2d::ui::Widget *sender, Touch *touch)
 {
     Widget* widgetParent = getWidgetParent();
+    bool ret = false;
     if (widgetParent)
     {
         widgetParent->_hittedByCamera = _hittedByCamera;
-        widgetParent->interceptTouchEvent(event,sender,touch);
+        ret = widgetParent->interceptTouchEvent(event,sender,touch);
         widgetParent->_hittedByCamera = nullptr;
     }
-
+    return ret;
 }
 
 void Widget::setPosition(const Vec2 &pos)

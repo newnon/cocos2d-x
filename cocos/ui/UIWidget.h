@@ -859,7 +859,7 @@ CC_CONSTRUCTOR_ACCESS:
      * @param parent
      * @param point
      */
-    virtual void interceptTouchEvent(TouchEventType event, Widget* sender, Touch *touch);
+    virtual bool interceptTouchEvent(TouchEventType event, Widget* sender, Touch *touch);
     
     /**
      *@brief Propagate touch events to its parents

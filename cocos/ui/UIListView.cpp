@@ -540,12 +540,12 @@ void ListView::selectedItemEvent(TouchEventType event)
     this->release();
 }
     
-void ListView::interceptTouchEvent(TouchEventType event, Widget *sender, Touch* touch)
+bool ListView::interceptTouchEvent(TouchEventType event, Widget *sender, Touch* touch)
 {
-    ScrollView::interceptTouchEvent(event, sender, touch);
+    bool ret = ScrollView::interceptTouchEvent(event, sender, touch);
     if (!_touchEnabled)
     {
-        return;
+        return ret;
     }
     if (event != TouchEventType::MOVED)
     {
@@ -563,6 +563,7 @@ void ListView::interceptTouchEvent(TouchEventType event, Widget *sender, Touch* 
             selectedItemEvent(event);
         }
     }
+    return ret;
 }
     
 static Vec2 calculateItemPositionWithAnchor(Widget* item, const Vec2& itemAnchorPoint)
