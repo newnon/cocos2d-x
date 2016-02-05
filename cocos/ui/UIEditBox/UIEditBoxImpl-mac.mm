@@ -115,7 +115,7 @@
 - (instancetype)initWithFrame:(NSRect)frameRect editBox:(void *)editBox;
 
 - (void)doAnimationWhenKeyboardMoveWithDuration:(float)duration distance:(float)distance;
-- (void)setPosition:(NSPoint)pos;
+- (void)setRect:(NSRect)frameRect;
 
 - (void)openKeyboard;
 - (void)closeKeyboard;
@@ -185,13 +185,10 @@
     return glview->getCocoaWindow();
 }
 
-- (void)setPosition:(NSPoint)pos
+- (void)setRect:(NSRect)frameRect
 {
-    NSRect frame = _textField.frame;
-    frame.origin = pos;
-    
-    _textField.frame = frame;
-    _secureTextField.frame = frame;
+    _textField.frame = frameRect;
+    _secureTextField.frame = frameRect;
 }
 
 - (void)setupTextField:(NSTextField *)textField
@@ -554,11 +551,11 @@ void EditBoxImplMac::updatePosition(float dt)
 {
     if(nullptr != _sysEdit)
     {
-        adjustTextFieldPosition();
+        adjustTextFieldPositionAndSize();
     }
 }
 
-void EditBoxImplMac::adjustTextFieldPosition()
+void EditBoxImplMac::adjustTextFieldPositionAndSize()
 {
     Size contentSize = _editBox->getContentSize();
     Rect rect = Rect(0, 0, contentSize.width, contentSize.height);
@@ -566,13 +563,18 @@ void EditBoxImplMac::adjustTextFieldPosition()
     rect = RectApplyAffineTransform(rect, _editBox->nodeToWorldTransform());
     
     Vec2 designCoord = Vec2(rect.origin.x, rect.origin.y + rect.size.height);
-    [_sysEdit setPosition:convertDesignCoordToScreenCoord(designCoord, _inRetinaMode)];
+    
+    GLView* eglView = Director::getInstance()->getOpenGLView();
+    NSPoint screenCoord = convertDesignCoordToScreenCoord(designCoord, _inRetinaMode);
+    NSRect rect2 = NSMakeRect(screenCoord.x, screenCoord.y, rect.size.width * eglView->getScaleX(), rect.size.height * eglView->getScaleY());
+    
+    [_sysEdit setRect:rect2];
 }
 
 void EditBoxImplMac::setPosition(const Vec2& pos)
 {
     _position = pos;
-    adjustTextFieldPosition();
+    adjustTextFieldPositionAndSize();
 }
 
 void EditBoxImplMac::setVisible(bool visible)
@@ -584,6 +586,7 @@ void EditBoxImplMac::setVisible(bool visible)
 void EditBoxImplMac::setContentSize(const Size& size)
 {
     _contentSize = size;
+    adjustTextFieldPositionAndSize();
     CCLOG("[Edit text] content size = (%f, %f)", size.width, size.height);
 }
 
@@ -611,7 +614,7 @@ void EditBoxImplMac::closeKeyboard()
 
 void EditBoxImplMac::onEnter(void)
 {
-    adjustTextFieldPosition();
+    adjustTextFieldPositionAndSize();
 }
 
 }

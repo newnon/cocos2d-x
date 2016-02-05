@@ -88,7 +88,7 @@ public:
     virtual void onEnter(void) override;
 private:
     NSPoint    convertDesignCoordToScreenCoord(const Vec2& designCoord, bool bInRetinaMode);
-    void       adjustTextFieldPosition();
+    void       adjustTextFieldPositionAndSize();
     NSFont*    constructFont(const char* fontName, int fontSize);
     Size              _contentSize;
     Vec2              _position;
