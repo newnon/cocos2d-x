@@ -172,12 +172,12 @@ std::string getCurrentLanguageJNI() {
     return ret;
 }
 
-std::string getDevideUIDJni()
+std::string getDeviceUIDJni()
 {
     JniMethodInfo t;
     std::string ret("");
     
-    if (JniHelper::getStaticMethodInfo(t, CLASS_NAME, "getDevideUID", "()Ljava/lang/String;")) {
+    if (JniHelper::getStaticMethodInfo(t, CLASS_NAME, "getDeviceUID", "()Ljava/lang/String;")) {
         jstring str = (jstring)t.env->CallStaticObjectMethod(t.classID, t.methodID);
         t.env->DeleteLocalRef(t.classID);
         ret = JniHelper::jstring2string(str);

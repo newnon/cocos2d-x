@@ -178,9 +178,9 @@ void Device::vibrate(float duration)
     vibrateJni(duration);
 }
 
-std::string Device::getDevideUID()
+std::string Device::getDeviceUID()
 {
-    return getDevideUIDJni();
+    return getDeviceUIDJni();
 }
 
 NS_CC_END

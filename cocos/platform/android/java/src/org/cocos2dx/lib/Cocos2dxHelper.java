@@ -194,7 +194,7 @@ public class Cocos2dxHelper {
         return Build.MODEL;
     }
     
-    public static String getDevideUID(){
+    public static String getDeviceUID(){
         return Secure.getString(sActivity.getContentResolver(), Secure.ANDROID_ID);
     }
 

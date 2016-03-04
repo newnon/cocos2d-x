@@ -512,7 +512,7 @@ void Device::vibrate(float duration)
     AudioServicesPlayAlertSound(kSystemSoundID_Vibrate);
 }
 
-std::string Device::getDevideUID()
+std::string Device::getDeviceUID()
 {
     return [[[[UIDevice currentDevice] identifierForVendor] UUIDString] UTF8String];
 }

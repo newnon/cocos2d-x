@@ -101,7 +101,7 @@ public:
      *  Gets the device unique identifier
      *  @return The device unique identifier.
      */
-    static std::string getDevideUID();
+    static std::string getDeviceUID();
 
 private:
     CC_DISALLOW_IMPLICIT_CONSTRUCTORS(Device);
