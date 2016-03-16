@@ -188,6 +188,20 @@ inline bool membervariableAssignVector(const std::string &name, const std::strin
     return false;
 }
     
+template <class T>
+inline bool membervariableAssignVector(const std::string &name, const std::string &memberVariableName, std::vector<T*> &variable, Node* node)
+{
+    if(memberVariableName != name)
+        return false;
+    T *result = dynamic_cast<T*>(node);
+    if(result)
+    {
+        variable.push_back(result);
+        return true;
+    }
+    return false;
+}
+    
 class NodeLoader;
 class NodeLoaderLibrary;
 class CCBReaderParams;

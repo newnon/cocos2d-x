@@ -225,6 +225,22 @@ private:
     std::unordered_map<std::string, cocos2d::Ref*> _objects;
     cocos2d::ValueMap _customProperties;
 };
+    
+template <class CustomNode>
+class SimpleNodeLoader : public NodeLoader {
+public:
+    static NodeLoader* create()
+    {
+        SimpleNodeLoader *ret = new SimpleNodeLoader();
+        ret->autorelease();
+        return ret;
+    }
+    
+    virtual cocos2d::Node *createNodeInstance(const cocos2d::Size &parentSize, float mainScale, float additionalScale, cocos2d::spritebuilder::CCBXReaderOwner *owner, cocos2d::Node *rootNode, cocos2d::spritebuilder::CCBXReaderOwner *parentOwner) override
+    {
+        return CustomNode::create();
+    }
+};
 
 }
 
