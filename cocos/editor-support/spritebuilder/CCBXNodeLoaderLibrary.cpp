@@ -73,6 +73,11 @@ void NodeLoaderLibrary::registerNodeLoader(const std::string &name, const NodeLo
 {
     _loaders.emplace(name, func);
 }
+    
+void NodeLoaderLibrary::removeNodeLoader(const std::string &name)
+{
+    _loaders.erase(name);
+}
 
 NodeLoaderLibrary::NodeLoaderLibrary()
 {

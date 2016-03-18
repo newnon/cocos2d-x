@@ -30,6 +30,7 @@ public:
     
     NodeLoader *createNodeLoader(const std::string &name) const;
     void registerNodeLoader(const std::string &name, const NodeLoaderCreateFuntion &func);
+    void removeNodeLoader(const std::string &name);
     
 CC_CONSTRUCTOR_ACCESS:
     NodeLoaderLibrary();
