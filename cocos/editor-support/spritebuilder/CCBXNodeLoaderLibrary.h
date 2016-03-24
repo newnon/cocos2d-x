@@ -27,6 +27,7 @@ public:
     static NodeLoaderLibrary *create();
     static NodeLoaderLibrary *createDefault();
     static NodeLoaderLibrary *getDefault();
+    static NodeLoaderLibrary *copyDefault();
     
     NodeLoader *createNodeLoader(const std::string &name) const;
     void registerNodeLoader(const std::string &name, const NodeLoaderCreateFuntion &func);

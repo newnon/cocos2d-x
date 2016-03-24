@@ -15,6 +15,8 @@ static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
 static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
     
+static const std::string PROPERTY_IMAGE_SCALE("imageScale");
+    
 LoadingBarLoader *LoadingBarLoader::create()
 {
     LoadingBarLoader *ret = new LoadingBarLoader();
@@ -49,6 +51,7 @@ Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainSca
         default:
             break;
     };
+    loadingBar->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
     loadingBar->setPercent(_percentage);
     return loadingBar;
 }
@@ -63,6 +66,7 @@ void LoadingBarLoader::setSpecialProperties(Node* node, const Size &parentSize, 
 LoadingBarLoader::LoadingBarLoader()
     :_direction(ui::LoadingBar::Direction::LEFT)
     ,_percentage(0)
+    ,_imageScale{0,1.f}
 {
     
 }
@@ -127,6 +131,15 @@ void LoadingBarLoader::onHandlePropTypeFloat(const std::string &propertyName, bo
         _percentage = value;
     } else {
         WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
+    }
+}
+    
+void LoadingBarLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
+{
+    if(propertyName == PROPERTY_IMAGE_SCALE) {
+        _imageScale = value;
+    } else {
+        WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
     }
 }
 

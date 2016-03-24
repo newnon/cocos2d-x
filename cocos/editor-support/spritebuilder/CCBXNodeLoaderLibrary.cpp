@@ -60,6 +60,24 @@ NodeLoaderLibrary *NodeLoaderLibrary::getDefault()
     
     return s_SharedNodeLoaderLibrary;
 }
+    
+NodeLoaderLibrary *NodeLoaderLibrary::copyDefault()
+{
+    if (!s_SharedNodeLoaderLibrary)
+    {
+        NodeLoaderLibrary *ret = new(std::nothrow) NodeLoaderLibrary();
+        ret->autorelease();
+        ret->registerDefaultLoaders();
+        return ret;
+    }
+    else
+    {
+        NodeLoaderLibrary *ret = new(std::nothrow) NodeLoaderLibrary(*s_SharedNodeLoaderLibrary);
+        ret->autorelease();
+        ret->registerDefaultLoaders();
+        return ret;
+    }
+}
 
 NodeLoader *NodeLoaderLibrary::createNodeLoader(const std::string &name) const
 {
