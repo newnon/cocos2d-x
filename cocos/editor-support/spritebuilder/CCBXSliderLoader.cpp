@@ -6,7 +6,8 @@ namespace spritebuilder {
     
 static const std::string PROPERTY_SPACING("spacing");
 static const std::string PROPERTY_DIRECTION("direction");
-static const std::string PROPERTY_BACKGROUND("backgroundSpriteFrame|Normal");
+static const std::string PROPERTY_BACKGROUND_OLD("backgroundSpriteFrame|Normal");
+static const std::string PROPERTY_BACKGROUND("backgroundSpriteFrame");
 static const std::string PROPERTY_PROGRESS("progressSpriteFrame");
 static const std::string PROPERTY_HANDLE_NORMAL("handleSpriteFrame|Normal");
 static const std::string PROPERTY_HANDLE_HIGHLIGHTED("handleSpriteFrame|Highlighted");
@@ -20,6 +21,9 @@ static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
     
 static const std::string PROPERTY_ZOOM_SCALE("zoomScale");
 static const std::string PROPERTY_MAX_PERCENT("maxPercent");
+static const std::string PROPERTY_SLIDER_VALUE("sliderValue");
+    
+static const std::string PROPERTY_IMAGE_SCALE("imageScale");
     
 SliderLoader *SliderLoader::create()
 {
@@ -125,7 +129,9 @@ Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, 
             break;
     };
     slider->setMaxPercent(_maxPercent);
+    slider->setPercent(_percent);
     slider->setZoomScale(_zoomScale - 1.0f);
+    slider->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
     return slider;
 
 }
@@ -138,6 +144,8 @@ void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
 SliderLoader::SliderLoader()
     :_zoomScale(1.0f)
     ,_maxPercent(100)
+    ,_percent(0)
+    ,_imageScale{0,1.f}
 {
     
 }
@@ -149,7 +157,7 @@ SliderLoader::~SliderLoader()
     
 void SliderLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value)
 {
-    if(propertyName == PROPERTY_BACKGROUND) {
+    if(propertyName == PROPERTY_BACKGROUND || propertyName == PROPERTY_BACKGROUND_OLD) {
         _background = value;
     } else if(propertyName == PROPERTY_PROGRESS) {
         _progress = value;
@@ -192,8 +200,8 @@ void SliderLoader::onHandlePropTypeFloat(const std::string &propertyName, bool i
     
 void SliderLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
 {
-    if(propertyName == PROPERTY_SPACING) {
-        //((LayoutBox *)pNode)->setSpacing(pFloatScale);
+    if(propertyName == PROPERTY_IMAGE_SCALE) {
+        _imageScale = value;
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
     }
@@ -203,7 +211,9 @@ void SliderLoader::onHandlePropTypeInteger(const std::string &propertyName, bool
 {
     if(propertyName == PROPERTY_MAX_PERCENT) {
         _maxPercent = value;
-    } else {
+    } else if(propertyName == PROPERTY_SLIDER_VALUE) {
+        _percent = value;
+    } else{
         WidgetLoader::onHandlePropTypeInteger(propertyName, isExtraProp, value);
     }
 }

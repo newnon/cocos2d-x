@@ -26,6 +26,7 @@ Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainS
     sprite->setAnchorPoint(Vec2(0.0f, 0.0f));
     Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     Size size = sprite->getOriginalSize();
+    sprite->setRenderingType(_margins == Vec4::ZERO?ui::Scale9Sprite::RenderingType::SIMPLE:ui::Scale9Sprite::RenderingType::SLICE);
     sprite->setCapInsets(Rect(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height));
     return sprite;
 }

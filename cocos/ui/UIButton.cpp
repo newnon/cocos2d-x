@@ -36,6 +36,7 @@ NS_CC_BEGIN
 
 namespace ui {
 
+static const int BUTTON_RENDERER_Z = (-2);
 static const int NORMAL_RENDERER_Z = (-2);
 static const int PRESSED_RENDERER_Z = (-2);
 static const int DISABLED_RENDERER_Z = (-2);
@@ -48,7 +49,9 @@ Button::Button():
 _buttonNormalRenderer(nullptr),
 _buttonPressedRenderer(nullptr),
 _buttonDisabledRenderer(nullptr),
+_buttonRenderer(nullptr),
 _titleRenderer(nullptr),
+_imageScale(1.0f),
 _zoomScale(0.1f),
 _normalFileName(""),
 _clickedFileName(""),
@@ -175,10 +178,20 @@ void Button::initRenderer()
     _buttonPressedRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
     _buttonNormalRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
     _buttonDisabledRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
+    
+    _buttonRenderer = Node::create();
+    
+    _buttonRenderer->addChild(_buttonNormalRenderer);
+    _buttonRenderer->addChild(_buttonPressedRenderer);
+    _buttonRenderer->addChild(_buttonDisabledRenderer);
+    _buttonRenderer->setCascadeColorEnabled(true);
+    _buttonRenderer->setCascadeOpacityEnabled(true);
+    
+    addProtectedChild(_buttonRenderer, BUTTON_RENDERER_Z, -1);
 
-    addProtectedChild(_buttonNormalRenderer, NORMAL_RENDERER_Z, -1);
-    addProtectedChild(_buttonPressedRenderer, PRESSED_RENDERER_Z, -1);
-    addProtectedChild(_buttonDisabledRenderer, DISABLED_RENDERER_Z, -1);
+    //addProtectedChild(_buttonNormalRenderer, NORMAL_RENDERER_Z, -1);
+    //addProtectedChild(_buttonPressedRenderer, PRESSED_RENDERER_Z, -1);
+    //addProtectedChild(_buttonDisabledRenderer, DISABLED_RENDERER_Z, -1);
 }
 
 void Button::createTitleRenderer()
@@ -951,23 +964,23 @@ Node* Button::getVirtualRenderer()
 
 void Button::normalTextureScaleChangedWithSize()
 {
-            _buttonNormalRenderer->setPreferredSize(_contentSize);
+    _buttonNormalRenderer->setPreferredSize(_contentSize / _imageScale);
 
-    _buttonNormalRenderer->setPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
+    _buttonNormalRenderer->setPosition(_contentSize.width / _imageScale / 2.0f, _contentSize.height / _imageScale / 2.0f);
 }
 
 void Button::pressedTextureScaleChangedWithSize()
 {
-    _buttonPressedRenderer->setPreferredSize(_contentSize);
+    _buttonPressedRenderer->setPreferredSize(_contentSize / _imageScale);
 
-    _buttonPressedRenderer->setPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
+    _buttonPressedRenderer->setPosition(_contentSize.width / _imageScale / 2.0f, _contentSize.height / _imageScale / 2.0f);
 }
 
 void Button::disabledTextureScaleChangedWithSize()
 {
-    _buttonDisabledRenderer->setPreferredSize(_contentSize);
+    _buttonDisabledRenderer->setPreferredSize(_contentSize / _imageScale);
 
-    _buttonDisabledRenderer->setPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
+    _buttonDisabledRenderer->setPosition(_contentSize.width / _imageScale / 2.0f, _contentSize.height / _imageScale / 2.0f);
 }
 
 void Button::setPressedActionEnabled(bool enabled)
@@ -1474,6 +1487,23 @@ void Button::setBottomOffset(float bottom)
 float Button::getBottomOffset() const
 {
     return _bottomOffsets;
+}
+    
+void Button::setImageScale(float scale)
+{
+    if(_imageScale != scale)
+    {
+        _imageScale = scale;
+        _buttonRenderer->setScale(scale);
+        _normalTextureAdaptDirty = true;
+        _pressedTextureAdaptDirty = true;
+        _disabledTextureAdaptDirty = true;
+    }
+}
+
+float Button::getImageScale() const
+{
+    return _imageScale;
 }
 
 void Button::copySpecialProperties(Widget *widget)

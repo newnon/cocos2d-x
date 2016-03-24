@@ -72,6 +72,8 @@ static const std::string PROPERTY_OFFSET_TOP("offsetTop");
 static const std::string PROPERTY_OFFSET_RIGHT("offsetRight");
 static const std::string PROPERTY_OFFSET_BOTTOM("offsetBottom");
     
+static const std::string PROPERTY_IMAGE_SCALE("imageScale");
+    
 ButtonLoader *ButtonLoader::create()
 {
     ButtonLoader *ret = new ButtonLoader();
@@ -84,7 +86,6 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
     Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     ui::Button *button = ui::Button::create();
     button->setAnchorPoint(Vec2(0.0f, 0.0f));
-    //button->setScale9Enabled(true);
     switch(_normalSpriteFrame.type)
     {
         case SpriteFrameDescription::TextureResType::LOCAL:
@@ -149,6 +150,7 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
             break;
     };
     button->setScale9Enabled(true);
+    button->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
     return button;
 }
 
@@ -210,6 +212,7 @@ ButtonLoader::ButtonLoader()
     ,_topPadding(FloatScaleDescription{0, 0.0f})
     ,_bottomPadding(FloatScaleDescription{0, 0.0f})
     ,_adjustsFontSizeToFit(false)
+    ,_imageScale{0,1.f}
 {
     
 }
@@ -313,6 +316,8 @@ void ButtonLoader::onHandlePropTypeFloatScale(const std::string &propertyName, b
         //_outlineWidth = pFloatScale;
     } else if(propertyName == PROPERTY_SHADOWBLURRADIUS) {
         //_shadowBlurRadius = pFloatScale;
+    } else if(propertyName == PROPERTY_IMAGE_SCALE) {
+        _imageScale = value;
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
     }

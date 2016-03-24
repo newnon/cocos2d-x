@@ -34,8 +34,10 @@ private:
     SpriteFrameDescription _handleNormal;
     SpriteFrameDescription _handleDisabled;
     SpriteFrameDescription _handleHiglihted;
+    FloatScaleDescription _imageScale;
     Vec4 _margins;
     float _zoomScale;
+    int _percent;
     int _maxPercent;
 };
 
