@@ -831,16 +831,17 @@ void Renderer::drawBatchedTriangles()
         glBindBuffer(GL_ARRAY_BUFFER, _buffersVBO[0]);
 
         // option 1: subdata
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(_verts[0])*_filledVertex, _verts);
 //        glBufferSubData(GL_ARRAY_BUFFER, sizeof(_quads[0])*start, sizeof(_quads[0]) * n , &_quads[start] );
 
         // option 2: data
 //        glBufferData(GL_ARRAY_BUFFER, sizeof(quads_[0]) * (n-start), &quads_[start], GL_DYNAMIC_DRAW);
 
         // option 3: orphaning + glMapBuffer
-        glBufferData(GL_ARRAY_BUFFER, sizeof(_verts[0]) * _filledVertex, nullptr, GL_DYNAMIC_DRAW);
-        void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        memcpy(buf, _verts, sizeof(_verts[0])* _filledVertex);
-        glUnmapBuffer(GL_ARRAY_BUFFER);
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(_verts[0]) * _filledVertex, nullptr, GL_DYNAMIC_DRAW);
+//        void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+//        memcpy(buf, _verts, sizeof(_verts[0])* _filledVertex);
+//        glUnmapBuffer(GL_ARRAY_BUFFER);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         
@@ -939,16 +940,16 @@ void Renderer::drawBatchedQuads()
         glBindBuffer(GL_ARRAY_BUFFER, _quadbuffersVBO[0]);
         
         // option 1: subdata
-        //  glBufferSubData(GL_ARRAY_BUFFER, sizeof(_quads[0])*start, sizeof(_quads[0]) * n , &_quads[start] );
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(_quadVerts[0]) * _numberQuads * 4, _quadVerts);
         
         // option 2: data
         //  glBufferData(GL_ARRAY_BUFFER, sizeof(quads_[0]) * (n-start), &quads_[start], GL_DYNAMIC_DRAW);
         
         // option 3: orphaning + glMapBuffer
-        glBufferData(GL_ARRAY_BUFFER, sizeof(_quadVerts[0]) * _numberQuads * 4, nullptr, GL_DYNAMIC_DRAW);
-        void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        memcpy(buf, _quadVerts, sizeof(_quadVerts[0])* _numberQuads * 4);
-        glUnmapBuffer(GL_ARRAY_BUFFER);
+//        glBufferData(GL_ARRAY_BUFFER, sizeof(_quadVerts[0]) * _numberQuads * 4, nullptr, GL_DYNAMIC_DRAW);
+//        void *buf = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+//        memcpy(buf, _quadVerts, sizeof(_quadVerts[0])* _numberQuads * 4);
+//        glUnmapBuffer(GL_ARRAY_BUFFER);
         
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         
