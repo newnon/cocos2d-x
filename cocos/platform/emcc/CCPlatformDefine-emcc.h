@@ -1,6 +1,6 @@
 /****************************************************************************
-Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2015 Chukong Technologies Inc.
+Copyright (c) 2011      Laschweinski
+Copyright (c) 2013-2014 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,27 +23,39 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#ifndef __PLATFORM_CCPLATFORMDEFINE_H__
-#define __PLATFORM_CCPLATFORMDEFINE_H__
-/// @cond DO_NOT_SHOW
+#ifndef __CCPLATFORMDEFINE_H__
+#define __CCPLATFORMDEFINE_H__
 
 #include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-#include "platform/mac/CCPlatformDefine-mac.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-#include "platform/ios/CCPlatformDefine-ios.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-#include "platform/android/CCPlatformDefine-android.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-#include "platform/win32/CCPlatformDefine-win32.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
-#include "platform/winrt/CCPlatformDefine-winrt.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-#include "platform/linux/CCPlatformDefine-linux.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-#include "platform/emcc/CCPlatformDefine-emcc.h"
+#include <string.h>
+
+#define CC_DLL 
+
+#include <assert.h>
+#define CC_ASSERT(cond)    assert(cond)
+#define CC_UNUSED_PARAM(unusedparam) (void)unusedparam
+
+/* Define NULL pointer value */
+#ifndef NULL
+#ifdef __cplusplus
+#define NULL    0
+#else
+#define NULL    ((void *)0)
+#endif
 #endif
 
-/// @endcond
-#endif /* __PLATFORM_CCPLATFORMDEFINE_H__*/
+/*
+#include <time.h>
+#define TIME_START(var) clock_t var = clock(); clock_t var##_mark = var
+#define TIME_END_MARK(var) ((double)(clock() - var##_mark)/CLOCKS_PER_SEC)
+#define TIME_END(var) ((double)(clock() - var)/CLOCKS_PER_SEC)
+
+#define TIME_LOG(var, desc) do { printf(#var " " desc " time %f s\n", TIME_END_MARK(var)); var##_mark = clock(); } while(0)
+#define TIME_TOTAL_LOG(var, desc) printf(#var " " desc " total time %f s\n", TIME_END(var))
+*/
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+
+#endif /* __CCPLATFORMDEFINE_H__*/

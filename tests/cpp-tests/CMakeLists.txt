@@ -1,7 +1,9 @@
 set(APP_NAME cpp-tests)
 
 # Use same method as in cocos library
+if(NOT EMSCRIPTEN)
 cocos_find_package(CURL CURL REQUIRED)
+endif()
 
 if(WIN32)
   set(PLATFORM_SRC proj.win32/main.cpp)
@@ -14,6 +16,9 @@ elseif(MACOSX)
   list(APPEND PLATFORM_SRC ${RES_FILES})
 
 elseif(LINUX)
+  set(PLATFORM_SRC proj.linux/main.cpp)
+  set(RES_PREFIX "/Resources")
+elseif(EMSCRIPTEN)
   set(PLATFORM_SRC proj.linux/main.cpp)
   set(RES_PREFIX "/Resources")
 else()
@@ -53,7 +58,7 @@ set(TESTS_SRC
   Classes/CocosStudio3DTest/CocosStudio3DTest.cpp  
   Classes/ConfigurationTest/ConfigurationTest.cpp
   Classes/ConsoleTest/ConsoleTest.cpp
-  Classes/CurlTest/CurlTest.cpp
+#  Classes/CurlTest/CurlTest.cpp
   Classes/CurrentLanguageTest/CurrentLanguageTest.cpp
   Classes/DataVisitorTest/DataVisitorTest.cpp
   Classes/DownloaderTest/DownloaderTest.cpp
@@ -274,8 +279,13 @@ else()
 
     set_target_properties(${APP_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${APP_BIN_DIR}")
 
-    pre_build(${APP_NAME}
-      COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources ${APP_BIN_DIR}${RES_PREFIX}
-      )
+    if(EMSCRIPTEN)
+        set(CMAKE_EXECUTABLE_SUFFIX ".html")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s TOTAL_MEMORY=268435456 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/Resources@/")
+    else()
+        pre_build(${APP_NAME}
+          COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources ${APP_BIN_DIR}${RES_PREFIX}
+          )
+    endif()
 endif()
 

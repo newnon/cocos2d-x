@@ -42,7 +42,9 @@ include(renderer/CMakeLists.txt)
 include(base/CMakeLists.txt)
 include(deprecated/CMakeLists.txt)
 include(ui/CMakeLists.txt)
+if(NOT EMSCRIPTEN)
 include(network/CMakeLists.txt)
+endif()
 include(audio/CMakeLists.txt)
 include_directories(audio/include)
 include(storage/CMakeLists.txt)
@@ -82,10 +84,15 @@ set(COCOS_SRC cocos2d.cpp
     ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
     ${COCOS_DEPRECATED_SRC}
-    ${COCOS_NETWORK_SRC}
     ${COCOS_EDITOR_SUPPORT_SRC}
     ${COCOS_EXTENSIONS_SRC}
     )
+    
+if(NOT EMSCRIPTEN)
+  set(COCOS_SRC COCOS_SRC
+    ${COCOS_NETWORK_SRC}
+  )
+endif()
 
   #todo: provide prebuild versions of the xx libs for all platforms
   include_directories(../external/xxtea)
@@ -128,7 +135,10 @@ elseif(MACOSX OR APPLE)
     ${IOKIT_LIBRARY}
     ${FOUNDATION_LIBRARY}
   )
-
+elseif(EMSCRIPTEN)
+  foreach(_pkg OPENGL GLFW3)
+    cocos_use_pkg(cocos2d ${_pkg})
+  endforeach()
 elseif(ANDROID)
   set(PLATFORM_SPECIFIC_LIBS GLESv2 log android)
 else()

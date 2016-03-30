@@ -147,6 +147,17 @@ elseif(LINUX)
 elseif(ANDROID)
   ADD_DEFINITIONS (-DUSE_FILE32API)
   set(PLATFORM_FOLDER android)
+elseif(EMSCRIPTEN)
+  set(PLATFORM_FOLDER emcc)
+  set(USE_WEBP OFF)
+  ADD_DEFINITIONS (-DCC_USE_JPEG=0 -DCC_USE_TIFF=0 -DCC_USE_WEBP=0)
+  
+  set(EMSCRIPTEN_FLAGS "-s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_FREETYPE=1 -s USE_GLFW=3 -s USE_BULLET=1 -s DEMANGLE_SUPPORT=1 -s FULL_ES2=1")
+  set(CMAKE_C_FLAGS             "${CMAKE_C_FLAGS} ${EMSCRIPTEN_FLAGS}")
+  set(CMAKE_CXX_FLAGS           "${CMAKE_CXX_FLAGS} ${EMSCRIPTEN_FLAGS}")
+  set(CMAKE_EXE_LINKER_FLAGS    "${CMAKE_EXE_LINKER_FLAGS} ${EMSCRIPTEN_FLAGS}")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${EMSCRIPTEN_FLAGS}")
+  set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} ${EMSCRIPTEN_FLAGS}")
 else()
   message( FATAL_ERROR "Unsupported platform, CMake will exit" )
 endif()
@@ -215,8 +226,10 @@ if(LINUX OR MACOSX OR WINDOWS)
   endif()
 endif(LINUX OR MACOSX OR WINDOWS)
 
-# Freetype required on all platforms
+# Freetype required on all platforms except emscripten
+if(NOT EMSCRIPTEN)
 cocos_find_package(Freetype FREETYPE REQUIRED)
+endif()
 
 # WebP required if used
 if(USE_WEBP)
@@ -225,7 +238,9 @@ endif(USE_WEBP)
 
 # Chipmunk
 if(USE_CHIPMUNK)
+if(NOT EMSCRIPTEN)
   cocos_find_package(Chipmunk CHIPMUNK REQUIRED)
+endif()
   add_definitions(-DCC_ENABLE_CHIPMUNK_INTEGRATION=1)
   if(IOS OR MACOSX)
     # without this chipmunk will try to use apple defined geometry types, that conflicts with cocos
@@ -254,6 +269,7 @@ endif(USE_BOX2D)
 
 # Bullet (not prebuilded, exists as source)
 if(USE_BULLET)
+if(NOT EMSCRIPTEN)
   if(USE_PREBUILT_LIBS)
     add_subdirectory(external/bullet)
     set(BULLET_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/external/bullet)
@@ -263,6 +279,7 @@ if(USE_BULLET)
     set(BULLET_LIBRARIES bullet)
   endif()
   message(STATUS "Bullet include dirs: ${BULLET_INCLUDE_DIRS}")
+endif()
   add_definitions(-DCC_ENABLE_BULLET_INTEGRATION=1)
   add_definitions(-DCC_USE_PHYSICS=1)
 else()
@@ -297,8 +314,10 @@ endif()
 message(STATUS "TinyXML2 include dirs: ${TinyXML2_INCLUDE_DIRS}")
 
 # libjpeg
+if(NOT EMSCRIPTEN)
 cocos_find_package(JPEG JPEG REQUIRED)
 cocos_find_package(ZLIB ZLIB REQUIRED)
+endif()
 
 # minizip (we try to migrate to minizip from https://github.com/nmoinvaz/minizip)
 # only msys2 currently provides package for this variant, all other
@@ -323,10 +342,12 @@ else()
   add_definitions(-DMINIZIP_FROM_SYSTEM)
 endif()
 
+if(NOT EMSCRIPTEN)
 cocos_find_package(PNG PNG REQUIRED)
 cocos_find_package(TIFF TIFF REQUIRED)
 cocos_find_package(WEBSOCKETS WEBSOCKETS REQUIRED)
 cocos_find_package(CURL CURL REQUIRED)
+endif()
 
 # flatbuffers
 if(USE_PREBUILT_LIBS)

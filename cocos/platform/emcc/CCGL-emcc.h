@@ -1,6 +1,5 @@
 /****************************************************************************
-Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2015 Chukong Technologies Inc.
+Copyright (c) 2010 cocos2d-x.org
 
 http://www.cocos2d-x.org
 
@@ -23,27 +22,38 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#ifndef __PLATFORM_CCPLATFORMDEFINE_H__
-#define __PLATFORM_CCPLATFORMDEFINE_H__
-/// @cond DO_NOT_SHOW
+#ifndef __CCGL_H__
+#define __CCGL_H__
 
 #include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
+#define GLFW_INCLUDE_ES2 1
+#include <GLFW/glfw3.h>
+//#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-#include "platform/mac/CCPlatformDefine-mac.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-#include "platform/ios/CCPlatformDefine-ios.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-#include "platform/android/CCPlatformDefine-android.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-#include "platform/win32/CCPlatformDefine-win32.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
-#include "platform/winrt/CCPlatformDefine-winrt.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-#include "platform/linux/CCPlatformDefine-linux.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-#include "platform/emcc/CCPlatformDefine-emcc.h"
-#endif
 
-/// @endcond
-#endif /* __PLATFORM_CCPLATFORMDEFINE_H__*/
+//#include "GL/glew.h"
+//#include <EGL/egl.h>
+
+// normal process
+//#include <GLES2/gl2.h>
+//#include <GLES2/gl2ext.h>
+//#include <GLES2/gl2platform.h>
+
+#define	glClearDepth				glClearDepthf
+#define GL_WRITE_ONLY				GL_WRITE_ONLY_OES
+#define GL_BGRA						GL_BGRA_EXT
+#define GL_DEPTH24_STENCIL8			GL_DEPTH24_STENCIL8_OES
+#define CC_GL_DEPTH24_STENCIL8		GL_DEPTH24_STENCIL8
+
+extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArrays;
+extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArray;
+extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArrays;
+extern PFNGLMAPBUFFEROESPROC glMapBuffer;
+extern PFNGLUNMAPBUFFEROESPROC glUnmapBuffer;
+extern PFNGLGETBUFFERPOINTERVOESPROC glGetBufferPointerv;
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
+
+#endif // __CCGL_H__

@@ -89,6 +89,10 @@ if(LINUX)
   list(APPEND all_prebuilt_libs fmod)
 endif()
 
+if(EMSCRIPTEN)
+  list(APPEND chipmunk)
+endif()
+
 # END CONFIG
 
 foreach(_lib ${all_prebuilt_libs})

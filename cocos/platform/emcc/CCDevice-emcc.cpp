@@ -1,6 +1,6 @@
 /****************************************************************************
-Copyright (c) 2010-2012 cocos2d-x.org
-Copyright (c) 2013-2015 Chukong Technologies Inc.
+Copyright (c) 2011      Laschweinski
+Copyright (c) 2013-2014 Chukong Technologies Inc.
 
 http://www.cocos2d-x.org
 
@@ -23,27 +23,51 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ****************************************************************************/
 
-#ifndef __PLATFORM_CCPLATFORMDEFINE_H__
-#define __PLATFORM_CCPLATFORMDEFINE_H__
-/// @cond DO_NOT_SHOW
-
 #include "platform/CCPlatformConfig.h"
+#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_MAC
-#include "platform/mac/CCPlatformDefine-mac.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_IOS
-#include "platform/ios/CCPlatformDefine-ios.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
-#include "platform/android/CCPlatformDefine-android.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WIN32
-#include "platform/win32/CCPlatformDefine-win32.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_WINRT
-#include "platform/winrt/CCPlatformDefine-winrt.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
-#include "platform/linux/CCPlatformDefine-linux.h"
-#elif CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-#include "platform/emcc/CCPlatformDefine-emcc.h"
-#endif
+#include "platform/CCDevice.h"
+#include <stdio.h>
+#include <algorithm>
+#include <vector>
+#include <map>
+#include <string>
+#include <sstream>
+#include "platform/CCFileUtils.h"
 
-/// @endcond
-#endif /* __PLATFORM_CCPLATFORMDEFINE_H__*/
+using namespace std;
+
+NS_CC_BEGIN
+
+int Device::getDPI()
+{
+	return 90;
+}
+
+void Device::setAccelerometerEnabled(bool isEnabled)
+{
+
+}
+
+void Device::setAccelerometerInterval(float interval)
+{
+
+}
+
+Data Device::getTextureDataForText(const char * text, const FontDefinition& textDefinition, TextAlign align, int &width, int &height, bool& hasPremultipliedAlpha)
+{
+    Data ret;    
+    return ret;
+}
+
+void Device::setKeepScreenOn(bool value)
+{
+}
+
+void Device::vibrate(float duration)
+{
+}
+
+NS_CC_END
+
+#endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX

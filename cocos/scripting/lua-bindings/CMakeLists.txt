@@ -68,6 +68,9 @@ elseif(UNIX)
     if(APPLE)
         add_definitions(-D_DARWIN_C_SOURCE)
     endif()
+    if(EMSCRIPTEN)
+        add_definitions(-D_BSD_SOURCE)
+    endif()
 
     list(APPEND lua_cocos2d_source_files
         ${cocos_root}/external/lua/luasocket/serial.c
