@@ -58,7 +58,7 @@ set(TESTS_SRC
   Classes/CocosStudio3DTest/CocosStudio3DTest.cpp  
   Classes/ConfigurationTest/ConfigurationTest.cpp
   Classes/ConsoleTest/ConsoleTest.cpp
-#  Classes/CurlTest/CurlTest.cpp
+  Classes/CurlTest/CurlTest.cpp
   Classes/CurrentLanguageTest/CurrentLanguageTest.cpp
   Classes/DataVisitorTest/DataVisitorTest.cpp
   Classes/DownloaderTest/DownloaderTest.cpp
