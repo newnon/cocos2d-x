@@ -40,16 +40,18 @@ ScrollListView::~ScrollListView()
     
 ui::Widget* ScrollListView::pushBackElement(spritebuilder::CCBXReaderOwner * owner)
 {
-    ui::Widget *ret = ui::Widget::create();
-    _template->loadNode(ret, getContentSize(), _mainScale, _additionalScale, owner);
+    Node * node =_template->createNode(getContentSize(), _mainScale, _additionalScale, owner);
+    ui::Widget *ret = static_cast<ui::Widget*>(node);
+    assert(dynamic_cast<ui::Widget*>(node));
     pushBackCustomItem(ret);
     return ret;
 }
 
 ui::Widget* ScrollListView::insertElement(ssize_t index, spritebuilder::CCBXReaderOwner * owner)
 {
-    ui::Widget *ret = ui::Widget::create();
-    _template->loadNode(ret, getContentSize(), _mainScale, _additionalScale, owner);
+    Node * node =_template->createNode(getContentSize(), _mainScale, _additionalScale, owner);
+    ui::Widget *ret = static_cast<ui::Widget*>(node);
+    assert(dynamic_cast<ui::Widget*>(node));
     insertCustomItem(ret, index);
     return ret;
 }
