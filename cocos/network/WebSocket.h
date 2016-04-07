@@ -188,6 +188,13 @@ public:
      *  @return State the state value could be State::CONNECTING, State::OPEN, State::CLOSING or State::CLOSED
      */
     State getReadyState();
+    
+#ifdef __EMSCRIPTEN__
+    static void onOpen(int fd, void* userData);
+    static void onMessage(int fd, void* userData);
+    static void onError(int fd, int err, const char* msg, void* userData);
+#endif
+    
 
 private:
     virtual void onSubThreadStarted();
@@ -220,6 +227,11 @@ private:
     Delegate* _delegate;
     int _SSLConnection;
     struct libwebsocket_protocols* _wsProtocols;
+    
+#ifdef __EMSCRIPTEN__
+    int _websocket = -1;
+    std::vector<char> _websocketData;
+#endif
 };
 
 }
