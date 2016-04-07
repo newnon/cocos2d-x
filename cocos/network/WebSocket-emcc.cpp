@@ -117,9 +117,7 @@ void WebSocket::onMessage(int fd, void* userData)
     
     cocos2d::network::WebSocket::Data data;
     data.len = receiveTotal;
-    data.bytes = new char[data.len];
-    memcpy(data.bytes, webSocket->_websocketData.data(), data.len);
-        
+    data.bytes = &webSocket->_websocketData.front();    
     webSocket->_delegate->onMessage(webSocket, data);
 }
 

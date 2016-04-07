@@ -117,12 +117,18 @@ bool HttpClient::lazyInitThreadSemphore()
 
 static void onLoad(unsigned, void* userData, void *buffer, unsigned bufferSize)
 {
-    CCLOG("HttpClient::send onLoad");
     HttpRequest* request = static_cast<HttpRequest*>(userData);
     HttpResponse *response = new (std::nothrow) HttpResponse(request);
     
+    char *newBuffer = static_cast<char*>(buffer);
+    std::vector<char> responseBuffer(newBuffer, newBuffer + bufferSize);
+    
     response->setSucceed(true);
-    response->setResponseDataString(static_cast<const char*>(buffer), bufferSize);
+    response->setResponseCode(200);
+    response->setResponseDataString(newBuffer, bufferSize);
+    response->setResponseData(&responseBuffer);
+    
+    printf("HttpClient::send onLoad %s %ld\n", newBuffer, bufferSize);
     
     const ccHttpRequestCallback& callback = request->getCallback();
     Ref* pTarget = request->getTarget();
@@ -142,9 +148,10 @@ static void onLoad(unsigned, void* userData, void *buffer, unsigned bufferSize)
     request->release();
 };
 
-
 static void onError(unsigned, void* userData, int errorCode, const char* status)
 {
+    printf("HttpClient::onError\n");
+    
     HttpRequest* request = static_cast<HttpRequest*>(userData);
     HttpResponse *response = new (std::nothrow) HttpResponse(request);
     
