@@ -42,9 +42,7 @@ include(renderer/CMakeLists.txt)
 include(base/CMakeLists.txt)
 include(deprecated/CMakeLists.txt)
 include(ui/CMakeLists.txt)
-if(NOT EMSCRIPTEN)
 include(network/CMakeLists.txt)
-endif()
 include(audio/CMakeLists.txt)
 include_directories(audio/include)
 include(storage/CMakeLists.txt)
@@ -86,13 +84,8 @@ set(COCOS_SRC cocos2d.cpp
     ${COCOS_DEPRECATED_SRC}
     ${COCOS_EDITOR_SUPPORT_SRC}
     ${COCOS_EXTENSIONS_SRC}
-    )
-    
-if(NOT EMSCRIPTEN)
-  set(COCOS_SRC COCOS_SRC
     ${COCOS_NETWORK_SRC}
-  )
-endif()
+    )
 
   #todo: provide prebuild versions of the xx libs for all platforms
   include_directories(../external/xxtea)
@@ -106,7 +99,7 @@ if(WINDOWS)
   foreach(_pkg OPENGL GLEW GLFW3 VORBIS MPG123 OPENAL)
     cocos_use_pkg(cocos2d ${_pkg})
   endforeach()
-  list(APPEND PLATFORM_SPECIFIC_LIBS ws2_32 winmm)
+  list(APPEND PLATFORM_SPECIFIC_LIBS ws2_32 winmm Version Iphlpapi)
 elseif(LINUX)
     foreach(_pkg OPENGL GLEW GLFW3 FMOD FONTCONFIG THREADS GTK3)
     cocos_use_pkg(cocos2d ${_pkg})
@@ -148,6 +141,10 @@ endif()
 foreach(pkg ZLIB MINIZIP JPEG PNG TIFF TinyXML2 FREETYPE WEBSOCKETS CURL FLATBUFFERS XXHASH)
   cocos_use_pkg(cocos2d ${pkg})
 endforeach()
+
+if(NOT USE_PREBUILT_LIBS)
+  cocos_use_pkg(cocos2d OPENSSL)
+endif()
 
 if(LINUX)
   set(glfw_other_linker_flags X11)
