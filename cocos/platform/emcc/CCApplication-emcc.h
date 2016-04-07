@@ -109,6 +109,8 @@ public:
 	* @lua NA
 	*/
 	virtual bool openURL(const std::string &url) override;
+	
+	static void setAppVersion(const std::string &version);
 
 
 protected:
@@ -116,6 +118,7 @@ protected:
     std::string _resourceRootPath;
     
 	static Application * sm_pSharedApplication;
+	static std::string _appVersion;
 };
 
 NS_CC_END

@@ -68,6 +68,11 @@ void Device::vibrate(float duration)
 {
 }
 
+std::string Device::getDeviceUID()
+{
+    return "emscripten";
+}
+
 NS_CC_END
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX

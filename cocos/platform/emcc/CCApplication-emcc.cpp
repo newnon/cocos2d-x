@@ -46,6 +46,7 @@ NS_CC_BEGIN
 
 // sharedApplication pointer
 Application * Application::sm_pSharedApplication = 0;
+std::string Application::_appVersion;
 
 // convert the timespec into milliseconds
 static long time2millis(struct timespec *times)
@@ -155,7 +156,12 @@ Application::Platform Application::getTargetPlatform()
 
 std::string Application::getVersion()
 {
-    return "";
+    return _appVersion;
+}
+
+void Application::setAppVersion(const std::string &version)
+{
+    _appVersion = version;
 }
 
 void Application::setResourceRootPath(const std::string& rootResDir)
@@ -165,12 +171,13 @@ void Application::setResourceRootPath(const std::string& rootResDir)
 
 const std::string& Application::getResourceRootPath(void)
 {
-	return std::string("/");
+    static std::string ret = "/";
+    return ret;
 }
 
 bool Application::openURL(const std::string &url)
 {
-	return false;
+    return false;
 }
 
 NS_CC_END
