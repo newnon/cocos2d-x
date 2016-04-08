@@ -23,8 +23,10 @@ protected:
     virtual void onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value) override;
     virtual void onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value) override;
     virtual void onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value) override;
+    virtual void onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value) override;
 private:
     SizeDescription _size;
+    FloatScaleDescription _imageScale;
     SpriteFrameDescription _spriteFrame;
     Vec4 _margins;
 };

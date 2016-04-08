@@ -13,6 +13,7 @@ static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
 static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
 static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
+static const std::string PROPERTY_IMAGE_SCALE("imageScale");
 
 ImageViewLoader *ImageViewLoader::create()
 {
@@ -35,6 +36,7 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
                 Size size = _spriteFrame.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
                 imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
+                imageView->setScale9Enabled(_margins != Vec4::ZERO);
                 imageView->setCapInsets(realMargins);
                 imageView->ignoreContentAdaptWithSize(false);
             }
@@ -44,6 +46,7 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
                 Size size = _spriteFrame.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
                 imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
+                imageView->setScale9Enabled(_margins != Vec4::ZERO);
                 imageView->setCapInsets(realMargins);
                 imageView->ignoreContentAdaptWithSize(false);
             }
@@ -51,6 +54,7 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
         default:
             break;
     };
+    imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
     return imageView;
 }
 
@@ -59,6 +63,7 @@ void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, f
 }
 
 ImageViewLoader::ImageViewLoader()
+    :_imageScale{0,1.f}
 {
     
 }
@@ -104,6 +109,15 @@ void ImageViewLoader::onHandlePropTypeFloat(const std::string &propertyName, boo
         _margins.w = value;
     } else {
         WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
+    }
+}
+    
+void ImageViewLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
+{
+    if(propertyName == PROPERTY_IMAGE_SCALE) {
+        _imageScale = value;
+    } else {
+        WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
     }
 }
 

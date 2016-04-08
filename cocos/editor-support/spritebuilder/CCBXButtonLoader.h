@@ -73,6 +73,8 @@ private:
     SpriteFrameDescription _selectedSpriteFrame;
     SpriteFrameDescription _disabledSpriteFrame;
     
+    FloatScaleDescription _imageScale;
+    
 };
 
 }

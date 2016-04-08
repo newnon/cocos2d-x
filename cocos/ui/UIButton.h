@@ -287,6 +287,18 @@ public:
     float getZoomScale()const;
     
     /**
+     * Sets image internal scale.
+     * @return internal image scale.
+     */
+    void setImageScale(float scale);
+    
+    /**
+     * Get image internal scale.
+     * @param scale image internal scale
+     */
+    float getImageScale() const;
+    
+    /**
      * @brief Return the nine-patch sprite of normal state
      * @return the nine-patch sprite of normal state
      * @since v3.9
@@ -416,7 +428,10 @@ protected:
     Scale9Sprite* _buttonNormalRenderer;
     Scale9Sprite* _buttonPressedRenderer;
     Scale9Sprite* _buttonDisabledRenderer;
+    Node* _buttonRenderer;
     Label* _titleRenderer;
+    
+    float _imageScale;
 
     float _zoomScale;
     bool _prevIgnoreSize;
