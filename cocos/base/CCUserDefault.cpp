@@ -36,9 +36,6 @@ THE SOFTWARE.
 
 #define XML_FILE_NAME "UserDefault.xml"
 
-#ifdef __EMSCRIPTEN__
-#   include <emscripten.h>
-#endif
 using namespace std;
 
 NS_CC_BEGIN
@@ -463,14 +460,6 @@ void UserDefault::initXMLFilePath()
     {
         _filePath += FileUtils::getInstance()->getWritablePath() + XML_FILE_NAME;
         _isFilePathInitialized = true;
-
-#ifdef __EMSCRIPTEN__
-        EM_ASM(
-               FS.mkdir('/data');
-        );
-
-        _filePath = std::string("/data/") + XML_FILE_NAME;
-#endif
     }    
 }
 

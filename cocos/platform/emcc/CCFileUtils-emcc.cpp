@@ -5,6 +5,7 @@
 #include "platform/CCCommon.h"
 #include "CCApplication.h"
 #include <unistd.h>
+#include <sys/stat.h>
 
 using namespace std;
 
@@ -26,7 +27,10 @@ FileUtils* FileUtils::getInstance()
 }
 
 FileUtilsEmscripten::FileUtilsEmscripten()
-{}
+{
+    mkdir("/data", S_IRWXU | S_IRWXG | S_IRWXO);
+    mkdir("/cache", S_IRWXU | S_IRWXG | S_IRWXO);
+}
 
 bool FileUtilsEmscripten::init()
 {
@@ -57,7 +61,7 @@ string FileUtilsEmscripten::getCachePath() const
     cwd[FILENAME_MAX-1] = '\0';
 
     std::string path = cwd;
-    path += "/data/";
+    path += "/cache/";
 
     return path;
 }
