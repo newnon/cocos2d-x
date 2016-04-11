@@ -97,23 +97,25 @@ void WebSocket::onMessage(int fd, void* userData)
     CCLOG("WebSocket::onMessage");
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     int receiveTotal = 0;
-    const int maxLength = 4096;
     
     while (1)
     {
-        if (receiveTotal > webSocket->_websocketData.size())
+        if (receiveTotal >= webSocket->_websocketData.size())
         {
-            webSocket->_websocketData.resize(webSocket->_websocketData.size() + maxLength);
+            CCLOG("WebSocket grow size to:%zu", webSocket->_websocketData.size() * 2);
+            webSocket->_websocketData.resize(webSocket->_websocketData.size() * 2);
         }
         
-        int receiveLength = ::recvfrom(webSocket->_websocket, webSocket->_websocketData.data() + receiveTotal, maxLength, 0, nullptr, 0);
+        int receiveLength = ::recvfrom(webSocket->_websocket, webSocket->_websocketData.data() + receiveTotal, webSocket->_websocketData.size() - receiveTotal, 0, nullptr, 0);
         receiveTotal += receiveLength;
         
-        if (receiveLength < maxLength)
+        CCLOG("WebSocket receiveLength: %d receiveTotal:%d", receiveLength, receiveTotal);
+        
+        if (receiveTotal < webSocket->_websocketData.size())
             break;
     }
     
-    CCLOG("message size: %ld %ld\n", webSocket->_websocketData.size(), receiveTotal);
+    printf("WebSocket message size:%d buffer size:%zu", receiveTotal,  webSocket->_websocketData.size());
     
     cocos2d::network::WebSocket::Data data;
     data.len = receiveTotal;
