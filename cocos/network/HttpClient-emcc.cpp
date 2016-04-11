@@ -121,14 +121,13 @@ static void onLoad(unsigned, void* userData, void *buffer, unsigned bufferSize)
     HttpResponse *response = new (std::nothrow) HttpResponse(request);
     
     char *newBuffer = static_cast<char*>(buffer);
-    std::vector<char> responseBuffer(newBuffer, newBuffer + bufferSize);
     
     response->setSucceed(true);
     response->setResponseCode(200);
     response->setResponseDataString(newBuffer, bufferSize);
-    response->setResponseData(&responseBuffer);
+    response->setResponseData(newBuffer, bufferSize);
     
-    printf("HttpClient::send onLoad %s %ld\n", newBuffer, bufferSize);
+    CCLOG("HttpClient::onLoad bufferSize:%u\n", bufferSize);
     
     const ccHttpRequestCallback& callback = request->getCallback();
     Ref* pTarget = request->getTarget();
@@ -150,7 +149,7 @@ static void onLoad(unsigned, void* userData, void *buffer, unsigned bufferSize)
 
 static void onError(unsigned, void* userData, int errorCode, const char* status)
 {
-    printf("HttpClient::onError\n");
+    CCLOG("HttpClient::onError code:%d status:%s\n", errorCode, status);
     
     HttpRequest* request = static_cast<HttpRequest*>(userData);
     HttpResponse *response = new (std::nothrow) HttpResponse(request);
