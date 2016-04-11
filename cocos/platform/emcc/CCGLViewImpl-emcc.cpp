@@ -254,20 +254,20 @@ public:
 
 	static void onGLFWWindowPosCallback(GLFWwindow* windows, int x, int y)
 	{
-		//if (_view)
-		//_view->onGLFWWindowPosCallback(windows, x, y);
+		if (_view)
+			_view->onGLFWWindowPosCallback(windows, x, y);
 	}
 
 	static void onGLFWframebuffersize(GLFWwindow* window, int w, int h)
 	{
-		//if (_view)
-		//_view->onGLFWframebuffersize(window, w, h);
+		if (_view)
+			_view->onGLFWframebuffersize(window, w, h);
 	}
 
 	static void onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height)
 	{
-		//if (_view)
-		//_view->onGLFWWindowSizeFunCallback(window, width, height);
+		if (_view)
+			_view->onGLFWWindowSizeFunCallback(window, width, height);
 	}
 
 	static void setGLViewImpl(GLViewImpl* view)
@@ -368,9 +368,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
 	glfwSetScrollCallback(_mainWindow, GLFWEventHandler::onGLFWMouseScrollCallback);
 	glfwSetCharCallback(_mainWindow, GLFWEventHandler::onGLFWCharCallback);
 	glfwSetKeyCallback(_mainWindow, GLFWEventHandler::onGLFWKeyCallback);
-	//glfwSetWindowPosCallback(_mainWindow, GLFWEventHandler::onGLFWWindowPosCallback);
-	//glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
-	//glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
+	glfwSetWindowPosCallback(_mainWindow, GLFWEventHandler::onGLFWWindowPosCallback);
+	glfwSetFramebufferSizeCallback(_mainWindow, GLFWEventHandler::onGLFWframebuffersize);
+	glfwSetWindowSizeCallback(_mainWindow, GLFWEventHandler::onGLFWWindowSizeFunCallback);
 	glfwSetWindowIconifyCallback(_mainWindow, GLFWEventHandler::onGLFWWindowIconifyCallback);
 
 	setFrameSize(rect.size.width, rect.size.height);
@@ -562,6 +562,27 @@ void GLViewImpl::onGLFWCharCallback(GLFWwindow *window, unsigned int character)
 
 	StringUtils::UTF16ToUTF8(wcharString, utf8String);
 	IMEDispatcher::sharedDispatcher()->dispatchInsertText(utf8String.c_str(), utf8String.size());
+}
+
+void GLViewImpl::onGLFWWindowPosCallback(GLFWwindow *windows, int x, int y)
+{
+    Director::getInstance()->setViewport();
+}
+
+void GLViewImpl::onGLFWframebuffersize(GLFWwindow* window, int w, int h)
+{
+    float frameSizeW = _screenSize.width;
+    float frameSizeH = _screenSize.height;
+    float factorX = frameSizeW / w * getFrameZoomFactor();
+    float factorY = frameSizeH / h * getFrameZoomFactor();
+
+    glfwSetWindowSize(window, static_cast<int>(frameSizeW * getFrameZoomFactor()), static_cast<int>(frameSizeH * getFrameZoomFactor()));
+}
+
+void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height)
+{
+    screenSizeChanged(width, height);
+    Application::getInstance()->applicationScreenSizeChanged(width, height);
 }
 
 void GLViewImpl::onGLFWWindowIconifyCallback(GLFWwindow* window, int iconified)

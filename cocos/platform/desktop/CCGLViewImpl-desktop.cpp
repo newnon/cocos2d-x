@@ -780,11 +780,8 @@ void GLViewImpl::onGLFWframebuffersize(GLFWwindow* window, int w, int h)
 
 void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height)
 {
-    if (_resolutionPolicy != ResolutionPolicy::UNKNOWN)
-    {
-        updateDesignResolutionSize();
-        Director::getInstance()->setViewport();
-    }
+    screenSizeChanged(width, height);
+    Application::getInstance()->applicationScreenSizeChanged(width, height);
 }
 
 void GLViewImpl::onGLFWWindowIconifyCallback(GLFWwindow* window, int iconified)
