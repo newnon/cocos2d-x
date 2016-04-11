@@ -153,8 +153,7 @@ elseif(ANDROID)
   set(PLATFORM_FOLDER android)
 elseif(EMSCRIPTEN)
   set(PLATFORM_FOLDER emcc)
-  set(USE_WEBP OFF)
-  ADD_DEFINITIONS (-DCC_USE_JPEG=0 -DCC_USE_TIFF=0 -DCC_USE_WEBP=0)
+  ADD_DEFINITIONS (-DCC_USE_TIFF=0)
   
   set(EMSCRIPTEN_FLAGS "-s USE_ZLIB=1 -s USE_LIBPNG=1 -s USE_FREETYPE=1 -s USE_GLFW=3 -s USE_BULLET=1 -s DEMANGLE_SUPPORT=1 -s FULL_ES2=1")
   set(CMAKE_C_FLAGS             "${CMAKE_C_FLAGS} ${EMSCRIPTEN_FLAGS}")
@@ -244,9 +243,7 @@ endif(USE_WEBP)
 
 # Chipmunk
 if(USE_CHIPMUNK)
-if(NOT EMSCRIPTEN)
   cocos_find_package(Chipmunk CHIPMUNK REQUIRED)
-endif()
   add_definitions(-DCC_ENABLE_CHIPMUNK_INTEGRATION=1)
   if(IOS OR MACOSX)
     # without this chipmunk will try to use apple defined geometry types, that conflicts with cocos
@@ -317,9 +314,9 @@ else()
 endif()
 message(STATUS "TinyXML2 include dirs: ${TinyXML2_INCLUDE_DIRS}")
 
+cocos_find_package(JPEG JPEG REQUIRED)
 # libjpeg
 if(NOT EMSCRIPTEN)
-cocos_find_package(JPEG JPEG REQUIRED)
 cocos_find_package(ZLIB ZLIB REQUIRED)
 endif()
 
