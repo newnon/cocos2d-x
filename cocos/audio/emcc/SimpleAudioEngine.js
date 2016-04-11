@@ -169,6 +169,7 @@ var LibrarySimpleAudioEngine = {
         // function.
         var filename = Pointer_stringify(filenameP);
         filename = filename.substr(0, filename.lastIndexOf('.'));
+        var numEffect = Module.CocosDensionState.numEffectCount;
 
         if(Module.CocosDensionState.effectMap[filename] === undefined)
         {
@@ -181,12 +182,12 @@ var LibrarySimpleAudioEngine = {
                                                 });
 
             Module.CocosDensionState.effectMap[filename] = sound;
-            Module.CocosDensionState.effectMapNum[filename] = Module.CocosDensionState.numEffectCount;
+            Module.CocosDensionState.effectMapNum[filename] = numEffect;
             Module.CocosDensionState.numEffectCount++;
         }
         else
         {
-            var effectNum = Module.CocosDensionState.effectMapNum[filename];
+            numEffect = Module.CocosDensionState.effectMapNum[filename];
             var sound = Module.CocosDensionState.effectMap[filename];
 
             if (loop) 
@@ -202,7 +203,7 @@ var LibrarySimpleAudioEngine = {
             sound.play();
         }
 
-        return Module.CocosDensionState.numEffectCount - 1;
+        return numEffect;
     },
     
     SimpleAudioEngine_preloadEffect: function(filenameP)
