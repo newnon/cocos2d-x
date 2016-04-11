@@ -202,7 +202,7 @@ var LibrarySimpleAudioEngine = {
             sound.play();
         }
 
-        return effectNum;
+        return Module.CocosDensionState.numEffectCount - 1;
     },
     
     SimpleAudioEngine_preloadEffect: function(filenameP)
