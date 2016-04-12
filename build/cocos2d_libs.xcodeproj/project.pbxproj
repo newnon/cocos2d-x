@@ -5808,6 +5808,9 @@
 		D0FD03441A3B51AA00825BB5 /* CCAllocatorStrategyFixedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorStrategyFixedBlock.h; sourceTree = "<group>"; };
 		D0FD03451A3B51AA00825BB5 /* CCAllocatorStrategyGlobalSmallBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorStrategyGlobalSmallBlock.h; sourceTree = "<group>"; };
 		D0FD03461A3B51AA00825BB5 /* CCAllocatorStrategyPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorStrategyPool.h; sourceTree = "<group>"; };
+		D84E10A81CBD0A1A005CA42F /* WebSocket-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "WebSocket-emcc.cpp"; sourceTree = "<group>"; };
+		D8E6A2801CBBE6A600F8593C /* CCUserDefault-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "CCUserDefault-emcc.cpp"; path = "../base/emcc/CCUserDefault-emcc.cpp"; sourceTree = "<group>"; };
+		D8E6A2811CBBEBD300F8593C /* HttpClient-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "HttpClient-emcc.cpp"; sourceTree = "<group>"; };
 		DA8C62A019E52C6400000516 /* ioapi_mem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ioapi_mem.cpp; sourceTree = "<group>"; };
 		DA8C62A119E52C6400000516 /* ioapi_mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi_mem.h; sourceTree = "<group>"; };
 		DABC9FA719E7DFA900FA252C /* CCClippingRectangleNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCClippingRectangleNode.cpp; sourceTree = "<group>"; };
@@ -6108,6 +6111,7 @@
 		1A5700A2180BC5E60088DEC7 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				D8E6A2801CBBE6A600F8593C /* CCUserDefault-emcc.cpp */,
 				291901411B05895600F8B4BA /* CCNinePatchImageParser.h */,
 				291901421B05895600F8B4BA /* CCNinePatchImageParser.cpp */,
 				505385001B01887A00793096 /* CCProperties.h */,
@@ -7846,6 +7850,7 @@
 		507003251B69820100E83DDD /* HttpClient */ = {
 			isa = PBXGroup;
 			children = (
+				D8E6A2811CBBEBD300F8593C /* HttpClient-emcc.cpp */,
 				52B47A2B1A5349A3004E4C60 /* HttpClient-apple.mm */,
 				507003161B69735200E83DDD /* HttpClient-android.cpp */,
 				507003171B69735200E83DDD /* HttpClient-winrt.cpp */,
@@ -7875,6 +7880,7 @@
 		507003271B69821300E83DDD /* WebSocket */ = {
 			isa = PBXGroup;
 			children = (
+				D84E10A81CBD0A1A005CA42F /* WebSocket-emcc.cpp */,
 				1AAF5368180E3374000584C8 /* WebSocket.cpp */,
 				1AAF5369180E3374000584C8 /* WebSocket.h */,
 			);

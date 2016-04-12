@@ -13,7 +13,7 @@ var LibraryStorageEngine = {
 
         if (pname)
             return allocate(intArrayFromString(pname), 'i8', ALLOC_STACK);
-        return pname;
+        return 0;
     },
 
     StorageEngine_remove: function(name)

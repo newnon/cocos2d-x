@@ -15,6 +15,10 @@ public:
 
     // implement the "static create()" method manually
     CREATE_FUNC(HelloWorld);
+    
+    void printValue();
+    
+    cocos2d::Label *_label = nullptr;
 };
 
 #endif // __HELLOWORLD_SCENE_H__

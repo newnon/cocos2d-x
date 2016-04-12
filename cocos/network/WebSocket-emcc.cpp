@@ -115,7 +115,7 @@ void WebSocket::onMessage(int fd, void* userData)
             break;
     }
     
-    printf("WebSocket message size:%d buffer size:%zu", receiveTotal,  webSocket->_websocketData.size());
+    CCLOG("WebSocket message size:%d buffer size:%zu", receiveTotal,  webSocket->_websocketData.size());
     
     cocos2d::network::WebSocket::Data data;
     data.len = receiveTotal;
@@ -224,6 +224,8 @@ bool WebSocket::init(const Delegate& delegate,
     
     _websocketData.resize(4096);
 #endif
+    _readyState = State::OPEN;
+    
     return true;
 }
 
@@ -241,6 +243,13 @@ void WebSocket::send(const unsigned char* binaryMsg, unsigned int len)
 
 void WebSocket::close()
 {
+    if (_readyState == State::CLOSING || _readyState == State::CLOSED)
+    {
+        return;
+    }
+    
+    _readyState = State::CLOSED;
+    
     // onClose callback needs to be invoked at the end of this method
     // since websocket instance may be deleted in 'onClose'.
     _delegate->onClose(this);

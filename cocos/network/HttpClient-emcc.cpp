@@ -130,7 +130,7 @@ static void onLoad(unsigned, void* userData, void *buffer, unsigned bufferSize)
     response->setResponseData(newBuffer, bufferSize);
     request->setSendingCompleted(true);
     
-    CCLOG("HttpClient::onLoad bufferSize:%u\n", bufferSize);
+    CCLOG("HttpClient::onLoad bufferSize:%u %i\n", bufferSize, request->getHandler());
     
     const ccHttpRequestCallback& callback = request->getCallback();
     Ref* pTarget = request->getTarget();
@@ -152,14 +152,15 @@ static void onLoad(unsigned, void* userData, void *buffer, unsigned bufferSize)
 
 static void onError(unsigned, void* userData, int errorCode, const char* status)
 {
-    CCLOG("HttpClient::onError code:%d status:%s\n", errorCode, status);
-    
     HttpRequest* request = static_cast<HttpRequest*>(userData);
     HttpResponse *response = new (std::nothrow) HttpResponse(request);
-    
+
+    CCLOG("HttpClient::onError handler: code:%d status:%s\n", request->getHandler(), errorCode, status);
+
     response->setSucceed(false);
     response->setResponseCode(errorCode);
-    response->setErrorBuffer(status);
+    response->setErrorBuffer(status ? status : "");
+    request->setSendingCompleted(true);
     
     const ccHttpRequestCallback& callback = request->getCallback();
     Ref* pTarget = request->getTarget();
@@ -181,47 +182,34 @@ static void onError(unsigned, void* userData, int errorCode, const char* status)
 
 static void onProgress(unsigned, void* userData, int, int)
 {
-    CCLOG("HttpClient::onProgress is connected\n");
-    
     HttpRequest* request = static_cast<HttpRequest*>(userData);
     request->setConnected(true);
+    
+    CCLOG("HttpClient::onProgress is connected %i\n", request->getHandler());
+
 };
     
 //Add a get task to queue
 void HttpClient::send(HttpRequest* request)
 {
-    CCLOG("HttpClient::send\n");
     request->retain();
     request->setHandler(-1);
     _requestQueue.pushBack(request);
 }
-
+    
 void HttpClient::sendImmediate(HttpRequest* request)
 {
-    std::string requestType;
-    switch (request->getRequestType())
-    {
-        case HttpRequest::Type::GET:
-            requestType = "GET";
-            break;
-            
-        case HttpRequest::Type::POST:
-            requestType = "POST";
-            break;
-            
-        case HttpRequest::Type::PUT:
-            requestType = "PUT";
-            break;
-            
-        case HttpRequest::Type::DELETE:
-            requestType = "DELETE";
-            break;
-        default:
-            break;
-    }
-    
     request->retain();
-    int handler = emscripten_async_wget2_data(request->getUrl(), requestType.c_str(), request->getRequestData(), static_cast<void*>(request), true, &onLoad, &onError, &onProgress);
+    int handler = emscripten_async_wget2_data(
+                                              request->getUrl(),
+                                              getRequestType(request->getRequestType()).c_str(),
+                                              request->getRequestData(),
+                                              static_cast<void*>(request),
+                                              true,
+                                              &onLoad,
+                                              &onError,
+                                              &onProgress
+                                              );
     request->setHandler(handler);
     _requestQueue.pushBack(request);
     
@@ -230,11 +218,7 @@ void HttpClient::sendImmediate(HttpRequest* request)
     
 void HttpClient::update(float time)
 {
-    int index = 0;
     bool sendOneTime = false;
-    
-    CCLOG("HttpClient::update: _requestQueue %i", _requestQueue.size());
-    
     for (auto it = _requestQueue.begin(); it != _requestQueue.end(); )
     {
         HttpRequest* request = (*it);
@@ -244,16 +228,12 @@ void HttpClient::update(float time)
             double connectTime = request->getConnectTime();
             double sendTime = request->getSendTime();
             
-            CCLOG("HttpClient::update: connectTime %f sendTime %f index %i\n", connectTime, sendTime, index);
-            
             if (
                 (!request->isConnected() && connectTime > _timeoutForConnect) ||
                 (!request->isSendingCompleted() && sendTime > _timeoutForRead)
                 )
             {
-                CCLOG("HttpClient::update: error timeout\n");
-                
-                onError(0, static_cast<void*>(request), 408, "connect failed");
+                onError(0, static_cast<void*>(request), 0, "connect failed");
 
                 emscripten_async_wget2_abort(request->getHandler());
                 it = _requestQueue.erase(it);
@@ -262,8 +242,6 @@ void HttpClient::update(float time)
             {
                 if (request->isSendingCompleted())
                 {
-                    CCLOG("HttpClient::update is sending completed index %i\n", index);
-                    
                     it = _requestQueue.erase(it);
                 }
                 else
@@ -278,34 +256,25 @@ void HttpClient::update(float time)
         {
             if (!sendOneTime)
             {
-                std::string requestType;
-                switch (request->getRequestType())
-                {
-                    case HttpRequest::Type::GET:
-                        requestType = "GET";
-                        break;
-                        
-                    case HttpRequest::Type::POST:
-                        requestType = "POST";
-                        break;
-                    default:
-                        break;
-                }
-                
                 sendOneTime = true;
-                int handler = emscripten_async_wget2_data(request->getUrl(), requestType.c_str(), request->getRequestData(), static_cast<void*>(request), true, &onLoad, &onError, &onProgress);
+                int handler = emscripten_async_wget2_data(
+                                                          request->getUrl(),
+                                                          getRequestType(request->getRequestType()).c_str(),
+                                                          request->getRequestData(),
+                                                          static_cast<void*>(request),
+                                                          true,
+                                                          &onLoad,
+                                                          &onError,
+                                                          &onProgress
+                                                          );
                 request->setHandler(handler);
                 
-                CCLOG("HttpClient::update: sendOneTime %i index %i\n", handler, index);
+                CCLOG("HttpClient::send one time %i\n", handler);
             }
             
             ++it;
         }
-        
-        ++index;
     }
-    
-    CCLOG("-------------------------");
 }
 
 // Poll and notify main thread if responses exists in queue
@@ -349,6 +318,33 @@ const std::string& HttpClient::getCookieFilename()
 const std::string& HttpClient::getSSLVerification()
 {
     return _sslCaFilename;
+}
+    
+std::string HttpClient::getRequestType(HttpRequest::Type type)
+{
+    std::string requestType;
+    switch (type)
+    {
+        case HttpRequest::Type::GET:
+            requestType = "GET";
+            break;
+            
+        case HttpRequest::Type::POST:
+            requestType = "POST";
+            break;
+            
+        case HttpRequest::Type::PUT:
+            requestType = "PUT";
+            break;
+            
+        case HttpRequest::Type::DELETE:
+            requestType = "DELETE";
+            break;
+        default:
+            break;
+    }
+    
+    return requestType;
 }
     
 }

@@ -76,8 +76,8 @@ bool UserDefault::getBoolForKey(const char* pKey)
 
 bool UserDefault::getBoolForKey(const char* pKey, bool defaultValue)
 {
-    const string &ret = StorageEngine_load(pKey);
-    return ret.empty() ? defaultValue : static_cast<bool>(std::stoi(ret, nullptr, 10));
+    const char *ret = StorageEngine_load(pKey);
+    return !ret ? defaultValue : static_cast<bool>(std::stoi(ret, nullptr, 10));
 }
 
 int UserDefault::getIntegerForKey(const char* pKey)
@@ -87,8 +87,8 @@ int UserDefault::getIntegerForKey(const char* pKey)
 
 int UserDefault::getIntegerForKey(const char* pKey, int defaultValue)
 {
-    const string &ret = StorageEngine_load(pKey);
-    return ret.empty() ? defaultValue : std::stoi(ret, nullptr, 10);
+    const char *ret = StorageEngine_load(pKey);
+    return !ret ? defaultValue : std::stoi(ret, nullptr, 10);
 }
 
 float UserDefault::getFloatForKey(const char* pKey)
@@ -98,8 +98,8 @@ float UserDefault::getFloatForKey(const char* pKey)
 
 float UserDefault::getFloatForKey(const char* pKey, float defaultValue)
 {
-    const string &ret = StorageEngine_load(pKey);
-    return ret.empty() ? defaultValue : std::stof(ret);
+    const char *ret = StorageEngine_load(pKey);
+    return !ret ? defaultValue : std::stof(ret);
 }
 
 double  UserDefault::getDoubleForKey(const char* pKey)
@@ -109,8 +109,8 @@ double  UserDefault::getDoubleForKey(const char* pKey)
 
 double UserDefault::getDoubleForKey(const char* pKey, double defaultValue)
 {
-    const string &ret = StorageEngine_load(pKey);
-    return ret.empty() ? defaultValue : std::stod(ret);
+    const char *ret = StorageEngine_load(pKey);
+    return !ret ? defaultValue : std::stod(ret);
 }
 
 std::string UserDefault::getStringForKey(const char* pKey)
@@ -120,8 +120,8 @@ std::string UserDefault::getStringForKey(const char* pKey)
 
 string UserDefault::getStringForKey(const char* pKey, const std::string & defaultValue)
 {
-    const string &ret = StorageEngine_load(pKey);
-    return ret.empty() ? defaultValue : ret;
+    const char *ret = StorageEngine_load(pKey);
+    return !ret ? defaultValue : ret;
 }
 
 Data UserDefault::getDataForKey(const char* pKey)
@@ -131,16 +131,20 @@ Data UserDefault::getDataForKey(const char* pKey)
 
 Data UserDefault::getDataForKey(const char* pKey, const Data& defaultValue)
 {
-    string encodedStr = StorageEngine_load(pKey);
+    const char *encodedStr = StorageEngine_load(pKey);
 
-    unsigned char * decodedData = NULL;
-    int decodedDataLen = base64Decode((unsigned char*)encodedStr.c_str(), (unsigned int)encodedStr.length(), &decodedData);
-
-    if (decodedData && decodedDataLen)
+    if (encodedStr)
     {
-        Data ret;
-        ret.fastSet(decodedData, decodedDataLen);
-        return ret;
+        unsigned char * decodedData = NULL;
+        size_t length = strlen(encodedStr);
+        int decodedDataLen = base64Decode((unsigned char*)encodedStr, (unsigned int)length, &decodedData);
+
+        if (decodedData && decodedDataLen)
+        {
+            Data ret;
+            ret.fastSet(decodedData, decodedDataLen);
+            return ret;
+        }
     }
 
     return defaultValue;
