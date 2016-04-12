@@ -12,12 +12,8 @@ var LibraryStorageEngine = {
         var pname = localStorage.getItem(strkey);
 
         if (pname)
-        {
-            var ptr = allocate(intArrayFromString(pname), 'i8', ALLOC_STACK);
-            return ptr;
-        }
-
-        return null;
+            return allocate(intArrayFromString(pname), 'i8', ALLOC_STACK);
+        return pname;
     },
 
     StorageEngine_remove: function(name)

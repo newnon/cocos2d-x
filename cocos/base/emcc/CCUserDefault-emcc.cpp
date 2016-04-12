@@ -76,19 +76,8 @@ bool UserDefault::getBoolForKey(const char* pKey)
 
 bool UserDefault::getBoolForKey(const char* pKey, bool defaultValue)
 {
-    string encodedStr = StorageEngine_load(pKey);
-    
-    unsigned char * decodedData = NULL;
-    int decodedDataLen = base64Decode((unsigned char*)encodedStr.c_str(), (unsigned int)encodedStr.length(), &decodedData);
-    
-    if (decodedData && decodedDataLen)
-    {
-        std::string ret((const char*)decodedData, decodedDataLen);
-        bool result = static_cast<bool>(std::stoi(ret, nullptr, 10));
-        return result;
-    }
-    
-    return defaultValue;
+    const string &ret = StorageEngine_load(pKey);
+    return ret.empty() ? defaultValue : static_cast<bool>(std::stoi(ret, nullptr, 10));
 }
 
 int UserDefault::getIntegerForKey(const char* pKey)
@@ -98,19 +87,8 @@ int UserDefault::getIntegerForKey(const char* pKey)
 
 int UserDefault::getIntegerForKey(const char* pKey, int defaultValue)
 {
-    string encodedStr = StorageEngine_load(pKey);
-    
-    unsigned char * decodedData = NULL;
-    int decodedDataLen = base64Decode((unsigned char*)encodedStr.c_str(), (unsigned int)encodedStr.length(), &decodedData);
-    
-    if (decodedData && decodedDataLen)
-    {
-        std::string ret((const char*)decodedData, decodedDataLen);
-        int result = std::stoi(ret, nullptr, 10);
-        return result;
-    }
-    
-    return defaultValue;
+    const string &ret = StorageEngine_load(pKey);
+    return ret.empty() ? defaultValue : std::stoi(ret, nullptr, 10);
 }
 
 float UserDefault::getFloatForKey(const char* pKey)
@@ -120,19 +98,8 @@ float UserDefault::getFloatForKey(const char* pKey)
 
 float UserDefault::getFloatForKey(const char* pKey, float defaultValue)
 {
-    string encodedStr = StorageEngine_load(pKey);
-    
-    unsigned char * decodedData = NULL;
-    int decodedDataLen = base64Decode((unsigned char*)encodedStr.c_str(), (unsigned int)encodedStr.length(), &decodedData);
-    
-    if (decodedData && decodedDataLen)
-    {
-        std::string ret((const char*)decodedData, decodedDataLen);
-        float result = std::stof(ret);
-        return result;
-    }
-    
-    return defaultValue;
+    const string &ret = StorageEngine_load(pKey);
+    return ret.empty() ? defaultValue : std::stof(ret);
 }
 
 double  UserDefault::getDoubleForKey(const char* pKey)
@@ -142,19 +109,8 @@ double  UserDefault::getDoubleForKey(const char* pKey)
 
 double UserDefault::getDoubleForKey(const char* pKey, double defaultValue)
 {
-    string encodedStr = StorageEngine_load(pKey);
-    
-    unsigned char * decodedData = NULL;
-    int decodedDataLen = base64Decode((unsigned char*)encodedStr.c_str(), (unsigned int)encodedStr.length(), &decodedData);
-    
-    if (decodedData && decodedDataLen)
-    {
-        std::string ret((const char*)decodedData, decodedDataLen);
-        double result = std::stod(ret);
-        return result;
-    }
-    
-    return defaultValue;
+    const string &ret = StorageEngine_load(pKey);
+    return ret.empty() ? defaultValue : std::stod(ret);
 }
 
 std::string UserDefault::getStringForKey(const char* pKey)
@@ -164,18 +120,8 @@ std::string UserDefault::getStringForKey(const char* pKey)
 
 string UserDefault::getStringForKey(const char* pKey, const std::string & defaultValue)
 {
-    string encodedStr = StorageEngine_load(pKey);
-    
-    unsigned char * decodedData = NULL;
-    int decodedDataLen = base64Decode((unsigned char*)encodedStr.c_str(), (unsigned int)encodedStr.length(), &decodedData);
-    
-    if (decodedData && decodedDataLen)
-    {
-        std::string ret((const char*)decodedData, decodedDataLen);
-        return ret;
-    }
-    
-    return defaultValue;
+    const string &ret = StorageEngine_load(pKey);
+    return ret.empty() ? defaultValue : ret;
 }
 
 Data UserDefault::getDataForKey(const char* pKey)
@@ -204,61 +150,31 @@ Data UserDefault::getDataForKey(const char* pKey, const Data& defaultValue)
 void UserDefault::setBoolForKey(const char* pKey, bool value)
 {
     const std::string &str = std::to_string(value);
-
-    char * encodedData = nullptr;
-    unsigned int encodedDataLen = base64Encode((unsigned char*)str.c_str(), str.length(), &encodedData);
-    
-    StorageEngine_save(pKey, encodedData);
-    
-    if (encodedData)
-        free(encodedData);
+    StorageEngine_save(pKey, str.c_str());
 }
 
 void UserDefault::setIntegerForKey(const char* pKey, int value)
 {
     const std::string &str = std::to_string(value);
-    char * encodedData = nullptr;
-    unsigned int encodedDataLen = base64Encode((unsigned char*)str.c_str(), str.length(), &encodedData);
-    
-    StorageEngine_save(pKey, encodedData);
-    
-    if (encodedData)
-        free(encodedData);
+    StorageEngine_save(pKey, str.c_str());
 }
+
 
 void UserDefault::setFloatForKey(const char* pKey, float value)
 {
     const std::string &str = std::to_string(value);
-    char * encodedData = nullptr;
-    unsigned int encodedDataLen = base64Encode((unsigned char*)str.c_str(), str.length(), &encodedData);
-    
-    StorageEngine_save(pKey, encodedData);
-    
-    if (encodedData)
-        free(encodedData);
+    StorageEngine_save(pKey, str.c_str());
 }
 
 void UserDefault::setDoubleForKey(const char* pKey, double value)
 {
     const std::string &str = std::to_string(value);
-    char * encodedData = nullptr;
-    unsigned int encodedDataLen = base64Encode((unsigned char*)str.c_str(), str.length(), &encodedData);
- 
-    StorageEngine_save(pKey, encodedData);
-    
-    if (encodedData)
-        free(encodedData);
+    StorageEngine_save(pKey, str.c_str());
 }
 
 void UserDefault::setStringForKey(const char* pKey, const std::string & value)
 {
-    char * encodedData = nullptr;
-    unsigned int encodedDataLen = base64Encode((unsigned char*)value.c_str(), value.length(), &encodedData);
-    
-    StorageEngine_save(pKey, encodedData);
-    
-    if (encodedData)
-        free(encodedData);
+    StorageEngine_save(pKey, value.c_str());
 }
 
 void UserDefault::setDataForKey(const char* pKey, const Data& value)

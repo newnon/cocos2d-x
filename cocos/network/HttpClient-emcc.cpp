@@ -103,10 +103,12 @@ HttpClient::HttpClient()
 , _scheduler(nullptr)
 , _cookie(nullptr)
 {
+    cocos2d::Director::getInstance()->getScheduler()->scheduleUpdate(this, 0, false);
 }
 
 HttpClient::~HttpClient()
 {
+    cocos2d::Director::getInstance()->getScheduler()->unscheduleUpdate(this);
 }
 
 //Lazy create semaphore & mutex & thread
@@ -126,6 +128,7 @@ static void onLoad(unsigned, void* userData, void *buffer, unsigned bufferSize)
     response->setResponseCode(200);
     response->setResponseDataString(newBuffer, bufferSize);
     response->setResponseData(newBuffer, bufferSize);
+    request->setSendingCompleted(true);
     
     CCLOG("HttpClient::onLoad bufferSize:%u\n", bufferSize);
     
@@ -178,12 +181,19 @@ static void onError(unsigned, void* userData, int errorCode, const char* status)
 
 static void onProgress(unsigned, void* userData, int, int)
 {
+    CCLOG("HttpClient::onProgress is connected\n");
+    
+    HttpRequest* request = static_cast<HttpRequest*>(userData);
+    request->setConnected(true);
 };
     
 //Add a get task to queue
 void HttpClient::send(HttpRequest* request)
 {
-    sendImmediate(request);
+    CCLOG("HttpClient::send\n");
+    request->retain();
+    request->setHandler(-1);
+    _requestQueue.pushBack(request);
 }
 
 void HttpClient::sendImmediate(HttpRequest* request)
@@ -203,8 +213,91 @@ void HttpClient::sendImmediate(HttpRequest* request)
     }
     
     request->retain();
+    int handler = emscripten_async_wget2_data(request->getUrl(), requestType.c_str(), request->getRequestData(), static_cast<void*>(request), true, &onLoad, &onError, &onProgress);
+    request->setHandler(handler);
+    _requestQueue.pushBack(request);
     
-    emscripten_async_wget2_data(request->getUrl(), requestType.c_str(), request->getRequestData(), static_cast<void*>(request), true, &onLoad, &onError, &onProgress);
+    CCLOG("HttpClient::sendImmediate %i\n", handler);
+}
+    
+void HttpClient::update(float time)
+{
+    int index = 0;
+    bool sendOneTime = false;
+    
+    CCLOG("HttpClient::update: _requestQueue %i", _requestQueue.size());
+    
+    for (auto it = _requestQueue.begin(); it != _requestQueue.end(); )
+    {
+        HttpRequest* request = (*it);
+        
+        if (request->getHandler() >= 0)
+        {
+            double connectTime = request->getConnectTime();
+            double sendTime = request->getSendTime();
+            
+            CCLOG("HttpClient::update: connectTime %f sendTime %f index %i\n", connectTime, sendTime, index);
+            
+            if (
+                (!request->isConnected() && connectTime > _timeoutForConnect) ||
+                (!request->isSendingCompleted() && sendTime > _timeoutForRead)
+                )
+            {
+                CCLOG("HttpClient::update: error timeout\n");
+                
+                onError(0, static_cast<void*>(request), 408, "connect failed");
+
+                emscripten_async_wget2_abort(request->getHandler());
+                it = _requestQueue.erase(it);
+            }
+            else
+            {
+                if (request->isSendingCompleted())
+                {
+                    CCLOG("HttpClient::update is sending completed index %i\n", index);
+                    
+                    it = _requestQueue.erase(it);
+                }
+                else
+                {
+                    request->setConnectTime(connectTime + time);
+                    request->setSendTime(sendTime + time);
+                    ++it;
+                }
+            }
+        }
+        else
+        {
+            if (!sendOneTime)
+            {
+                std::string requestType;
+                switch (request->getRequestType())
+                {
+                    case HttpRequest::Type::GET:
+                        requestType = "GET";
+                        break;
+                        
+                    case HttpRequest::Type::POST:
+                        requestType = "POST";
+                        break;
+                    default:
+                        break;
+                }
+                
+                sendOneTime = true;
+                int handler = emscripten_async_wget2_data(request->getUrl(), requestType.c_str(), request->getRequestData(), static_cast<void*>(request), true, &onLoad, &onError, &onProgress);
+                request->setHandler(handler);
+                
+                CCLOG("HttpClient::update: sendOneTime %i index %i\n", handler, index);
+            }
+            
+            ++it;
+        }
+        
+        ++index;
+    }
+    
+    CCLOG("-------------------------");
 }
 
 // Poll and notify main thread if responses exists in queue
