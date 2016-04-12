@@ -283,6 +283,14 @@ else()
     if(EMSCRIPTEN)
         set(CMAKE_EXECUTABLE_SUFFIX ".html")
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s TOTAL_MEMORY=268435456 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/Resources@/")
+        file(GLOB preJsFiles ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/buzz.js)
+        file(GLOB libraryJsFiles 
+          ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/SimpleAudioEngine.js
+          ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/base/emcc/StorageEngine.js
+          )
+    
+    em_link_js_library(${APP_NAME} ${libraryJsFiles})
+    em_link_pre_js(${APP_NAME} ${preJsFiles})
     else()
         pre_build(${APP_NAME}
           COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources ${APP_BIN_DIR}${RES_PREFIX}
