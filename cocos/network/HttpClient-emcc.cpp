@@ -198,6 +198,14 @@ void HttpClient::sendImmediate(HttpRequest* request)
         case HttpRequest::Type::POST:
             requestType = "POST";
             break;
+            
+        case HttpRequest::Type::PUT:
+            requestType = "PUT";
+            break;
+            
+        case HttpRequest::Type::DELETE:
+            requestType = "DELETE";
+            break;
         default:
             break;
     }
