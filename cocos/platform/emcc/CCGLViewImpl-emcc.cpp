@@ -303,6 +303,8 @@ void GLViewImpl::pollEvents()
         _windowHeight = windowHeight;
         _windowFullscreen = windowFullscreen;
         
+        screenSizeChanged(_windowWidth, _windowHeight);
+        Application::getInstance()->applicationScreenSizeChanged(_windowWidth, _windowHeight);
         CCLOG("change window size(%i, %i, %i)\n", _windowWidth, _windowHeight, _windowFullscreen);
     }
     

@@ -52,8 +52,8 @@ protected:
     GLViewImpl();
     virtual ~GLViewImpl();
 
-	bool initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor);
-	bool initWithFullScreen(const std::string& viewName);
+    bool initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor);
+    bool initWithFullScreen(const std::string& viewName);
     
     void onMouseMoveCallBack(double x, double y);
     void onMouseCallBack(int button, int action, double x, double y);
