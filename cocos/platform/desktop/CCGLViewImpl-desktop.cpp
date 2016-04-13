@@ -582,11 +582,6 @@ void GLViewImpl::updateFrameSize()
 
 void GLViewImpl::setFrameSize(float width, float height)
 {
-    _viewPortRect.origin.x = 0.0f;
-    _viewPortRect.origin.y = 0.0f;
-    _viewPortRect.size.width = width;
-    _viewPortRect.size.height = height;
-    
     GLView::setFrameSize(width, height);
     updateFrameSize();
 }
@@ -785,11 +780,17 @@ void GLViewImpl::onGLFWframebuffersize(GLFWwindow* window, int w, int h)
 
 void GLViewImpl::onGLFWWindowSizeFunCallback(GLFWwindow *window, int width, int height)
 {
-    if (_resolutionPolicy != ResolutionPolicy::UNKNOWN)
+    width = width / _frameZoomFactor;
+    height = height / _frameZoomFactor;
+    if(_isInRetinaMonitor && _isRetinaEnabled)
     {
-        updateDesignResolutionSize();
-        Director::getInstance()->setViewport();
+        width *= 2;
+        height *= 2;
     }
+    GLView::setFrameSize(width, height);
+    updateDesignResolutionSize();
+    Director::getInstance()->setViewport();
+    Application::getInstance()->applicationScreenSizeChanged(width, height);
 }
 
 void GLViewImpl::onGLFWWindowIconifyCallback(GLFWwindow* window, int iconified)
