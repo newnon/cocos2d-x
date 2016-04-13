@@ -28,9 +28,13 @@ THE SOFTWARE.
 #include "platform/CCPlatformConfig.h"
 #if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
 #define GLFW_INCLUDE_ES2 1
-#include <GLFW/glfw3.h>
+
+#include "SDL/SDL.h"
+#include "SDL/SDL_opengl.h"
+
+//#include <GLFW/glfw3.h>
 //#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
+//#include <GLES2/gl2ext.h>
 
 
 //#include "GL/glew.h"
@@ -41,18 +45,18 @@ THE SOFTWARE.
 //#include <GLES2/gl2ext.h>
 //#include <GLES2/gl2platform.h>
 
-#define	glClearDepth				glClearDepthf
-#define GL_WRITE_ONLY				GL_WRITE_ONLY_OES
-#define GL_BGRA						GL_BGRA_EXT
-#define GL_DEPTH24_STENCIL8			GL_DEPTH24_STENCIL8_OES
-#define CC_GL_DEPTH24_STENCIL8		GL_DEPTH24_STENCIL8
+//#define	glClearDepth				glClearDepthf
+//#define GL_WRITE_ONLY				GL_WRITE_ONLY_OES
+//#define GL_BGRA						GL_BGRA_EXT
+//#define GL_DEPTH24_STENCIL8			GL_DEPTH24_STENCIL8_OES
+//#define CC_GL_DEPTH24_STENCIL8		GL_DEPTH24_STENCIL8
 
-extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArrays;
-extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArray;
-extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArrays;
-extern PFNGLMAPBUFFEROESPROC glMapBuffer;
-extern PFNGLUNMAPBUFFEROESPROC glUnmapBuffer;
-extern PFNGLGETBUFFERPOINTERVOESPROC glGetBufferPointerv;
+//extern PFNGLGENVERTEXARRAYSOESPROC glGenVertexArrays;
+//extern PFNGLBINDVERTEXARRAYOESPROC glBindVertexArray;
+//extern PFNGLDELETEVERTEXARRAYSOESPROC glDeleteVertexArrays;
+//extern PFNGLMAPBUFFEROESPROC glMapBuffer;
+//extern PFNGLUNMAPBUFFEROESPROC glUnmapBuffer;
+//extern PFNGLGETBUFFERPOINTERVOESPROC glGetBufferPointerv;
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 

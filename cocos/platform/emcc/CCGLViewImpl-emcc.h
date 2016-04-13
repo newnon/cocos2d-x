@@ -30,14 +30,14 @@ THE SOFTWARE.
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
 
-#include <GLFW/glfw3.h>
+#include "SDL2/SDL.h"
+#include "SDL2/SDL_opengl.h"
 
 NS_CC_BEGIN
 
 class CC_DLL GLViewImpl : public GLView
 {
 public:
-
 	static GLViewImpl* create(const std::string& viewName);
 	static GLViewImpl* createWithRect(const std::string& viewName, Rect size, float frameZoomFactor = 1.0f);
 	static GLViewImpl* createWithFullScreen(const std::string& viewName);
@@ -49,36 +49,27 @@ public:
 	void setIMEKeyboardState(bool bOpen) override;
 
 protected:
-	void onGLFWError(int errorID, const char* errorDesc);
-	void onGLFWMouseCallBack(GLFWwindow* window, int button, int action, int modify);
-	void onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y);
-	void onGLFWMouseScrollCallback(GLFWwindow* window, double x, double y);
-	void onGLFWKeyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
-	void onGLFWCharCallback(GLFWwindow *window, unsigned int character);
-	void onGLFWWindowIconifyCallback(GLFWwindow* window, int iconified);
-
-	bool _captured;
-	float _mouseX;
-	float _mouseY;
-
-	friend class GLFWEventHandler;
-
-protected:
     GLViewImpl();
     virtual ~GLViewImpl();
 
 	bool initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor);
 	bool initWithFullScreen(const std::string& viewName);
+    
+    void onMouseMoveCallBack(double x, double y);
+    void onMouseCallBack(int button, int action, double x, double y);
+    void onMouseScrollCallback(double x, double y);
+    void onKeyCallback(int key, int action, int repeat);
+//    void onCharCallback(unsigned int character);
+    
 private:
-	GLFWwindow * _mainWindow;
-
-	bool initGL();
-
-	bool			 _isGLInitialized;
-
-	//EGLDisplay 		 _eglDisplay;
-	//EGLContext 		 _eglContext;
-	//EGLSurface 		 _eglSurface;
+	SDL_Window *_mainWindow = nullptr;
+    SDL_GLContext _glContext = nullptr;
+	bool _isGLInitialized = false;
+    
+    bool _captured = false;
+    int _windowWidth = 0;
+    int _windowHeight = 0;
+    int _windowFullscreen = 0;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(GLViewImpl);
