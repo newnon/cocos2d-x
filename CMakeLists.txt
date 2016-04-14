@@ -83,6 +83,9 @@ option(USE_BOX2D "Use box2d for physics library" OFF)
 option(USE_BULLET "Use bullet for physics3d library" ON)
 option(USE_RECAST "Use Recast for navigation mesh" ON)
 option(USE_WEBP "Use WebP codec" ${USE_WEBP_DEFAULT})
+option(USE_PNG "Use PNG codec" ON)
+option(USE_TIFF "Use TIFF codec" ON)
+option(USE_JPEG "Use JPEG codec" ON)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 option(BUILD_EXTENSIONS "Build extension library" ON)
 option(BUILD_EDITOR_SPINE "Build editor support for spine" ON)
@@ -313,12 +316,6 @@ else()
 endif()
 message(STATUS "TinyXML2 include dirs: ${TinyXML2_INCLUDE_DIRS}")
 
-cocos_find_package(JPEG JPEG REQUIRED)
-# libjpeg
-if(NOT EMSCRIPTEN)
-cocos_find_package(ZLIB ZLIB REQUIRED)
-endif()
-
 # minizip (we try to migrate to minizip from https://github.com/nmoinvaz/minizip)
 # only msys2 currently provides package for this variant, all other
 # dists have packages from zlib, thats very old for us.
@@ -342,9 +339,36 @@ else()
   add_definitions(-DMINIZIP_FROM_SYSTEM)
 endif()
 
-cocos_find_package(TIFF TIFF REQUIRED)
+# Jpeg
+if(USE_JPEG)
+  cocos_find_package(JPEG JPEG REQUIRED)
+  add_definitions(-DCC_USE_JPEG=1)
+  if(NOT EMSCRIPTEN)
+    cocos_find_package(ZLIB ZLIB REQUIRED)
+  endif()
+else(USE_JPEG)
+  add_definitions(-DCC_USE_JPEG=0)
+endif(USE_JPEG)
+
+# Tiff
+if(USE_TIFF)
+  cocos_find_package(TIFF TIFF REQUIRED)
+  add_definitions(-DCC_USE_TIFF=1)
+else(USE_TIFF)
+  add_definitions(-DCC_USE_TIFF=0)
+endif(USE_TIFF)
+
+# Tiff
+if(USE_PNG)
 if(NOT EMSCRIPTEN)
-cocos_find_package(PNG PNG REQUIRED)
+  cocos_find_package(PNG PNG REQUIRED)
+endif(NOT EMSCRIPTEN)
+  add_definitions(-DCC_USE_PNG=1)
+else(USE_PNG)
+  add_definitions(-DCC_USE_PNG=0)
+endif(USE_PNG)
+
+if(NOT EMSCRIPTEN)
 cocos_find_package(WEBSOCKETS WEBSOCKETS REQUIRED)
 cocos_find_package(CURL CURL REQUIRED)
 if(NOT USE_PREBUILT_LIBS)

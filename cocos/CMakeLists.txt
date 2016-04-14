@@ -138,7 +138,7 @@ else()
   message( FATAL_ERROR "Unsupported platform, CMake will exit" )
 endif()
 
-foreach(pkg ZLIB MINIZIP JPEG PNG TIFF TinyXML2 FREETYPE WEBSOCKETS CURL FLATBUFFERS XXHASH)
+foreach(pkg ZLIB MINIZIP TinyXML2 FREETYPE WEBSOCKETS CURL FLATBUFFERS XXHASH)
   cocos_use_pkg(cocos2d ${pkg})
 endforeach()
 
@@ -151,6 +151,34 @@ if(LINUX)
 endif(LINUX)
 
 target_link_libraries(cocos2d ${PLATFORM_SPECIFIC_LIBS} ${glfw_other_linker_flags})
+
+if(USE_JPEG)
+  add_definitions(-DCC_USE_JPEG=1)
+  cocos_use_pkg(cocos2d JPEG)
+else()
+  add_definitions(-DCC_USE_JPEG=0)
+endif()
+
+if(USE_WEBP)
+  add_definitions(-DCC_USE_WEBP=1)
+  cocos_use_pkg(cocos2d WEBP)
+else()
+  add_definitions(-DCC_USE_WEBP=0)
+endif()
+
+if(USE_TIFF)
+  add_definitions(-DCC_USE_TIFF=1)
+  cocos_use_pkg(cocos2d WEBP)
+else()
+  add_definitions(-DCC_USE_TIFF=0)
+endif()
+
+if(USE_PNG)
+  add_definitions(-DCC_USE_PNG=1)
+  cocos_use_pkg(cocos2d WEBP)
+else()
+  add_definitions(-DCC_USE_PNG=0)
+endif()
 
 if(USE_WEBP)
   add_definitions(-DCC_USE_WEBP=1)
