@@ -514,7 +514,11 @@ void Device::vibrate(float duration)
 
 std::string Device::getDeviceUID()
 {
+#if TARGET_IPHONE_SIMULATOR
+    return "ios_simulator";
+#else
     return [[[[UIDevice currentDevice] identifierForVendor] UUIDString] UTF8String];
+#endif
 }
 
 NS_CC_END
