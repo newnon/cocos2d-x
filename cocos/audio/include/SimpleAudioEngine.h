@@ -248,6 +248,15 @@ public:
      * @param filePath The path of the effect file.
      */
     virtual void unloadEffect(const char* filePath);
+    
+    /**
+    * set emscripten availaible audio files extension
+    *
+    * @extFiles extensions vector
+    */
+#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
+    void setUseFileExt(const std::vector<std::string> &extFiles);
+#endif
 
 protected:
     /**

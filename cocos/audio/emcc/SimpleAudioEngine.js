@@ -38,8 +38,15 @@ var LibrarySimpleAudioEngine = {
 
             musicMap: {},
             musicVolume: 100,
-            curBackgroundMusic: null
+            curBackgroundMusic: null,
+            formats: []
         };
+    },
+
+    SimpleAudioEngine_setUseFileExt: function(extFiles)
+    {
+        var exts = Pointer_stringify(extFiles);
+        Module.CocosDensionState.formats = exts.split(',');
     },
 
     SimpleAudioEngine_end: function()
@@ -90,7 +97,7 @@ var LibrarySimpleAudioEngine = {
         if(Module.CocosDensionState.musicMap[filename] === undefined)
         {
             var sound = new buzz.sound(filename, {
-                                                formats: [ "ogg", "mp3", "aac", "wav" ],
+                                                formats: Module.CocosDensionState.formats,
                                                 preload: true,
                                                 autoplay: true,
                                                 loop: loop,
@@ -126,7 +133,7 @@ var LibrarySimpleAudioEngine = {
         if(Module.CocosDensionState.musicMap[filename] === undefined)
         {
             var sound = new buzz.sound(filename, {
-                                                formats: [ "ogg", "mp3", "aac", "wav" ],
+                                                formats: Module.CocosDensionState.formats,
                                                 preload: true,
                                                 autoplay: false,
                                                 volume: Module.CocosDensionState.musicVolume
@@ -174,7 +181,7 @@ var LibrarySimpleAudioEngine = {
         if(Module.CocosDensionState.effectMap[filename] === undefined)
         {
             var sound = new buzz.sound(filename, {
-                                                formats: [ "ogg", "mp3", "aac", "wav" ],
+                                                formats: Module.CocosDensionState.formats,
                                                 preload: true,
                                                 autoplay: true,
                                                 loop: loop,
@@ -214,7 +221,7 @@ var LibrarySimpleAudioEngine = {
         if(Module.CocosDensionState.effectMap[filename] === undefined)
         {
             var sound = new buzz.sound(filename, {
-                                                formats: [ "ogg", "mp3", "aac", "wav" ],
+                                                formats: Module.CocosDensionState.formats,
                                                 preload: true,
                                                 autoplay: false,
                                                 volume: Module.CocosDensionState.effectVolume

@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 #include "../include/SimpleAudioEngine.h"
 #include "../include/AudioEngine.h"
@@ -28,6 +29,7 @@ extern "C" {
     void SimpleAudioEngine_resumeBackgroundMusic();
     void SimpleAudioEngine_stopBackgroundMusic();
     void SimpleAudioEngine_setBackgroundMusicVolume(int);
+    void SimpleAudioEngine_setUseFileExt(const char *);
     
     void SimpleAudioEngine_end();
 };
@@ -250,5 +252,19 @@ void SimpleAudioEngine::unloadEffect(const char* filePath)
 {
     // This doesn't make as much sense here. Just ignore.
 }
+
+void SimpleAudioEngine::setUseFileExt(const std::vector<std::string> &extFiles)
+{
+    std::string transferExts;
+    for (int i = 0; i < extFiles.size(); ++i)
+    {
+        transferExts += extFiles[i];
+        if (i + 1 < extFiles.size())
+            transferExts += ",";
+    }
+    
+    SimpleAudioEngine_setUseFileExt(transferExts.c_str());
+}
+
 
     
