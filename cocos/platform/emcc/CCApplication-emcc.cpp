@@ -177,6 +177,10 @@ const std::string& Application::getResourceRootPath(void)
 
 bool Application::openURL(const std::string &url)
 {
+    std::string script = "window.open(\"";
+    script += url;
+    script += "\", \"_blank\")";
+    emscripten_run_script(script.c_str());
     return false;
 }
 

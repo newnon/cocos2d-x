@@ -38,11 +38,11 @@ THE SOFTWARE.
 #include "base/CCIMEDispatcher.h"
 #include "base/ccUtils.h"
 #include "base/ccUTF8.h"
-
+#include "2d/CCCamera.h"
 
 #include <emscripten/emscripten.h>
 
-#include <SDL2/SDL.h>
+#include <SDL/SDL.h>
 #include <emscripten.h>
 
 NS_CC_BEGIN
@@ -208,7 +208,8 @@ GLViewImpl* GLViewImpl::create(const std::string& viewName)
 GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName)
 {
 	auto ret = new GLViewImpl();
-	if (ret && ret->initWithFullScreen(viewName)) {
+	if (ret && ret->initWithFullScreen(viewName))
+    {
 		ret->autorelease();
 		return ret;
 	}
@@ -216,9 +217,9 @@ GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName)
 	return nullptr;
 }
 
-GLViewImpl::GLViewImpl() :
-_mainWindow(nullptr),
-_captured(false)
+GLViewImpl::GLViewImpl()
+    :_screenSurface(nullptr),
+    _captured(false)
 {
 }
 
@@ -242,21 +243,27 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, _glContextAttrs.depthBits);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, _glContextAttrs.stencilBits);
     
-    _mainWindow = SDL_CreateWindow(
-                                   viewName.c_str(),
-                                   SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                   rect.size.width, rect.size.height, SDL_WINDOW_OPENGL | SDL_WINDOW_INPUT_GRABBED | SDL_WINDOW_RESIZABLE
-                                   );
+    _frameZoomFactor = frameZoomFactor;
+    int bpp = _glContextAttrs.redBits + _glContextAttrs.greenBits + _glContextAttrs.blueBits + _glContextAttrs.alphaBits;
+    _screenSurface = SDL_SetVideoMode(rect.size.width * frameZoomFactor, rect.size.height * frameZoomFactor, bpp, SDL_OPENGL);
     
-    _glContext = SDL_GL_CreateContext(_mainWindow);
-
     setFrameSize(rect.size.width, rect.size.height);
-    
-    emscripten_get_canvas_size(&_windowWidth, &_windowHeight, &_windowFullscreen);
+
+    emscripten_SDL_SetEventHandler(&GLViewImpl::EventHandler, static_cast<void*>(this));
 
 	const GLubyte* glVersion = glGetString(GL_VERSION);
 	CCLOG("Version %s", glVersion);
 	return true;
+}
+
+void GLViewImpl::setFrameSize(float width, float height)
+{
+    _viewPortRect.origin.x = 0.0f;
+    _viewPortRect.origin.y = 0.0f;
+    _viewPortRect.size.width = width;
+    _viewPortRect.size.height = height;
+
+    GLView::setFrameSize(width, height);
 }
 
 bool GLViewImpl::initWithFullScreen(const std::string& viewName)
@@ -266,16 +273,15 @@ bool GLViewImpl::initWithFullScreen(const std::string& viewName)
 
 bool GLViewImpl::isOpenGLReady()
 {
-	return nullptr != _mainWindow;
+	return nullptr != _screenSurface;
 }
 
 void GLViewImpl::end()
 {
-	if (_mainWindow)
+	if (_screenSurface)
 	{
-        SDL_GL_DeleteContext(_glContext);
-        SDL_DestroyWindow(_mainWindow);
-		_mainWindow = nullptr;
+        SDL_FreeSurface(_screenSurface);
+		_screenSurface = nullptr;
 	}
 
 	// Release self. Otherwise, GLViewImpl could not be freed.
@@ -284,7 +290,7 @@ void GLViewImpl::end()
 
 void GLViewImpl::swapBuffers()
 {
-	if (_mainWindow)
+	if (_screenSurface)
 	{
         SDL_GL_SwapBuffers();
 	}
@@ -292,154 +298,134 @@ void GLViewImpl::swapBuffers()
 
 void GLViewImpl::pollEvents()
 {
-    int windowWidth = 0;
-    int windowHeight = 0;
-    int windowFullscreen = 0;
-    emscripten_get_canvas_size(&windowWidth, &windowHeight, &windowFullscreen);
-    
-    if (windowWidth != _windowWidth || windowHeight != _windowHeight || windowFullscreen != _windowFullscreen)
-    {
-        _windowWidth = windowWidth;
-        _windowHeight = windowHeight;
-        _windowFullscreen = windowFullscreen;
-        
-        screenSizeChanged(_windowWidth, _windowHeight);
-        Application::getInstance()->applicationScreenSizeChanged(_windowWidth, _windowHeight);
-        CCLOG("change window size(%i, %i, %i)\n", _windowWidth, _windowHeight, _windowFullscreen);
-    }
-    
-    SDL_Event event;
-    while (SDL_PollEvent(&event) > 0)
-    {
-        switch(event.type)
-        {
-            case SDL_FINGERMOTION:
-            {
-                SDL_TouchFingerEvent *touch = (SDL_TouchFingerEvent*)&event.tfinger;
-                intptr_t touchId = (intptr_t)touch->fingerId;
-                float mouseX = static_cast<float>(touch->x) / this->getFrameZoomFactor();
-                float mouseY = static_cast<float>(touch->y) / this->getFrameZoomFactor();
-                float maxForce = 1.0f;
-                
-                float cursorX = (mouseX - _viewPortRect.origin.x) / _scaleX;
-                float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - mouseY) / _scaleY;
-                
-                auto glview = cocos2d::Director::getInstance()->getOpenGLView();
-                glview->handleTouchesMove(1, &touchId, &cursorX, &cursorY, &touch->pressure, &maxForce);
-                break;
-            }
-             
-            case SDL_FINGERDOWN:
-            {
-                SDL_TouchFingerEvent *touch = (SDL_TouchFingerEvent*)&event.tfinger;
-                intptr_t touchId = (intptr_t)touch->fingerId;
-                float mouseX = static_cast<float>(touch->x) / this->getFrameZoomFactor();
-                float mouseY = static_cast<float>(touch->y) / this->getFrameZoomFactor();
-                
-                float cursorX = (mouseX - _viewPortRect.origin.x) / _scaleX;
-                float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - mouseY) / _scaleY;
-                
-                auto glview = cocos2d::Director::getInstance()->getOpenGLView();
-                glview->handleTouchesBegin(1, &touchId, &cursorX, &cursorY);
-                break;
-            }
-                
-            case SDL_FINGERUP:
-            {
-                SDL_TouchFingerEvent *touch = (SDL_TouchFingerEvent*)&event.tfinger;
-                intptr_t touchId = (intptr_t)touch->fingerId;
-                float mouseX = static_cast<float>(touch->x) / this->getFrameZoomFactor();
-                float mouseY = static_cast<float>(touch->y) / this->getFrameZoomFactor();
-                
-                float cursorX = (mouseX - _viewPortRect.origin.x) / _scaleX;
-                float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - mouseY) / _scaleY;
-                
-                auto glview = cocos2d::Director::getInstance()->getOpenGLView();
-                glview->handleTouchesEnd(1, &touchId, &cursorX, &cursorY);
-                break;
-            }
-   
-            case SDL_MOUSEMOTION:
-            {
-                SDL_MouseMotionEvent *mouse = (SDL_MouseMotionEvent*)&event;
-                onMouseMoveCallBack(mouse->x, mouse->y);
-                break;
-            }
-                
-            case SDL_MOUSEBUTTONDOWN:
-            case SDL_MOUSEBUTTONUP:
-            {
-                SDL_MouseButtonEvent *mouse = (SDL_MouseButtonEvent*)&event;
-                onMouseCallBack(mouse->button, event.type, mouse->x, mouse->y);
-                break;
-            }
-                
-            case SDL_MOUSEWHEEL:
-            {
-                SDL_MouseWheelEvent *mouse = (SDL_MouseWheelEvent*)&event;
-                onMouseScrollCallback(mouse->x, mouse->y);
-                break;
-            }
-                
-            case SDL_KEYDOWN:
-            case SDL_KEYUP:
-            {
-                SDL_KeyboardEvent *key = (SDL_KeyboardEvent*)&event;
-                onKeyCallback(key->keysym.sym, key->state, key->repeat);
-                break;
-            }
-                
-//            case SDL_TEXTINPUT:
-//            {
-//                SDL_TextInputEvent *key = (SDL_TextInputEvent*)&event;
-//                
-//                CCLOG("text input %c", key->text[0]);
-//                
-//                for(int i = 0; i < SDL_TEXTINPUTEVENT_TEXT_SIZE; ++i)
-//                {
-//                    onCharCallback(static_cast<unsigned int>(key->text[i]));
-//                }
-//                break;
-//            }
-        }
-    }
 }
 
 void GLViewImpl::setIMEKeyboardState(bool bOpen)
 {
 }
 
+float GLViewImpl::getFrameZoomFactor() const
+{
+    return _frameZoomFactor;
+}
+
+int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
+{
+    GLViewImpl *thiz = static_cast<GLViewImpl*>(userdata);
+    
+    switch(event->type)
+    {
+        case SDL_FINGERMOTION:
+        {
+            SDL_TouchFingerEvent *touch = (SDL_TouchFingerEvent*)&event->tfinger;
+            intptr_t touchId = (intptr_t)touch->fingerId;
+            float realScreenWidth = thiz->_viewPortRect.size.width * thiz->getFrameZoomFactor();
+            float realScreenHeight = thiz->_viewPortRect.size.height * thiz->getFrameZoomFactor();
+            float mouseX = static_cast<float>(touch->x * realScreenWidth) / thiz->getFrameZoomFactor();
+            float mouseY = static_cast<float>(touch->y * realScreenHeight) / thiz->getFrameZoomFactor();
+            float maxForce = 1.0f;
+            
+            auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+            glview->handleTouchesMove(1, &touchId, &mouseX, &mouseY, &touch->pressure, &maxForce);
+            break;
+        }
+            
+        case SDL_FINGERDOWN:
+        {
+            SDL_TouchFingerEvent *touch = (SDL_TouchFingerEvent*)&event->tfinger;
+            intptr_t touchId = (intptr_t)touch->fingerId;
+            float realScreenWidth = thiz->_viewPortRect.size.width * thiz->getFrameZoomFactor();
+            float realScreenHeight = thiz->_viewPortRect.size.height * thiz->getFrameZoomFactor();
+            float mouseX = static_cast<float>(touch->x * realScreenWidth) / thiz->getFrameZoomFactor();
+            float mouseY = static_cast<float>(touch->y * realScreenHeight) / thiz->getFrameZoomFactor();
+            
+            auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+            glview->handleTouchesBegin(1, &touchId, &mouseX, &mouseY);
+            break;
+        }
+            
+        case SDL_FINGERUP:
+        {
+            SDL_TouchFingerEvent *touch = (SDL_TouchFingerEvent*)&event->tfinger;
+            intptr_t touchId = (intptr_t)touch->fingerId;
+            float realScreenWidth = thiz->_viewPortRect.size.width * thiz->getFrameZoomFactor();
+            float realScreenHeight = thiz->_viewPortRect.size.height * thiz->getFrameZoomFactor();
+            float mouseX = static_cast<float>(touch->x * realScreenWidth) / thiz->getFrameZoomFactor();
+            float mouseY = static_cast<float>(touch->y * realScreenHeight) / thiz->getFrameZoomFactor();
+            
+            auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+            glview->handleTouchesEnd(1, &touchId, &mouseX, &mouseY);
+            break;
+        }
+            
+        case SDL_MOUSEMOTION:
+        {
+            SDL_MouseMotionEvent *mouse = (SDL_MouseMotionEvent*)event;
+            thiz->onMouseMoveCallBack(mouse->x, mouse->y);
+            break;
+        }
+            
+        case SDL_MOUSEBUTTONDOWN:
+        case SDL_MOUSEBUTTONUP:
+        {
+            SDL_MouseButtonEvent *mouse = (SDL_MouseButtonEvent*)event;
+            thiz->onMouseCallBack(mouse->button, event->type, mouse->x, mouse->y);
+            break;
+        }
+            
+        case SDL_MOUSEWHEEL:
+        {
+            SDL_MouseWheelEvent *mouse = (SDL_MouseWheelEvent*)event;
+            thiz->onMouseScrollCallback(mouse->x, mouse->y);
+            break;
+        }
+            
+        case SDL_KEYDOWN:
+        case SDL_KEYUP:
+        {
+            SDL_KeyboardEvent *key = (SDL_KeyboardEvent*)event;
+            thiz->onKeyCallback(key->keysym.sym, key->state, key->repeat);
+            break;
+        }
+            
+        case SDL_VIDEORESIZE:
+        {
+            int windowWidth = 0;
+            int windowHeight = 0;
+            int windowFullscreen = 0;
+            emscripten_get_canvas_size(&windowWidth, &windowHeight, &windowFullscreen);
+            
+            thiz->screenSizeChanged(windowWidth, windowHeight);
+            Application::getInstance()->applicationScreenSizeChanged(windowWidth, windowHeight);
+            CCLOG("change window size(%i, %i, %i)\n", windowWidth, windowHeight, windowFullscreen);
+            break;
+        }
+            
+            
+//            case SDL_TEXTINPUT:
+//            {
+//                SDL_TextInputEvent *key = (SDL_TextInputEvent*)&event;
+//
+//                CCLOG("text input %c", key->text[0]);
+//
+//                for(int i = 0; i < SDL_TEXTINPUTEVENT_TEXT_SIZE; ++i)
+//                {
+//                    onCharCallback(static_cast<unsigned int>(key->text[i]));
+//                }
+//                break;
+//            }
+    }
+    
+    return 0;
+}
+
 void GLViewImpl::onMouseCallBack(int button, int action, double x, double y)
 {
-    float mouseX = static_cast<float>(x) / this->getFrameZoomFactor();
-    float mouseY = static_cast<float>(y) / this->getFrameZoomFactor();
-    Uint32 mouseState = SDL_GetMouseState(nullptr, nullptr);
-    
-	if (SDL_BUTTON_LEFT == button)
-	{
-		if (SDL_MOUSEBUTTONDOWN == action)
-		{
-			_captured = true;
-			if (this->getViewPortRect().equals(Rect::ZERO) || this->getViewPortRect().containsPoint(Vec2(mouseX, mouseY)))
-			{
-				intptr_t id = 0;
-				this->handleTouchesBegin(1, &id, &mouseX, &mouseY);
-			}
-		}
-		else if (SDL_MOUSEBUTTONUP == action)
-		{
-			if (_captured)
-			{
-				_captured = false;
-				intptr_t id = 0;
-				this->handleTouchesEnd(1, &id, &mouseX, &mouseY);
-			}
-		}
-	}
-    
 	//Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     if (SDL_MOUSEBUTTONDOWN == action || SDL_MOUSEBUTTONUP == action)
     {
+        float mouseX = static_cast<float>(x) / this->getFrameZoomFactor();
+        float mouseY = static_cast<float>(y) / this->getFrameZoomFactor();
         float cursorX = (mouseX - _viewPortRect.origin.x) / _scaleX;
         float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - mouseY) / _scaleY;
         
@@ -455,12 +441,6 @@ void GLViewImpl::onMouseMoveCallBack(double x, double y)
 	float mouseX = static_cast<float>(x) / this->getFrameZoomFactor();
 	float mouseY = static_cast<float>(y) / this->getFrameZoomFactor();
     Uint32 mouseState = SDL_GetMouseState(nullptr, nullptr);
-    
-	if (_captured)
-	{
-		intptr_t id = 0;
-		this->handleTouchesMove(1, &id, &mouseX, &mouseY);
-	}
 
 	//Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     float cursorX = (mouseX - _viewPortRect.origin.x) / _scaleX;
@@ -514,6 +494,34 @@ void GLViewImpl::onKeyCallback(int key, int action, int repeat)
 	{
 		IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
 	}
+}
+
+void GLViewImpl::setViewPortInPoints(float x , float y , float w , float h)
+{
+    experimental::Viewport vp((float)(x * _scaleX * _frameZoomFactor + _viewPortRect.origin.x * _frameZoomFactor),
+                              (float)(y * _scaleY * _frameZoomFactor + _viewPortRect.origin.y * _frameZoomFactor),
+                              (float)(w * _scaleX * _frameZoomFactor),
+                              (float)(h * _scaleY * _frameZoomFactor));
+    Camera::setDefaultViewport(vp);
+}
+
+void GLViewImpl::setScissorInPoints(float x , float y , float w , float h)
+{
+    glScissor((GLint)(x * _scaleX * _frameZoomFactor + _viewPortRect.origin.x * _frameZoomFactor),
+              (GLint)(y * _scaleY * _frameZoomFactor + _viewPortRect.origin.y * _frameZoomFactor),
+              (GLsizei)(w * _scaleX * _frameZoomFactor),
+              (GLsizei)(h * _scaleY * _frameZoomFactor));
+}
+
+Rect GLViewImpl::getScissorRect() const
+{
+    GLfloat params[4];
+    glGetFloatv(GL_SCISSOR_BOX, params);
+    float x = (params[0] - _viewPortRect.origin.x * _frameZoomFactor) / (_scaleX * _frameZoomFactor);
+    float y = (params[1] - _viewPortRect.origin.y * _frameZoomFactor) / (_scaleY * _frameZoomFactor);
+    float w = params[2] / (_scaleX * _frameZoomFactor);
+    float h = params[3] / (_scaleY * _frameZoomFactor);
+    return Rect(x, y, w, h);
 }
 
 //void GLViewImpl::onCharCallback(unsigned int character)

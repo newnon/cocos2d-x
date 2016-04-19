@@ -30,8 +30,8 @@ THE SOFTWARE.
 #include "platform/CCCommon.h"
 #include "platform/CCGLView.h"
 
-#include "SDL2/SDL.h"
-#include "SDL2/SDL_opengl.h"
+#include "SDL/SDL.h"
+#include "SDL/SDL_opengl.h"
 
 NS_CC_BEGIN
 
@@ -47,6 +47,13 @@ public:
 	void swapBuffers() override;
 	void pollEvents() override;
 	void setIMEKeyboardState(bool bOpen) override;
+    virtual void setFrameSize(float width, float height) override;
+    
+    float getFrameZoomFactor() const override;
+    
+    virtual void setViewPortInPoints(float x , float y , float w , float h) override;
+    virtual void setScissorInPoints(float x , float y , float w , float h) override;
+    virtual Rect getScissorRect() const override;
 
 protected:
     GLViewImpl();
@@ -61,15 +68,14 @@ protected:
     void onKeyCallback(int key, int action, int repeat);
 //    void onCharCallback(unsigned int character);
     
+    static int EventHandler(void *userdata, SDL_Event *event);
+    
 private:
-	SDL_Window *_mainWindow = nullptr;
-    SDL_GLContext _glContext = nullptr;
+    SDL_Surface *_screenSurface = nullptr;
 	bool _isGLInitialized = false;
     
     bool _captured = false;
-    int _windowWidth = 0;
-    int _windowHeight = 0;
-    int _windowFullscreen = 0;
+    float _frameZoomFactor = 1.0f;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(GLViewImpl);
