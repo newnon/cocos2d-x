@@ -38,6 +38,7 @@ THE SOFTWARE.
 #define __EMSCRIPTEN__ 1
 #endif
 
+#include <locale>
 #include <emscripten/emscripten.h>
 
 #define  LOGD(...)  emscripten_log(EM_LOG_CONSOLE, ##__VA_ARGS__)
@@ -139,14 +140,36 @@ Application* Application::sharedApplication()
 
 const char * Application::getCurrentLanguageCode()
 {
-    static char code[3]="en";    
+    static char code[3]="en";
     return code;
+
+//    const std::string &localeName = std::locale().name();
+//    return !localeName.empty() ? localeName.substr(0, 2).c_str() "en";
 }
 
 LanguageType Application::getCurrentLanguage()
-{    
-    LanguageType ret = LanguageType::ENGLISH; 
-    return ret;
+{
+    const char *languageCode = getCurrentLanguageCode();
+    if (languageCode == "zh") return LanguageType::CHINESE;
+    if (languageCode == "en") return LanguageType::ENGLISH;
+    if (languageCode == "fr") return LanguageType::FRENCH;
+    if (languageCode == "it") return LanguageType::ITALIAN;
+    if (languageCode == "de") return LanguageType::GERMAN;
+    if (languageCode == "es") return LanguageType::SPANISH;
+    if (languageCode == "nl") return LanguageType::DUTCH;
+    if (languageCode == "ru") return LanguageType::RUSSIAN;
+    if (languageCode == "ko") return LanguageType::KOREAN;
+    if (languageCode == "ja") return LanguageType::JAPANESE;
+    if (languageCode == "hu") return LanguageType::HUNGARIAN;
+    if (languageCode == "pt") return LanguageType::PORTUGUESE;
+    if (languageCode == "ar") return LanguageType::ARABIC;
+    if (languageCode == "nb") return LanguageType::NORWEGIAN;
+    if (languageCode == "pl") return LanguageType::POLISH;
+    if (languageCode == "tr") return LanguageType::TURKISH;
+    if (languageCode == "uk") return LanguageType::UKRAINIAN;
+    if (languageCode == "ro") return LanguageType::ROMANIAN;
+    if (languageCode == "bg") return LanguageType::BULGARIAN;
+    return LanguageType::ENGLISH;
 }
 
 Application::Platform Application::getTargetPlatform()
