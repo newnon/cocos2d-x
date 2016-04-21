@@ -326,6 +326,7 @@ float GLViewImpl::getFrameZoomFactor() const
 
 void GLViewImpl::toggleToFullscreen()
 {
+    SDL_WM_ToggleFullScreen(_screenSurface);
 }
 
 int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
