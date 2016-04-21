@@ -303,6 +303,7 @@ void GLViewImpl::pollEvents()
 	
 	if(_windowWidth != windowWidth || windowHeight != _windowHeight)
 	{
+		clearAllTouches();
 		_windowWidth = windowWidth;
 		_windowHeight = windowHeight;
 	
@@ -326,7 +327,12 @@ float GLViewImpl::getFrameZoomFactor() const
 
 void GLViewImpl::toggleToFullscreen()
 {
-    SDL_WM_ToggleFullScreen(_screenSurface);
+    int windowFullscreen = 0;
+    emscripten_get_canvas_size(nullptr, nullptr, &windowFullscreen);
+    if(windowFullscreen)
+        emscripten_run_script("Module['canvas'].cancelFullScreen();");
+    else
+        emscripten_run_script("Module.requestFullScreen(false, true);");
 }
 
 int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
