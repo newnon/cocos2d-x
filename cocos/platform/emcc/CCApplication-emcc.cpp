@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "CCApplication.h"
 //#include "platform/CCFileUtils.h"
 #include "base/CCDirector.h"
+#include "CCGLViewImpl-emcc.h"
 //#include "CCEGLView.h"
 #include <stdio.h>
 #include <time.h>
@@ -202,6 +203,13 @@ bool Application::openURL(const std::string &url)
     script += "\", \"_blank\")";
     emscripten_run_script(script.c_str());
     return false;
+}
+
+void Application::toggleToFullscreen()
+{
+    auto director = Director::getInstance();
+    GLViewImpl *glview = static_cast<GLViewImpl*>(director->getOpenGLView());
+    glview->toggleToFullscreen();
 }
 
 NS_CC_END

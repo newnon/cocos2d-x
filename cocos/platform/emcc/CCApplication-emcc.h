@@ -111,6 +111,8 @@ public:
 	virtual bool openURL(const std::string &url) override;
 	
 	static void setAppVersion(const std::string &version);
+    
+    void toggleToFullscreen();
 
 
 protected:

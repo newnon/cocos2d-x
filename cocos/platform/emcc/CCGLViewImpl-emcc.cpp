@@ -248,7 +248,7 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     _screenSurface = SDL_SetVideoMode(rect.size.width * frameZoomFactor, rect.size.height * frameZoomFactor, bpp, SDL_OPENGL);
     
     setFrameSize(rect.size.width, rect.size.height);
-
+    
     emscripten_SDL_SetEventHandler(&GLViewImpl::EventHandler, static_cast<void*>(this));
 
 	const GLubyte* glVersion = glGetString(GL_VERSION);
@@ -307,6 +307,13 @@ void GLViewImpl::setIMEKeyboardState(bool bOpen)
 float GLViewImpl::getFrameZoomFactor() const
 {
     return _frameZoomFactor;
+}
+
+void GLViewImpl::toggleToFullscreen()
+{
+    if (_screenSurface)
+    {
+    }
 }
 
 int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
@@ -401,7 +408,6 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             break;
         }
             
-            
 //            case SDL_TEXTINPUT:
 //            {
 //                SDL_TextInputEvent *key = (SDL_TextInputEvent*)&event;
@@ -415,7 +421,7 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
 //                break;
 //            }
     }
-    
+
     return 0;
 }
 
