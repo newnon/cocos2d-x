@@ -1397,7 +1397,7 @@ private:
             unsigned contactTestBitmask = readInt(true);
             unsigned collisionBitmask = readInt(true);
             
-            Vect velocity;
+            Vec2 velocity;
             velocity.x = readFloat();
             velocity.y = readFloat();
             float velocityLimit = readFloat();

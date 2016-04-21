@@ -24,7 +24,7 @@ protected:
     virtual void onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value) override;
     virtual void onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, NodeLoader *value) override;
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
-    virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value);
+    virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
     
 private:
     bool _horizontal;

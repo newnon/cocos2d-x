@@ -1,6 +1,6 @@
 #include "CCBXWidgetLoader.h"
 #include "ui/UIWidget.h"
-#include "SimpleAudioEngine.h"
+#include "audio/include/SimpleAudioEngine.h"
 
 NS_CC_BEGIN
 namespace spritebuilder {

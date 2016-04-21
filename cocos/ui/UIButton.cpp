@@ -689,7 +689,7 @@ void Button::onPressStateChangedToNormal()
                 titleZoomAction = ScaleTo::create(ZOOM_ACTION_TIME_STEP, _titleScale, _titleScale);
             FiniteTimeAction *titleColorAction = TextTintTo::create(ZOOM_ACTION_TIME_STEP, realTitleColor.r, realTitleColor.g, realTitleColor.b);
             FiniteTimeAction *titleOpacityAction = FadeTo::create(ZOOM_ACTION_TIME_STEP, realTitleOpacity);
-            Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, NULL);
+            Action *titleSpawn = Spawn::create(titleZoomAction, titleColorAction, titleOpacityAction, nullptr);
             _titleRenderer->runAction(titleSpawn);
         }
     }
