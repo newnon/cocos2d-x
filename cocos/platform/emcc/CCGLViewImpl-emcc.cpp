@@ -248,6 +248,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     _screenSurface = SDL_SetVideoMode(rect.size.width * frameZoomFactor, rect.size.height * frameZoomFactor, bpp, SDL_OPENGL);
     
     setFrameSize(rect.size.width, rect.size.height);
+    
+    _windowWidth = rect.size.width * frameZoomFactor;
+    _windowHeight = rect.size.height * frameZoomFactor;
 
     emscripten_SDL_SetEventHandler(&GLViewImpl::EventHandler, static_cast<void*>(this));
 
@@ -293,6 +296,23 @@ void GLViewImpl::swapBuffers()
 
 void GLViewImpl::pollEvents()
 {
+	int windowWidth = 0;
+	int windowHeight = 0;
+	int windowFullscreen = 0;
+	emscripten_get_canvas_size(&windowWidth, &windowHeight, &windowFullscreen);
+	
+	if(_windowWidth != windowWidth || windowHeight != _windowHeight)
+	{
+		_windowWidth = windowWidth;
+		_windowHeight = windowHeight;
+	
+		int zoomWidth = windowWidth / _frameZoomFactor;
+		int zoomHeight = windowHeight / _frameZoomFactor;
+
+		screenSizeChanged(zoomWidth, zoomHeight);
+		Application::getInstance()->applicationScreenSizeChanged(zoomWidth, zoomHeight);
+		CCLOG("change window size(%i, %i, %i)\n", windowWidth, windowHeight, windowFullscreen);
+	}
 }
 
 void GLViewImpl::setIMEKeyboardState(bool bOpen)
@@ -380,22 +400,6 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
         {
             SDL_KeyboardEvent *key = (SDL_KeyboardEvent*)event;
             thiz->onKeyCallback(key->keysym.sym, key->state, key->repeat);
-            break;
-        }
-            
-        case SDL_VIDEORESIZE:
-        {
-            int windowWidth = 0;
-            int windowHeight = 0;
-            int windowFullscreen = 0;
-            emscripten_get_canvas_size(&windowWidth, &windowHeight, &windowFullscreen);
-            
-            int zoomWidth = windowWidth / thiz->_frameZoomFactor;
-            int zoomHeight = windowHeight / thiz->_frameZoomFactor;
-            
-            thiz->screenSizeChanged(zoomWidth, zoomHeight);
-            Application::getInstance()->applicationScreenSizeChanged(zoomWidth, zoomHeight);
-            CCLOG("change window size(%i, %i, %i)\n", windowWidth, windowHeight, windowFullscreen);
             break;
         }
             
@@ -496,6 +500,7 @@ void GLViewImpl::onKeyCallback(int key, int action, int repeat)
 
 void GLViewImpl::setViewPortInPoints(float x , float y , float w , float h)
 {
+    CCLOG("GLViewImpl::setViewPortInPoints()");
     experimental::Viewport vp((float)(x * _scaleX * _frameZoomFactor + _viewPortRect.origin.x * _frameZoomFactor),
                               (float)(y * _scaleY * _frameZoomFactor + _viewPortRect.origin.y * _frameZoomFactor),
                               (float)(w * _scaleX * _frameZoomFactor),

@@ -76,6 +76,9 @@ private:
     
     bool _captured = false;
     float _frameZoomFactor = 1.0f;
+    
+    int _windowWidth = 0;
+    int _windowHeight = 0;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(GLViewImpl);
