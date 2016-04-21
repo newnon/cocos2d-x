@@ -83,8 +83,8 @@ inline void nomalize_point(float x, float y, particle_point* out)
     // Already normalized.
     if (n == 1.0f)
         return;
-    
-    n = sqrt(n);
+
+    n = sqrtf(n);
     // Too close to zero.
     if (n < MATH_TOLERANCE)
         return;
@@ -714,7 +714,8 @@ dc[i] = (dc[i] - c[i]) / _particleData.timeToLive[i];\
             for (int i = start; i < _particleCount; ++i)
             {
                 float a = CC_DEGREES_TO_RADIANS( _angle + _angleVar * RANDOM_M11(&RANDSEED) );
-                Vec2 v(cosf( a ), sinf( a ));
+                
+                Vec2 v(cosf(a), sinf(a));
                 float s = modeA.speed + modeA.speedVar * RANDOM_M11(&RANDSEED);
                 Vec2 dir = v * s;
                 _particleData.modeA.dirX[i] = dir.x;//v * s ;
@@ -727,7 +728,7 @@ dc[i] = (dc[i] - c[i]) / _particleData.timeToLive[i];\
             for (int i = start; i < _particleCount; ++i)
             {
                 float a = CC_DEGREES_TO_RADIANS( _angle + _angleVar * RANDOM_M11(&RANDSEED) );
-                Vec2 v(cosf( a ), sinf( a ));
+                Vec2 v(cosf(a), sinf(a));
                 float s = modeA.speed + modeA.speedVar * RANDOM_M11(&RANDSEED);
                 Vec2 dir = v * s;
                 _particleData.modeA.dirX[i] = dir.x;//v * s ;
@@ -946,6 +947,7 @@ void ParticleSystem::update(float dt)
             {
                 _particleData.posx[i] = - cosf(_particleData.modeB.angle[i]) * _particleData.modeB.radius[i];
             }
+            
             for (int i = 0; i < _particleCount; ++i)
             {
                 _particleData.posy[i] = - sinf(_particleData.modeB.angle[i]) * _particleData.modeB.radius[i] * _yCoordFlipped;

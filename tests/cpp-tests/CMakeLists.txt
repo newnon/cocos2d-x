@@ -1,7 +1,9 @@
 set(APP_NAME cpp-tests)
 
 # Use same method as in cocos library
+if(NOT EMSCRIPTEN)
 cocos_find_package(CURL CURL REQUIRED)
+endif()
 
 if(WIN32)
   set(PLATFORM_SRC proj.win32/main.cpp)
@@ -15,6 +17,9 @@ elseif(MACOSX)
 
 elseif(LINUX)
   set(PLATFORM_SRC proj.linux/main.cpp)
+  set(RES_PREFIX "/Resources")
+elseif(EMSCRIPTEN)
+  set(PLATFORM_SRC proj.emscripten/main.cpp)
   set(RES_PREFIX "/Resources")
 else()
   message( FATAL_ERROR "Unsupported platform, CMake will exit" )
@@ -42,6 +47,7 @@ set(TESTS_SRC
   Classes/BugsTest/Bug-899.cpp
   Classes/BugsTest/Bug-914.cpp
   Classes/BugsTest/Bug-12847.cpp
+  Classes/BugsTest/Bug-14327.cpp
   Classes/BugsTest/Bug-Child.cpp
   Classes/BugsTest/BugsTest.cpp
   Classes/Camera3DTest/Camera3DTest.cpp
@@ -274,8 +280,24 @@ else()
 
     set_target_properties(${APP_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${APP_BIN_DIR}")
 
-    pre_build(${APP_NAME}
-      COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources ${APP_BIN_DIR}${RES_PREFIX}
-      )
+    if(EMSCRIPTEN)
+        set(CMAKE_EXECUTABLE_SUFFIX ".html")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s TOTAL_MEMORY=268435456 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/Resources@/")
+        file(GLOB preJsFiles ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/buzz.js)
+        file(GLOB libraryJsFiles 
+          ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/SimpleAudioEngine.js
+          ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/base/emcc/StorageEngine.js
+          ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/network/WebSocket.js
+          ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/network/HttpClient.js
+          ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/ui/UIEditBox/UIEditBox.js
+          )
+    
+    em_link_js_library(${APP_NAME} ${libraryJsFiles})
+    em_link_pre_js(${APP_NAME} ${preJsFiles})
+    else()
+        pre_build(${APP_NAME}
+          COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources ${APP_BIN_DIR}${RES_PREFIX}
+          )
+    endif()
 endif()
 

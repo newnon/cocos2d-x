@@ -41,6 +41,8 @@ THE SOFTWARE.
 #include "platform/winrt/CCApplication.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "platform/linux/CCApplication-linux.h"
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
+#include "platform/emcc/CCApplication-emcc.h"
 #endif
 
 /// @endcond

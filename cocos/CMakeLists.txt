@@ -67,7 +67,9 @@ include(editor-support/spine/CMakeLists.txt)
 set(COCOS_EDITOR_SUPPORT_SRC ${COCOS_EDITOR_SUPPORT_SRC} ${COCOS_SPINE_SRC})
 endif(BUILD_EDITOR_SPINE)
 
+if(BUILD_EXTENSIONS)
 include(../extensions/CMakeLists.txt)
+endif(BUILD_EXTENSIONS)
 
 set(COCOS_SRC cocos2d.cpp
     ${COCOS_2D_SRC}
@@ -82,9 +84,9 @@ set(COCOS_SRC cocos2d.cpp
     ${COCOS_AUDIO_SRC}
     ${COCOS_UI_SRC}
     ${COCOS_DEPRECATED_SRC}
-    ${COCOS_NETWORK_SRC}
     ${COCOS_EDITOR_SUPPORT_SRC}
     ${COCOS_EXTENSIONS_SRC}
+    ${COCOS_NETWORK_SRC}
     )
 
   #todo: provide prebuild versions of the xx libs for all platforms
@@ -99,7 +101,7 @@ if(WINDOWS)
   foreach(_pkg OPENGL GLEW GLFW3 VORBIS MPG123 OPENAL)
     cocos_use_pkg(cocos2d ${_pkg})
   endforeach()
-  list(APPEND PLATFORM_SPECIFIC_LIBS ws2_32 winmm)
+  list(APPEND PLATFORM_SPECIFIC_LIBS ws2_32 winmm Version Iphlpapi)
 elseif(LINUX)
     foreach(_pkg OPENGL GLEW GLFW3 FMOD FONTCONFIG THREADS GTK3)
     cocos_use_pkg(cocos2d ${_pkg})
@@ -128,16 +130,23 @@ elseif(MACOSX OR APPLE)
     ${IOKIT_LIBRARY}
     ${FOUNDATION_LIBRARY}
   )
-
+elseif(EMSCRIPTEN)
+  foreach(_pkg OPENGL GLFW3)
+    cocos_use_pkg(cocos2d ${_pkg})
+  endforeach()
 elseif(ANDROID)
   set(PLATFORM_SPECIFIC_LIBS GLESv2 log android)
 else()
   message( FATAL_ERROR "Unsupported platform, CMake will exit" )
 endif()
 
-foreach(pkg ZLIB MINIZIP JPEG PNG TIFF TinyXML2 FREETYPE WEBSOCKETS CURL FLATBUFFERS XXHASH)
+foreach(pkg ZLIB MINIZIP TinyXML2 FREETYPE WEBSOCKETS CURL FLATBUFFERS XXHASH)
   cocos_use_pkg(cocos2d ${pkg})
 endforeach()
+
+if(NOT USE_PREBUILT_LIBS)
+  cocos_use_pkg(cocos2d OPENSSL)
+endif()
 
 if(LINUX)
   set(glfw_other_linker_flags X11)
@@ -145,11 +154,32 @@ endif(LINUX)
 
 target_link_libraries(cocos2d ${PLATFORM_SPECIFIC_LIBS} ${glfw_other_linker_flags})
 
+if(USE_JPEG)
+  add_definitions(-DCC_USE_JPEG=1)
+  cocos_use_pkg(cocos2d JPEG)
+else()
+  add_definitions(-DCC_USE_JPEG=0)
+endif()
+
 if(USE_WEBP)
   add_definitions(-DCC_USE_WEBP=1)
   cocos_use_pkg(cocos2d WEBP)
 else()
   add_definitions(-DCC_USE_WEBP=0)
+endif()
+
+if(USE_TIFF)
+  add_definitions(-DCC_USE_TIFF=1)
+  cocos_use_pkg(cocos2d TIFF)
+else()
+  add_definitions(-DCC_USE_TIFF=0)
+endif()
+
+if(USE_PNG)
+  add_definitions(-DCC_USE_PNG=1)
+  cocos_use_pkg(cocos2d PNG)
+else()
+  add_definitions(-DCC_USE_PNG=0)
 endif()
 
 if(USE_CHIPMUNK)

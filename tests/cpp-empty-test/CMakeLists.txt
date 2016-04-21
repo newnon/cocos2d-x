@@ -23,6 +23,9 @@ elseif(MACOSX OR APPLE)
 elseif(LINUX)
   set(PLATFORM_SRC proj.linux/main.cpp)
   set(RES_PREFIX "/Resources")
+elseif(EMSCRIPTEN)
+  set(PLATFORM_SRC proj.emscripten/main.cpp)
+  set(RES_PREFIX "/Resources")
 else()
   message( FATAL_ERROR "Unsupported platform, CMake will exit" )
 
@@ -74,9 +77,26 @@ else()
 
   set_target_properties(${APP_NAME} PROPERTIES
        RUNTIME_OUTPUT_DIRECTORY  "${APP_BIN_DIR}")
-  add_custom_command(TARGET ${APP_NAME} POST_BUILD
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources $<TARGET_FILE_DIR:${APP_NAME}>${RES_PREFIX}
-    )
+       
+  if(EMSCRIPTEN)
+    set(CMAKE_EXECUTABLE_SUFFIX ".html")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s TOTAL_MEMORY=67108864 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/Resources@/")
 
+    file(GLOB preJsFiles ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/buzz.js)
+    file(GLOB libraryJsFiles 
+      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/SimpleAudioEngine.js
+      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/base/emcc/StorageEngine.js
+      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/network/WebSocket.js
+      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/network/HttpClient.js
+      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/ui/UIEditBox/UIEditBox.js
+    )
+    
+    em_link_js_library(${APP_NAME} ${libraryJsFiles})
+    em_link_pre_js(${APP_NAME} ${preJsFiles})
+  else()
+    add_custom_command(TARGET ${APP_NAME} POST_BUILD
+      COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources $<TARGET_FILE_DIR:${APP_NAME}>${RES_PREFIX}
+      )
+  endif()
 endif()
 

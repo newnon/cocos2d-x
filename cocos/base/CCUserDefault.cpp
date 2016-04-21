@@ -482,7 +482,8 @@ bool UserDefault::createXMLFile()
     if (nullptr==pRootEle)  
     {  
         return false;  
-    }  
+    }
+    
     pDoc->LinkEndChild(pRootEle);  
     bRet = tinyxml2::XML_SUCCESS == pDoc->SaveFile(FileUtils::getInstance()->getSuitableFOpen(_filePath).c_str());
 

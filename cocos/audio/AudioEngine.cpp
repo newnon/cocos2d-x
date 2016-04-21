@@ -40,6 +40,8 @@
 #include "winrt/AudioEngine-winrt.h"
 #elif CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
 #include "linux/AudioEngine-linux.h"
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
+#include "emcc/AudioEngine-emcc.h"
 #endif
 
 #define TIME_DELAY_PRECISION 0.0001

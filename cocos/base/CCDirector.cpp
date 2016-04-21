@@ -61,6 +61,7 @@ THE SOFTWARE.
 #include "base/CCConfiguration.h"
 #include "base/CCAsyncTaskPool.h"
 #include "platform/CCApplication.h"
+#include "ui/UIWidget.h"
 
 #if CC_ENABLE_SCRIPT_BINDING
 #include "CCScriptSupport.h"
@@ -102,6 +103,11 @@ Director* Director::getInstance()
     }
 
     return s_SharedDirector;
+}
+
+bool Director::hasInstance()
+{
+    return s_SharedDirector != nullptr;
 }
 
 Director::Director()
@@ -261,6 +267,8 @@ void Director::drawScene()
     // calculate "global" dt
     calculateDeltaTime();
     
+    ui::Widget::_mouseOverProcessed = false;
+    
     if (_openGLView)
     {
         _openGLView->pollEvents();
@@ -353,12 +361,14 @@ void Director::calculateDeltaTime()
         _deltaTime = MAX(0, _deltaTime);
     }
 
-#if COCOS2D_DEBUG
+#if CC_TARGET_PLATFORM != CC_PLATFORM_EMSCRIPTEN
+#   if COCOS2D_DEBUG
     // If we are debugging our code, prevent big delta time
     if (_deltaTime > 0.2f)
     {
         _deltaTime = 1 / 60.0f;
     }
+#   endif
 #endif
 
     *_lastUpdate = now;

@@ -582,6 +582,11 @@ void GLViewImpl::updateFrameSize()
 
 void GLViewImpl::setFrameSize(float width, float height)
 {
+    _viewPortRect.origin.x = 0.0f;
+    _viewPortRect.origin.y = 0.0f;
+    _viewPortRect.size.width = width;
+    _viewPortRect.size.height = height;
+    
     GLView::setFrameSize(width, height);
     updateFrameSize();
 }

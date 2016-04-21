@@ -1,7 +1,13 @@
 
 if(MACOSX OR APPLE)
-  set(COCOS_BASE_SPECIFIC_SRC
-    base/CCUserDefault-apple.mm)
+	set(COCOS_BASE_SPECIFIC_SRC
+		base/CCUserDefault-apple.mm)
+elseif (EMSCRIPTEN)
+	set(COCOS_BASE_SPECIFIC_SRC
+		base/emcc/CCUserDefault-emcc.cpp)
+else()
+	set(COCOS_BASE_SPECIFIC_SRC
+	      base/CCUserDefault.cpp)
 endif()
 
 # todo: android support via base/CCUserDefaultAndroid.cpp
@@ -42,7 +48,6 @@ set(COCOS_BASE_SRC
   base/CCScheduler.cpp
   base/CCScriptSupport.cpp
   base/CCTouch.cpp
-  base/CCUserDefault.cpp
   base/CCValue.cpp
   base/ObjectFactory.cpp
   base/CCStencilStateManager.cpp
