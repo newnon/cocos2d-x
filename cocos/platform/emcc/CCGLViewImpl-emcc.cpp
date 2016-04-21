@@ -258,11 +258,6 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
 
 void GLViewImpl::setFrameSize(float width, float height)
 {
-    _viewPortRect.origin.x = 0.0f;
-    _viewPortRect.origin.y = 0.0f;
-    _viewPortRect.size.width = width;
-    _viewPortRect.size.height = height;
-
     GLView::setFrameSize(width, height);
 }
 
@@ -395,8 +390,11 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             int windowFullscreen = 0;
             emscripten_get_canvas_size(&windowWidth, &windowHeight, &windowFullscreen);
             
-            thiz->screenSizeChanged(windowWidth, windowHeight);
-            Application::getInstance()->applicationScreenSizeChanged(windowWidth, windowHeight);
+            int zoomWidth = windowWidth / thiz->_frameZoomFactor;
+            int zoomHeight = windowHeight / thiz->_frameZoomFactor;
+            
+            thiz->screenSizeChanged(zoomWidth, zoomHeight);
+            Application::getInstance()->applicationScreenSizeChanged(zoomWidth, zoomHeight);
             CCLOG("change window size(%i, %i, %i)\n", windowWidth, windowHeight, windowFullscreen);
             break;
         }
