@@ -140,35 +140,32 @@ Application* Application::sharedApplication()
 
 const char * Application::getCurrentLanguageCode()
 {
-    static char code[3]="en";
-    return code;
-
-//    const std::string &localeName = std::locale().name();
-//    return !localeName.empty() ? localeName.substr(0, 2).c_str() "en";
+    const std::string &localeName = emscripten_run_script_string("navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage)");
+    return !localeName.empty() ? localeName.substr(0, 2).c_str() : "en";
 }
 
 LanguageType Application::getCurrentLanguage()
 {
     const char *languageCode = getCurrentLanguageCode();
-    if (languageCode == "zh") return LanguageType::CHINESE;
-    if (languageCode == "en") return LanguageType::ENGLISH;
-    if (languageCode == "fr") return LanguageType::FRENCH;
-    if (languageCode == "it") return LanguageType::ITALIAN;
-    if (languageCode == "de") return LanguageType::GERMAN;
-    if (languageCode == "es") return LanguageType::SPANISH;
-    if (languageCode == "nl") return LanguageType::DUTCH;
-    if (languageCode == "ru") return LanguageType::RUSSIAN;
-    if (languageCode == "ko") return LanguageType::KOREAN;
-    if (languageCode == "ja") return LanguageType::JAPANESE;
-    if (languageCode == "hu") return LanguageType::HUNGARIAN;
-    if (languageCode == "pt") return LanguageType::PORTUGUESE;
-    if (languageCode == "ar") return LanguageType::ARABIC;
-    if (languageCode == "nb") return LanguageType::NORWEGIAN;
-    if (languageCode == "pl") return LanguageType::POLISH;
-    if (languageCode == "tr") return LanguageType::TURKISH;
-    if (languageCode == "uk") return LanguageType::UKRAINIAN;
-    if (languageCode == "ro") return LanguageType::ROMANIAN;
-    if (languageCode == "bg") return LanguageType::BULGARIAN;
+    if (strcmp(languageCode, "zh") == 0) return LanguageType::CHINESE;
+    if (strcmp(languageCode, "en") == 0) return LanguageType::ENGLISH;
+    if (strcmp(languageCode, "fr") == 0) return LanguageType::FRENCH;
+    if (strcmp(languageCode, "it") == 0) return LanguageType::ITALIAN;
+    if (strcmp(languageCode, "de") == 0) return LanguageType::GERMAN;
+    if (strcmp(languageCode, "es") == 0) return LanguageType::SPANISH;
+    if (strcmp(languageCode, "nl") == 0) return LanguageType::DUTCH;
+    if (strcmp(languageCode, "ru") == 0) return LanguageType::RUSSIAN;
+    if (strcmp(languageCode, "ko") == 0) return LanguageType::KOREAN;
+    if (strcmp(languageCode, "ja") == 0) return LanguageType::JAPANESE;
+    if (strcmp(languageCode, "hu") == 0) return LanguageType::HUNGARIAN;
+    if (strcmp(languageCode, "pt") == 0) return LanguageType::PORTUGUESE;
+    if (strcmp(languageCode, "ar") == 0) return LanguageType::ARABIC;
+    if (strcmp(languageCode, "nb") == 0) return LanguageType::NORWEGIAN;
+    if (strcmp(languageCode, "pl") == 0) return LanguageType::POLISH;
+    if (strcmp(languageCode, "tr") == 0) return LanguageType::TURKISH;
+    if (strcmp(languageCode, "uk") == 0) return LanguageType::UKRAINIAN;
+    if (strcmp(languageCode, "ro") == 0) return LanguageType::ROMANIAN;
+    if (strcmp(languageCode, "bg") == 0) return LanguageType::BULGARIAN;
     return LanguageType::ENGLISH;
 }
 
