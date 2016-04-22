@@ -37,6 +37,11 @@ THE SOFTWARE.
 #define CC_DEPRECATED_ATTRIBUTE
 #endif
 
+#ifdef EMSCRIPTEN
+#include <vector>
+#endif
+
+
 /**
 * @addtogroup audio
 * @{
@@ -254,7 +259,7 @@ public:
     *
     * @extFiles extensions vector
     */
-#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
+#ifdef EMSCRIPTEN
     void setUseFileExt(const std::vector<std::string> &extFiles);
 #endif
 
