@@ -190,9 +190,9 @@ public:
     State getReadyState();
     
 #ifdef __EMSCRIPTEN__
-    static void onOpen(int fd, void* userData);
-    static void onMessage(int fd, void* userData);
-    static void onError(int fd, int err, const char* msg, void* userData);
+    static void onOpen(void* userData, unsigned char *msg, int length);
+    static void onMessage(void* userData, unsigned char *msg, int length);
+    static void onError(int err, const char* msg, void* userData);
 #endif
     
 
@@ -227,11 +227,6 @@ private:
     Delegate* _delegate;
     int _SSLConnection;
     struct libwebsocket_protocols* _wsProtocols;
-    
-#ifdef __EMSCRIPTEN__
-    int _websocket = -1;
-    std::vector<char> _websocketData;
-#endif
 };
 
 }
