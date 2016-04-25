@@ -26,6 +26,7 @@ THE SOFTWARE.
 #include "ui/UILayout.h"
 #include "ui/UIHelper.h"
 #include "base/CCEventListenerTouch.h"
+#include "base/CCEventListenerMouse.h"
 #include "base/CCEventListenerKeyboard.h"
 #include "base/CCDirector.h"
 #include "base/CCEventFocus.h"
@@ -146,6 +147,7 @@ _enabled(true),
 _bright(true),
 _touchEnabled(false),
 _highlight(false),
+_mouseOver(false),
 _affectByClipping(false),
 _ignoreSize(false),
 _propagateTouchEvents(true),
@@ -157,6 +159,7 @@ _customSize(Size::ZERO),
 _hitted(false),
 _hittedByCamera(nullptr),
 _touchListener(nullptr),
+_mouseListener(nullptr),
 _flippedX(false),
 _flippedY(false),
 _layoutParameterType(LayoutParameter::Type::NONE),
@@ -180,7 +183,9 @@ void Widget::cleanupWidget()
 {
     //clean up _touchListener
     _eventDispatcher->removeEventListener(_touchListener);
+    _eventDispatcher->removeEventListener(_mouseListener);
     CC_SAFE_RELEASE_NULL(_touchListener);
+    CC_SAFE_RELEASE_NULL(_mouseListener);
 
     //cleanup focused widget and focus navigation controller
     if (_focusedWidget == this)
@@ -594,11 +599,18 @@ void Widget::setTouchEnabled(bool enable)
         _touchListener->onTouchEnded = CC_CALLBACK_2(Widget::onTouchEnded, this);
         _touchListener->onTouchCancelled = CC_CALLBACK_2(Widget::onTouchCancelled, this);
         _eventDispatcher->addEventListenerWithSceneGraphPriority(_touchListener, this);
+        
+        _mouseListener = EventListenerMouse::create();
+        CC_SAFE_RETAIN(_mouseListener);
+        _mouseListener->onMouseMove = CC_CALLBACK_1(Widget::onMouseMove, this);
+        _eventDispatcher->addEventListenerWithSceneGraphPriority(_mouseListener, this);
     }
     else
     {
         _eventDispatcher->removeEventListener(_touchListener);
         CC_SAFE_RELEASE_NULL(_touchListener);
+        _eventDispatcher->removeEventListener(_mouseListener);
+        CC_SAFE_RELEASE_NULL(_mouseListener);
     }
 }
 
@@ -625,6 +637,44 @@ void Widget::setHighlighted(bool highlight)
         if (_highlight)
         {
             setBrightStyle(BrightStyle::HIGHLIGHT);
+        }
+        else if (_mouseOver)
+        {
+            setBrightStyle(BrightStyle::MOUSEOVER);
+        }
+        else
+        {
+            setBrightStyle(BrightStyle::NORMAL);
+        }
+    }
+    else
+    {
+        onPressStateChangedToDisabled();
+    }
+}
+    
+bool Widget::isMouseOver() const
+{
+    return _mouseOver;
+}
+
+void Widget::setMouseOver(bool mouseOver)
+{
+    if (mouseOver == _mouseOver)
+    {
+        return;
+    }
+    
+    _mouseOver = mouseOver;
+    if (_bright)
+    {
+        if (_highlight)
+        {
+            setBrightStyle(BrightStyle::HIGHLIGHT);
+        }
+        else if (_mouseOver)
+        {
+            setBrightStyle(BrightStyle::MOUSEOVER);
         }
         else
         {
@@ -666,6 +716,9 @@ void Widget::setBrightStyle(BrightStyle style)
         case BrightStyle::HIGHLIGHT:
             onPressStateChangedToPressed();
             break;
+        case BrightStyle::MOUSEOVER:
+            onPressStateChangedToMouseOver();
+            break;
         default:
             break;
     }
@@ -684,6 +737,11 @@ void Widget::onPressStateChangedToPressed()
 void Widget::onPressStateChangedToDisabled()
 {
 
+}
+    
+void Widget::onPressStateChangedToMouseOver()
+{
+    
 }
 
 void Widget::updateChildrenDisplayedRGBA()
@@ -861,8 +919,26 @@ void Widget::onTouchEnded(Touch *touch, Event *unusedEvent)
 
 void Widget::onTouchCancelled(Touch *touch, Event *unusedEvent)
 {
+    setMouseOver(false);
     setHighlighted(false);
     cancelUpEvent();
+}
+    
+void Widget::onMouseMove(EventMouse *eventMouse)
+{
+    bool hitted = false;
+    if (isVisible() && isEnabled() && isAncestorsEnabled() && isAncestorsVisible(this) )
+    {
+        const Vec2 &mousePosition = eventMouse->getLocation();
+        auto camera = Camera::getVisitingCamera();
+        if(hitTest(mousePosition, camera, nullptr))
+        {
+            if (isClippingParentContainsPoint(mousePosition)) {
+                hitted = true;
+            }
+        }
+    }
+    setMouseOver(hitted);
 }
 
 void Widget::pushDownEvent()
