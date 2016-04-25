@@ -267,7 +267,7 @@ void Director::drawScene()
     // calculate "global" dt
     calculateDeltaTime();
     
-    ui::Widget::_mouseOverProcessed = false;
+    ui::Widget::_mouseOverWidget = nullptr;
     
     if (_openGLView)
     {
