@@ -37,9 +37,6 @@ NS_CC_BEGIN
 namespace ui {
 
 static const int BUTTON_RENDERER_Z = (-2);
-static const int NORMAL_RENDERER_Z = (-2);
-static const int PRESSED_RENDERER_Z = (-2);
-static const int DISABLED_RENDERER_Z = (-2);
 static const int TITLE_RENDERER_Z = (-1);
 static const float ZOOM_ACTION_TIME_STEP = 0.05f;
 
@@ -49,6 +46,7 @@ Button::Button():
 _buttonNormalRenderer(nullptr),
 _buttonPressedRenderer(nullptr),
 _buttonDisabledRenderer(nullptr),
+_buttonMouseOverRenderer(nullptr),
 _buttonRenderer(nullptr),
 _titleRenderer(nullptr),
 _imageScale(1.0f),
@@ -56,9 +54,11 @@ _zoomScale(0.1f),
 _normalFileName(""),
 _clickedFileName(""),
 _disabledFileName(""),
+_mouseOverFileName(""),
 _normalTexType(TextureResType::LOCAL),
 _pressedTexType(TextureResType::LOCAL),
 _disabledTexType(TextureResType::LOCAL),
+_mouseOverTexType(TextureResType::LOCAL),
 _fontName(""),
 _prevIgnoreSize(true),
 _scale9Enabled(false),
@@ -66,9 +66,11 @@ _pressedActionEnabled(false),
 _capInsetsNormal(Rect::ZERO),
 _capInsetsPressed(Rect::ZERO),
 _capInsetsDisabled(Rect::ZERO),
+_capInsetsMouseOver(Rect::ZERO),
 _normalTextureSize(_contentSize),
 _pressedTextureSize(_contentSize),
 _disabledTextureSize(_contentSize),
+_mouseOverTextureSize(_contentSize),
 _normalTextureScaleXInSize(1.0f),
 _normalTextureScaleYInSize(1.0f),
 _pressedTextureScaleXInSize(1.0f),
@@ -77,9 +79,11 @@ _titleScale(1.0f),
 _normalTextureLoaded(false),
 _pressedTextureLoaded(false),
 _disabledTextureLoaded(false),
+_mouseOverTextureLoaded(false),
 _normalTextureAdaptDirty(true),
 _pressedTextureAdaptDirty(true),
 _disabledTextureAdaptDirty(true),
+_mouseOverTextureAdaptDirty(true),
 _titileAdaptDirty(true),
 _fontSize(10),
 _type(FontType::SYSTEM),
@@ -87,15 +91,19 @@ _state(State::NORMAL),
 _normalBackgroundColor(Color3B::WHITE),
 _pressedBackgroundColor(Color3B::WHITE),
 _disabledBackgroundColor(Color3B::WHITE),
+_mouseOverBackgroundColor(Color3B::WHITE),
 _normalBackgroundOpacity(255),
 _pressedBackgroundOpacity(255),
 _disabledBackgroundOpacity(127),
+_mouseOverBackgroundOpacity(255),
 _normalTitleColor(Color3B::WHITE),
 _pressedTitleColor(Color3B::WHITE),
 _disabledTitleColor(Color3B::WHITE),
+_mouseOverTitleColor(Color3B::WHITE),
 _normalTitleOpacity(255),
 _pressedTitleOpacity(255),
 _disabledTitleOpacity(255),
+_mouseOverTitleOpacity(255),
 _leftPadding(0),
 _rightPadding(0),
 _topPadding(0),
@@ -130,10 +138,11 @@ Button* Button::create()
 Button* Button::create(const std::string &normalImage,
                        const std::string& selectedImage ,
                        const std::string& disableImage,
+                       const std::string& highlightdImage,
                        TextureResType texType)
 {
     Button *btn = new (std::nothrow) Button;
-    if (btn && btn->init(normalImage,selectedImage,disableImage,texType))
+    if (btn && btn->init(normalImage, selectedImage, disableImage, highlightdImage, texType))
     {
         btn->autorelease();
         return btn;
@@ -145,6 +154,7 @@ Button* Button::create(const std::string &normalImage,
 bool Button::init(const std::string &normalImage,
                   const std::string& selectedImage ,
                   const std::string& disableImage,
+                  const std::string& highlightdImage,
                   TextureResType texType)
 {
     bool ret = true;
@@ -156,7 +166,7 @@ bool Button::init(const std::string &normalImage,
             break;
         }
 
-        this->loadTextures(normalImage, selectedImage, disableImage,texType);
+        this->loadTextures(normalImage, selectedImage, disableImage, highlightdImage, texType);
     } while (0);
     return ret;
 }
@@ -175,15 +185,18 @@ void Button::initRenderer()
     _buttonNormalRenderer = Scale9Sprite::create();
     _buttonPressedRenderer = Scale9Sprite::create();
     _buttonDisabledRenderer = Scale9Sprite::create();
+    _buttonMouseOverRenderer = Scale9Sprite::create();
     _buttonPressedRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
     _buttonNormalRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
     _buttonDisabledRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
+    _buttonMouseOverRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
     
     _buttonRenderer = Node::create();
     
     _buttonRenderer->addChild(_buttonNormalRenderer);
     _buttonRenderer->addChild(_buttonPressedRenderer);
     _buttonRenderer->addChild(_buttonDisabledRenderer);
+    _buttonRenderer->addChild(_buttonMouseOverRenderer);
     _buttonRenderer->setCascadeColorEnabled(true);
     _buttonRenderer->setCascadeOpacityEnabled(true);
     
@@ -219,10 +232,12 @@ void Button::setScale9Enabled(bool able)
         _buttonNormalRenderer->setRenderingType(Scale9Sprite::RenderingType::SLICE);
         _buttonPressedRenderer->setRenderingType(Scale9Sprite::RenderingType::SLICE);
         _buttonDisabledRenderer->setRenderingType(Scale9Sprite::RenderingType::SLICE);
+        _buttonMouseOverRenderer->setRenderingType(Scale9Sprite::RenderingType::SLICE);
     }else{
         _buttonNormalRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
         _buttonPressedRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
         _buttonDisabledRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
+        _buttonMouseOverRenderer->setRenderingType(Scale9Sprite::RenderingType::SIMPLE);
     }
     
 
@@ -240,6 +255,8 @@ void Button::setScale9Enabled(bool able)
     setCapInsetsNormalRenderer(_capInsetsNormal);
     setCapInsetsPressedRenderer(_capInsetsPressed);
     setCapInsetsDisabledRenderer(_capInsetsDisabled);
+    setCapInsetsMouseOverRenderer(_capInsetsMouseOver);
+
 
     _brightStyle = BrightStyle::NONE;
     setBright(_bright);
@@ -247,6 +264,7 @@ void Button::setScale9Enabled(bool able)
     _normalTextureAdaptDirty = true;
     _pressedTextureAdaptDirty = true;
     _disabledTextureAdaptDirty = true;
+    _mouseOverTextureAdaptDirty = true;
 }
 
 bool Button::isScale9Enabled()const
@@ -272,11 +290,13 @@ void Button::ignoreContentAdaptWithSize(bool ignore)
 void Button::loadTextures(const std::string& normal,
                           const std::string& selected,
                           const std::string& disabled,
+                          const std::string& mouseOver,
                           TextureResType texType)
 {
     loadTextureNormal(normal,texType);
     loadTexturePressed(selected,texType);
     loadTextureDisabled(disabled,texType);
+    loadTextureMouseOver(mouseOver,texType);
 }
 
 void Button::loadTextureNormal(const std::string& normal,TextureResType texType)
@@ -422,12 +442,56 @@ void Button::loadTextureDisabled(SpriteFrame* disabledSpriteFrame)
     _buttonDisabledRenderer->initWithSpriteFrame(disabledSpriteFrame);
     this->setupDisabledTexture(nullptr != disabledSpriteFrame);
 }
+    
+void Button::loadTextureMouseOver(const std::string& mouseOver,TextureResType texType)
+{
+    _mouseOverFileName = mouseOver;
+    _mouseOverTexType = texType;
+    bool textureLoaded = true;
+    if (mouseOver.empty())
+    {
+        _buttonMouseOverRenderer->resetRender();
+        textureLoaded = false;
+    }
+    else
+    {
+        switch (texType)
+        {
+            case TextureResType::LOCAL:
+                _buttonMouseOverRenderer->initWithFile(mouseOver);
+                break;
+            case TextureResType::PLIST:
+                _buttonMouseOverRenderer->initWithSpriteFrameName(mouseOver);
+                break;
+            default:
+                break;
+        }
+    }
+    this->setupMouseOverTexture(textureLoaded);
+}
+
+void Button::setupMouseOverTexture(bool textureLoaded)
+{
+    _mouseOverTextureSize = _buttonMouseOverRenderer->getContentSize();
+    
+    this->updateChildrenDisplayedRGBA();
+    
+    _mouseOverTextureLoaded = textureLoaded;
+    _mouseOverTextureAdaptDirty = true;
+}
+
+void Button::loadTextureMouseOver(SpriteFrame* mouseOverSpriteFrame)
+{
+    _buttonMouseOverRenderer->initWithSpriteFrame(mouseOverSpriteFrame);
+    this->setupMouseOverTexture(nullptr != mouseOverSpriteFrame);
+}
 
 void Button::setCapInsets(const Rect &capInsets)
 {
     setCapInsetsNormalRenderer(capInsets);
     setCapInsetsPressedRenderer(capInsets);
     setCapInsetsDisabledRenderer(capInsets);
+    setCapInsetsMouseOverRenderer(capInsets);
 }
 
 
@@ -466,6 +530,18 @@ void Button::setCapInsetsDisabledRenderer(const Rect &capInsets)
     }
     _buttonDisabledRenderer->setCapInsets(_capInsetsDisabled);
 }
+    
+void Button::setCapInsetsMouseOverRenderer(const Rect &capInsets)
+{
+    _capInsetsMouseOver = Helper::restrictCapInsetRect(capInsets, this->_mouseOverTextureSize);
+    
+    //for performance issue
+    if (!_scale9Enabled)
+    {
+        return;
+    }
+    _buttonMouseOverRenderer->setCapInsets(_capInsetsMouseOver);
+}
 
 const Rect& Button::getCapInsetsNormalRenderer()const
 {
@@ -480,6 +556,11 @@ const Rect& Button::getCapInsetsPressedRenderer()const
 const Rect& Button::getCapInsetsDisabledRenderer()const
 {
     return _capInsetsDisabled;
+}
+    
+const Rect& Button::getCapInsetsMouseOverRenderer()const
+{
+    return _capInsetsMouseOver;
 }
     
 bool Button::hitTest(const Vec2 &pt, const Camera* camera, Vec3 *p) const
@@ -573,6 +654,7 @@ void Button::onPressStateChangedToNormal()
     _buttonNormalRenderer->setVisible(true);
     _buttonPressedRenderer->setVisible(false);
     _buttonDisabledRenderer->setVisible(false);
+    _buttonMouseOverRenderer->setVisible(false);
     _buttonNormalRenderer->setState(Scale9Sprite::State::NORMAL);
     _state = State::NORMAL;
     
@@ -634,6 +716,7 @@ void Button::onPressStateChangedToPressed()
 
     _state = State::PRESSED;
     _buttonDisabledRenderer->setVisible(false);
+    _buttonMouseOverRenderer->setVisible(false);
     
     Color3B realBackgroundColor(multiplyColors(_pressedBackgroundColor, _displayedColor));
     GLubyte realBackgroundOpacity(multiplyOpacity(_pressedBackgroundOpacity, _displayedOpacity));
@@ -719,6 +802,7 @@ void Button::onPressStateChangedToDisabled()
     }
 
     _buttonPressedRenderer->setVisible(false);
+    _buttonMouseOverRenderer->setVisible(false);
     _buttonNormalRenderer->setScale(_normalTextureScaleXInSize, _normalTextureScaleYInSize);
     _buttonPressedRenderer->setScale(_pressedTextureScaleXInSize, _pressedTextureScaleYInSize);
     nextRender->setColor(multiplyColors(_disabledBackgroundColor, _displayedColor));
@@ -727,6 +811,36 @@ void Button::onPressStateChangedToDisabled()
     {
         _titleRenderer->setTextColor(Color4B(multiplyColors(_disabledTitleColor, _displayedColor)));
         _titleRenderer->setOpacity(multiplyOpacity(_disabledTitleOpacity, _displayedOpacity));
+        _titleRenderer->setScale(_titleScale);
+    }
+}
+    
+void Button::onPressStateChangedToMouseOver()
+{
+    //if highlighted resource is null
+    Scale9Sprite* nextRender = nullptr;
+    if (!_mouseOverTextureLoaded)
+    {
+        nextRender = _buttonNormalRenderer;
+        _buttonNormalRenderer->setVisible(true);
+        _buttonMouseOverRenderer->setVisible(false);
+    }
+    else
+    {
+        nextRender = _buttonMouseOverRenderer;
+        _buttonNormalRenderer->setVisible(false);
+        _buttonMouseOverRenderer->setVisible(true);
+    }
+    
+    _buttonPressedRenderer->setVisible(false);
+    _buttonNormalRenderer->setScale(_normalTextureScaleXInSize, _normalTextureScaleYInSize);
+    _buttonPressedRenderer->setScale(_pressedTextureScaleXInSize, _pressedTextureScaleYInSize);
+    nextRender->setColor(multiplyColors(_mouseOverBackgroundColor, _displayedColor));
+    nextRender->setOpacity(multiplyOpacity(_mouseOverBackgroundOpacity, _displayedOpacity));
+    if(_titleRenderer)
+    {
+        _titleRenderer->setTextColor(Color4B(multiplyColors(_mouseOverTitleColor, _displayedColor)));
+        _titleRenderer->setOpacity(multiplyOpacity(_mouseOverTitleOpacity, _displayedOpacity));
         _titleRenderer->setScale(_titleScale);
     }
 }
@@ -755,6 +869,10 @@ void Button::updateDisplayedOpacity(GLubyte parentOpacity)
         case State::DISABLED:
             if(!_disabledTextureLoaded)
                 _buttonNormalRenderer->setOpacity(multiplyOpacity(_disabledBackgroundOpacity, _displayedOpacity));
+            break;
+        case State::MOUSEOVER:
+            if(!_mouseOverTextureLoaded)
+                _buttonNormalRenderer->setOpacity(multiplyOpacity(_mouseOverBackgroundOpacity, _displayedOpacity));
             break;
     }
     if(_titleRenderer)
@@ -787,6 +905,10 @@ void Button::updateDisplayedColor(const Color3B& parentColor)
         case State::DISABLED:
             if(!_disabledTextureLoaded)
                 _buttonNormalRenderer->setColor(multiplyColors(_disabledBackgroundColor, _displayedColor));
+            break;
+        case State::MOUSEOVER:
+            if(!_mouseOverTextureLoaded)
+                _buttonNormalRenderer->setColor(multiplyColors(_mouseOverBackgroundColor, _displayedColor));
             break;
     }
     if(_titleRenderer)
@@ -832,6 +954,7 @@ void Button::onSizeChanged()
     _normalTextureAdaptDirty = true;
     _pressedTextureAdaptDirty = true;
     _disabledTextureAdaptDirty = true;
+    _mouseOverTextureAdaptDirty = true;
     _titileAdaptDirty = true;
 }
 
@@ -853,6 +976,12 @@ void Button::adaptRenderers()
     {
         disabledTextureScaleChangedWithSize();
         _disabledTextureAdaptDirty = false;
+    }
+    
+    if (_mouseOverTextureAdaptDirty)
+    {
+        mouseOverTextureScaleChangedWithSize();
+        _mouseOverTextureAdaptDirty = false;
     }
     
     if(_titileAdaptDirty)
@@ -952,6 +1081,8 @@ Node* Button::getVirtualRenderer()
                 return _buttonNormalRenderer;
             case BrightStyle::HIGHLIGHT:
                 return _buttonPressedRenderer;
+            case BrightStyle::MOUSEOVER:
+                return _buttonMouseOverRenderer;
             default:
                 return nullptr;
         }
@@ -981,6 +1112,13 @@ void Button::disabledTextureScaleChangedWithSize()
     _buttonDisabledRenderer->setPreferredSize(_contentSize / _imageScale);
 
     _buttonDisabledRenderer->setPosition(_contentSize.width / _imageScale / 2.0f, _contentSize.height / _imageScale / 2.0f);
+}
+    
+void Button::mouseOverTextureScaleChangedWithSize()
+{
+    _buttonMouseOverRenderer->setPreferredSize(_contentSize / _imageScale);
+    
+    _buttonMouseOverRenderer->setPosition(_contentSize.width / _imageScale / 2.0f, _contentSize.height / _imageScale / 2.0f);
 }
 
 void Button::setPressedActionEnabled(bool enabled)
@@ -1138,6 +1276,9 @@ void Button::updateTextColor()
             case State::DISABLED:
                 _titleRenderer->setTextColor(Color4B(multiplyColors(_disabledTitleColor, _displayedColor)));
                 break;
+            case State::MOUSEOVER:
+                _titleRenderer->setTextColor(Color4B(multiplyColors(_mouseOverTitleColor, _displayedColor)));
+                break;
         }
     }
 }
@@ -1153,6 +1294,9 @@ void Button::updateTextOpacity()
             break;
         case State::DISABLED:
             _titleRenderer->setOpacity(multiplyOpacity(_disabledTitleOpacity, _displayedOpacity));
+            break;
+        case State::MOUSEOVER:
+            _titleRenderer->setOpacity(multiplyOpacity(_mouseOverTitleOpacity, _displayedOpacity));
             break;
     }
 }
@@ -1262,6 +1406,23 @@ const Color3B& Button::getDisabledBackgroundColor() const
     return _disabledBackgroundColor;
 }
 
+void Button::setMouseOverBackgroundColor(const Color3B &color)
+{
+    _mouseOverBackgroundColor = color;
+    if(_state == State::MOUSEOVER)
+    {
+        if(_pressedTextureLoaded)
+            _buttonMouseOverRenderer->setColor(multiplyColors(color, _displayedColor));
+        else
+            _buttonNormalRenderer->setColor(multiplyColors(color, _displayedColor));
+    }
+}
+
+const Color3B& Button::getMouseOverBackgroundColor() const
+{
+    return _mouseOverBackgroundColor;
+}
+
 
 void Button::setNormalBackgroundOpacity(GLubyte opacity)
 {
@@ -1308,6 +1469,23 @@ GLubyte Button::getDisabledBackgroundOpacity() const
 {
     return _disabledBackgroundOpacity;
 }
+    
+void Button::setMouseOverBackgroundOpacity(GLubyte opacity)
+{
+    _mouseOverBackgroundOpacity = opacity;
+    if(_state == State::MOUSEOVER)
+    {
+        if(_mouseOverTextureLoaded)
+            _buttonMouseOverRenderer->setOpacity(multiplyOpacity(opacity, _displayedOpacity));
+        else
+            _buttonNormalRenderer->setOpacity(multiplyOpacity(opacity, _displayedOpacity));
+    }
+}
+
+GLubyte Button::getMouseOverBackgroundOpacity() const
+{
+    return _mouseOverBackgroundOpacity;
+}
 
 
 void Button::setNormalTitleColor(const Color3B &color)
@@ -1348,6 +1526,19 @@ const Color3B& Button::getDisabledTitleColor() const
 {
     return _disabledTitleColor;
 }
+    
+void Button::setMouseOverTitleColor(const Color3B &color)
+{
+    _mouseOverTitleColor = color;
+    if(_state == State::MOUSEOVER && FontType::BMFONT != _type)
+        if(_titleRenderer)
+            _titleRenderer->setTextColor(Color4B(multiplyColors(color, _displayedColor)));
+}
+
+const Color3B& Button::getMouseOverTitleColor() const
+{
+    return _mouseOverTitleColor;
+}
 
 void Button::setNormalTitleOpacity(GLubyte opacity)
 {
@@ -1386,6 +1577,19 @@ void Button::setDisabledTitleOpacity(GLubyte opacity)
 GLubyte Button::getDisabledTitleOpacity() const
 {
     return _disabledTitleOpacity;
+}
+    
+void Button::setMouseOverTitleOpacity(GLubyte opacity)
+{
+    _mouseOverTitleOpacity = opacity;
+    if(_state == State::MOUSEOVER)
+        if(_titleRenderer)
+            _titleRenderer->setOpacity(multiplyOpacity(opacity, _displayedOpacity));
+}
+
+GLubyte Button::getMouseOverTitleOpacity() const
+{
+    return _mouseOverTitleOpacity;
 }
     
 void Button::setPaddingPadding(float left, float top, float right, float bottom)
@@ -1528,9 +1732,15 @@ void Button::copySpecialProperties(Widget *widget)
         {
             loadTextureDisabled(disabledSprite->getSpriteFrame());
         }
+        auto mouseOverSprite = button->_buttonMouseOverRenderer->getSprite();
+        if (nullptr != mouseOverSprite)
+        {
+            loadTextureMouseOver(mouseOverSprite->getSpriteFrame());
+        }
         setCapInsetsNormalRenderer(button->_capInsetsNormal);
         setCapInsetsPressedRenderer(button->_capInsetsPressed);
         setCapInsetsDisabledRenderer(button->_capInsetsDisabled);
+        setCapInsetsMouseOverRenderer(button->_capInsetsMouseOver);
         if(nullptr != button->getTitleRenderer())
         {
             setTitleText(button->getTitleText());
@@ -1543,15 +1753,19 @@ void Button::copySpecialProperties(Widget *widget)
         setNormalBackgroundColor(button->_normalBackgroundColor);
         setPressedBackgroundColor(button->_pressedBackgroundColor);
         setDisabledBackgroundColor(button->_disabledBackgroundColor);
+        setMouseOverBackgroundColor(button->_mouseOverBackgroundColor);
         setNormalBackgroundOpacity(button->_normalBackgroundOpacity);
         setPressedBackgroundOpacity(button->_pressedBackgroundOpacity);
         setDisabledBackgroundOpacity(button->_disabledBackgroundOpacity);
+        setMouseOverBackgroundOpacity(button->_mouseOverBackgroundOpacity);
         setNormalTitleColor(button->_normalTitleColor);
         setPressedTitleColor(button->_pressedTitleColor);
         setDisabledTitleColor(button->_disabledTitleColor);
+        setMouseOverTitleColor(button->_mouseOverTitleColor);
         setNormalTitleOpacity(button->_normalTitleOpacity);
         setPressedTitleOpacity(button->_pressedTitleOpacity);
         setDisabledTitleOpacity(button->_disabledTitleOpacity);
+        setMouseOverTitleOpacity(button->_mouseOverTitleOpacity);
     }
 }
 
@@ -1615,6 +1829,19 @@ void Button::resetDisabledRender()
 
     _buttonDisabledRenderer->resetRender();
 }
+    
+void Button::resetMouseOverRender()
+{
+    _mouseOverFileName = "";
+    _mouseOverTexType = TextureResType::LOCAL;
+    
+    _mouseOverTextureSize = Size(0, 0);
+    
+    _mouseOverTextureLoaded = false;
+    _mouseOverTextureAdaptDirty = false;
+    
+    _buttonMouseOverRenderer->resetRender();
+}
 
 ResourceData Button::getNormalFile()
 {
@@ -1635,6 +1862,13 @@ ResourceData Button::getDisabledFile()
     ResourceData rData;
     rData.type = (int)_disabledTexType;
     rData.file = _disabledFileName;
+    return rData;
+}
+ResourceData Button::getMouseOverFile()
+{
+    ResourceData rData;
+    rData.type = (int)_mouseOverTexType;
+    rData.file = _mouseOverFileName;
     return rData;
 }
 
