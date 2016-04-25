@@ -70,7 +70,7 @@ extern "C"
     void WebSocket_close();
     
     typedef void (*socket_callback)(void* userData, unsigned char *msg, int length);
-    typedef void (*socket_error_callback)(int err, const char* msg, void* userData);
+    typedef void (*socket_error_callback)(int err, const char* msg, int length, void* userData);
     
     void WebSocket_set_socket_error_callback(void *userData, socket_error_callback callback);
     
@@ -122,11 +122,20 @@ void WebSocket::onMessage(void* userData, unsigned char *msg, int length)
     CCLOG("WebSocket message: %s size:%d", (char*)msg, length);
 }
 
-void WebSocket::onError(int err, const char* msg, void* userData)
+void WebSocket::onError(int err, const char* msg, int length, void* userData)
 {
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
+    webSocket->_readyState = State::CLOSING;
     webSocket->_delegate->onError(webSocket, cocos2d::network::WebSocket::ErrorCode::CONNECTION_FAILURE);
     CCLOG("error message: %s\n", msg);
+}
+    
+void WebSocket::onClose(void* userData, unsigned char *msg, int length)
+{
+    WebSocket* webSocket = static_cast<WebSocket*>(userData);
+    webSocket->_readyState = State::CLOSED;
+    webSocket->_delegate->onClose(webSocket);
+    CCLOG("on close message: %s\n", msg);
 }
     
 #endif
@@ -143,6 +152,7 @@ bool WebSocket::init(const Delegate& delegate,
     WebSocket_set_socket_error_callback(static_cast<void*>(this), &WebSocket::onError);
     WebSocket_set_socket_open_callback(static_cast<void*>(this), &WebSocket::onOpen);
     WebSocket_set_socket_message_callback(static_cast<void*>(this), &WebSocket::onMessage);
+    WebSocket_set_socket_close_callback(static_cast<void*>(this), &WebSocket::onClose);
 #endif
     _readyState = State::OPEN;
     
@@ -151,14 +161,20 @@ bool WebSocket::init(const Delegate& delegate,
 
 void WebSocket::send(const std::string& message)
 {
-    WebSocket_send(message.c_str());
+    if (_readyState == State::OPEN)
+    {
+        WebSocket_send(message.c_str());
+    }
 }
 
 void WebSocket::send(const unsigned char* binaryMsg, unsigned int len)
 {
-    CCASSERT(binaryMsg != nullptr && len > 0, "parameter invalid.");
-    
-    WebSocket_send_data((unsigned char*)binaryMsg, len);
+    if (_readyState == State::OPEN)
+    {
+        CCASSERT(binaryMsg != nullptr && len > 0, "parameter invalid.");
+        
+        WebSocket_send_data((unsigned char*)binaryMsg, len);
+    }
 }
 
 void WebSocket::close()
