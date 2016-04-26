@@ -646,7 +646,7 @@ void GLViewImpl::onGLFWMouseCallBack(GLFWwindow* window, int button, int action,
     
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+    float cursorY = (_mouseY - _viewPortRect.origin.y) / _scaleY;
 
     if(GLFW_PRESS == action)
     {
@@ -689,7 +689,7 @@ void GLViewImpl::onGLFWMouseMoveCallBack(GLFWwindow* window, double x, double y)
     
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+    float cursorY = (_mouseY - _viewPortRect.origin.y) / _scaleY;
 
     EventMouse event(EventMouse::MouseEventType::MOUSE_MOVE);
     // Set current button
@@ -714,7 +714,7 @@ void GLViewImpl::onGLFWMouseScrollCallback(GLFWwindow* window, double x, double 
     EventMouse event(EventMouse::MouseEventType::MOUSE_SCROLL);
     //Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     float cursorX = (_mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - _mouseY) / _scaleY;
+    float cursorY = (_mouseY - _viewPortRect.origin.y) / _scaleY;
     event.setScrollData((float)x, -(float)y);
     event.setCursorPosition(cursorX, cursorY);
     Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);

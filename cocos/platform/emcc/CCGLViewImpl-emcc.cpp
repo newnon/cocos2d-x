@@ -455,9 +455,8 @@ void GLViewImpl::onMouseMoveCallBack(double x, double y)
 	float mouseY = static_cast<float>(y) / this->getFrameZoomFactor();
     Uint32 mouseState = SDL_GetMouseState(nullptr, nullptr);
 
-	//Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
     float cursorX = (mouseX - _viewPortRect.origin.x) / _scaleX;
-    float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - mouseY) / _scaleY;
+    float cursorY = (mouseY - _viewPortRect.origin.y) / _scaleY;
     
     EventMouse event(EventMouse::MouseEventType::MOUSE_MOVE);
     
@@ -486,9 +485,8 @@ void GLViewImpl::onMouseScrollCallback(double x, double y)
     float mouseY = static_cast<float>(y) / this->getFrameZoomFactor();
     
 	EventMouse event(EventMouse::MouseEventType::MOUSE_SCROLL);
-	//Because OpenGL and cocos2d-x uses different Y axis, we need to convert the coordinate here
 	float cursorX = (mouseX - _viewPortRect.origin.x) / _scaleX;
-	float cursorY = (_viewPortRect.origin.y + _viewPortRect.size.height - mouseY) / _scaleY;
+	float cursorY = (mouseY - _viewPortRect.origin.y) / _scaleY;
 	event.setScrollData(static_cast<float>(x), -static_cast<float>(y));
 	event.setCursorPosition(cursorX, cursorY);
 	Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
