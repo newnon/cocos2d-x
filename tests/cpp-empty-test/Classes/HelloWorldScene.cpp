@@ -6,6 +6,7 @@
 #include "stdio.h"
 #include "stdlib.h"
 
+
 #include "network/HttpClient.h"
 
 
@@ -25,51 +26,6 @@ Scene* HelloWorld::scene()
 
     // return the scene
     return scene;
-}
-
-template<typename T>
-void logData(const char* key)
-{
-    Data data = UserDefault::getInstance()->getDataForKey(key);
-    T* buffer = (T*) data.getBytes();
-    ssize_t length = data.getSize() / sizeof(T);
-    
-    std::ostringstream ss;
-    ss << std::setprecision(2) << std::fixed;
-    for (int i = 0; i < length; i++)
-    {
-        ss << buffer[i] << " ";
-    }
-    
-    CCLOG("%s is %s", key, ss.str().c_str());
-}
-
-template<typename T>
-void setData(const char* key)
-{
-    Data data;
-    std::vector<T> v;
-    
-    for (int i = 0; i <= 5; i++)
-    {
-        v.push_back(static_cast<T>(i));
-    }
-    data.copy((unsigned char*) v.data(), v.size() * sizeof(T));
-    UserDefault::getInstance()->setDataForKey(key, data);
-}
-
-template<typename T>
-void setData2(const char* key)
-{
-    Data data;
-    std::vector<T> v;
-    
-    for (int i = 5; i >= 0; i--)
-    {
-        v.push_back(static_cast<T>(i));
-    }
-    data.copy((unsigned char*) v.data(), v.size() * sizeof(T));
-    UserDefault::getInstance()->setDataForKey(key, data);
 }
 
 // on "init" you need to initialize your instance
@@ -126,110 +82,32 @@ bool HelloWorld::init()
     // add the sprite as a child to this layer
     this->addChild(sprite);
     
-    UserDefault::getInstance()->setStringForKey("string", "value1");
-    UserDefault::getInstance()->setIntegerForKey("integer", 10);
-    UserDefault::getInstance()->setFloatForKey("float", 2.3f);
-    UserDefault::getInstance()->setDoubleForKey("double", 2.4);
-    UserDefault::getInstance()->setBoolForKey("bool", true);
-    
-    // test saving of Data buffers
-    setData<int>("int_data");
-    setData<float>("float_data");
-    setData<double>("double_data");
-    
-    printValue();
-    
-    logData<int>("int_data");
-    logData<float>("float_data");
-    logData<double>("double_data");
-    
-    //CCUserDefault::getInstance()->flush();
-    
-    // change the value
-    
-    UserDefault::getInstance()->setStringForKey("string", "value2");
-    UserDefault::getInstance()->setIntegerForKey("integer", 11);
-    UserDefault::getInstance()->setFloatForKey("float", 2.5f);
-    UserDefault::getInstance()->setDoubleForKey("double", 2.6);
-    UserDefault::getInstance()->setBoolForKey("bool", false);
-    
-    setData2<int>("int_data");
-    setData2<float>("float_data");
-    setData2<double>("double_data");
-    
-    UserDefault::getInstance()->flush();
-    
-    // print value
-    printValue();
-    
-    logData<int>("int_data");
-    logData<float>("float_data");
-    logData<double>("double_data");
-    
-    UserDefault::getInstance()->deleteValueForKey("string");
-    UserDefault::getInstance()->deleteValueForKey("integer");
-    UserDefault::getInstance()->deleteValueForKey("float");
-    UserDefault::getInstance()->deleteValueForKey("double");
-    UserDefault::getInstance()->deleteValueForKey("bool");
-    
-    // print value
-    printValue();
-    
-    for (int i = 0; i < 2; ++i)
-    {
-        cocos2d::network::HttpRequest* request = new cocos2d::network::HttpRequest();
-        request->setUrl("http://httpbin.org/get");
-        request->setRequestType(cocos2d::network::HttpRequest::Type::GET);
-        request->setResponseCallback([this](cocos2d::network::HttpClient* client, cocos2d::network::HttpResponse* response)
-        {
-            if (!response->isSucceed())
-            {
-                CCLOG("get data error: buffer: %s  code: %ld\n", response->getErrorBuffer(), response->getResponseCode());
-            }
-            else
-            {
-                CCLOG("get data success: buffer: %s  code: %ld\n", response->getResponseDataString(), response->getResponseCode());
-            }
-        });
-        
-        cocos2d::network::HttpClient::getInstance()->send(request);
-        request->release();
-    }
+    ws = new cocos2d::network::WebSocket();
+    ws->init(*this, "wss://echo.websocket.org");//"ws://dev.pokerist.club/proto");
     
     return true;
 }
 
-void HelloWorld::printValue()
+void HelloWorld::onOpen(cocos2d::network::WebSocket* ws)
 {
-    char strTemp[256] = "";
-    // print value
-    std::string ret = UserDefault::getInstance()->getStringForKey("string");
-    sprintf(strTemp, "string is %s", ret.c_str());
-    this->_label->setString(this->_label->getString() + "\n" + strTemp);
-    
-    double d = UserDefault::getInstance()->getDoubleForKey("double");
-    sprintf(strTemp, "double is %f", d);
-    this->_label->setString(this->_label->getString() + "\n" + strTemp);
-    
-    int i = UserDefault::getInstance()->getIntegerForKey("integer");
-    sprintf(strTemp, "integer is %d", i);
-    this->_label->setString(this->_label->getString() + "\n" + strTemp);
-    
-    float f = UserDefault::getInstance()->getFloatForKey("float");
-    sprintf(strTemp, "float is %f", f);
-    this->_label->setString(this->_label->getString() + "\n" + strTemp);
-    
-    bool b = UserDefault::getInstance()->getBoolForKey("bool");
-    if (b)
-    {
-        sprintf(strTemp, "bool is true");
-        this->_label->setString(this->_label->getString() + "\n" + strTemp);
-    }
-    else
-    {
-        sprintf(strTemp, "bool is false");
-        this->_label->setString(this->_label->getString() + "\n" + strTemp);
-    }
+    const std::string &msg = "test";
+    ws->send((const unsigned char *)&msg.front(), static_cast<unsigned int>(msg.size()));
+//    ws->send(msg);
+//    CCLOG("HelloWorld::onOpen %i", static_cast<unsigned int>(msg.size()));
+}
+
+void HelloWorld::onMessage(cocos2d::network::WebSocket* ws, const cocos2d::network::WebSocket::Data& data)
+{
+    CCLOG("HelloWorld::onMessage %s", data.bytes);
+    ws->close();
+}
+
+void HelloWorld::onClose(cocos2d::network::WebSocket* ws)
+{
+}
+
+void HelloWorld::onError(cocos2d::network::WebSocket* ws, const cocos2d::network::WebSocket::ErrorCode& error)
+{
 }
 
 void HelloWorld::menuCloseCallback(Ref* sender)

@@ -58,11 +58,28 @@
 #endif
 
 
-#define WS_WRITE_BUFFER_SIZE 2048
-
 NS_CC_BEGIN
 
 namespace network {
+    
+extern "C"
+{
+    void WebSocket_init(const char *);
+    void WebSocket_send(const char *);
+    void WebSocket_send_data(unsigned char *, unsigned int);
+    void WebSocket_close();
+    
+    typedef void (*socket_callback)(void* userData, unsigned char *msg, int length);
+    typedef void (*socket_error_callback)(int err, const char* msg, int length, void* userData);
+    
+    void WebSocket_set_socket_error_callback(void *userData, socket_error_callback callback);
+    
+    void WebSocket_set_socket_open_callback(void *userData, socket_callback callback);
+    void WebSocket_set_socket_listen_callback(void *userData, socket_callback callback);
+    void WebSocket_set_socket_connection_callback(void *userData, socket_callback callback);
+    void WebSocket_set_socket_message_callback(void *userData, socket_callback callback);
+    void WebSocket_set_socket_close_callback(void *userData, socket_callback callback);
+};
 
 WebSocket::WebSocket()
 : _readyState(State::CONNECTING)
@@ -85,55 +102,40 @@ WebSocket::~WebSocket()
 }
 
 #ifdef __EMSCRIPTEN__
-void WebSocket::onOpen(int fd, void* userData)
+    
+void WebSocket::onOpen(void* userData, unsigned char *msg, int length)
 {
-    CCLOG("WebSocket::onOpen");
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
+    
     webSocket->_delegate->onOpen(webSocket);
 }
 
-void WebSocket::onMessage(int fd, void* userData)
+void WebSocket::onMessage(void* userData, unsigned char *msg, int length)
 {
-    CCLOG("WebSocket::onMessage");
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
-    int receiveTotal = 0;
-    
-    while (1)
-    {
-        if (receiveTotal >= webSocket->_websocketData.size())
-        {
-            CCLOG("WebSocket grow size to:%zu", webSocket->_websocketData.size() * 2);
-            webSocket->_websocketData.resize(webSocket->_websocketData.size() * 2);
-        }
-        
-        int receiveLength = ::recvfrom(webSocket->_websocket, webSocket->_websocketData.data() + receiveTotal, webSocket->_websocketData.size() - receiveTotal, 0, nullptr, 0);
-        receiveTotal += receiveLength;
-        
-        CCLOG("WebSocket receiveLength: %d receiveTotal:%d", receiveLength, receiveTotal);
-        
-        if (receiveTotal < webSocket->_websocketData.size())
-            break;
-    }
-    
-    CCLOG("WebSocket message size:%d buffer size:%zu", receiveTotal,  webSocket->_websocketData.size());
     
     cocos2d::network::WebSocket::Data data;
-    data.len = receiveTotal;
-    data.bytes = &webSocket->_websocketData.front();    
+    data.len = length;
+    data.bytes = (char*)msg;
     webSocket->_delegate->onMessage(webSocket, data);
+    
+    CCLOG("WebSocket message: %s size:%d", (char*)msg, length);
 }
 
-void WebSocket::onError(int fd, int err, const char* msg, void* userData)
+void WebSocket::onError(int err, const char* msg, int length, void* userData)
 {
-    CCLOG("WebSocket::onError");
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
+    webSocket->_readyState = State::CLOSING;
     webSocket->_delegate->onError(webSocket, cocos2d::network::WebSocket::ErrorCode::CONNECTION_FAILURE);
-    
-    int error;
-    socklen_t len = sizeof(error);
-    
-    int ret = getsockopt(fd, SOL_SOCKET, SO_ERROR, &error, &len);
     CCLOG("error message: %s\n", msg);
+}
+    
+void WebSocket::onClose(void* userData, unsigned char *msg, int length)
+{
+    WebSocket* webSocket = static_cast<WebSocket*>(userData);
+    webSocket->_readyState = State::CLOSED;
+    webSocket->_delegate->onClose(webSocket);
+    CCLOG("on close message: %s\n", msg);
 }
     
 #endif
@@ -142,87 +144,15 @@ bool WebSocket::init(const Delegate& delegate,
                      const std::string& url,
                      const std::vector<std::string>* protocols/* = nullptr*/)
 {
-    bool useSSL = false;
-    std::string host = url;
-    size_t pos = 0;
-    int port = 80;
+    WebSocket_init(url.c_str());
     
     _delegate = const_cast<Delegate*>(&delegate);
     
-    //ws://
-    pos = host.find("ws://");
-    if (pos == 0) host.erase(0,5);
-    
-    pos = host.find("wss://");
-    if (pos == 0)
-    {
-        host.erase(0,6);
-        useSSL = true;
-    }
-    
-    pos = host.find(":");
-    if (pos != std::string::npos) port = atoi(host.substr(pos+1, host.size()).c_str());
-    
-    pos = host.find("/", 0);
-    std::string path = "/";
-    if (pos != std::string::npos) path += host.substr(pos + 1, host.size());
-    
-    pos = host.find(":");
-    if(pos != std::string::npos){
-        host.erase(pos, host.size());
-    }else if((pos = host.find("/")) != std::string::npos) {
-    	host.erase(pos, host.size());
-    }
-    
-    _host = host;
-    _port = port;
-    _path = path;
-    _SSLConnection = useSSL ? 1 : 0;
-    
-    CCLOG("[WebSocket::init] _host: %s, _port: %d, _path: %s", _host.c_str(), _port, _path.c_str());
-
-    struct addrinfo addr;
-    struct addrinfo *res;
-    memset(&addr, 0, sizeof addr);
-    
-    addr.ai_family = AF_INET;
-#if !TEST_DGRAM
-    addr.ai_socktype = SOCK_STREAM;
-#else
-    addr.ai_socktype = SOCK_DGRAM;
-#endif
-    
-    int result = getaddrinfo((_host + _path).c_str(), std::to_string(_port).c_str(), &addr, &res);
-    
-    if (result != 0)
-    {
-        CCLOG("error getaddrinfo");
-    }
-    
-    _websocket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if (_websocket == -1)
-    {
-        CCLOG("cannot create socket");
-    }
-    
-    fcntl(_websocket, F_SETFL, O_NONBLOCK);
-
-    // connect the socket
-    result = connect(_websocket, res->ai_addr, res->ai_addrlen);
-    if (result == -1 && errno != EINPROGRESS)
-    {
-        CCLOG("connect failed");
-        ::close(_websocket);
-    }
-    
-    freeaddrinfo(res);
-    
 #ifdef __EMSCRIPTEN__
-    emscripten_set_socket_error_callback(static_cast<void*>(this), &WebSocket::onError);
-    emscripten_set_socket_open_callback(static_cast<void*>(this), &WebSocket::onOpen);
-    emscripten_set_socket_message_callback(static_cast<void*>(this), &WebSocket::onMessage);
-    
-    _websocketData.resize(4096);
+    WebSocket_set_socket_error_callback(static_cast<void*>(this), &WebSocket::onError);
+    WebSocket_set_socket_open_callback(static_cast<void*>(this), &WebSocket::onOpen);
+    WebSocket_set_socket_message_callback(static_cast<void*>(this), &WebSocket::onMessage);
+    WebSocket_set_socket_close_callback(static_cast<void*>(this), &WebSocket::onClose);
 #endif
     _readyState = State::OPEN;
     
@@ -231,14 +161,20 @@ bool WebSocket::init(const Delegate& delegate,
 
 void WebSocket::send(const std::string& message)
 {
-    int length = static_cast<int>(message.length());
-    ::send(_websocket, message.c_str(), length, 0);
+    if (_readyState == State::OPEN)
+    {
+        WebSocket_send(message.c_str());
+    }
 }
 
 void WebSocket::send(const unsigned char* binaryMsg, unsigned int len)
 {
-    CCASSERT(binaryMsg != nullptr && len > 0, "parameter invalid.");
-    ::send(_websocket, binaryMsg, len, 0);
+    if (_readyState == State::OPEN)
+    {
+        CCASSERT(binaryMsg != nullptr && len > 0, "parameter invalid.");
+        
+        WebSocket_send_data((unsigned char*)binaryMsg, len);
+    }
 }
 
 void WebSocket::close()
@@ -254,9 +190,7 @@ void WebSocket::close()
     // since websocket instance may be deleted in 'onClose'.
     _delegate->onClose(this);
     
-#ifdef __EMSCRIPTEN__
-    ::close(_websocket);
-#endif
+    WebSocket_close();
 }
 
 WebSocket::State WebSocket::getReadyState()
