@@ -56,6 +56,11 @@ private:
     GLubyte _disabledLabelOpacity;
     GLubyte _disabledBackgroundOpacity;
     
+    Color3B _mouseOverLabelColor;
+    Color3B _mouseOverBackgroundColor;
+    GLubyte _mouseOverLabelOpacity;
+    GLubyte _mouseOverBackgroundOpacity;
+    
     std::string _label;
     std::string _font;
     FloatScaleDescription _fontSize;
@@ -72,6 +77,7 @@ private:
     SpriteFrameDescription _normalSpriteFrame;
     SpriteFrameDescription _selectedSpriteFrame;
     SpriteFrameDescription _disabledSpriteFrame;
+    SpriteFrameDescription _mouseOverSpriteFrame;
     
     FloatScaleDescription _imageScale;
     
