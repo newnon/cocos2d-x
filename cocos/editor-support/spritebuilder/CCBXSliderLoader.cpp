@@ -12,6 +12,7 @@ static const std::string PROPERTY_PROGRESS("progressSpriteFrame");
 static const std::string PROPERTY_HANDLE_NORMAL("handleSpriteFrame|Normal");
 static const std::string PROPERTY_HANDLE_HIGHLIGHTED("handleSpriteFrame|Highlighted");
 static const std::string PROPERTY_HANDLE_DISABLED("handleSpriteFrame|Disabled");
+static const std::string PROPERTY_HANDLE_MOUSEOVER("handleSpriteFrame|MouseOver");
     
 static const std::string PROPERTY_MARGIN("margin");
 static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
@@ -134,6 +135,21 @@ void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
         default:
             break;
     };
+    switch(_handleMouseOver.type)
+    {
+        case SpriteFrameDescription::TextureResType::LOCAL:
+        {
+            slider->loadSlidBallTextureMouseOver(_handleMouseOver.path, ui::Widget::TextureResType::LOCAL);
+        }
+            break;
+        case SpriteFrameDescription::TextureResType::PLIST:
+        {
+            slider->loadSlidBallTextureMouseOver(_handleMouseOver.path, ui::Widget::TextureResType::PLIST);
+        }
+            break;
+        default:
+            break;
+    };
     slider->setMaxPercent(_maxPercent);
     slider->setPercent(_percent);
     slider->setZoomScale(_zoomScale - 1.0f);
@@ -168,6 +184,8 @@ void SliderLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, 
         _handleHiglihted = value;
     } else if(propertyName == PROPERTY_HANDLE_DISABLED) {
         _handleDisabled = value;
+    } else if(propertyName == PROPERTY_HANDLE_MOUSEOVER) {
+        _handleMouseOver = value;
     } else {
         WidgetLoader::onHandlePropTypeSpriteFrame(propertyName, isExtraProp, value);
     }
