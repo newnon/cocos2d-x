@@ -192,8 +192,8 @@ public:
 #ifdef __EMSCRIPTEN__
     static void onOpen(void* userData, unsigned char *msg, int length);
     static void onMessage(void* userData, unsigned char *msg, int length);
-    static void onError(int err, const char* msg, int length, void* userData);
-    static void onClose(void* userData, unsigned char *msg, int length);
+    static void onError(void* userData);
+    static void onClose(int err, const char* msg, int length, void* userData);
 #endif
     
 
