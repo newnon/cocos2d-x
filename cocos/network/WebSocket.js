@@ -86,9 +86,7 @@ var LibraryWebSocket = {
         
         socket.onerror = function(error)
         {
-            var reason = "Unknown reason";
-            var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
-            Module['websocket'].emit('error', [1, msg, reason.length]);
+            Module['websocket'].emit('error', []);
         };
     },
     WebSocket_close: function()
@@ -119,6 +117,12 @@ var LibraryWebSocket = {
                 if (event === 'error')
                 {
                     var sp = Runtime.stackSave();
+                    Runtime.dynCall('vi', callback, [userData]);
+                    Runtime.stackRestore(sp);
+                }
+                else if (event == 'close')
+                {
+                    var sp = Runtime.stackSave();
                     Runtime.dynCall('viiii', callback, [data[0], data[1], data[2], userData]);
                     Runtime.stackRestore(sp);
                 }
@@ -138,7 +142,6 @@ var LibraryWebSocket = {
                 else
                 {
                     if (e && typeof e === 'object' && e.stack) Module.printErr('exception thrown: ' + [e, e.stack]);
-                    throw e;
                 }
             }
         };

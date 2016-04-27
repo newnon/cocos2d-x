@@ -70,15 +70,16 @@ extern "C"
     void WebSocket_close();
     
     typedef void (*socket_callback)(void* userData, unsigned char *msg, int length);
-    typedef void (*socket_error_callback)(int err, const char* msg, int length, void* userData);
-    
-    void WebSocket_set_socket_error_callback(void *userData, socket_error_callback callback);
+    typedef void (*socket_close_callback)(int err, const char* msg, int length, void* userData);
+    typedef void (*socket_error_callback)(void* userData);
     
     void WebSocket_set_socket_open_callback(void *userData, socket_callback callback);
     void WebSocket_set_socket_listen_callback(void *userData, socket_callback callback);
     void WebSocket_set_socket_connection_callback(void *userData, socket_callback callback);
     void WebSocket_set_socket_message_callback(void *userData, socket_callback callback);
-    void WebSocket_set_socket_close_callback(void *userData, socket_callback callback);
+    
+    void WebSocket_set_socket_error_callback(void *userData, socket_error_callback callback);
+    void WebSocket_set_socket_close_callback(void *userData, socket_close_callback callback);
 };
 
 WebSocket::WebSocket()
@@ -122,20 +123,20 @@ void WebSocket::onMessage(void* userData, unsigned char *msg, int length)
     CCLOG("WebSocket message: %s size:%d", (char*)msg, length);
 }
 
-void WebSocket::onError(int err, const char* msg, int length, void* userData)
+void WebSocket::onError(void* userData)
 {
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     webSocket->_readyState = State::CLOSING;
     webSocket->_delegate->onError(webSocket, cocos2d::network::WebSocket::ErrorCode::CONNECTION_FAILURE);
-    CCLOG("error message: %s\n", msg);
+    CCLOG("WebSocket::onError");
 }
     
-void WebSocket::onClose(void* userData, unsigned char *msg, int length)
+void WebSocket::onClose(int err, const char* msg, int length, void* userData)
 {
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     webSocket->_readyState = State::CLOSED;
     webSocket->_delegate->onClose(webSocket);
-    CCLOG("on close message: %s\n", msg);
+    CCLOG("WebSocket::onClose: errorCode:%i %s", err, msg);
 }
     
 #endif
