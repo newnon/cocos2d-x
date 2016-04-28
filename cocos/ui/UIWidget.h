@@ -1033,7 +1033,7 @@ private:
     friend class ::cocos2d::Director;
     class FocusNavigationController;
     static FocusNavigationController* _focusNavigationController;
-    static bool _mouseOverProcessed;
+    static Widget *_mouseOverWidget;
 };
 }
 
