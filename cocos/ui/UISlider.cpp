@@ -437,7 +437,7 @@ void Slider::loadSlidBallTextureMouseOver(const std::string& mouseOver,TextureRe
     }
     else
     {
-        switch (_ballDTexType)
+        switch (_ballMTexType)
         {
             case TextureResType::LOCAL:
                 _slidBallMouseOverRenderer->setTexture(mouseOver);
