@@ -130,12 +130,11 @@ void WebSocket::onMessage(void* userData, unsigned char *msg, int length)
 
 void WebSocket::onError(void* userData)
 {
-    CCLOG("WebSocket::onError");
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     
     if (userData)
     {
-        webSocket->_readyState = State::CLOSING;
+        CCLOG("WebSocket::onError");
         
         if (webSocket->_delegate)
             webSocket->_delegate->onError(webSocket, cocos2d::network::WebSocket::ErrorCode::CONNECTION_FAILURE);
@@ -144,11 +143,15 @@ void WebSocket::onError(void* userData)
     
 void WebSocket::onClose(int err, unsigned char* msg, int length, void* userData)
 {
-    CCLOG("WebSocket::onClose: errorCode:%i %s", err, (char*)msg);
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     
     if (userData)
     {
+        if (webSocket->_readyState == State::CLOSING || webSocket->_readyState == State::CLOSED)
+            return;
+        
+        CCLOG("WebSocket::onClose: errorCode:%i %s", err, (char*)msg);
+
         webSocket->_readyState = State::CLOSED;
         
         if (webSocket->_delegate)
