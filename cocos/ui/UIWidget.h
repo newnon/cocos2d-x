@@ -1030,8 +1030,10 @@ protected:
     std::string _callbackType;
     std::string _callbackName;
 private:
+    friend class ::cocos2d::Director;
     class FocusNavigationController;
     static FocusNavigationController* _focusNavigationController;
+    static bool _mouseOverProcessed;
 };
 }
 

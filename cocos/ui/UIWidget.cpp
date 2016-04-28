@@ -139,6 +139,7 @@ void Widget::FocusNavigationController::removeKeyboardEventListener()
 
 Widget* Widget::_focusedWidget = nullptr;
 Widget::FocusNavigationController* Widget::_focusNavigationController = nullptr;
+bool Widget::_mouseOverProcessed = false;
 
 Widget::Widget():
 _usingLayoutComponent(false),
@@ -927,7 +928,7 @@ void Widget::onTouchCancelled(Touch *touch, Event *unusedEvent)
 void Widget::onMouseMove(EventMouse *eventMouse)
 {
     bool hitted = false;
-    if (isVisible() && isEnabled() && isAncestorsEnabled() && isAncestorsVisible(this) )
+    if (!_mouseOverProcessed && isVisible() && isEnabled() && isAncestorsEnabled() && isAncestorsVisible(this) )
     {
         const Vec2 &mousePosition = eventMouse->getLocation();
         auto camera = Camera::getVisitingCamera();
@@ -935,6 +936,7 @@ void Widget::onMouseMove(EventMouse *eventMouse)
         {
             if (isClippingParentContainsPoint(mousePosition)) {
                 hitted = true;
+                _mouseOverProcessed = true;
             }
         }
     }
