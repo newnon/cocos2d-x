@@ -44,6 +44,7 @@ var LibraryWebSocket = {
                 var buffer = _malloc(byteArray.length);
                 HEAPU8.set(byteArray, buffer);
                 Module['websocket'].emit('message', [buffer, event.data.byteLength]);
+                _free(buffer);
             }
         };
 
@@ -87,6 +88,10 @@ var LibraryWebSocket = {
         socket.onerror = function(error)
         {
             Module['websocket'].emit('error', []);
+
+            var reason = "reason socket error";
+            var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
+            Module['websocket'].emit('close', [1, msg, reason.length]);
         };
     },
     WebSocket_close: function()
@@ -141,7 +146,8 @@ var LibraryWebSocket = {
                 }
                 else
                 {
-                    if (e && typeof e === 'object' && e.stack) Module.printErr('exception thrown: ' + [e, e.stack]);
+                    if (e && typeof e === 'object' && e.stack) 
+                        console.log('exception thrown: ' + [e, e.stack]);
                 }
             }
         };
