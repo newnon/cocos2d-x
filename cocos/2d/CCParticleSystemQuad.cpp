@@ -276,14 +276,8 @@ inline void updatePosWithParticle(V3F_C4B_T2F_Quad *quad, const Vec2& newPositio
     
     GLfloat r = (GLfloat)-CC_DEGREES_TO_RADIANS(rotation);
     
-#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-    // very strange bug in emscripten, when used float
-    GLfloat cr = cosf(static_cast<double>(r));
-    GLfloat sr = sinf(static_cast<double>(r));
-#else
     GLfloat cr = cosf(r);
     GLfloat sr = sinf(r);
-#endif
 
     GLfloat ax = x1 * cr - y1 * sr + x;
     GLfloat ay = x1 * sr + y1 * cr + y;

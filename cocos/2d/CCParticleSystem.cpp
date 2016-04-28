@@ -84,13 +84,7 @@ inline void nomalize_point(float x, float y, particle_point* out)
     if (n == 1.0f)
         return;
 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-    // very strange bug in emscripten, when used float
-    n = sqrtf(static_cast<double>(n));
-#else
     n = sqrtf(n);
-#endif
-    
     // Too close to zero.
     if (n < MATH_TOLERANCE)
         return;
@@ -721,12 +715,7 @@ dc[i] = (dc[i] - c[i]) / _particleData.timeToLive[i];\
             {
                 float a = CC_DEGREES_TO_RADIANS( _angle + _angleVar * RANDOM_M11(&RANDSEED) );
                 
-#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-                // very strange bug in emscripten, when used float
-                Vec2 v(cosf(static_cast<double>(a)), sinf(static_cast<double>(a)));
-#else
                 Vec2 v(cosf(a), sinf(a));
-#endif
                 float s = modeA.speed + modeA.speedVar * RANDOM_M11(&RANDSEED);
                 Vec2 dir = v * s;
                 _particleData.modeA.dirX[i] = dir.x;//v * s ;
@@ -739,12 +728,7 @@ dc[i] = (dc[i] - c[i]) / _particleData.timeToLive[i];\
             for (int i = start; i < _particleCount; ++i)
             {
                 float a = CC_DEGREES_TO_RADIANS( _angle + _angleVar * RANDOM_M11(&RANDSEED) );
-#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-                // very strange bug in emscripten, when used float
-                Vec2 v(cosf(static_cast<double>(a)), sinf(static_cast<double>(a)));
-#else
                 Vec2 v(cosf(a), sinf(a));
-#endif
                 float s = modeA.speed + modeA.speedVar * RANDOM_M11(&RANDSEED);
                 Vec2 dir = v * s;
                 _particleData.modeA.dirX[i] = dir.x;//v * s ;
@@ -961,22 +945,12 @@ void ParticleSystem::update(float dt)
             
             for (int i = 0; i < _particleCount; ++i)
             {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-                // very strange bug in emscripten, when used float
-                _particleData.posx[i] = - cosf(static_cast<double>(_particleData.modeB.angle[i])) * _particleData.modeB.radius[i];
-#else
                 _particleData.posx[i] = - cosf(_particleData.modeB.angle[i]) * _particleData.modeB.radius[i];
-#endif
             }
             
             for (int i = 0; i < _particleCount; ++i)
             {
-#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
-                // very strange bug in emscripten, when used float
-                _particleData.posy[i] = - sinf(static_cast<double>(_particleData.modeB.angle[i])) * _particleData.modeB.radius[i] * _yCoordFlipped;
-#else
                 _particleData.posy[i] = - sinf(_particleData.modeB.angle[i]) * _particleData.modeB.radius[i] * _yCoordFlipped;
-#endif
             }
         }
         
