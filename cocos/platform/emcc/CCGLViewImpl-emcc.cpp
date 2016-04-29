@@ -300,20 +300,31 @@ void GLViewImpl::pollEvents()
 	int windowHeight = 0;
 	int windowFullscreen = 0;
 	emscripten_get_canvas_size(&windowWidth, &windowHeight, &windowFullscreen);
-	
+    
 	if(_windowWidth != windowWidth || windowHeight != _windowHeight)
 	{
 		clearAllTouches();
-		_windowWidth = windowWidth;
-		_windowHeight = windowHeight;
+        _windowWidth = windowWidth;
+        _windowHeight = windowHeight;
 	
 		int zoomWidth = windowWidth / _frameZoomFactor;
 		int zoomHeight = windowHeight / _frameZoomFactor;
 
 		screenSizeChanged(zoomWidth, zoomHeight);
 		Application::getInstance()->applicationScreenSizeChanged(zoomWidth, zoomHeight);
-		CCLOG("change window size(%i, %i, %i)\n", windowWidth, windowHeight, windowFullscreen);
+        
+		CCLOG("change window size(%i, %i, %i)", zoomWidth, zoomHeight, windowFullscreen);
+        
+        if (_windowFullscreen == 1 && windowFullscreen == 0)
+        {
+            _windowFullscreen = 0;
+            const std::string &script = "Module['forcedAspectRatio'] = " + std::to_string(_defaultWindowHeight / _defaultWindowWidth) + ";";
+            emscripten_run_script(script.c_str());
+            emscripten_set_canvas_size(_defaultWindowWidth, _defaultWindowHeight);
+        }
 	}
+    
+    _windowFullscreen = windowFullscreen;
 }
 
 void GLViewImpl::setIMEKeyboardState(bool bOpen)
@@ -329,10 +340,19 @@ void GLViewImpl::toggleToFullscreen()
 {
     int windowFullscreen = 0;
     emscripten_get_canvas_size(nullptr, nullptr, &windowFullscreen);
+    
     if(windowFullscreen)
+    {
         emscripten_run_script("Module['canvas'].cancelFullScreen();");
+    }
     else
+    {
+        _defaultWindowWidth = _windowWidth;
+        _defaultWindowHeight = _windowHeight;
+
+        emscripten_run_script("Module['forcedAspectRatio'] = screen.width / screen.height;");
         emscripten_run_script("Module.requestFullScreen(false, true);");
+    }
 }
 
 int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
@@ -411,6 +431,7 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
         {
             SDL_KeyboardEvent *key = (SDL_KeyboardEvent*)event;
             thiz->onKeyCallback(key->keysym.sym, key->state, key->repeat);
+            CCLOG("key %i", key->keysym.sym);
             break;
         }
             
@@ -509,7 +530,6 @@ void GLViewImpl::onKeyCallback(int key, int action, int repeat)
 
 void GLViewImpl::setViewPortInPoints(float x , float y , float w , float h)
 {
-    CCLOG("GLViewImpl::setViewPortInPoints()");
     experimental::Viewport vp((float)(x * _scaleX * _frameZoomFactor + _viewPortRect.origin.x * _frameZoomFactor),
                               (float)(y * _scaleY * _frameZoomFactor + _viewPortRect.origin.y * _frameZoomFactor),
                               (float)(w * _scaleX * _frameZoomFactor),
