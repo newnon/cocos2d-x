@@ -87,6 +87,8 @@ var LibraryWebSocket = {
         
         socket.onerror = function(error)
         {
+            socket.close();
+            
             Module['websocket'].emit('error', []);
 
             var reason = "reason socket error";
