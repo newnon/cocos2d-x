@@ -91,9 +91,9 @@ var LibraryWebSocket = {
             
             Module['websocket'].emit('error', []);
 
-            var reason = "reason socket error";
-            var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
-            Module['websocket'].emit('close', [1, msg, reason.length]);
+            // var reason = "reason socket error";
+            // var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
+            // Module['websocket'].emit('close', [1, msg, reason.length]);
         };
     },
     WebSocket_close: function()
