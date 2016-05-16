@@ -349,9 +349,78 @@ void GLViewImpl::toggleToFullscreen()
     {
         _defaultWindowWidth = _windowWidth;
         _defaultWindowHeight = _windowHeight;
-
-        emscripten_run_script("Module['forcedAspectRatio'] = screen.width / screen.height;");
-        emscripten_run_script("Module.requestFullScreen(false, true);");
+        
+        EM_ASM(
+               Module['forcedAspectRatio'] = screen.width / screen.height;
+               Browser.lockPointer = false;
+               Browser.resizeCanvas = true;
+               Browser.vrDevice = 'undefined';
+               
+               if (typeof Browser.lockPointer === 'undefined') Browser.lockPointer = true;
+               if (typeof Browser.resizeCanvas === 'undefined') Browser.resizeCanvas = false;
+               if (typeof Browser.vrDevice === 'undefined') Browser.vrDevice = null;
+               
+               var canvas = Module['canvas'];
+               function fullScreenChange() {
+                   Browser.isFullScreen = false;
+                   var canvasContainer = canvas.parentNode;
+                   if ((document['webkitFullScreenElement'] || document['webkitFullscreenElement'] ||
+                        document['mozFullScreenElement'] || document['mozFullscreenElement'] ||
+                        document['fullScreenElement'] || document['fullscreenElement'] ||
+                        document['msFullScreenElement'] || document['msFullscreenElement'] ||
+                        document['webkitCurrentFullScreenElement']) === canvasContainer) {
+                       
+                       canvas.cancelFullScreen = document['cancelFullScreen'] ||
+                       document['mozCancelFullScreen'] ||
+                       document['webkitCancelFullScreen'] ||
+                       document['msExitFullscreen'] ||
+                       document['exitFullscreen'] ||
+                       function() {};
+                       canvas.cancelFullScreen = canvas.cancelFullScreen.bind(document);
+                       
+                       if (Browser.lockPointer) canvas.requestPointerLock();
+                       Browser.isFullScreen = true;
+                       if (Browser.resizeCanvas) Browser.setFullScreenCanvasSize();
+                   } else {
+                       
+                       // remove the full screen specific parent of the canvas again to restore the HTML structure from before going full screen
+                       canvasContainer.parentNode.insertBefore(canvas, canvasContainer);
+                       canvasContainer.parentNode.removeChild(canvasContainer);
+                       
+                       if (Browser.resizeCanvas) Browser.setWindowedCanvasSize();
+                   }
+                   
+                   if (Module['onFullScreen']) Module['onFullScreen'](Browser.isFullScreen);
+                   Browser.updateCanvasDimensions(canvas);
+               }
+               if (!Browser.fullScreenHandlersInstalled) {
+                   Browser.fullScreenHandlersInstalled = true;
+                   document.addEventListener('fullscreenchange', fullScreenChange, false);
+                   document.addEventListener('mozfullscreenchange', fullScreenChange, false);
+                   document.addEventListener('webkitfullscreenchange', fullScreenChange, false);
+                   document.addEventListener('MSFullscreenChange', fullScreenChange, false);
+               }
+               // create a new parent to ensure the canvas has no siblings. this allows browsers to optimize full screen performance when its parent is the full screen root
+               var canvasContainer = document.createElement("div");
+               canvas.parentNode.insertBefore(canvasContainer, canvas);
+               canvasContainer.appendChild(canvas);
+               
+               // use parent of canvas as full screen root to allow aspect ratio correction (Firefox stretches the root to screen size)
+               canvasContainer.requestFullScreen = canvasContainer['requestFullScreen'] ||
+               canvasContainer['mozRequestFullScreen'] ||
+               canvasContainer['msRequestFullscreen'] ||
+               (canvasContainer['webkitRequestFullScreen'] ? function() 
+                { 
+                    canvasContainer['webkitRequestFullScreen'](Element['ALLOW_KEYBOARD_INPUT']);
+                    if (!document.webkitCurrentFullScreenElement) canvasContainer['webkitRequestFullScreen']();
+                } : null);
+               
+               if (Browser.vrDevice) {
+                   canvasContainer.requestFullScreen({ vrDisplay: Browser.vrDevice });
+               } else {
+                   canvasContainer.requestFullScreen();
+               }
+        );
     }
 }
 
