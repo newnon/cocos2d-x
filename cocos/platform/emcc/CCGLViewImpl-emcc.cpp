@@ -256,6 +256,63 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
 
 	const GLubyte* glVersion = glGetString(GL_VERSION);
 	CCLOG("Version %s", glVersion);
+    
+    _wheelScrollScale = EM_ASM_INT(
+    {
+        var nAgt = navigator.userAgent;
+        var browserName = navigator.appName;
+        var verOffset = -1;
+        var OSName = "Unknown OS";
+        var result = 0;
+        
+        if ((verOffset = nAgt.indexOf("OPR")) != -1) browserName = "Opera";
+        else if ((verOffset = nAgt.indexOf("MSIE")) != -1) browserName = "MSIE";
+        else if ((verOffset = nAgt.indexOf("Chrome")) != -1) browserName = "Chrome";
+        else if ((verOffset = nAgt.indexOf("Safari")) != -1) browserName = "Safari";
+        else if ((verOffset = nAgt.indexOf("Firefox")) != -1) browserName = "Firefox";
+        else if ((verOffset = nAgt.indexOf("Edge")) != -1) browserName = "Edge";
+        
+        if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
+        if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
+        if (navigator.appVersion.indexOf("X11") != -1) OSName = "UNIX";
+        if (navigator.appVersion.indexOf("Linux") != -1) OSName = "Linux";
+        
+        if (browserName == "Chrome" || browserName == "Opera" || browserName == "Safari")
+        {
+            if (OSName == "MacOS")
+            {
+                result = 4;
+            }
+            else if (OSName == "Windows")
+            {
+                result = 100;
+            }
+            else if (OSName == "UNIX" || OSName == "Linux")
+            {
+                result = 53;
+            }
+        }
+        else if (browserName == "MSIE" || browserName == "Edge")
+        {
+            result = 147;
+        }
+        else if (browserName == "Firefox")
+        {
+            if (OSName == "MacOS")
+            {
+                result = 1;
+            }
+            else if (OSName == "Windows" || OSName == "UNIX" || OSName == "Linux")
+            {
+                result = 3;
+            }
+        }
+        
+        Module.print("nAgt " + nAgt);
+        Module.print("browserName " + browserName);
+        Module.print("OSName " + OSName);
+        return result;
+    }, 1);
 	return true;
 }
 
@@ -570,7 +627,7 @@ void GLViewImpl::onMouseMoveCallBack(double x, double y)
 
 void GLViewImpl::onMouseScrollCallback(double x, double y)
 {
-	CCLOG("Scroll %f %f", x, y);
+    y /= _wheelScrollScale;
     float mouseX = static_cast<float>(x) / this->getFrameZoomFactor();
     float mouseY = static_cast<float>(y) / this->getFrameZoomFactor();
     
@@ -580,6 +637,9 @@ void GLViewImpl::onMouseScrollCallback(double x, double y)
 	event.setScrollData(static_cast<float>(x), -static_cast<float>(y));
 	event.setCursorPosition(cursorX, cursorY);
 	Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
+    
+    CCLOG("GLViewImpl::onScroll result=%i, x=%.0f, y=%.0f", _wheelScrollScale, x, y);
+
 }
 
 void GLViewImpl::onKeyCallback(int key, int action, int repeat)

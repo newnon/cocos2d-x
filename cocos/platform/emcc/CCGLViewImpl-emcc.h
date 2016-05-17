@@ -85,6 +85,7 @@ private:
     int _defaultWindowWidth = 0;
     int _defaultWindowHeight = 0;
     int _windowFullscreen = 0;
+    int _wheelScrollScale = 1;
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(GLViewImpl);
