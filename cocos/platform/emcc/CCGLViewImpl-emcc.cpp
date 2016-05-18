@@ -411,11 +411,9 @@ void GLViewImpl::toggleToFullscreen()
                Module['forcedAspectRatio'] = screen.width / screen.height;
                Browser.lockPointer = false;
                Browser.resizeCanvas = true;
-               Browser.vrDevice = 'undefined';
                
                if (typeof Browser.lockPointer === 'undefined') Browser.lockPointer = true;
                if (typeof Browser.resizeCanvas === 'undefined') Browser.resizeCanvas = false;
-               if (typeof Browser.vrDevice === 'undefined') Browser.vrDevice = null;
                
                var canvas = Module['canvas'];
                function fullScreenChange() {
@@ -472,11 +470,7 @@ void GLViewImpl::toggleToFullscreen()
                     if (!document.webkitCurrentFullScreenElement) canvasContainer['webkitRequestFullScreen']();
                 } : null);
                
-               if (Browser.vrDevice) {
-                   canvasContainer.requestFullScreen({ vrDisplay: Browser.vrDevice });
-               } else {
-                   canvasContainer.requestFullScreen();
-               }
+               canvasContainer.requestFullScreen();
         );
     }
 }
