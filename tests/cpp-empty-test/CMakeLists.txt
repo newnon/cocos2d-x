@@ -87,6 +87,7 @@ else()
       ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/SimpleAudioEngine.js
       ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/base/emcc/StorageEngine.js
       ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/network/WebSocket.js
+      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/network/HttpClient.js
     )
     
     em_link_js_library(${APP_NAME} ${libraryJsFiles})

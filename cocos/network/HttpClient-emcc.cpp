@@ -42,6 +42,11 @@
  
 NS_CC_BEGIN
 
+
+extern "C" {
+int http_client_async_wget2_data(const char* url, const char* requesttype, const char* param, void *arg, int free, em_async_wget2_data_onload_func onload, em_async_wget2_data_onerror_func onerror, em_async_wget2_data_onprogress_func onprogress);
+};
+
 namespace network {
 
 static HttpClient* _httpClient = nullptr; // pointer to singleton
@@ -157,6 +162,7 @@ static void onError(unsigned, void* userData, int errorCode, const char* status)
 
     CCLOG("HttpClient::onError handler: code:%d status:%s\n", request->getHandler(), errorCode, status);
 
+    
     response->setSucceed(false);
     response->setResponseCode(errorCode);
     response->setErrorBuffer(status ? status : "");
@@ -200,16 +206,17 @@ void HttpClient::send(HttpRequest* request)
 void HttpClient::sendImmediate(HttpRequest* request)
 {
     request->retain();
-    int handler = emscripten_async_wget2_data(
-                                              request->getUrl(),
-                                              getRequestType(request->getRequestType()).c_str(),
-                                              request->getRequestData(),
-                                              static_cast<void*>(request),
-                                              true,
-                                              &onLoad,
-                                              &onError,
-                                              &onProgress
-                                              );
+
+    int handler = http_client_async_wget2_data(
+                                   request->getUrl(),
+                                   getRequestType(request->getRequestType()).c_str(),
+                                   request->getRequestData(),
+                                   static_cast<void*>(request),
+                                   true,
+                                   &onLoad,
+                                   &onError,
+                                   &onProgress
+                                   );
     request->setHandler(handler);
     _requestQueue.pushBack(request);
     
@@ -257,16 +264,16 @@ void HttpClient::update(float time)
             if (!sendOneTime)
             {
                 sendOneTime = true;
-                int handler = emscripten_async_wget2_data(
-                                                          request->getUrl(),
-                                                          getRequestType(request->getRequestType()).c_str(),
-                                                          request->getRequestData(),
-                                                          static_cast<void*>(request),
-                                                          true,
-                                                          &onLoad,
-                                                          &onError,
-                                                          &onProgress
-                                                          );
+                int handler = http_client_async_wget2_data(
+                                               request->getUrl(),
+                                               getRequestType(request->getRequestType()).c_str(),
+                                               request->getRequestData(),
+                                               static_cast<void*>(request),
+                                               true,
+                                               &onLoad,
+                                               &onError,
+                                               &onProgress
+                                               );
                 request->setHandler(handler);
                 
                 CCLOG("HttpClient::send one time %i\n", handler);
@@ -276,7 +283,7 @@ void HttpClient::update(float time)
         }
     }
 }
-
+    
 // Poll and notify main thread if responses exists in queue
 void HttpClient::dispatchResponseCallbacks()
 {
