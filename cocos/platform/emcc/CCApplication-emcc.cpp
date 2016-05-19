@@ -94,7 +94,7 @@ extern "C"
 {
     void EMSCRIPTEN_KEEPALIVE backgroundMainLoop()
     {
-        if (!isBackgroundLoop)
+        if (!useBackgroundLoop)
             return;
         
         Director::getInstance()->mainLoop();
