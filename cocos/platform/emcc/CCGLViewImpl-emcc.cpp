@@ -555,6 +555,26 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             break;
         }
             
+        case SDL_WINDOWEVENT:
+        {
+            switch (event->window.event)
+            {
+                case SDL_WINDOWEVENT_SHOWN:
+                    Application::getInstance()->setNormalMainLoop();
+                    CCLOG("SDL_WINDOWEVENT_SHOWN");
+                    break;
+                    
+                case SDL_WINDOWEVENT_HIDDEN:
+                    Application::getInstance()->setExtraMainLoop();
+                    CCLOG("SDL_WINDOWEVENT_HIDDEN");
+                    break;
+            }
+            
+            break;
+        }
+            
+            
+            
             
 //            case SDL_TEXTINPUT:
 //            {

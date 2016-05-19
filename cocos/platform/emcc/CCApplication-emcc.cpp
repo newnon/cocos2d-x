@@ -50,6 +50,9 @@ NS_CC_BEGIN
 Application * Application::sm_pSharedApplication = 0;
 std::string Application::_appVersion;
 
+static bool useBackgroundLoop = false;
+static bool useMainLoopTiming = true;
+
 // convert the timespec into milliseconds
 static long time2millis(struct timespec *times)
 {
@@ -68,15 +71,35 @@ Application::~Application()
     sm_pSharedApplication = NULL;
 }
 
-
 extern "C" void mainLoopIter()
 {
+    if (useMainLoopTiming)
+    {
+        float animationInterval = Director::getInstance()->getAnimationInterval();
+        emscripten_set_main_loop_timing(EM_TIMING_RAF, animationInterval * 60);
+        useMainLoopTiming = false;
+    }
+    
+    if (useBackgroundLoop)
+        return ;
+
 	//CCEGLView::sharedOpenGLView()->handleEvents();
 	//TIME_START(mainloop);
 	Director::getInstance()->mainLoop();
 	//TIME_TOTAL_LOG(mainloop, "one loop");
 	//Director::getInstance()->getOpenGLView()->pollEvents();
 }
+
+extern "C"
+{
+    void EMSCRIPTEN_KEEPALIVE backgroundMainLoop()
+    {
+        if (!isBackgroundLoop)
+            return;
+        
+        Director::getInstance()->mainLoop();
+    }
+};
 
 int Application::run()
 {
@@ -103,8 +126,10 @@ int Application::run()
 
 	CCLOG("Mainloop begin %f", director->getAnimationInterval());
 	// XXX: Set to 1FPS while debugging
-	emscripten_set_main_loop(&mainLoopIter, 0, 1);
-
+    
+    EM_ASM(setInterval(function(){ Module.ccall('backgroundMainLoop'); }, 500););
+    
+    emscripten_set_main_loop(&mainLoopIter, 0, 1);
 
 	CCLOG("Mainloop end");
 	if (glview->isOpenGLReady())
@@ -122,6 +147,11 @@ void Application::setAnimationInterval(float interval)
 {
 	CCLOG("Animation interval %f", interval);
 	_animationInterval = (long)(interval * 1000);
+    
+    if (!useMainLoopTiming)
+    {
+        emscripten_set_main_loop_timing(EM_TIMING_RAF, _animationInterval * 60 / 1000);
+    }
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -210,6 +240,16 @@ void Application::toggleToFullscreen()
     auto director = Director::getInstance();
     GLViewImpl *glview = static_cast<GLViewImpl*>(director->getOpenGLView());
     glview->toggleToFullscreen();
+}
+
+void Application::setForegroundMainLoop()
+{
+    useBackgroundLoop = false;
+}
+
+void Application::setBackgroundMainLoop()
+{
+    useBackgroundLoop = true;
 }
 
 NS_CC_END

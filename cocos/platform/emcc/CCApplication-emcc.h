@@ -113,12 +113,14 @@ public:
 	static void setAppVersion(const std::string &version);
     
     void toggleToFullscreen();
-
+    
+    void setForegroundMainLoop();
+    void setBackgroundMainLoop();
 
 protected:
     long       _animationInterval;  //micro second
     std::string _resourceRootPath;
-    
+
 	static Application * sm_pSharedApplication;
 	static std::string _appVersion;
 };
