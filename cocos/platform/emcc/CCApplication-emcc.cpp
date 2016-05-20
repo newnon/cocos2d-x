@@ -82,7 +82,7 @@ extern "C" void mainLoopIter()
     
     if (useBackgroundLoop)
         return ;
-
+    
 	//CCEGLView::sharedOpenGLView()->handleEvents();
 	//TIME_START(mainloop);
 	Director::getInstance()->mainLoop();
@@ -96,7 +96,6 @@ extern "C"
     {
         if (!useBackgroundLoop)
             return;
-        
         Director::getInstance()->mainLoop();
     }
 };
