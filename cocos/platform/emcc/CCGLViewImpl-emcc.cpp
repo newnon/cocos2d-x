@@ -263,14 +263,14 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
         var browserName = navigator.appName;
         var verOffset = -1;
         var OSName = "Unknown OS";
-        var result = 0;
+        var result = 1;
         
         if ((verOffset = nAgt.indexOf("OPR")) != -1) browserName = "Opera";
         else if ((verOffset = nAgt.indexOf("MSIE")) != -1) browserName = "MSIE";
+        else if ((verOffset = nAgt.indexOf("Netscape")) != -1) browserName = "MSIE";
         else if ((verOffset = nAgt.indexOf("Chrome")) != -1) browserName = "Chrome";
         else if ((verOffset = nAgt.indexOf("Safari")) != -1) browserName = "Safari";
         else if ((verOffset = nAgt.indexOf("Firefox")) != -1) browserName = "Firefox";
-        else if ((verOffset = nAgt.indexOf("Edge")) != -1) browserName = "Edge";
         
         if (navigator.appVersion.indexOf("Win") != -1) OSName = "Windows";
         if (navigator.appVersion.indexOf("Mac") != -1) OSName = "MacOS";
@@ -292,7 +292,7 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
                 result = 53;
             }
         }
-        else if (browserName == "MSIE" || browserName == "Edge")
+        else if (browserName == "MSIE" || browserName == "Netscape")
         {
             result = 147;
         }

@@ -6,7 +6,16 @@ var LibraryHttpClient = {
         var _param = Pointer_stringify(param);
         
         var http = new XMLHttpRequest();
-        http.open(_request, _url, true);
+
+        try
+        {
+            http.open(_request, _url, true);
+        }
+        catch(err)
+        {
+            return ;
+        }
+
         http.responseType = 'arraybuffer';
         
         var handle = Browser.getNextWgetRequestHandle();
