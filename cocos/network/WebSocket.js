@@ -98,6 +98,7 @@ var LibraryWebSocket = {
     },
     WebSocket_close: function()
     {
+        socket.onclose = function(event){ };
         socket.close();
     },
     WebSocket_send: function(data)

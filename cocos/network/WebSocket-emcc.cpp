@@ -117,7 +117,7 @@ void WebSocket::onMessage(void* userData, unsigned char *msg, int length)
     CCLOG("WebSocket message: %s size:%d", (char*)msg, length);
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     
-    if (userData)
+    if (webSocket)
     {
         cocos2d::network::WebSocket::Data data;
         data.len = length;
@@ -132,7 +132,7 @@ void WebSocket::onError(void* userData)
 {
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     
-    if (userData)
+    if (webSocket)
     {
         CCLOG("WebSocket::onError");
         
@@ -145,7 +145,7 @@ void WebSocket::onClose(int err, unsigned char* msg, int length, void* userData)
 {
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     
-    if (userData)
+    if (webSocket)
     {
         if (webSocket->_readyState == State::CLOSING || webSocket->_readyState == State::CLOSED)
             return;
@@ -165,9 +165,9 @@ bool WebSocket::init(const Delegate& delegate,
                      const std::string& url,
                      const std::vector<std::string>* protocols/* = nullptr*/)
 {
-    WebSocket_init(url.c_str());
-    
     _delegate = const_cast<Delegate*>(&delegate);
+    
+    WebSocket_init(url.c_str());
     
 #ifdef __EMSCRIPTEN__
     WebSocket_set_socket_error_callback(static_cast<void*>(this), &WebSocket::onError);
