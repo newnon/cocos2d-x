@@ -255,7 +255,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     emscripten_SDL_SetEventHandler(&GLViewImpl::EventHandler, static_cast<void*>(this));
 
 	const GLubyte* glVersion = glGetString(GL_VERSION);
+	const GLubyte* glExtensions = glGetString(GL_EXTENSIONS);
 	CCLOG("Version %s", glVersion);
+	CCLOG("Extensions %s", glExtensions);
     
     _wheelScrollScale = EM_ASM_INT(
     {
