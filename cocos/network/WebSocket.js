@@ -35,8 +35,10 @@ var LibraryWebSocket = {
         {
             if (typeof event.data === "string")
             {
+                var sp = Runtime.stackSave();
                 var msg = allocate(intArrayFromString(event.data), 'i8', ALLOC_STACK);
                 Module['websocket'].emit('message', [msg, event.data.length]);
+                Runtime.stackRestore(sp);
             }
             else if (event.data instanceof ArrayBuffer)
             {
@@ -81,8 +83,10 @@ var LibraryWebSocket = {
             else
                 reason = "Unknown reason";
 
+            var sp = Runtime.stackSave();
             var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
             Module['websocket'].emit('close', [event.code, msg, reason.length]);
+            Runtime.stackRestore(sp);
         };
         
         socket.onerror = function(error)
@@ -98,7 +102,10 @@ var LibraryWebSocket = {
     },
     WebSocket_close: function()
     {
+        socket.onopen = function(){ };
+        socket.onmessage = function(event) { };
         socket.onclose = function(event){ };
+        socket.onerror = function(error) { };
         socket.close();
     },
     WebSocket_send: function(data)

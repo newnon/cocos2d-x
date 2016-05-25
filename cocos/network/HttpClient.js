@@ -6,6 +6,7 @@ var LibraryHttpClient = {
         var _param = Pointer_stringify(param);
         
         var http = new XMLHttpRequest();
+        var handle = Browser.getNextWgetRequestHandle();
 
         try
         {
@@ -13,21 +14,24 @@ var LibraryHttpClient = {
         }
         catch(err)
         {
+            if (onerror) {
+                Runtime.dynCall('viiii', onerror, [handle, arg, http.status, http.statusText]);
+            }
             return ;
         }
 
         http.responseType = 'arraybuffer';
         
-        var handle = Browser.getNextWgetRequestHandle();
-        
         // LOAD
         http.onload = function http_onload(e) {
             if (http.status == 200 || _url.substr(0,4).toLowerCase() != "http") {
+                
                 var byteArray = new Uint8Array(http.response);
                 var buffer = _malloc(byteArray.length);
                 HEAPU8.set(byteArray, buffer);
                 if (onload) Runtime.dynCall('viiii', onload, [handle, arg, buffer, byteArray.length]);
                 if (free) _free(buffer);
+                
             } else {
                 if (onerror) Runtime.dynCall('viiii', onerror, [handle, arg, http.status, http.statusText]);
             }
@@ -68,7 +72,13 @@ var LibraryHttpClient = {
                 http.send(null);
             }
         }
-        catch(err) { }
+        catch(err)
+        {
+            if (onerror) {
+                Runtime.dynCall('viiii', onerror, [handle, arg, http.status, http.statusText]);
+            }
+            return ;
+        }
         
         Browser.wgetRequests[handle] = http;
         

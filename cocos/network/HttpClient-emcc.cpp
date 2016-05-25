@@ -161,7 +161,6 @@ static void onError(unsigned, void* userData, int errorCode, const char* status)
     HttpResponse *response = new (std::nothrow) HttpResponse(request);
 
     CCLOG("HttpClient::onError handler: code:%d status:%s\n", request->getHandler(), errorCode, status);
-
     
     response->setSucceed(false);
     response->setResponseCode(errorCode);
@@ -192,13 +191,11 @@ static void onProgress(unsigned, void* userData, int, int)
     request->setConnected(true);
     
     CCLOG("HttpClient::onProgress is connected %i\n", request->getHandler());
-
 };
     
 //Add a get task to queue
 void HttpClient::send(HttpRequest* request)
 {
-    request->retain();
     request->setHandler(-1);
     _requestQueue.pushBack(request);
 }
@@ -206,8 +203,8 @@ void HttpClient::send(HttpRequest* request)
 void HttpClient::sendImmediate(HttpRequest* request)
 {
     request->retain();
-
-    int handler = http_client_async_wget2_data(
+    
+    int handler = emscripten_async_wget2_data(
                                    request->getUrl(),
                                    getRequestType(request->getRequestType()).c_str(),
                                    request->getRequestData(),
@@ -219,8 +216,6 @@ void HttpClient::sendImmediate(HttpRequest* request)
                                    );
     request->setHandler(handler);
     _requestQueue.pushBack(request);
-    
-    CCLOG("HttpClient::sendImmediate %i\n", handler);
 }
     
 void HttpClient::update(float time)
@@ -264,7 +259,10 @@ void HttpClient::update(float time)
             if (!sendOneTime)
             {
                 sendOneTime = true;
-                int handler = http_client_async_wget2_data(
+                
+                request->retain();
+                
+                int handler = emscripten_async_wget2_data(
                                                request->getUrl(),
                                                getRequestType(request->getRequestType()).c_str(),
                                                request->getRequestData(),
@@ -275,7 +273,6 @@ void HttpClient::update(float time)
                                                &onProgress
                                                );
                 request->setHandler(handler);
-                
                 CCLOG("HttpClient::send one time %i\n", handler);
             }
             
