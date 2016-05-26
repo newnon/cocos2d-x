@@ -5809,6 +5809,17 @@
 		D0FD03451A3B51AA00825BB5 /* CCAllocatorStrategyGlobalSmallBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorStrategyGlobalSmallBlock.h; sourceTree = "<group>"; };
 		D0FD03461A3B51AA00825BB5 /* CCAllocatorStrategyPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorStrategyPool.h; sourceTree = "<group>"; };
 		D84E10A81CBD0A1A005CA42F /* WebSocket-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "WebSocket-emcc.cpp"; sourceTree = "<group>"; };
+		D8B890091CF73BAC00C45EB0 /* CCApplication-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CCApplication-emcc.cpp"; sourceTree = "<group>"; };
+		D8B8900A1CF73BAC00C45EB0 /* CCApplication-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCApplication-emcc.h"; sourceTree = "<group>"; };
+		D8B8900B1CF73BAC00C45EB0 /* CCCommon-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CCCommon-emcc.cpp"; sourceTree = "<group>"; };
+		D8B8900C1CF73BAC00C45EB0 /* CCDevice-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CCDevice-emcc.cpp"; sourceTree = "<group>"; };
+		D8B8900D1CF73BAC00C45EB0 /* CCFileUtils-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CCFileUtils-emcc.cpp"; sourceTree = "<group>"; };
+		D8B8900E1CF73BAC00C45EB0 /* CCFileUtils-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCFileUtils-emcc.h"; sourceTree = "<group>"; };
+		D8B8900F1CF73BAC00C45EB0 /* CCGL-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCGL-emcc.h"; sourceTree = "<group>"; };
+		D8B890101CF73BAC00C45EB0 /* CCGLViewImpl-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CCGLViewImpl-emcc.cpp"; sourceTree = "<group>"; };
+		D8B890111CF73BAC00C45EB0 /* CCGLViewImpl-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCGLViewImpl-emcc.h"; sourceTree = "<group>"; };
+		D8B890121CF73BAC00C45EB0 /* CCPlatformDefine-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCPlatformDefine-emcc.h"; sourceTree = "<group>"; };
+		D8B890131CF73BAC00C45EB0 /* CCStdC-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCStdC-emcc.h"; sourceTree = "<group>"; };
 		D8E6A2801CBBE6A600F8593C /* CCUserDefault-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; name = "CCUserDefault-emcc.cpp"; path = "../base/emcc/CCUserDefault-emcc.cpp"; sourceTree = "<group>"; };
 		D8E6A2811CBBEBD300F8593C /* HttpClient-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "HttpClient-emcc.cpp"; sourceTree = "<group>"; };
 		DA8C62A019E52C6400000516 /* ioapi_mem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ioapi_mem.cpp; sourceTree = "<group>"; };
@@ -7890,6 +7901,7 @@
 		50ABBEDB1926664700A911A9 /* platform */ = {
 			isa = PBXGroup;
 			children = (
+				D8B890081CF73BAC00C45EB0 /* emcc */,
 				503DD8CD1926736A00CD74DD /* ios */,
 				50ABBF2D1926664700A911A9 /* desktop */,
 				50ABBF4E1926664700A911A9 /* mac */,
@@ -9319,6 +9331,24 @@
 			);
 			name = allocator;
 			path = ../base/allocator;
+			sourceTree = "<group>";
+		};
+		D8B890081CF73BAC00C45EB0 /* emcc */ = {
+			isa = PBXGroup;
+			children = (
+				D8B890091CF73BAC00C45EB0 /* CCApplication-emcc.cpp */,
+				D8B8900A1CF73BAC00C45EB0 /* CCApplication-emcc.h */,
+				D8B8900B1CF73BAC00C45EB0 /* CCCommon-emcc.cpp */,
+				D8B8900C1CF73BAC00C45EB0 /* CCDevice-emcc.cpp */,
+				D8B8900D1CF73BAC00C45EB0 /* CCFileUtils-emcc.cpp */,
+				D8B8900E1CF73BAC00C45EB0 /* CCFileUtils-emcc.h */,
+				D8B8900F1CF73BAC00C45EB0 /* CCGL-emcc.h */,
+				D8B890101CF73BAC00C45EB0 /* CCGLViewImpl-emcc.cpp */,
+				D8B890111CF73BAC00C45EB0 /* CCGLViewImpl-emcc.h */,
+				D8B890121CF73BAC00C45EB0 /* CCPlatformDefine-emcc.h */,
+				D8B890131CF73BAC00C45EB0 /* CCStdC-emcc.h */,
+			);
+			path = emcc;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */

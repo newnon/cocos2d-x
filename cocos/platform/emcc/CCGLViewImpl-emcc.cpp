@@ -479,6 +479,9 @@ void GLViewImpl::toggleToFullscreen()
 
 int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
 {
+    if (!event)
+        return 0;
+    
     GLViewImpl *thiz = static_cast<GLViewImpl*>(userdata);
     
     switch(event->type)

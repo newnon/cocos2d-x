@@ -214,6 +214,9 @@ public:
      */
 	void loadConfigFile(const std::string& filename);
     
+    /** Should call after initalized director */
+    void dispatchEvent();
+    
     static const char* CONFIG_FILE_LOADED;
 
 private:
