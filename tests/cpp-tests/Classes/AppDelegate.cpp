@@ -68,8 +68,6 @@ bool AppDelegate::applicationDidFinishLaunching()
         glview = GLViewImpl::create("Cpp Tests");
         director->setOpenGLView(glview);
     }
-    
-    Configuration::getInstance()->dispatchEvent();
 
     director->setDisplayStats(true);
     director->setAnimationInterval(1.0 / 60);

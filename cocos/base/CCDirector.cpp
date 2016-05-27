@@ -105,6 +105,11 @@ Director* Director::getInstance()
     return s_SharedDirector;
 }
 
+bool Director::hasInstance()
+{
+    return s_SharedDirector != nullptr;
+}
+
 Director::Director()
 : _isStatusLabelUpdated(true)
 {
