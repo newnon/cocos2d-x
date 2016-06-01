@@ -18,6 +18,7 @@ extern "C"
     int UIEditBox_init(bool isMultiLine);
     void UIEditBox_setContentSize(int id, int x, int y, int width, int height);
     void UIEditBox_setColor(int id, int r, int g, int b);
+    void UIEditBox_setPlaceholderColor(int id, int r, int g, int b);
     void UIEditBox_setFont(int id, const char* fontName, int size);
     void UIEditBox_setText(int id, const char* str);
     void UIEditBox_setPlaceholder(int id, const char* str);
@@ -58,6 +59,7 @@ bool EditBoxImplEmcc::initWithSize(const Size& size)
     _isDirty = true;
     _fontSize = rect.size.height * 2 / 3;
     _color = Color4B(255, 255, 255, 255);
+    _placeholderColor = Color4B(255, 255, 255, 255);
     _inputFlag = EditBox::InputFlag::INITIAL_CAPS_ALL_CHARACTERS;
     _inputMode = EditBox::InputMode::ANY;
     return true;
@@ -89,11 +91,13 @@ void EditBoxImplEmcc::setFont(const char* pFontName, int fontSize)
     CCLOG("[Edit text] set font %s %i", fontName.c_str(), fontSize);
     _fontName = fontName;
     _fontSize = fontSize;
+    _isDirty = true;
 }
     
 void EditBoxImplEmcc::setFontColor(const Color4B& color)
 {
     _color = color;
+    _isDirty = true;
 }
 
 void EditBoxImplEmcc::setPlaceholderFont(const char* pFontName, int fontSize)
@@ -103,7 +107,8 @@ void EditBoxImplEmcc::setPlaceholderFont(const char* pFontName, int fontSize)
 
 void EditBoxImplEmcc::setPlaceholderFontColor(const Color4B& color)
 {
-    //TODO::
+    _placeholderColor = color;
+    _isDirty = true;
 }
 
 void EditBoxImplEmcc::setInputMode(EditBox::InputMode inputMode)
@@ -121,6 +126,7 @@ void EditBoxImplEmcc::setInputFlag(EditBox::InputFlag inputFlag)
 void EditBoxImplEmcc::setMaxLength(int maxLength)
 {
     _maxTextLength = maxLength;
+    _isDirty = true;
 }
 
 int EditBoxImplEmcc::getMaxLength()
@@ -151,13 +157,14 @@ const char* EditBoxImplEmcc::getText(void)
 
 void EditBoxImplEmcc::setPlaceHolder(const char* pText)
 {
-    UIEditBox_setPlaceholder(_id, pText);
+    _placeholderText = pText;
+    _isDirty = true;
+    CCLOG("Edit text] setPlaceHolder %s", pText);
 }
 
 void EditBoxImplEmcc::setPosition(const Vec2& pos)
 {
     CCLOG("[Edit text] setPosition = (%f, %f)", pos.x, pos.y);
-    
     _position = pos;
     adjustTextFieldPositionAndSize();
 }
@@ -169,7 +176,7 @@ void EditBoxImplEmcc::setVisible(bool visible)
 
 void EditBoxImplEmcc::setContentSize(const Size& size)
 {
-    CCLOG("[Edit text] setNativeContentSize");
+    CCLOG("[Edit text] setContentSize width = %i, height = %i", (int)size.width, (int)size.height);
     _contentSize = size;
     adjustTextFieldPositionAndSize();
 }
@@ -229,9 +236,13 @@ void EditBoxImplEmcc::createFromJS()
     UIEditBox_setColor(_id, _color.r, _color.g, _color.b);
     UIEditBox_setFont(_id, _fontName.c_str(), _fontSize);
     UIEditBox_setMaxLength(_id, _maxTextLength);
+    UIEditBox_setPlaceholderColor(_id, _placeholderColor.r, _placeholderColor.g, _placeholderColor.b);
     
     if (!_text.empty())
         UIEditBox_setText(_id, _text.c_str());
+    
+    if (!_placeholderText.empty())
+        UIEditBox_setPlaceholder(_id, _placeholderText.c_str());
     
     switch (_inputFlag)
     {
@@ -259,27 +270,27 @@ void EditBoxImplEmcc::createFromJS()
 
 void EditBoxImplEmcc::adjustTextFieldPositionAndSize()
 {
-    if (_isCreate)
-    {
-        auto glview = cocos2d::Director::getInstance()->getOpenGLView();
-        float factor = cocos2d::Director::getInstance()->getContentScaleFactor();
-        const Size &winSize = cocos2d::Director::getInstance()->getWinSize();
-        
-        Rect rect = Rect(0, 0, _contentSize.width, _contentSize.height);
-        rect = RectApplyAffineTransform(rect, _editBox->nodeToWorldTransform());
-        
-        Vec2 designCoord = Vec2(rect.origin.x, rect.origin.y + rect.size.height);
-        
-        Vec2 visiblePos = Vec2(designCoord.x * glview->getScaleX(), designCoord.y * glview->getScaleY());
-        Vec2 screenGLPos = visiblePos + glview->getViewPortRect().origin;
+    auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+    float factor = cocos2d::Director::getInstance()->getContentScaleFactor();
+    const Size &winSize = cocos2d::Director::getInstance()->getWinSize();
+    
+    Rect rect = Rect(0, 0, _contentSize.width, _contentSize.height);
+    rect = RectApplyAffineTransform(rect, _editBox->nodeToWorldTransform());
+    
+    Vec2 designCoord = Vec2(rect.origin.x, rect.origin.y + rect.size.height);
+    
+    Vec2 visiblePos = Vec2(designCoord.x * glview->getScaleX(), designCoord.y * glview->getScaleY());
+    Vec2 screenGLPos = visiblePos + glview->getViewPortRect().origin;
 
-        screenGLPos.x = screenGLPos.x / factor;
-        screenGLPos.y = screenGLPos.y / factor;
-        rect.size.width /= factor;
-        rect.size.height /= factor;
-        
-        UIEditBox_setContentSize(_id, screenGLPos.x, screenGLPos.y, rect.size.width, rect.size.height);
-    }
+    rect.size = Size(rect.size.width * glview->getScaleX(), rect.size.height * glview->getScaleY());
+    
+    screenGLPos.x = screenGLPos.x / factor;
+    screenGLPos.y = screenGLPos.y / factor;
+    rect.size.width /= factor;
+    rect.size.height /= factor;
+    
+    float newPositionY = (winSize.height / factor) - screenGLPos.y;
+    UIEditBox_setContentSize(_id, screenGLPos.x, newPositionY, rect.size.width, rect.size.height);
 }
 }
 
@@ -288,3 +299,4 @@ NS_CC_END
 #endif /* #if (CC_TARGET_PLATFORM == CC_PLATFORM_IOS) */
 
 
+ 

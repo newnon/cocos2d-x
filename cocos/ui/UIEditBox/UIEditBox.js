@@ -44,6 +44,7 @@ var LibraryUIEditBox = {
             Module.editBox[id] = document.createElement('input');
 
         Module.editBox[id].style.position = 'absolute';
+        Module.editBox[id].id = "Module_editBox" + id;
         Module.editBox[id].style.resize = 'none';
         Module.editBox[id].style.backgroundColor = 'transparent';
         Module.editBox[id].style.outline = 'none';
@@ -77,6 +78,30 @@ var LibraryUIEditBox = {
 
         return id;
     },
+    UIEditBox_setPlaceholderColor: function(id, colorR, colorG, colorB)
+    {
+        dec2hex = function(d)
+        {
+            if(d > 15) { return d.toString(16) } 
+            else { return "0" + d.toString(16) }
+        }
+
+        rgb = function(r,g,b) { return "#" + dec2hex(r) + dec2hex(g) + dec2hex(b) };
+
+        if(Module.editBox !== undefined && Module.editBox[id] !== undefined)
+        {
+            var child = document.querySelector('.editBoxStyle' + id);
+            if (child != null)
+                document.querySelector('body').removeChild(child);
+
+            var color = rgb(colorR, colorG, colorB);
+            var st = document.createElement('style');
+            st.innerHTML = '#Module_editBox' + id + '::-webkit-input-placeholder {color:' + color + ';} ::-moz-placeholder {color:' + color + ';} :-moz-placeholder {color:' + color + ';} :-ms-input-placeholder {color:' + color + ';}';
+            st.classList = 'editBoxStyle' + id;
+            document.querySelector('body').appendChild(st);
+        }
+    },
+
     UIEditBox_setContentSize: function(id, x, y, width, height)
     {
         if(Module.editBox !== undefined && Module.editBox[id] !== undefined)
@@ -132,8 +157,8 @@ var LibraryUIEditBox = {
     {
         if(Module.editBox !== undefined && Module.editBox[id] !== undefined)
         {
-            var placeholder = Pointer_stringify(str);
-            Module.editBox[id].placeholder = placeholder;
+            var text = Pointer_stringify(str);
+            Module.editBox[id].placeholder = text;
         }
     },
     UIEditBox_setVisible: function(id, visible)
@@ -162,6 +187,10 @@ var LibraryUIEditBox = {
         {
             if(Module.editBox !== undefined && Module.editBox[id] !== undefined)
             {
+                var child = document.querySelector('.editBoxStyle' + id);
+                if (child != null)
+                    document.querySelector('body').removeChild(child);
+
                 Module.target.removeChild(Module.editBox[id]);
                 delete Module.editBox[id];
             }

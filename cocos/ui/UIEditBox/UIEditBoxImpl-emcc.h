@@ -73,8 +73,10 @@ private:
     
     std::string _fontName;
     std::string _text;
+    std::string _placeholderText;
     
     Color4B _color;
+    Color4B _placeholderColor;
     
     int _fontSize = 0;
     int _id = 0;
