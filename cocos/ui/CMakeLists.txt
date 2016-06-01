@@ -16,6 +16,11 @@ elseif(LINUX)
       ui/UIEditBox/UIEditBoxImpl-common.cpp
       ui/UIEditBox/UIEditBoxImpl-linux.cpp
       )
+  elseif(EMSCRIPTEN)
+  set(COCOS_UI_SPECIFIC_SRC
+      ui/UIEditBox/UIEditBoxImpl-common.cpp
+      ui/UIEditBox/UIEditBoxImpl-emcc.cpp
+      )
 endif()
 
 #todo: android UIWebViewImpl and UIVideoPlayer

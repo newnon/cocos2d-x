@@ -47,7 +47,6 @@ THE SOFTWARE.
 
 NS_CC_BEGIN
 
-
 struct keyCodeItem
 {
 	int glfwKeyCode;
@@ -399,7 +398,7 @@ void GLViewImpl::toggleToFullscreen()
 {
     int windowFullscreen = 0;
     emscripten_get_canvas_size(nullptr, nullptr, &windowFullscreen);
-    
+
     if(windowFullscreen)
     {
         emscripten_run_script("Module['canvas'].cancelFullScreen();");
@@ -450,6 +449,7 @@ void GLViewImpl::toggleToFullscreen()
                    if (Module['onFullScreen']) Module['onFullScreen'](Browser.isFullScreen);
                    Browser.updateCanvasDimensions(canvas);
                }
+               
                if (!Browser.fullScreenHandlersInstalled) {
                    Browser.fullScreenHandlersInstalled = true;
                    document.addEventListener('fullscreenchange', fullScreenChange, false);
@@ -459,6 +459,8 @@ void GLViewImpl::toggleToFullscreen()
                }
                // create a new parent to ensure the canvas has no siblings. this allows browsers to optimize full screen performance when its parent is the full screen root
                var canvasContainer = document.createElement("div");
+               canvasContainer.style.background = 'none';
+               canvasContainer.id = "div_fullscreen";
                canvas.parentNode.insertBefore(canvasContainer, canvas);
                canvasContainer.appendChild(canvas);
                
@@ -575,22 +577,20 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             
             break;
         }
-            
-            
-            
-            
-//            case SDL_TEXTINPUT:
-//            {
-//                SDL_TextInputEvent *key = (SDL_TextInputEvent*)&event;
+        
+//        case SDL_TEXTINPUT:
+//        {
+//            
+////            SDL_TextInputEvent *key = (SDL_TextInputEvent*)&event;
 //
-//                CCLOG("text input %c", key->text[0]);
-//
-//                for(int i = 0; i < SDL_TEXTINPUTEVENT_TEXT_SIZE; ++i)
-//                {
-//                    onCharCallback(static_cast<unsigned int>(key->text[i]));
-//                }
-//                break;
-//            }
+////            for(int i = 0; i < SDL_TEXTINPUTEVENT_TEXT_SIZE; ++i)
+////            {
+////                thiz->onCharCallback(static_cast<unsigned int>(key->text[0]));
+////                thiz->onCharCallback('s');
+//                CCLOG("text input %s", event->text.text);
+////            }
+//            break;
+//        }
     }
     
     return 0;
@@ -656,7 +656,6 @@ void GLViewImpl::onMouseScrollCallback(double x, double y)
 	Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
     
     CCLOG("GLViewImpl::onScroll result=%i, x=%.0f, y=%.0f", _wheelScrollScale, x, y);
-
 }
 
 void GLViewImpl::onKeyCallback(int key, int action, int repeat)
