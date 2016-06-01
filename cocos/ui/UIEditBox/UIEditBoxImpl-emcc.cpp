@@ -87,8 +87,6 @@ void EditBoxImplEmcc::setFont(const char* pFontName, int fontSize)
     pos = fontName.rfind("/");
     if (pos != std::string::npos)
         fontName = fontName.substr(pos + 1, fontName.length() - (pos + 1));
-    
-    CCLOG("[Edit text] set font %s %i", fontName.c_str(), fontSize);
     _fontName = fontName;
     _fontSize = fontSize;
     _isDirty = true;
@@ -147,7 +145,6 @@ void EditBoxImplEmcc::setText(const char* pText)
 {
     _text = pText;
     UIEditBox_setText(_id, pText);
-    CCLOG("[Edit text] set text %s", pText);
 }
 
 const char* EditBoxImplEmcc::getText(void)
@@ -159,12 +156,10 @@ void EditBoxImplEmcc::setPlaceHolder(const char* pText)
 {
     _placeholderText = pText;
     _isDirty = true;
-    CCLOG("Edit text] setPlaceHolder %s", pText);
 }
 
 void EditBoxImplEmcc::setPosition(const Vec2& pos)
 {
-    CCLOG("[Edit text] setPosition = (%f, %f)", pos.x, pos.y);
     _position = pos;
     adjustTextFieldPositionAndSize();
 }
@@ -176,14 +171,12 @@ void EditBoxImplEmcc::setVisible(bool visible)
 
 void EditBoxImplEmcc::setContentSize(const Size& size)
 {
-    CCLOG("[Edit text] setContentSize width = %i, height = %i", (int)size.width, (int)size.height);
     _contentSize = size;
     adjustTextFieldPositionAndSize();
 }
     
 void EditBoxImplEmcc::setAnchorPoint(const Vec2& anchorPoint)
 {
-    CCLOG("[Edit text] anchor point = (%f, %f)", anchorPoint.x, anchorPoint.y);
     _anchorPoint = anchorPoint;
     setPosition(_position);
 }

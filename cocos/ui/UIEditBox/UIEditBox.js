@@ -96,7 +96,7 @@ var LibraryUIEditBox = {
 
             var color = rgb(colorR, colorG, colorB);
             var st = document.createElement('style');
-            st.innerHTML = '#Module_editBox' + id + '::-webkit-input-placeholder {color:' + color + ';} ::-moz-placeholder {color:' + color + ';} :-moz-placeholder {color:' + color + ';} :-ms-input-placeholder {color:' + color + ';}';
+            st.innerHTML = '#Module_editBox' + id + '::-webkit-input-placeholder {color:' + color + ';} ::-moz-placeholder {color:' + color + ';} :-moz-placeholder {color:' + color + ';} :-ms-input-placeholder {color:' + color + ' !important;}';
             st.classList = 'editBoxStyle' + id;
             document.querySelector('body').appendChild(st);
         }
