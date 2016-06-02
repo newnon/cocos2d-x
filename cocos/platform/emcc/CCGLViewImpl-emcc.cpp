@@ -220,6 +220,11 @@ GLViewImpl::GLViewImpl()
     :_screenSurface(nullptr),
     _captured(false)
 {
+    g_keyCodeMap.clear();
+    for (auto& item : g_keyCodeStructArray)
+    {
+        g_keyCodeMap[item.glfwKeyCode] = item.keyCode;
+    }
 }
 
 GLViewImpl::~GLViewImpl()
@@ -383,10 +388,6 @@ void GLViewImpl::pollEvents()
 	}
     
     _windowFullscreen = windowFullscreen;
-}
-
-void GLViewImpl::setIMEKeyboardState(bool bOpen)
-{
 }
 
 float GLViewImpl::getFrameZoomFactor() const
@@ -558,7 +559,6 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
         {
             SDL_KeyboardEvent *key = (SDL_KeyboardEvent*)event;
             thiz->onKeyCallback(key->keysym.sym, key->state, key->repeat);
-            CCLOG("key %i", key->keysym.sym);
             break;
         }
             
@@ -578,19 +578,11 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             break;
         }
         
-//        case SDL_TEXTINPUT:
-//        {
-//            
-////            SDL_TextInputEvent *key = (SDL_TextInputEvent*)&event;
-//
-////            for(int i = 0; i < SDL_TEXTINPUTEVENT_TEXT_SIZE; ++i)
-////            {
-////                thiz->onCharCallback(static_cast<unsigned int>(key->text[0]));
-////                thiz->onCharCallback('s');
-//                CCLOG("text input %s", event->text.text);
-////            }
-//            break;
-//        }
+        case SDL_TEXTINPUT:
+        {
+            thiz->onCharCallback(static_cast<unsigned int>(*event->text.text));
+            break;
+        }
     }
     
     return 0;
@@ -654,8 +646,6 @@ void GLViewImpl::onMouseScrollCallback(double x, double y)
 	event.setScrollData(static_cast<float>(x), -static_cast<float>(y));
 	event.setCursorPosition(cursorX, cursorY);
 	Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
-    
-    CCLOG("GLViewImpl::onScroll result=%i, x=%.0f, y=%.0f", _wheelScrollScale, x, y);
 }
 
 void GLViewImpl::onKeyCallback(int key, int action, int repeat)
@@ -667,7 +657,7 @@ void GLViewImpl::onKeyCallback(int key, int action, int repeat)
 		dispatcher->dispatchEvent(&event);
 	}
     
-	if (SDL_RELEASED != action && g_keyCodeMap[key] == EventKeyboard::KeyCode::KEY_BACKSPACE)
+    if (SDL_RELEASED != action && g_keyCodeMap[key] == EventKeyboard::KeyCode::KEY_BACKSPACE)
 	{
 		IMEDispatcher::sharedDispatcher()->dispatchDeleteBackward();
 	}
@@ -701,14 +691,27 @@ Rect GLViewImpl::getScissorRect() const
     return Rect(x, y, w, h);
 }
 
-//void GLViewImpl::onCharCallback(unsigned int character)
-//{
-//	char16_t wcharString[2] = { (char16_t)character, 0 };
-//	std::string utf8String;
-//
-//	StringUtils::UTF16ToUTF8(wcharString, utf8String);
-//	IMEDispatcher::sharedDispatcher()->dispatchInsertText(utf8String.c_str(), utf8String.size());
-//}
+void GLViewImpl::onCharCallback(unsigned int character)
+{
+	char16_t wcharString[2] = { (char16_t)character, 0 };
+	std::string utf8String;
+
+	StringUtils::UTF16ToUTF8(wcharString, utf8String);
+	IMEDispatcher::sharedDispatcher()->dispatchInsertText(utf8String.c_str(), utf8String.size());
+}
+
+void GLViewImpl::setIMEKeyboardState(bool open)
+{
+    if (open)
+    {
+        SDL_StartTextInput();
+    }
+    else
+    {
+        SDL_StopTextInput();
+    }
+}
+
 
 NS_CC_END
 

@@ -63,6 +63,8 @@ protected:
     void adjustTextFieldPositionAndSize();
     void createFromJS();
     
+    static void onEnterCallback(void *userData);
+    
 private:
     Vec2 _position;
     Vec2 _anchorPoint;

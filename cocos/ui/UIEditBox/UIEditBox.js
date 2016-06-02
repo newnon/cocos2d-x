@@ -19,6 +19,14 @@ var LibraryUIEditBox = {
             return false;
         }
     },
+    UIEditBox_setOnEnterCalback: function(id, data, callback)
+    {
+        if(Module.editBox !== undefined && Module.editBox[id] !== undefined)
+        {
+            Module.userData[id] = data;
+            Module.callback[id] = callback;
+        }
+    },
     UIEditBox_init: function(multiLine)
     {
         if(Module.editBox === undefined)
@@ -27,6 +35,8 @@ var LibraryUIEditBox = {
             Module.defaultX = {};
             Module.defaultY = {};
             Module.countId = 0;
+            Module.callback = {};
+            Module.userData = {};
         }
          
         var id = Module.countId;
@@ -57,6 +67,19 @@ var LibraryUIEditBox = {
         keyboardListeningElement.removeEventListener("keyup", SDL.receiveEvent);
         keyboardListeningElement.removeEventListener("keydown", SDL.receiveEvent);
 
+        Module.editBox[id].addEventListener("keyup", function(event)
+        {
+            if (event.keyCode == 13)
+            {
+                if(Module.callback[id] !== undefined)
+                {
+                    event.preventDefault();
+                    var sp = Runtime.stackSave();
+                    Runtime.dynCall('vi', Module.callback[id], [Module.userData[id]]);
+                    Runtime.stackRestore(sp);
+                }
+            }
+        });
         window.addEventListener('resize', function(event){
 
             if(Module.editBox !== undefined)
@@ -192,6 +215,13 @@ var LibraryUIEditBox = {
                     document.querySelector('body').removeChild(child);
 
                 Module.target.removeChild(Module.editBox[id]);
+
+                if (Module.callback !== undefined && Module.callback[id] !== undefined && Module.callback[id] != null)
+                    delete Module.callback[id];
+
+                if (Module.data !== undefined && Module.data[id] !== undefined && Module.data[id] != null)
+                    delete Module.data[id];
+
                 delete Module.editBox[id];
             }
         }

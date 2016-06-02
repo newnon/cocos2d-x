@@ -68,7 +68,7 @@ protected:
     void onMouseCallBack(int button, int action, double x, double y);
     void onMouseScrollCallback(double x, double y);
     void onKeyCallback(int key, int action, int repeat);
-//    void onCharCallback(unsigned int character);
+    void onCharCallback(unsigned int character);
     
     static int EventHandler(void *userdata, SDL_Event *event);
     

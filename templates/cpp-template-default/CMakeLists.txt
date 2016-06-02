@@ -219,6 +219,7 @@ elseif ( EMSCRIPTEN )
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/base/emcc/StorageEngine.js
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/network/WebSocket.js
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/network/HttpClient.js
+      ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/ui/UIEditBox/UIEditBox.js
     )
     
     em_link_js_library(${APP_NAME} ${libraryJsFiles})
