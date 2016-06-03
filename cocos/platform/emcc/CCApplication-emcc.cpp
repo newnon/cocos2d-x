@@ -41,6 +41,7 @@ THE SOFTWARE.
 
 #include <locale>
 #include <emscripten/emscripten.h>
+#include <emscripten/html5.h>
 
 #define  LOGD(...)  emscripten_log(EM_LOG_CONSOLE, ##__VA_ARGS__)
 
@@ -100,6 +101,25 @@ extern "C"
     }
 };
 
+const char *beforeunload_callback(int eventType, const void *reserved, void *userData)
+{
+    auto director = Director::getInstance();
+    auto glview = director->getOpenGLView();
+    
+    CCLOG("beforeunload callback");
+    if (glview->isOpenGLReady())
+    {
+        director->end();
+        director->mainLoop();
+        director = nullptr;
+    }
+    glview->release();
+    
+    Application* application = (Application*)userData;
+    delete application;
+    return nullptr;
+}
+
 int Application::run()
 {
 
@@ -127,6 +147,8 @@ int Application::run()
 	// XXX: Set to 1FPS while debugging
     
     EM_ASM(setInterval(function(){ Module.ccall('backgroundMainLoop'); }, 500););
+    
+    emscripten_set_beforeunload_callback(this, beforeunload_callback);
     
     emscripten_set_main_loop(&mainLoopIter, 0, 1);
 
