@@ -473,7 +473,7 @@ void GLViewImpl::toggleToFullscreen()
                 { 
                     canvasContainer['webkitRequestFullScreen'](Element['ALLOW_KEYBOARD_INPUT']);
                     if (!document.webkitCurrentFullScreenElement) canvasContainer['webkitRequestFullScreen']();
-                } : null);
+                } : function() {});
                
                canvasContainer.requestFullScreen();
         );
