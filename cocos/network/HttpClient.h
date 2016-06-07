@@ -153,7 +153,7 @@ public:
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
     virtual void update(float time);
     
-    std::string getRequestType(HttpRequest::Type type);
+    static td::string getRequestType(HttpRequest::Type type);
 #endif
     
 private:
