@@ -324,7 +324,7 @@ const std::string& HttpClient::getSSLVerification()
     return _sslCaFilename;
 }
     
-static std::string HttpClient::getRequestType(HttpRequest::Type type)
+std::string HttpClient::getRequestType(HttpRequest::Type type)
 {
     std::string requestType;
     switch (type)
