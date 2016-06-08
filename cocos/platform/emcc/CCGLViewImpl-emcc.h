@@ -56,6 +56,7 @@ public:
     virtual Rect getScissorRect() const override;
     
     void toggleToFullscreen();
+    bool isFullscreen();
 
 protected:
     GLViewImpl();

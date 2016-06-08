@@ -113,6 +113,7 @@ public:
 	static void setAppVersion(const std::string &version);
     
     void toggleToFullscreen();
+    bool isFullscreen();
     
     void setForegroundMainLoop();
     void setBackgroundMainLoop();

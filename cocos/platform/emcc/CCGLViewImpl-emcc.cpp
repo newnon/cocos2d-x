@@ -397,10 +397,7 @@ float GLViewImpl::getFrameZoomFactor() const
 
 void GLViewImpl::toggleToFullscreen()
 {
-    int windowFullscreen = 0;
-    emscripten_get_canvas_size(nullptr, nullptr, &windowFullscreen);
-
-    if(windowFullscreen)
+    if(isFullscreen())
     {
         emscripten_run_script("Module['canvas'].cancelFullScreen();");
     }
@@ -478,6 +475,13 @@ void GLViewImpl::toggleToFullscreen()
                canvasContainer.requestFullScreen();
         );
     }
+}
+
+bool GLViewImpl::isFullscreen()
+{
+    int windowFullscreen = 0;
+    emscripten_get_canvas_size(nullptr, nullptr, &windowFullscreen);
+    return windowFullscreen;
 }
 
 int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)

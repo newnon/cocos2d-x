@@ -263,6 +263,13 @@ void Application::toggleToFullscreen()
     glview->toggleToFullscreen();
 }
 
+bool Application::isFullscreen()
+{
+    auto director = Director::getInstance();
+    GLViewImpl *glview = static_cast<GLViewImpl*>(director->getOpenGLView());
+    return glview->isFullscreen();
+}
+
 void Application::setForegroundMainLoop()
 {
     useBackgroundLoop = false;
