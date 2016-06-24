@@ -51,7 +51,9 @@ NS_CC_BEGIN
 Application * Application::sm_pSharedApplication = 0;
 std::string Application::_appVersion;
 
-static const float maxWaitingTime = 15.0f * 60.0f;
+const float Application::maxWaitingTime = 15.0f * 60.0f;
+const float Application::maxWaitingMouseTime = 15.0f * 60.0f;
+
 static bool useBackgroundLoop = false;
 static bool useMainLoopTiming = true;
 
@@ -101,12 +103,11 @@ extern "C"
             return;
         Director::getInstance()->mainLoop();
         
-        float time = Application::getInstance()->getCurrentWaitingTime();
-        if (time < maxWaitingTime)
+        float time = Application::getInstance()->getWaitingTime();
+        if (time < Application::maxWaitingTime)
         {
-            time += Director::getInstance()->getSecondsPerFrame();
-            Application::getInstance()->setCurrentWaitingTime(time);
-            CCLOG("!!! setCurrentWaitingTime %f", time);
+            time += Director::getInstance()->getDeltaTime();
+            Application::getInstance()->setWaitingTime(time);
         }
         else
         {

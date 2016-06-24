@@ -388,6 +388,7 @@ void GLViewImpl::pollEvents()
 	}
     
     _windowFullscreen = windowFullscreen;
+    trackUserMouse();
 }
 
 float GLViewImpl::getFrameZoomFactor() const
@@ -506,7 +507,7 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             auto glview = cocos2d::Director::getInstance()->getOpenGLView();
             glview->handleTouchesMove(1, &touchId, &mouseX, &mouseY, &touch->pressure, &maxForce);
             
-            trackUserMouse();
+            thiz->trackUserMouse(true);
             break;
         }
             
@@ -522,7 +523,7 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             auto glview = cocos2d::Director::getInstance()->getOpenGLView();
             glview->handleTouchesBegin(1, &touchId, &mouseX, &mouseY);
             
-            trackUserMouse();
+            thiz->trackUserMouse(true);
             break;
         }
             
@@ -538,7 +539,7 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             auto glview = cocos2d::Director::getInstance()->getOpenGLView();
             glview->handleTouchesEnd(1, &touchId, &mouseX, &mouseY);
             
-            trackUserMouse();
+            thiz->trackUserMouse(true);
             break;
         }
             
@@ -547,7 +548,7 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             SDL_MouseMotionEvent *mouse = (SDL_MouseMotionEvent*)event;
             thiz->onMouseMoveCallBack(mouse->x, mouse->y);
             
-            trackUserMouse();
+            thiz->trackUserMouse(true);
             break;
         }
             
@@ -557,7 +558,7 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             SDL_MouseButtonEvent *mouse = (SDL_MouseButtonEvent*)event;
             thiz->onMouseCallBack(mouse->button, event->type, mouse->x, mouse->y);
             
-            trackUserMouse();
+            thiz->trackUserMouse();
             break;
         }
             
@@ -566,7 +567,7 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             SDL_MouseWheelEvent *mouse = (SDL_MouseWheelEvent*)event;
             thiz->onMouseScrollCallback(mouse->x, mouse->y);
             
-            trackUserMouse();
+            thiz->trackUserMouse(true);
             break;
         }
             
@@ -728,8 +729,25 @@ void GLViewImpl::setIMEKeyboardState(bool open)
     }
 }
 
-void GLViewImpl::trackUserMouse()
+void GLViewImpl::trackUserMouse(bool isUpdated)
 {
+    if (isUpdated)
+    {
+        Application::getInstance()->setWaitingMouseTime(0.0f);
+    }
+    else
+    {
+        float time = Application::getInstance()->getWaitingMouseTime();
+        if (time < Application::maxWaitingMouseTime)
+        {
+            time += Director::getInstance()->getDeltaTime();
+            Application::getInstance()->setWaitingMouseTime(time);
+        }
+        else
+        {
+            Application::getInstance()->setSleepMode(true);
+        }
+    }
 }
 
 

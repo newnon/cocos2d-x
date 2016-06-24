@@ -118,8 +118,11 @@ public:
     void setForegroundMainLoop();
     void setBackgroundMainLoop();
     
-    float getCurrentWaitingTime() const { return _currentWaitingTime; }
-    void setCurrentWaitingTime(float currentWaitingTime) { _currentWaitingTime = currentWaitingTime; }
+    float getWaitingTime() const { return _currentWaitingTime; }
+    void setWaitingTime(float currentWaitingTime) { _currentWaitingTime = currentWaitingTime; }
+    
+    float getWaitingMouseTime() const { return _currentWaitingMouseTime; }
+    void setWaitingMouseTime(float waitingMouseTime) { _currentWaitingMouseTime = waitingMouseTime; }
     
     /**
      @brieef This function change app to sleep mode
@@ -132,9 +135,14 @@ protected:
     std::string _resourceRootPath;
     
     float _currentWaitingTime = 0.0f;
+    float _currentWaitingMouseTime = 0.0f;
 
 	static Application * sm_pSharedApplication;
 	static std::string _appVersion;
+    
+public:
+    static const float maxWaitingTime;
+    static const float maxWaitingMouseTime;
 };
 
 NS_CC_END
