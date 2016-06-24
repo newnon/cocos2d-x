@@ -117,10 +117,21 @@ public:
     
     void setForegroundMainLoop();
     void setBackgroundMainLoop();
+    
+    float getCurrentWaitingTime() const { return _currentWaitingTime; }
+    void setCurrentWaitingTime(float currentWaitingTime) { _currentWaitingTime = currentWaitingTime; }
+    
+    /**
+     @brieef This function change app to sleep mode
+     @param sleep state
+     */
+    virtual void setSleepMode(bool state) override;
 
 protected:
     long       _animationInterval;  //micro second
     std::string _resourceRootPath;
+    
+    float _currentWaitingTime = 0.0f;
 
 	static Application * sm_pSharedApplication;
 	static std::string _appVersion;

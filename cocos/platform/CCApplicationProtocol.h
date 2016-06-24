@@ -158,6 +158,12 @@ public:
      @param new height
      */
     virtual void applicationScreenSizeChanged(int newWidth, int newHeight) = 0;
+    
+    /**
+     @brieef This function change app to sleep mode
+     @param sleep state
+     */
+    virtual void setSleepMode(bool state) = 0;
 };
 
 // end of platform group

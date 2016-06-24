@@ -51,8 +51,10 @@ NS_CC_BEGIN
 Application * Application::sm_pSharedApplication = 0;
 std::string Application::_appVersion;
 
+static const float maxWaitingTime = 15.0f * 60.0f;
 static bool useBackgroundLoop = false;
 static bool useMainLoopTiming = true;
+
 
 // convert the timespec into milliseconds
 static long time2millis(struct timespec *times)
@@ -98,6 +100,18 @@ extern "C"
         if (!useBackgroundLoop)
             return;
         Director::getInstance()->mainLoop();
+        
+        float time = Application::getInstance()->getCurrentWaitingTime();
+        if (time < maxWaitingTime)
+        {
+            time += Director::getInstance()->getSecondsPerFrame();
+            Application::getInstance()->setCurrentWaitingTime(time);
+            CCLOG("!!! setCurrentWaitingTime %f", time);
+        }
+        else
+        {
+            Application::getInstance()->setSleepMode(true);
+        }
     }
 };
 
@@ -272,12 +286,18 @@ bool Application::isFullscreen()
 
 void Application::setForegroundMainLoop()
 {
+    _currentWaitingTime = 0.0f;
     useBackgroundLoop = false;
 }
 
 void Application::setBackgroundMainLoop()
 {
+    _currentWaitingTime = 0.0f;
     useBackgroundLoop = true;
+}
+
+void Application::setSleepMode(bool state)
+{
 }
 
 NS_CC_END

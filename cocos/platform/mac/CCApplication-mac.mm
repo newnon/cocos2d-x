@@ -227,6 +227,10 @@ const std::string& Application::getStartupScriptFilename(void)
     return _startupScriptFilename;
 }
 
+void Application::setSleepMode(bool state)
+{
+}
+
 NS_CC_END
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_MAC

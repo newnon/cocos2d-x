@@ -505,6 +505,8 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             
             auto glview = cocos2d::Director::getInstance()->getOpenGLView();
             glview->handleTouchesMove(1, &touchId, &mouseX, &mouseY, &touch->pressure, &maxForce);
+            
+            trackUserMouse();
             break;
         }
             
@@ -519,6 +521,8 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             
             auto glview = cocos2d::Director::getInstance()->getOpenGLView();
             glview->handleTouchesBegin(1, &touchId, &mouseX, &mouseY);
+            
+            trackUserMouse();
             break;
         }
             
@@ -533,6 +537,8 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
             
             auto glview = cocos2d::Director::getInstance()->getOpenGLView();
             glview->handleTouchesEnd(1, &touchId, &mouseX, &mouseY);
+            
+            trackUserMouse();
             break;
         }
             
@@ -540,6 +546,8 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
         {
             SDL_MouseMotionEvent *mouse = (SDL_MouseMotionEvent*)event;
             thiz->onMouseMoveCallBack(mouse->x, mouse->y);
+            
+            trackUserMouse();
             break;
         }
             
@@ -548,6 +556,8 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
         {
             SDL_MouseButtonEvent *mouse = (SDL_MouseButtonEvent*)event;
             thiz->onMouseCallBack(mouse->button, event->type, mouse->x, mouse->y);
+            
+            trackUserMouse();
             break;
         }
             
@@ -555,6 +565,8 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
         {
             SDL_MouseWheelEvent *mouse = (SDL_MouseWheelEvent*)event;
             thiz->onMouseScrollCallback(mouse->x, mouse->y);
+            
+            trackUserMouse();
             break;
         }
             
@@ -714,6 +726,10 @@ void GLViewImpl::setIMEKeyboardState(bool open)
     {
         SDL_StopTextInput();
     }
+}
+
+void GLViewImpl::trackUserMouse()
+{
 }
 
 

@@ -270,6 +270,10 @@ LanguageType Application::getCurrentLanguage()
     return ret;
 }
 
+void Application::setSleepMode(bool state)
+{
+}
+
 NS_CC_END
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_LINUX
