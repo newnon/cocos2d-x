@@ -227,7 +227,11 @@ const std::string& Application::getStartupScriptFilename(void)
     return _startupScriptFilename;
 }
 
-void Application::setSleepMode(bool state)
+void Application::applicationDidEnterBackground()
+{
+}
+
+void Application::applicationWillEnterForeground()
 {
 }
 

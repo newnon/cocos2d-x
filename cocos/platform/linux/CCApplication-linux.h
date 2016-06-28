@@ -107,12 +107,6 @@ public:
      @brief Get target platform
      */
     virtual Platform getTargetPlatform();
-
-    /**
-     @brieef This function change app to sleep mode
-     @param sleep state
-     */
-    virtual void setSleepMode(bool state) override;
     
 protected:
     long       _animationInterval;  //micro second

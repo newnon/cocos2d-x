@@ -214,10 +214,6 @@ void Application::applicationScreenSizeChanged(int newWidth, int newHeight) {
 
 }
 
-void Application::setSleepMode(bool state)
-{
-}
-
 NS_CC_END
 
 #endif // CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID

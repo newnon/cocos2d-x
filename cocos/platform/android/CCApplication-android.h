@@ -103,12 +103,6 @@ public:
     */
     virtual void applicationScreenSizeChanged(int newWidth, int newHeight);
 
-    /**
-     @brieef This function change app to sleep mode
-     @param sleep state
-     */
-    virtual void setSleepMode(bool state) override;
-
 protected:
     static Application * sm_pSharedApplication;
 };

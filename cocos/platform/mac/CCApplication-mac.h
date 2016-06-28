@@ -120,10 +120,18 @@ public:
     const std::string& getStartupScriptFilename(void);
     
     /**
-     @brieef This function change app to sleep mode
-     @param sleep state
+     * @brief  This function will be called when the application enters background.
+     * @js NA
+     * @lua NA
      */
-    virtual void setSleepMode(bool state) override;
+    virtual void applicationDidEnterBackground() override;
+    
+    /**
+     * @brief  This function will be called when the application enters foreground.
+     * @js NA
+     * @lua NA
+     */
+    virtual void applicationWillEnterForeground() override;
     
 protected:
     static Application * sm_pSharedApplication;

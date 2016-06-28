@@ -73,8 +73,6 @@ protected:
     
     static int EventHandler(void *userdata, SDL_Event *event);
     
-    void trackUserMouse(bool isUpdated = false);
-    
 private:
     SDL_Surface *_screenSurface = nullptr;
 	bool _isGLInitialized = false;

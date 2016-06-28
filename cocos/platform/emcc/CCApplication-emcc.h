@@ -118,31 +118,27 @@ public:
     void setForegroundMainLoop();
     void setBackgroundMainLoop();
     
-    float getWaitingTime() const { return _currentWaitingTime; }
-    void setWaitingTime(float currentWaitingTime) { _currentWaitingTime = currentWaitingTime; }
-    
-    float getWaitingMouseTime() const { return _currentWaitingMouseTime; }
-    void setWaitingMouseTime(float waitingMouseTime) { _currentWaitingMouseTime = waitingMouseTime; }
+    /**
+     * @brief  This function will be called when the application enters background.
+     * @js NA
+     * @lua NA
+     */
+    virtual void applicationDidEnterBackground() override;
     
     /**
-     @brieef This function change app to sleep mode
-     @param sleep state
+     * @brief  This function will be called when the application enters foreground.
+     * @js NA
+     * @lua NA
      */
-    virtual void setSleepMode(bool state) override;
+    virtual void applicationWillEnterForeground() override;
 
 protected:
     long       _animationInterval;  //micro second
     std::string _resourceRootPath;
-    
-    float _currentWaitingTime = 0.0f;
-    float _currentWaitingMouseTime = 0.0f;
 
-	static Application * sm_pSharedApplication;
+    static Application * sm_pSharedApplication;
 	static std::string _appVersion;
-    
-public:
-    static const float maxWaitingTime;
-    static const float maxWaitingMouseTime;
+
 };
 
 NS_CC_END

@@ -51,8 +51,7 @@ NS_CC_BEGIN
 Application * Application::sm_pSharedApplication = 0;
 std::string Application::_appVersion;
 
-const float Application::maxWaitingTime = 15.0f * 60.0f;
-const float Application::maxWaitingMouseTime = 15.0f * 60.0f;
+
 
 static bool useBackgroundLoop = false;
 static bool useMainLoopTiming = true;
@@ -102,17 +101,6 @@ extern "C"
         if (!useBackgroundLoop)
             return;
         Director::getInstance()->mainLoop();
-        
-        float time = Application::getInstance()->getWaitingTime();
-        if (time < Application::maxWaitingTime)
-        {
-            time += Director::getInstance()->getDeltaTime();
-            Application::getInstance()->setWaitingTime(time);
-        }
-        else
-        {
-            Application::getInstance()->setSleepMode(true);
-        }
     }
 };
 
@@ -287,17 +275,22 @@ bool Application::isFullscreen()
 
 void Application::setForegroundMainLoop()
 {
-    _currentWaitingTime = 0.0f;
+    applicationWillEnterForeground();
+    
     useBackgroundLoop = false;
 }
 
 void Application::setBackgroundMainLoop()
 {
-    _currentWaitingTime = 0.0f;
+    applicationDidEnterBackground();
     useBackgroundLoop = true;
 }
 
-void Application::setSleepMode(bool state)
+void Application::applicationDidEnterBackground()
+{
+}
+
+void Application::applicationWillEnterForeground()
 {
 }
 
