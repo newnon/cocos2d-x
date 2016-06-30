@@ -245,7 +245,12 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
         parentOwner = newParentOwner;
     for(auto child:_children)
     {
-        node->addChild(child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode, parentOwner));
+        Node *childNode = child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode, parentOwner);
+        
+        if (childNode)
+        {
+            node->addChild(childNode);
+        }
     }
     if(rootNode)
     {
