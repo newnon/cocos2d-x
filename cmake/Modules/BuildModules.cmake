@@ -43,9 +43,7 @@ macro (BuildModules)
 
 	# Chipmunk
 	if(USE_CHIPMUNK)
-	  if(USE_PREBUILT_LIBS)
-	    cocos_find_package(Chipmunk CHIPMUNK REQUIRED)
-	  endif()
+	  cocos_find_package(Chipmunk CHIPMUNK REQUIRED)
 	  add_definitions(-DCC_ENABLE_CHIPMUNK_INTEGRATION=1)
 	else(USE_CHIPMUNK)
 	  add_definitions(-DCC_USE_PHYSICS=0)
