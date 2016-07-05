@@ -209,6 +209,14 @@ public:
      *  @return State the state value could be State::CONNECTING, State::OPEN, State::CLOSING or State::CLOSED
      */
     State getReadyState();
+    
+#ifdef __EMSCRIPTEN__
+    static void onOpen(void* userData, unsigned char *msg, int length);
+    static void onMessage(void* userData, unsigned char *msg, int length);
+    static void onError(void* userData);
+    static void onClose(int err, unsigned char* msg, int length, void* userData);
+#endif
+    
 
 private:
     void onSubThreadStarted();
