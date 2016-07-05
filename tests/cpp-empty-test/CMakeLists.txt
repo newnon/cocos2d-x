@@ -112,19 +112,11 @@ else()
        
   if(EMSCRIPTEN)
     set(CMAKE_EXECUTABLE_SUFFIX ".html")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s TOTAL_MEMORY=67108864 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/Resources@/")
-
-    file(GLOB preJsFiles ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/buzz.js)
-    file(GLOB libraryJsFiles 
-      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/audio/emcc/SimpleAudioEngine.js
-      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/base/emcc/StorageEngine.js
-      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/network/WebSocket.js
-      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/network/HttpClient.js
-      ${CMAKE_CURRENT_SOURCE_DIR}/../../cocos/ui/UIEditBox/UIEditBox.js
-    )
-    
-    em_link_js_library(${APP_NAME} ${libraryJsFiles})
-    em_link_pre_js(${APP_NAME} ${preJsFiles})
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -s NO_EXIT_RUNTIME=1 -s TOTAL_MEMORY=67108864 --preload-file ${CMAKE_CURRENT_SOURCE_DIR}/Resources@/")
+    set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2 -s SAFE_HEAP=1")
+    set(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO} -s DEMANGLE_SUPPORT=1 -s ASSERTIONS=2 -s SAFE_HEAP=1")
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} -s DEMANGLE_SUPPORT=0 -s ELIMINATE_DUPLICATE_FUNCTIONS=1 --llvm-lto 1")
+    set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL} -s DEMANGLE_SUPPORT=0 -s ELIMINATE_DUPLICATE_FUNCTIONS=1 --llvm-lto 1")
   else()
     add_custom_command(TARGET ${APP_NAME} POST_BUILD
       COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_SOURCE_DIR}/Resources $<TARGET_FILE_DIR:${APP_NAME}>${RES_PREFIX}
