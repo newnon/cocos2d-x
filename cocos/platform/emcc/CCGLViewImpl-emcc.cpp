@@ -479,8 +479,10 @@ void GLViewImpl::toggleToFullscreen()
 
 bool GLViewImpl::isFullscreen()
 {
+    int windowWidth = 0;
+    int windowHeight = 0;
     int windowFullscreen = 0;
-    emscripten_get_canvas_size(nullptr, nullptr, &windowFullscreen);
+    emscripten_get_canvas_size(&windowWidth, &windowHeight, &windowFullscreen);
     return windowFullscreen;
 }
 
