@@ -16,7 +16,7 @@
 #include "renderer/CCTexture2D.h"
 #include "base/CCDirector.h"
 #include "physics/CCPhysicsBody.h"
-#include "CCFileUtils.h"
+#include "platform/CCFileUtils.h"
 #include "CCBXNodeLoaderLibrary.h"
 #include "CCBXReaderParams.h"
 

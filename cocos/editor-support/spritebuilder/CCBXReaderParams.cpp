@@ -1,6 +1,6 @@
 #include "CCBXReaderParams.h"
 #include "platform/CCFileUtils.h"
-#include "CCApplication.h"
+#include "platform/CCApplication.h"
 #include "base/CCDirector.h"
 #include "2d/CCSpriteFrameCache.h"
 #include <unordered_set>
