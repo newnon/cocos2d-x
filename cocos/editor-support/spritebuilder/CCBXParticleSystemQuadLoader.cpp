@@ -148,8 +148,22 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
  
 ParticleSystemQuadLoader::ParticleSystemQuadLoader()
     :_texture(nullptr)
-    ,_resetOnVisible(false)
-    ,_blendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED)
+    ,_blendFunc({GL_ONE, GL_ONE})
+    ,_emitterMode(ParticleSystem::Mode::GRAVITY)
+    ,_positionType(ParticleSystem::PositionType::FREE)
+    ,_posVar(40.0f, 20.0f)
+    ,_emissionRate(80.0f)
+    ,_duration(-1)
+    ,_totalParticles(250)
+    ,_resetOnVisible(true)
+    ,_life(3.0f, 0.25f)
+    ,_startSize(54.0f, 10.0f)
+    ,_angle(90.0f, 10.0f)
+    ,_speed(60.0f, 20.0f)
+    ,_startColor(Color4F::BLACK)
+    ,_startColorVar(0, 0, 0, 0)
+    ,_endColor(Color4F::BLACK)
+    ,_endColorVar(0, 0, 0, 0)
 {
     
 }

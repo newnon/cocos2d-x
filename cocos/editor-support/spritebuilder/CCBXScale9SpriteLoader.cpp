@@ -38,7 +38,7 @@ void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize
 }
 
 Scale9SpriteLoader::Scale9SpriteLoader()
-    :_blendFunc(BlendFunc::ALPHA_NON_PREMULTIPLIED)
+    :_blendFunc(BlendFunc::ALPHA_PREMULTIPLIED)
 {
     
 }
