@@ -33,6 +33,7 @@ protected:
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
     
     ParticleSystem::Mode _emitterMode;
+    ParticleSystem::PositionType _positionType;
     Vec2 _posVar;
     Vec2 _gravity;
     float _emissionRate;

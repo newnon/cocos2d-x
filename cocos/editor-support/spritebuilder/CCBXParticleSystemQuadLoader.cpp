@@ -7,6 +7,7 @@ namespace spritebuilder {
 static const std::string PROPERTY_EMITERMODE("emitterMode");
 static const std::string PROPERTY_POSVAR("posVar");
 static const std::string PROPERTY_EMISSIONRATE("emissionRate");
+static const std::string PROPERTY_POSITIONTYPE("particlePositionType");
 static const std::string PROPERTY_DURATION("duration");
 static const std::string PROPERTY_TOTALPARTICLES("totalParticles");
 static const std::string PROPERTY_LIFE("life");
@@ -115,6 +116,7 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
         particle->setTexture(_texture);
         particle->setBlendFunc(_blendFunc);
         particle->setEmitterMode(_emitterMode);
+        particle->setPositionType(_positionType);
         
         switch(_emitterMode)
         {
@@ -161,6 +163,8 @@ void ParticleSystemQuadLoader::onHandlePropTypeIntegerLabeled(const std::string 
 {
     if(propertyName == PROPERTY_EMITERMODE) {
         _emitterMode = static_cast<ParticleSystem::Mode>(value);
+    } else if (propertyName == PROPERTY_POSITIONTYPE) {
+        _positionType = static_cast<ParticleSystem::PositionType>(value);
     } else {
         NodeLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
