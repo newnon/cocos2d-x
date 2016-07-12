@@ -373,17 +373,20 @@ void GLViewImpl::pollEvents()
 		int zoomWidth = windowWidth / _frameZoomFactor;
 		int zoomHeight = windowHeight / _frameZoomFactor;
 
-		screenSizeChanged(zoomWidth, zoomHeight);
-		Application::getInstance()->applicationScreenSizeChanged(zoomWidth, zoomHeight);
-        
 		CCLOG("change window size(%i, %i, %i)", zoomWidth, zoomHeight, windowFullscreen);
-        
+
         if (_windowFullscreen == 1 && windowFullscreen == 0)
         {
             _windowFullscreen = 0;
             const std::string &script = "Module['forcedAspectRatio'] = " + std::to_string(_defaultWindowHeight / _defaultWindowWidth) + ";";
             emscripten_run_script(script.c_str());
             emscripten_set_canvas_size(_defaultWindowWidth, _defaultWindowHeight);
+        }
+        else
+        {
+            screenSizeChanged(zoomWidth, zoomHeight);
+            Application::getInstance()->applicationScreenSizeChanged(zoomWidth, zoomHeight);
+
         }
 	}
     

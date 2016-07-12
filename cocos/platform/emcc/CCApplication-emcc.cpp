@@ -30,7 +30,6 @@ THE SOFTWARE.
 //#include "platform/CCFileUtils.h"
 #include "base/CCDirector.h"
 #include "CCGLViewImpl-emcc.h"
-//#include "CCEGLView.h"
 #include <stdio.h>
 #include <time.h>
 #include <unistd.h>
