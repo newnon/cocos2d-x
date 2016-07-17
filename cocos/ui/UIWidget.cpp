@@ -1276,17 +1276,23 @@ void Widget::copyClonedWidgetChildren(Widget* model)
     }
 }
 
-GLProgramState* Widget::getNormalGLProgramState()const
+GLProgramState* Widget::getNormalGLProgramState(bool hasSeparateAlpha)const
 {
     GLProgramState *glState = nullptr;
-    glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP);
+    if(hasSeparateAlpha)
+        glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS_NO_MVP);
+    else
+        glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP);
     return glState;
 }
 
-GLProgramState* Widget::getGrayGLProgramState()const
+GLProgramState* Widget::getGrayGLProgramState(bool hasSeparateAlpha)const
 {
     GLProgramState *glState = nullptr;
-    glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE);
+    if(hasSeparateAlpha)
+        glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE_ATLAS);
+    else
+        glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE);
     return glState;
 }
 

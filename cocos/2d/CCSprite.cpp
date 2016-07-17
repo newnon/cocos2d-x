@@ -289,7 +289,10 @@ bool Sprite::initWithTexture(Texture2D *texture, const Rect& rect, bool rotated)
         _quad.tr.colors = Color4B::WHITE;
         
         // shader state
-        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP));
+        if(texture && texture->hasSeparateAlpha())
+            setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS_NO_MVP));
+        else
+            setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP));
 
         // update texture (calls updateBlendFunc)
         setTexture(texture);
@@ -386,6 +389,14 @@ void Sprite::setTexture(Texture2D *texture)
             texture = _director->getTextureCache()->addImage(image, CC_2x2_WHITE_IMAGE_KEY);
             CC_SAFE_RELEASE(image);
         }
+    }
+    
+    if((!_texture && texture && texture->hasSeparateAlpha()) || (_texture && _texture->hasSeparateAlpha() && !texture) || (_texture && texture && texture->hasSeparateAlpha()!=_texture->hasSeparateAlpha()))
+    {
+        if(texture && texture->hasSeparateAlpha())
+            setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS_NO_MVP));
+        else
+            setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP));
     }
 
     if (!_batchNode && _texture != texture)

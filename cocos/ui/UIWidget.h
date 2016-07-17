@@ -914,13 +914,13 @@ protected:
      *@since v3.4
      */
     
-    GLProgramState* getNormalGLProgramState()const;
+    GLProgramState* getNormalGLProgramState(bool hasSeparateAlpha = false) const;
     
     /**
      * Get a disabled state GLProgramState
      *@since v3.4
      */
-    GLProgramState* getGrayGLProgramState()const;
+    GLProgramState* getGrayGLProgramState(bool hasSeparateAlpha = false) const;
      
     
     //call back function called when size changed.

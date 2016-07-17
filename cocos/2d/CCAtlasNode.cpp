@@ -102,7 +102,10 @@ bool AtlasNode::initWithTexture(Texture2D* texture, int tileWidth, int tileHeigh
     _quadsToDraw = itemsToRender;
 
     // shader stuff
-    setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP));
+    if(texture && texture->hasSeparateAlpha())
+        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS_NO_MVP));
+    else
+        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP));
 
     return true;
 }

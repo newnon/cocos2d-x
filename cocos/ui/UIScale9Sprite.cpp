@@ -420,6 +420,14 @@ namespace ui {
         this->cleanupSlicedSprites();
 
         updateBlendFunc(sprite?sprite->getTexture():nullptr);
+        
+        Texture2D* oldTexture = _scale9Image?_scale9Image->getTexture():nullptr;
+        Texture2D* texture = sprite?sprite->getTexture():nullptr;
+        
+        if((!oldTexture && texture && texture->hasSeparateAlpha()) || (oldTexture && oldTexture->hasSeparateAlpha() && !texture) || (oldTexture && texture && texture->hasSeparateAlpha()!=oldTexture->hasSeparateAlpha()))
+        {
+            setState(_brightState);
+        }
 
         if(nullptr != sprite)
         {
@@ -482,8 +490,9 @@ namespace ui {
         }
 
         applyBlendFunc();
+        
         if (getGLProgramState()) {
-            _scale9Image->setGLProgramState(getGLProgramState());
+            //_scale9Image->setGLProgramState(getGLProgramState());
         } else {
             this->setState(_brightState);
         }
@@ -598,12 +607,18 @@ namespace ui {
         {
         case State::NORMAL:
         {
-            glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP);
+            if(_scale9Image && _scale9Image->getTexture() && _scale9Image->getTexture()->hasSeparateAlpha())
+                glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS_NO_MVP);
+            else
+                glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP);
         }
         break;
         case State::GRAY:
         {
-            glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE);
+            if(_scale9Image->getTexture() && _scale9Image->getTexture()->hasSeparateAlpha())
+                glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE_ATLAS);
+            else
+                glState = GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_GRAYSCALE);
         }
         default:
             break;

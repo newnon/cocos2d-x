@@ -304,8 +304,8 @@ void AbstractCheckButton::onPressStateChangedToNormal()
     _backGroundBoxDisabledRenderer->setVisible(false);
     _frontCrossDisabledRenderer->setVisible(false);
     
-    _backGroundBoxRenderer->setGLProgramState(this->getNormalGLProgramState());
-    _frontCrossRenderer->setGLProgramState(this->getNormalGLProgramState());
+    _backGroundBoxRenderer->setGLProgramState(this->getNormalGLProgramState(_backGroundBoxRenderer->getTexture() && _backGroundBoxRenderer->getTexture()->hasSeparateAlpha()));
+    _frontCrossRenderer->setGLProgramState(this->getNormalGLProgramState(_frontCrossRenderer->getTexture() && _frontCrossRenderer->getTexture()->hasSeparateAlpha()));
     
     
     _backGroundBoxRenderer->setScale(_backgroundTextureScaleX, _backgroundTextureScaleY);
@@ -321,8 +321,8 @@ void AbstractCheckButton::onPressStateChangedToNormal()
 
 void AbstractCheckButton::onPressStateChangedToPressed()
 {
-    _backGroundBoxRenderer->setGLProgramState(this->getNormalGLProgramState());
-    _frontCrossRenderer->setGLProgramState(this->getNormalGLProgramState());
+    _backGroundBoxRenderer->setGLProgramState(this->getNormalGLProgramState(_backGroundBoxRenderer->getTexture() && _backGroundBoxRenderer->getTexture()->hasSeparateAlpha()));
+    _frontCrossRenderer->setGLProgramState(this->getNormalGLProgramState(_frontCrossRenderer->getTexture() && _frontCrossRenderer->getTexture()->hasSeparateAlpha()));
     
     if (!_isBackgroundSelectedTextureLoaded)
     {
@@ -345,8 +345,8 @@ void AbstractCheckButton::onPressStateChangedToDisabled()
     if (!_isBackgroundDisabledTextureLoaded
         || !_isFrontCrossDisabledTextureLoaded)
     {
-        _backGroundBoxRenderer->setGLProgramState(this->getGrayGLProgramState());
-        _frontCrossRenderer->setGLProgramState(this->getGrayGLProgramState());
+        _backGroundBoxRenderer->setGLProgramState(this->getGrayGLProgramState(_backGroundBoxRenderer->getTexture() && _backGroundBoxRenderer->getTexture()->hasSeparateAlpha()));
+        _frontCrossRenderer->setGLProgramState(this->getGrayGLProgramState(_frontCrossRenderer->getTexture() && _frontCrossRenderer->getTexture()->hasSeparateAlpha()));
     }
     else
     {

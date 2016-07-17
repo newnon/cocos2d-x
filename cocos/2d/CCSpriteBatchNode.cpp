@@ -103,7 +103,10 @@ bool SpriteBatchNode::initWithTexture(Texture2D *tex, ssize_t capacity/* = DEFAU
 
     _descendants.reserve(capacity);
     
-    setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR));
+    if(tex && tex->hasSeparateAlpha())
+        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS));
+    else
+        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR));
     return true;
 }
 

@@ -76,6 +76,8 @@ NS_CC_BEGIN
 
 const char* GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR = "ShaderPositionTextureColor";
 const char* GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_NO_MVP = "ShaderPositionTextureColor_noMVP";
+const char* GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS = "ShaderPositionTextureColorAtlas";
+const char* GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS_NO_MVP = "ShaderPositionTextureColorAtlas_noMVP";
 const char* GLProgram::SHADER_NAME_POSITION_TEXTURE_ALPHA_TEST = "ShaderPositionTextureColorAlphaTest";
 const char* GLProgram::SHADER_NAME_POSITION_TEXTURE_ALPHA_TEST_NO_MV = "ShaderPositionTextureColorAlphaTest_NoMV";
 const char* GLProgram::SHADER_NAME_POSITION_COLOR = "ShaderPositionColor";
@@ -88,6 +90,7 @@ const char* GLProgram::SHADER_NAME_POSITION_TEXTURE_A8_COLOR = "ShaderPositionTe
 const char* GLProgram::SHADER_NAME_POSITION_U_COLOR = "ShaderPosition_uColor";
 const char* GLProgram::SHADER_NAME_POSITION_LENGTH_TEXTURE_COLOR = "ShaderPositionLengthTextureColor";
 const char* GLProgram::SHADER_NAME_POSITION_GRAYSCALE = "ShaderUIGrayScale";
+const char* GLProgram::SHADER_NAME_POSITION_GRAYSCALE_ATLAS = "ShaderUIGrayScaleAtlas";
 const char* GLProgram::SHADER_NAME_LABEL_DISTANCEFIELD_NORMAL = "ShaderLabelDFNormal";
 const char* GLProgram::SHADER_NAME_LABEL_DISTANCEFIELD_GLOW = "ShaderLabelDFGlow";
 const char* GLProgram::SHADER_NAME_LABEL_NORMAL = "ShaderLabelNormal";

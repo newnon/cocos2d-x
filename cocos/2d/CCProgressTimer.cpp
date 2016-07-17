@@ -78,7 +78,10 @@ bool ProgressTimer::initWithSprite(Sprite* sp)
     setSprite(sp);
 
     // shader state
-    setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR));
+    if(_sprite->getTexture() && _sprite->getTexture()->hasSeparateAlpha())
+        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR_ATLAS));
+    else
+        setGLProgramState(GLProgramState::getOrCreateWithGLProgramName(GLProgram::SHADER_NAME_POSITION_TEXTURE_COLOR));
     return true;
 }
 
