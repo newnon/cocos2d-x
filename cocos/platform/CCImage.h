@@ -157,10 +157,11 @@ public:
     Format            getFileType()           { return _fileType; }
     Texture2D::PixelFormat getRenderFormat()  { return _renderFormat; }
     int               getWidth()              { return _width; }
-    int               getHeight()             { return _height; }
+    int               getHeight()             { return _hasSeparateAlpha?_height/2:_height; }
     int               getNumberOfMipmaps()    { return _numberOfMipmaps; }
     MipmapInfo*       getMipmaps()            { return _mipmaps; }
     bool              hasPremultipliedAlpha() { return _hasPremultipliedAlpha; }
+    bool              hasSeparateAlpha()      { return _hasSeparateAlpha; }
     CC_DEPRECATED_ATTRIBUTE bool isPremultipliedAlpha() { return _hasPremultipliedAlpha; }
     std::string getFilePath() const { return _filePath; }
 
@@ -220,6 +221,7 @@ protected:
     int _numberOfMipmaps;
     // false if we can't auto detect the image is premultiplied or not.
     bool _hasPremultipliedAlpha;
+    bool _hasSeparateAlpha;
     std::string _filePath;
 
 
