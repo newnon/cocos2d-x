@@ -4,6 +4,7 @@
 #include "base/CCDirector.h"
 #include "2d/CCSpriteFrameCache.h"
 #include <unordered_set>
+#include "json/document.h"
 
 NS_CC_BEGIN
 
@@ -81,7 +82,61 @@ bool CCBReaderParams::loadParams(const std::string &path)
 
 bool CCBReaderParams::loadLocalization(const std::string &path)
 {
-    std::string fullTranslationPath = FileUtils::getInstance()->fullPathForFilename(path+"Strings.ccbLang");
+    std::string fullTranslationPath = FileUtils::getInstance()->fullPathForFilename(path+"Strings.json");
+    
+    bool loaded = false;
+    if(FileUtils::getInstance()->isFileExist(fullTranslationPath))
+    {
+        std::string jsonData = FileUtils::getInstance()->getStringFromFile(fullTranslationPath);
+        rapidjson::Document parser;
+        parser.Parse<rapidjson::kParseDefaultFlags>(jsonData.c_str());
+        const auto &fileVersionValue = parser["fileVersion"];
+        if(fileVersionValue.IsInt())
+        {
+            if(fileVersionValue.GetInt() == 1)
+            {
+                const auto &activeLanguagesValue = parser["activeLanguages"];
+                if(activeLanguagesValue.IsArray())
+                {
+                    std::unordered_set<std::string> languages;
+                    for(int i=0;i<activeLanguagesValue.Size();++i)
+                    {
+                        languages.insert(activeLanguagesValue[i].GetString());
+                    }
+                    if(languages.find(_curentLanguage) == languages.end())
+                        _curentLanguage = activeLanguagesValue[0].GetString();
+                    
+                    const auto &translationsValue = parser["translations"];
+                    if(translationsValue.IsArray())
+                    {
+                        for(int i=0;i<translationsValue.Size();++i)
+                        {
+                            auto member =  translationsValue[i].FindMember("key");
+                            if (member != translationsValue[i].MemberEnd())
+                            {
+                                const char *key = member->value.GetString();
+                                if(key)
+                                {
+                                    const auto &translationsInternalValue = translationsValue[i]["translations"];
+                                    for(auto it=translationsInternalValue.MemberBegin();it!=translationsInternalValue.MemberEnd();++it)
+                                    {
+                                        if(it->name.GetString())
+                                            _languages[it->name.GetString()][key] = it->value.GetString()?it->value.GetString():"";
+                                    }
+                                }
+                            }
+                        }
+                        loaded = true;
+                    }
+                }
+            }
+        }
+    }
+    
+    if(loaded)
+        return true;
+    
+    fullTranslationPath = FileUtils::getInstance()->fullPathForFilename(path+"Strings.ccbLang");
     ValueMap translationDict = FileUtils::getInstance()->getValueMapFromFile(fullTranslationPath);
     
     auto fileVersion = translationDict.find("fileVersion");
