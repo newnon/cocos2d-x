@@ -346,7 +346,7 @@ void AbstractCheckButton::onPressStateChangedToDisabled()
         || !_isFrontCrossDisabledTextureLoaded)
     {
         _backGroundBoxRenderer->setGLProgramState(this->getGrayGLProgramState(_backGroundBoxRenderer->getTexture()));
-        _frontCrossRenderer->setGLProgramState(this->getGrayGLProgramState(_backGroundBoxRenderer->getTexture()));
+        _frontCrossRenderer->setGLProgramState(this->getGrayGLProgramState(_frontCrossRenderer->getTexture()));
     }
     else
     {
