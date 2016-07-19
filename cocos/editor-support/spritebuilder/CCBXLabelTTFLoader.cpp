@@ -25,6 +25,7 @@ static const std::string PROPERTY_SHADOWWIDTH("shadowWidth");
 static const std::string PROPERTY_SHADOWOFFSET("shadowOffset");
     
 static const std::string PROPERTY_CONTENTSIZE("contentSize");
+static const std::string PROPERTY_ADJUSTSFONTSIZETOFIT("adjustsFontSizeToFit");
     
 LabelTTFLoader *LabelTTFLoader::create()
 {
@@ -70,6 +71,7 @@ LabelTTFLoader::LabelTTFLoader()
     ,_textVAlignment(TextVAlignment::TOP)
 	,_dimensions(SizeDescription{SizeUnit::POINTS, SizeUnit::POINTS, {0, 0}})
     ,_fontColor(Color4B::WHITE)
+    ,_adjustsFontSizeToFit(false)
 {
     
 }
@@ -77,6 +79,15 @@ LabelTTFLoader::LabelTTFLoader()
 LabelTTFLoader::~LabelTTFLoader()
 {
     
+}
+    
+void LabelTTFLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
+{
+    if(propertyName == PROPERTY_ADJUSTSFONTSIZETOFIT){
+        _adjustsFontSizeToFit = value;
+    } else {
+        NodeLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
+    }
 }
     
 void LabelTTFLoader::onHandlePropTypeColor4(const std::string &propertyName, bool isExtraProp, const Color4B &value)

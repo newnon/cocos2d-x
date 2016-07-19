@@ -28,6 +28,7 @@ protected:
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value) override;
     virtual void onHandlePropTypePosition(const std::string &propertyName, bool isExtraProp, const PositionDescription &value) override;
+    virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
     
 private:
     cocos2d::Color4B _outlineColor;
@@ -43,6 +44,7 @@ private:
     BlendFunc _blendFunc;
     Color4B _fontColor;
     SizeDescription _dimensions;
+    bool _adjustsFontSizeToFit;
 };
 
 }
