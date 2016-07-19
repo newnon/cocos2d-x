@@ -275,7 +275,7 @@ public:
      * @param outlineColor The color of outline.
      * @param outlineSize The size of outline.
      */
-    void enableOutline(const Color4B& outlineColor,int outlineSize = 1);
+    void enableOutline(const Color4B& outlineColor, float outlineSize = 1.0f);
 
     /** Only support for TTF.
      *
@@ -314,7 +314,7 @@ public:
     /**
     * Return the outline effect size value.
     */
-    int getOutlineSize() const;
+    float getOutlineSize() const;
     /**
     * Return current effect type.
     */
