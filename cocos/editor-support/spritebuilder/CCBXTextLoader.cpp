@@ -1,5 +1,6 @@
 #include "CCBXTextLoader.h"
 #include "ui/UIText.h"
+#include "2d/CCLabel.h"
 
 NS_CC_BEGIN
 namespace spritebuilder {
@@ -25,6 +26,8 @@ static const std::string PROPERTY_SHADOWOFFSET("shadowOffset");
     
 static const std::string PROPERTY_ADJUSTSFONTSIZETOFIT("adjustsFontSizeToFit");
 static const std::string PROPERTY_CONTENTSIZE("contentSize");
+static const std::string PROPERTY_OVERFLOW("overflowType");
+static const std::string PROPERTY_WORDWRAP("wordWrap");
     
 TextLoader *TextLoader::create()
 {
@@ -59,7 +62,11 @@ void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float 
     text->setTextHorizontalAlignment(_textHAlignment);
     text->setTextVerticalAlignment(_textVAlignment);
     text->setTextAreaSize(getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize));
-    text->setAdjustsFontSizeToFit(_adjustsFontSizeToFit);
+//    text->setAdjustsFontSizeToFit(_adjustsFontSizeToFit);
+    
+    Label::Overflow overflow = static_cast<Label::Overflow>(_overflowLabel);
+    text->setOverflow((_adjustsFontSizeToFit && overflow == Label::Overflow::NONE) ? static_cast<int>(Label::Overflow::SHRINK) : _overflowLabel);
+    text->setLabelWordWrap(_wordWrapLabel);
 }
 
 TextLoader::TextLoader()
@@ -74,6 +81,8 @@ TextLoader::TextLoader()
 	,_dimensions(SizeDescription{SizeUnit::POINTS, SizeUnit::POINTS, {0, 0}})
     ,_fontColor(Color4B::WHITE)
     ,_adjustsFontSizeToFit(false)
+    ,_overflowLabel(static_cast<int>(cocos2d::Label::Overflow::NONE))
+    ,_wordWrapLabel(true)
 {
     
 }
@@ -151,6 +160,10 @@ void TextLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName,
         _textHAlignment = static_cast<TextHAlignment>(value);
     } else if(propertyName == PROPERTY_VERTICALALIGNMENT) {
         _textVAlignment = static_cast<TextVAlignment>(value);
+    }else if (propertyName == PROPERTY_OVERFLOW) {
+        _overflowLabel = value;
+    }else if (propertyName == PROPERTY_WORDWRAP) {
+        _wordWrapLabel = static_cast<bool>(value);
     } else {
         WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }

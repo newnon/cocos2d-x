@@ -25,7 +25,8 @@ static const std::string PROPERTY_SHADOWWIDTH("shadowWidth");
 static const std::string PROPERTY_SHADOWOFFSET("shadowOffset");
     
 static const std::string PROPERTY_CONTENTSIZE("contentSize");
-static const std::string PROPERTY_ADJUSTSFONTSIZETOFIT("adjustsFontSizeToFit");
+static const std::string PROPERTY_OVERFLOW("overflowType");
+static const std::string PROPERTY_WORDWRAP("wordWrap");
     
 LabelTTFLoader *LabelTTFLoader::create()
 {
@@ -58,6 +59,9 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
         label->enableShadow(_shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
     if(_fontColor != Color4B::WHITE)
         label->setTextColor(_fontColor);
+    
+    label->setOverflow(static_cast<Label::Overflow>(_overflowLabel));
+    label->setLineBreakWithoutSpace(!_wordWrapLabel);
 }
 
 LabelTTFLoader::LabelTTFLoader()
@@ -71,7 +75,8 @@ LabelTTFLoader::LabelTTFLoader()
     ,_textVAlignment(TextVAlignment::TOP)
 	,_dimensions(SizeDescription{SizeUnit::POINTS, SizeUnit::POINTS, {0, 0}})
     ,_fontColor(Color4B::WHITE)
-    ,_adjustsFontSizeToFit(false)
+    ,_overflowLabel(static_cast<int>(cocos2d::Label::Overflow::NONE))
+    ,_wordWrapLabel(true)
 {
     
 }
@@ -80,16 +85,7 @@ LabelTTFLoader::~LabelTTFLoader()
 {
     
 }
-    
-void LabelTTFLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
-{
-    if(propertyName == PROPERTY_ADJUSTSFONTSIZETOFIT){
-        _adjustsFontSizeToFit = value;
-    } else {
-        NodeLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
-    }
-}
-    
+        
 void LabelTTFLoader::onHandlePropTypeColor4(const std::string &propertyName, bool isExtraProp, const Color4B &value)
 {
     if(propertyName == PROPERTY_FONTCOLOR){
@@ -149,6 +145,10 @@ void LabelTTFLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyN
         _textHAlignment = static_cast<TextHAlignment>(value);
     } else if(propertyName == PROPERTY_VERTICALALIGNMENT) {
         _textVAlignment = static_cast<TextVAlignment>(value);
+    }else if (propertyName == PROPERTY_OVERFLOW) {
+        _overflowLabel = value;
+    }else if (propertyName == PROPERTY_WORDWRAP) {
+        _wordWrapLabel = static_cast<bool>(value);
     } else {
         NodeLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }

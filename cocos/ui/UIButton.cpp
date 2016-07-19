@@ -112,7 +112,8 @@ _leftOffsets(0.0f),
 _topOffsets(0.0f),
 _rightOffsets(0.0f),
 _bottomOffsets(0),
-_adjustsFontSizeToFit(false),
+_overflowLabel(static_cast<int>(Label::Overflow::NONE)),
+_wordWrapLabel(true),
 _hAlignment(TextHAlignment::CENTER),
 _vAlignment(TextVAlignment::CENTER)
 {
@@ -991,62 +992,15 @@ void Button::adaptRenderers()
             Size contentSize = getContentSize();
             Size paddedLabelSize = Size(contentSize.width - (_leftPadding + _rightPadding), contentSize.height -  (_topPadding + _bottomPadding));
             _titleRenderer->setScale(1.0f);
-            if(_adjustsFontSizeToFit && paddedLabelSize.width && paddedLabelSize.height)
-            {
-                _titleRenderer->setDimensions(paddedLabelSize.width, 0);
-                Size textureSize = _titleRenderer->getContentSize();
-                if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
-                {
-                    _titleRenderer->setScale(1.0f);
-                    _titileAdaptDirty = false;
-                    return;
-                }
-                if(textureSize.height>paddedLabelSize.height || textureSize.width>paddedLabelSize.width)
-                {
-                    float startScale = 1.0;
-                    float endScale = 1.0;
-                    do
-                    {
-                        _titleRenderer->setDimensions(paddedLabelSize.width * (endScale * 2.0), 0);
-                        startScale = endScale;
-                        endScale = endScale*2;
-                    }while (_titleRenderer->getContentSize().height>paddedLabelSize.height * endScale || _titleRenderer->getContentSize().width>paddedLabelSize.width * endScale);
-                    
-                    float midScale;
-                    for(int i=0;i<4;++i)
-                    {
-                        midScale = (startScale + endScale) / 2.0f;
-                        _titleRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
-                        if(_titleRenderer->getContentSize().height>paddedLabelSize.height * midScale || _titleRenderer->getContentSize().width>paddedLabelSize.width * midScale)
-                        {
-                            startScale = midScale;
-                        }
-                        else
-                        {
-                            endScale = midScale;
-                        }
-                    }
-                    float realScale = endScale * 1.05;
-                    _titleRenderer->setDimensions(paddedLabelSize.width * realScale, paddedLabelSize.height * realScale);
-                    _titleRenderer->getContentSize();
-                    float labelScale = 1.0f/realScale;
-                    _titleRenderer->setScale(labelScale);
-                    _titleScale = labelScale;
-                }
-                else
-                {
-                    _titleRenderer->setScale(1.0f);
-                    _titleRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
-                    _titleScale = 1.0f;
-                }
-            }
-            else
-            {
-                _titleRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
-                _titleRenderer->getContentSize();
-                _titleRenderer->setScale(_normalTextureScaleXInSize);
-                _titleScale = _normalTextureScaleXInSize;
-            }
+            
+            _titleRenderer->setOverflow(static_cast<Label::Overflow>(_overflowLabel));
+            _titleRenderer->setLineBreakWithoutSpace(!_wordWrapLabel);
+           
+            _titleRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
+            _titleRenderer->getContentSize();
+            _titleRenderer->setScale(_normalTextureScaleXInSize);
+            _titleScale = _normalTextureScaleXInSize;
+            
             updateTitleLocation();
         }
         _titileAdaptDirty = false;
@@ -1340,14 +1294,24 @@ std::string Button::getTitleFontName() const
     }
 }
 
-void Button::setAdjustsFontSizeToFit(bool value)
+void Button::setOverflow(int value)
 {
-    _adjustsFontSizeToFit = value;
+    _overflowLabel = value;
 }
     
-bool Button::getAdjustsFontSizeToFit() const
+int Button::getOverflow() const
 {
-    return _adjustsFontSizeToFit;
+    return _overflowLabel;
+}
+    
+void Button::setLabelWordWrap(bool value)
+{
+    _wordWrapLabel = value;
+}
+
+bool Button::getLabelWordWrap() const
+{
+    return _wordWrapLabel;
 }
 
 std::string Button::getDescription() const

@@ -78,6 +78,8 @@ static const std::string PROPERTY_OFFSET_RIGHT("offsetRight");
 static const std::string PROPERTY_OFFSET_BOTTOM("offsetBottom");
     
 static const std::string PROPERTY_IMAGE_SCALE("imageScale");
+static const std::string PROPERTY_OVERFLOW("overflowType");
+static const std::string PROPERTY_WORDWRAP("wordWrap");
     
 ButtonLoader *ButtonLoader::create()
 {
@@ -217,8 +219,11 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
                                   getAbsoluteScale(mainScale, additionalScale, _rightPadding.scale, _rightPadding.type),
                                   getAbsoluteScale(mainScale, additionalScale, _bottomPadding.scale, _bottomPadding.type));
         button->setOffsets(_offset.x, _offset.y, _offset.z, _offset.w);
-        button->setAdjustsFontSizeToFit(_adjustsFontSizeToFit);
         button->setTitleText(_label);
+        
+        Label::Overflow overflow = static_cast<Label::Overflow>(_overflowLabel);
+        button->setOverflow((_adjustsFontSizeToFit && overflow == Label::Overflow::NONE) ? static_cast<int>(Label::Overflow::SHRINK) : _overflowLabel);
+        button->setLabelWordWrap(_wordWrapLabel);
     }
 }
 
@@ -248,6 +253,8 @@ ButtonLoader::ButtonLoader()
     ,_bottomPadding(FloatScaleDescription{0, 0.0f})
     ,_adjustsFontSizeToFit(false)
     ,_imageScale{0,1.f}
+    ,_overflowLabel(static_cast<int>(cocos2d::Label::Overflow::NONE))
+    ,_wordWrapLabel(true)
 {
     
 }
@@ -441,6 +448,10 @@ void ButtonLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyNam
         _textHAlignment = static_cast<TextHAlignment>(value);
     } else if(propertyName == PROPERTY_VERTICALALIGMENT) {
         _textVAlignment = static_cast<TextVAlignment>(value);
+    }else if (propertyName == PROPERTY_OVERFLOW) {
+        _overflowLabel = value;
+    }else if (propertyName == PROPERTY_WORDWRAP) {
+        _wordWrapLabel = static_cast<bool>(value);
     } else {
         WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }

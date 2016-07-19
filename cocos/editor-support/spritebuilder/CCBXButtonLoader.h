@@ -4,6 +4,7 @@
 #include "CCBXWidgetLoader.h"
 
 NS_CC_BEGIN
+
 namespace spritebuilder {
 
 class CC_DLL ButtonLoader : public WidgetLoader {
@@ -73,6 +74,9 @@ private:
     TextHAlignment _textHAlignment;
     TextVAlignment _textVAlignment;
     bool _adjustsFontSizeToFit;
+    
+    int _overflowLabel;
+    bool _wordWrapLabel;
     
     SpriteFrameDescription _normalSpriteFrame;
     SpriteFrameDescription _selectedSpriteFrame;

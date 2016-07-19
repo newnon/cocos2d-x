@@ -45,6 +45,8 @@ private:
     Color4B _fontColor;
     SizeDescription _dimensions;
     bool _adjustsFontSizeToFit;
+    int _overflowLabel;
+    bool _wordWrapLabel;
 };
 
 }

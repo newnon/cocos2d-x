@@ -322,9 +322,12 @@ public:
     * Return current effect color value.
     */
     Color4B getEffectColor() const;
-
-    void setAdjustsFontSizeToFit(bool value);
-    bool getAdjustsFontSizeToFit() const;
+    
+    void setLabelWordWrap(bool value);
+    bool getLabelWordWrap() const;
+    
+    void setOverflow(int value);
+    int getOverflow() const;
 
 CC_CONSTRUCTOR_ACCESS:
     virtual bool init() override;
@@ -353,7 +356,9 @@ protected:
     Label* _labelRenderer;
     bool _labelRendererAdaptDirty;
     Type _type;
-    bool _adjustsFontSizeToFit;
+
+    bool _wordWrapLabel;
+    int _overflowLabel;
 };
 
 }

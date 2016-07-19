@@ -44,7 +44,8 @@ _onSelectedScaleOffset(0.5),
 _labelRenderer(nullptr),
 _labelRendererAdaptDirty(true),
 _type(Type::SYSTEM),
-_adjustsFontSizeToFit(false)
+_overflowLabel(static_cast<int>(Label::Overflow::NONE)),
+_wordWrapLabel(true)
 {
 }
 
@@ -318,72 +319,23 @@ void Text::labelScaleChangedWithSize()
     else
     {
         _labelRenderer->setScale(1.0f);
-        if(_adjustsFontSizeToFit && paddedLabelSize.width && paddedLabelSize.height)
+        _labelRenderer->setDimensions(_contentSize.width,_contentSize.height);
+        Size textureSize = _labelRenderer->getContentSize();
+        if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
         {
-            _labelRenderer->setDimensions(paddedLabelSize.width, 0);
-            Size textureSize = _labelRenderer->getContentSize();
-            if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
-            {
-                _labelRenderer->setScale(1.0f);
-                return;
-            }
-            if(textureSize.height>paddedLabelSize.height || textureSize.width>paddedLabelSize.width)
-            {
-                float startScale = 1.0;
-                float endScale = 1.0;
-                do
-                {
-                    _labelRenderer->setDimensions(paddedLabelSize.width * (endScale * 2.0), 0);
-                    startScale = endScale;
-                    endScale = endScale*2;
-                }while (_labelRenderer->getContentSize().height>paddedLabelSize.height * endScale || _labelRenderer->getContentSize().width>paddedLabelSize.width * endScale);
-                
-                float midScale;
-                for(int i=0;i<4;++i)
-                {
-                    midScale = (startScale + endScale) / 2.0f;
-                    _labelRenderer->setDimensions(paddedLabelSize.width * midScale, 0);
-                    if(_labelRenderer->getContentSize().height>paddedLabelSize.height * midScale || _labelRenderer->getContentSize().width>paddedLabelSize.width * midScale)
-                    {
-                        startScale = midScale;
-                    }
-                    else
-                    {
-                        endScale = midScale;
-                    }
-                }
-                float realScale = endScale * 1.05;
-                _labelRenderer->setDimensions(paddedLabelSize.width * realScale, paddedLabelSize.height * realScale);
-                _labelRenderer->getContentSize();
-                float labelScale = 1.0f/realScale;
-                _labelRenderer->setScale(labelScale);
-                _normalScaleValueX = labelScale;
-                _normalScaleValueY = labelScale;
-            }
-            else
-            {
-                _labelRenderer->setScale(1.0f);
-                _labelRenderer->setDimensions(paddedLabelSize.width, paddedLabelSize.height);
-                _normalScaleValueX = 1.0f;
-                _normalScaleValueY = 1.0f;
-            }
+            _labelRenderer->setScale(1.0f);
+            return;
         }
-        else
-        {
-            _labelRenderer->setDimensions(_contentSize.width,_contentSize.height);
-            Size textureSize = _labelRenderer->getContentSize();
-            if (textureSize.width <= 0.0f || textureSize.height <= 0.0f)
-            {
-                _labelRenderer->setScale(1.0f);
-                return;
-            }
-            float scaleX = _contentSize.width / textureSize.width;
-            float scaleY = _contentSize.height / textureSize.height;
-            _labelRenderer->setScaleX(scaleX);
-            _labelRenderer->setScaleY(scaleY);
-            _normalScaleValueX = scaleX;
-            _normalScaleValueY = scaleY;
-        }
+        float scaleX = _contentSize.width / textureSize.width;
+        float scaleY = _contentSize.height / textureSize.height;
+        _labelRenderer->setScaleX(scaleX);
+        _labelRenderer->setScaleY(scaleY);
+        
+        _labelRenderer->setOverflow(static_cast<Label::Overflow>(_overflowLabel));
+        _labelRenderer->setLineBreakWithoutSpace(!_wordWrapLabel);
+        
+        _normalScaleValueX = scaleX;
+        _normalScaleValueY = scaleY;
     }
     _labelRenderer->setPosition(_contentSize.width / 2.0f, _contentSize.height / 2.0f);
 }
@@ -460,17 +412,27 @@ Color4B Text::getEffectColor() const
     Color4F effect = _labelRenderer->getEffectColor();
     return Color4B(effect.r * 255, effect.g * 255, effect.b * 255, effect.a * 255);
 }
+
+void Text::setLabelWordWrap(bool value)
+{
+    _wordWrapLabel = value;
+}
     
-void Text::setAdjustsFontSizeToFit(bool value)
+bool Text::getLabelWordWrap() const
 {
-    _adjustsFontSizeToFit = value;
+    return _wordWrapLabel;
 }
 
-bool Text::getAdjustsFontSizeToFit() const
+void Text::setOverflow(int value)
 {
-    return _adjustsFontSizeToFit;
+    _overflowLabel = value;
 }
-
+    
+int Text::getOverflow() const
+{
+    return _overflowLabel;
+}
+    
 Widget* Text::createCloneInstance()
 {
     return Text::create();

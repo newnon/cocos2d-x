@@ -296,9 +296,6 @@ public:
      */
     void setTitleAlignment(TextHAlignment hAlignment, TextVAlignment vAlignment);
     
-    void setAdjustsFontSizeToFit(bool value);
-    bool getAdjustsFontSizeToFit() const;
-
     /** @brief When user pressed the button, the button will zoom to a scale.
      * The final scale of the button  equals (button original scale + _zoomScale)
      * @since v3.3
@@ -323,6 +320,12 @@ public:
      * @param scale image internal scale
      */
     float getImageScale() const;
+    
+    void setLabelWordWrap(bool value);
+    bool getLabelWordWrap() const;
+    
+    void setOverflow(int value);
+    int getOverflow() const;
     
     /**
      * @brief Return the nine-patch sprite of normal state
@@ -571,7 +574,8 @@ private:
     int _fontSize;
     FontType _type;
     std::string _fontName;
-    bool _adjustsFontSizeToFit;
+    bool _wordWrapLabel;
+    int _overflowLabel;
 };
 
 }
