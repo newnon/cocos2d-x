@@ -504,13 +504,9 @@ ActionInterval* CCBAnimationManager::getAction(CCBKeyframe *pKeyframe0, CCBKeyfr
     {
         bool baseValue = getBaseValue(pNode, propName).asBool();
         if (pKeyframe1->getValue().asBool() != baseValue)
-        {
             return Sequence::createWithTwoActions(DelayTime::create(duration), Show::create());
-        }
-        else 
-        {
+        else
             return Sequence::createWithTwoActions(DelayTime::create(duration), Hide::create());
-        }
     }
     else if ((propName == "displayFrame")||((propName == "spriteFrame")))
     {
@@ -672,8 +668,8 @@ void CCBAnimationManager::setAnimatedProperty(const std::string& propName, Node 
             }
             else if (propName == "visible")
             {
-                bool visible = value.asBool();
-                pNode->setVisible(visible);
+                bool baseValue = getBaseValue(pNode, propName).asBool();
+                pNode->setVisible(value.asBool() != baseValue);
             }
             else if (propName == "animation")
             {
@@ -894,19 +890,41 @@ void CCBAnimationManager::runAction(Node *pNode, CCBSequenceProperty *pSeqProp, 
         Vector<FiniteTimeAction*> actions;
         
         CCBKeyframe *keyframeFirst = keyframes.at(0);
-        float timeFirst = keyframeFirst->getTime() + fTweenDuration;
+        float timeFirst = keyframeFirst->getTime();
         
-        if (timeFirst > 0)
+        if (timeFirst + fTweenDuration > 0)
         {
-            actions.pushBack(DelayTime::create(timeFirst));
-        }
-        {
-            CCBKeyframe *kf0 = keyframes.at(0);
-            ActionInterval *action = getAction(kf0, kf0, pSeqProp->getName(), pNode);
-            if (action)
+            if(timeFirst > fTweenDuration)
             {
-                actions.pushBack(action);
+                actions.pushBack(DelayTime::create(timeFirst + fTweenDuration));
+                ActionInterval *action = getAction(keyframeFirst, keyframeFirst, pSeqProp->getName(), pNode);
+                if (action)
+                    actions.pushBack(action);
             }
+            else
+            {
+                float deltaDuration = fTweenDuration - timeFirst;
+                actions.pushBack(DelayTime::create(timeFirst));
+                
+                CCBKeyframe *kf0 = new (std::nothrow) CCBKeyframe();
+                kf0->autorelease();
+                
+                kf0->setObject(keyframeFirst->getObject());
+                kf0->setValue(keyframeFirst->getValue());
+                kf0->setTime(deltaDuration);
+                kf0->setEasingType(CCBKeyframe::EasingType::LINEAR);
+                
+                ActionInterval *action = getAction(kf0, keyframeFirst, pSeqProp->getName(), pNode);
+                if (action)
+                {
+                    action = getEaseAction(action, kf0->getEasingType(), kf0->getEasingOpt());
+                    actions.pushBack(action);
+                }
+            }
+        }
+        else
+        {
+            setAnimatedProperty(pSeqProp->getName(), pNode, keyframeFirst->getValue(), keyframeFirst->getObject(), 0);
         }
         if (numKeyframes > 1)
         {
@@ -926,9 +944,12 @@ void CCBAnimationManager::runAction(Node *pNode, CCBSequenceProperty *pSeqProp, 
             }
         }
         
-        auto seq = Sequence::create(actions);
-        seq->setTag(animationTag);
-        pNode->runAction(seq);
+        if(actions.size())
+        {
+            auto seq = Sequence::create(actions);
+            seq->setTag(animationTag);
+            pNode->runAction(seq);
+        }
     }
 }
 
