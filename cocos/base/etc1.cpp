@@ -19,6 +19,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 //#include "detex.h"
 
 #include <stdint.h>
+#include <string.h>
 
 #define DETEX_INLINE_ONLY __attribute__((always_inline)) inline
 #define DETEX_RESTRICT __restrict
