@@ -175,6 +175,7 @@ public:
     virtual void onHandlePropTypeInteger(const std::string &propertyName, bool isExtraProp, int value);
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value);
     virtual void onHandlePropTypeFloatVar(const std::string &propertyName, bool isExtraProp, const Vec2 &value);
+    virtual void onHandlePropTypeAnimation(const std::string &propertyName, bool isExtraProp, int value);
     
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value);
     virtual void onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value);

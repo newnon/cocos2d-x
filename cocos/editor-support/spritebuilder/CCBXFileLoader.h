@@ -17,9 +17,11 @@ CC_CONSTRUCTOR_ACCESS:
 
 protected:
     virtual void onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, NodeLoader *value) override;
+    virtual void onHandlePropTypeAnimation(const std::string &propertyName, bool isExtraProp, int value) override;
     
 private:
     NodeLoader *_file;
+    int _sequenceId;
 };
 
 }

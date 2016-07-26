@@ -86,6 +86,8 @@ public:
     void runAnimationsForSequenceNamedTweenDuration(const char *pName, float fTweenDuration, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback = nullptr);
     void runAnimationsForSequenceNamed(const char *pName, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback = nullptr);
     void runAnimationsForSequenceIdTweenDuration(int nSeqId, float fTweenDuraiton, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback = nullptr);
+    
+    void stopAnimations();
 
     void debug();
 

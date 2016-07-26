@@ -235,6 +235,10 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
     {
         manager->setBaseValue(it.second, node, it.first);
     }
+    for(const auto &it:_objects)
+    {
+        manager->setObject(it.second, node, it.first);
+    }
     setAnimation(node, manager);
 #if CC_USE_PHYSICS
     if(_physicsLoader)
@@ -543,6 +547,10 @@ void NodeLoader::onHandlePropTypeFloatVar(const std::string &propertyName, bool 
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }
 
+void NodeLoader::onHandlePropTypeAnimation(const std::string &propertyName, bool isExtraProp, int value)
+{
+    ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
+}
 
 void NodeLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
 {

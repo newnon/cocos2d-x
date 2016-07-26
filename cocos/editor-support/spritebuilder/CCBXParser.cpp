@@ -1006,6 +1006,16 @@ private:
                     loader->onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, integerLabeled);
                     break;
                 }
+                case PropertyType::ANIMATION:
+                {
+                    int animation = this->parsePropTypeInteger();
+                    if (animatedProperties.find(propertyName) != animatedProperties.end())
+                    {
+                        baseValues.emplace(propertyName, Value(animation));
+                    }
+                    loader->onHandlePropTypeAnimation(propertyName, isExtraProp, animation);
+                    break;
+                }
                 case PropertyType::FLOAT_VAR:
                 {
                     Vec2 floatVar = parsePropTypeFloatVar();
@@ -1242,6 +1252,11 @@ private:
             
             keyframe->setObject(spriteFrame);
         }
+        else if (type == PropertyType::ANIMATION)
+        {
+            value = readInt(true);
+        }
+            
         
         if (!value.isNull())
             keyframe->setValue(value);
