@@ -36,7 +36,7 @@ public:
     CCBAnimationManager(float mainScale, float additionalScale, cocos2d::Node *rootNode, CCBXReaderOwner *owner);
     ~CCBAnimationManager();
     
-    inline static CCBAnimationManager *fromNode(Node *node);
+    static CCBAnimationManager *fromNode(Node *node);
     
     virtual bool init();
     
