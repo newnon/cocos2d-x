@@ -502,8 +502,16 @@ ActionInterval* CCBAnimationManager::getAction(CCBKeyframe *pKeyframe0, CCBKeyfr
     }
     else if (propName == "visible")
     {
-        bool baseValue = getBaseValue(pNode, propName).asBool();
-        if (pKeyframe1->getValue().asBool() != baseValue)
+        bool val = pKeyframe1->getValue().asBool();
+        if(pKeyframe0)
+        {
+            bool baseValue = getBaseValue(pNode, propName).asBool();
+            if(val)
+                val = !baseValue;
+            else
+                val = baseValue;
+        }
+        if (val)
             return Sequence::createWithTwoActions(DelayTime::create(duration), Show::create());
         else
             return Sequence::createWithTwoActions(DelayTime::create(duration), Hide::create());
@@ -668,8 +676,7 @@ void CCBAnimationManager::setAnimatedProperty(const std::string& propName, Node 
             }
             else if (propName == "visible")
             {
-                bool baseValue = getBaseValue(pNode, propName).asBool();
-                pNode->setVisible(value.asBool() != baseValue);
+                pNode->setVisible(value.asBool());
             }
             else if (propName == "animation")
             {
@@ -680,7 +687,7 @@ void CCBAnimationManager::setAnimatedProperty(const std::string& propName, Node 
                     if(sequenceId == -2)
                         animationManager->runAnimationsForSequenceIdTweenDuration(animationManager->getAutoPlaySequenceId(), 0);
                     else if(sequenceId == -1)
-                        animationManager->stopAnimations();
+                        animationManager->stopAnimations(false);
                     else
                         animationManager->runAnimationsForSequenceIdTweenDuration(sequenceId, 0);
                 }
@@ -699,7 +706,18 @@ void CCBAnimationManager::setFirstFrame(Node *pNode, CCBSequenceProperty *pSeqPr
     auto& baseValue = getBaseValue(pNode, pSeqProp->getName());
     auto obj = getObject(pNode, pSeqProp->getName());
     CCASSERT(!baseValue.isNull() || obj, "No baseValue found for property");
-    setAnimatedProperty(pSeqProp->getName(), pNode, baseValue, obj, fTweenDuration);
+    
+    auto& keyframes = pSeqProp->getKeyframes();
+    CCBKeyframe *keyframeFirst = !keyframes.empty() ? keyframes.at(0) : nullptr;
+    
+    if (keyframeFirst && keyframeFirst->getTime() == 0)
+    {
+        setAnimatedProperty(pSeqProp->getName(), pNode, keyframeFirst->getValue(), keyframeFirst->getObject(), fTweenDuration);
+    }
+    else
+    {
+        setAnimatedProperty(pSeqProp->getName(), pNode, baseValue, obj, fTweenDuration);
+    }
 }
 
 ActionInterval* CCBAnimationManager::getEaseAction(ActionInterval *pAction, CCBKeyframe::EasingType easingType, float fEasingOpt)
@@ -892,40 +910,16 @@ void CCBAnimationManager::runAction(Node *pNode, CCBSequenceProperty *pSeqProp, 
         CCBKeyframe *keyframeFirst = keyframes.at(0);
         float timeFirst = keyframeFirst->getTime();
         
-        if (timeFirst + fTweenDuration > 0)
+        if(timeFirst > 0 || fTweenDuration > 0)
+            actions.pushBack(DelayTime::create(timeFirst + fTweenDuration));
+        
+        if (timeFirst > 0)
         {
-            if(timeFirst > fTweenDuration)
-            {
-                actions.pushBack(DelayTime::create(timeFirst + fTweenDuration));
-                ActionInterval *action = getAction(keyframeFirst, keyframeFirst, pSeqProp->getName(), pNode);
-                if (action)
-                    actions.pushBack(action);
-            }
-            else
-            {
-                float deltaDuration = fTweenDuration - timeFirst;
-                actions.pushBack(DelayTime::create(timeFirst));
-                
-                CCBKeyframe *kf0 = new (std::nothrow) CCBKeyframe();
-                kf0->autorelease();
-                
-                kf0->setObject(keyframeFirst->getObject());
-                kf0->setValue(keyframeFirst->getValue());
-                kf0->setTime(deltaDuration);
-                kf0->setEasingType(CCBKeyframe::EasingType::LINEAR);
-                
-                ActionInterval *action = getAction(kf0, keyframeFirst, pSeqProp->getName(), pNode);
-                if (action)
-                {
-                    action = getEaseAction(action, kf0->getEasingType(), kf0->getEasingOpt());
-                    actions.pushBack(action);
-                }
-            }
+            ActionInterval *action = getAction(keyframeFirst, keyframeFirst, pSeqProp->getName(), pNode);
+            if (action)
+                actions.pushBack(action);
         }
-        else
-        {
-            setAnimatedProperty(pSeqProp->getName(), pNode, keyframeFirst->getValue(), keyframeFirst->getObject(), 0);
-        }
+        
         if (numKeyframes > 1)
         {
             for (ssize_t i = 0; i < numKeyframes - 1; ++i)
@@ -965,7 +959,7 @@ void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, fl
             _runningSequence.second(_rootNode, AnimationCompleteType::STOPED);
     }
     
-    _rootNode->stopAllActionsByTag(animationTag);
+    stopAnimations(false);
     
     for (auto nodeSeqIter = _nodeSequences.begin(); nodeSeqIter != _nodeSequences.end(); ++nodeSeqIter)
     {
@@ -1016,7 +1010,7 @@ void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, fl
                 CCBSequenceProperty *seqProp = iter->second;
                 seqNodePropNames.insert(propName);
                 
-                //setFirstFrame(node, seqProp, fTweenDuration);
+                setFirstFrame(node, seqProp, fTweenDuration);
                 runAction(node, seqProp, fTweenDuration);
             }
         }
@@ -1051,7 +1045,17 @@ void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, fl
     _runningSequence.second = callback;
 }
     
-void CCBAnimationManager::stopAnimations()
+static void stopAllActionsForNode(cocos2d::Node *node)
+{
+    if(node)
+    {
+        node->stopAllActionsByTag(animationTag);
+        for(cocos2d::Node *child:node->getChildren())
+            stopAllActionsForNode(child);
+    }
+}
+    
+void CCBAnimationManager::stopAnimations(bool reset)
 {
     if(_runningSequence.first)
     {
@@ -1061,7 +1065,35 @@ void CCBAnimationManager::stopAnimations()
             _runningSequence.second(_rootNode, AnimationCompleteType::STOPED);
     }
     
-    _rootNode->stopAllActionsByTag(animationTag);
+    stopAllActionsForNode(_rootNode);
+    
+    if(reset)
+    {
+        for(auto nodeIt:_baseValues)
+        {
+            for(const auto &iter:nodeIt.second)
+            {
+                if (iter.first == "animation")
+                {
+                    CCBAnimationManager *animationManager = CCBAnimationManager::fromNode(nodeIt.first);
+                    if(animationManager)
+                        animationManager->stopAnimations(true);
+                }
+                else
+                {
+                    setAnimatedProperty(iter.first, nodeIt.first, iter.second, nullptr, 0);
+                }
+            }
+        }
+
+        for(auto nodeIt:_objects)
+        {
+            for(const auto &iter:nodeIt.second)
+            {
+                setAnimatedProperty(iter.first, nodeIt.first, Value(), iter.second, 0);
+            }
+        }
+    }
 }
 
 void CCBAnimationManager::runAnimationsForSequenceNamedTweenDuration(const char *pName, float fTweenDuration, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback)

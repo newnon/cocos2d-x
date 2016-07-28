@@ -968,6 +968,10 @@ private:
                 case PropertyType::FLOAT:
                 {
                     float f = parsePropTypeFloat();
+                    if (animatedProperties.find(propertyName) != animatedProperties.end())
+                    {
+                        baseValues.emplace(propertyName, Value(f));
+                    }
                     loader->onHandlePropTypeFloat(propertyName, isExtraProp, f);
                     break;
                 }
