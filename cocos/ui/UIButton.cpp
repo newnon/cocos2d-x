@@ -1241,10 +1241,10 @@ void Button::updateTextOpacity()
 {
     switch (_state) {
         case State::NORMAL:
-            _titleRenderer->setOpacity(multiplyOpacity(_disabledTitleOpacity, _displayedOpacity));
+            _titleRenderer->setOpacity(multiplyOpacity(_normalTitleOpacity, _displayedOpacity));
             break;
         case State::PRESSED:
-            _titleRenderer->setOpacity(multiplyOpacity(_disabledTitleOpacity, _displayedOpacity));
+            _titleRenderer->setOpacity(multiplyOpacity(_pressedTitleOpacity, _displayedOpacity));
             break;
         case State::DISABLED:
             _titleRenderer->setOpacity(multiplyOpacity(_disabledTitleOpacity, _displayedOpacity));
