@@ -13,6 +13,12 @@ static const std::string PROPERTY_CLIPCONTENT("clipContent");
 static const std::string PROPERTY_HORIZONRAL("horizontal");
 static const std::string PROPERTY_INERTIAL_SCROLL("inertialScroll");
 static const std::string PROPERTY_SCROLL_BAR_ENABLED("scrollBarEnabled");
+static const std::string PROPERTY_SCROLL_BAR_WIDTH("scrollBarWidth");
+static const std::string PROPERTY_SCROLL_BAR_AUTOHIDE_ENABLED("scrollBarAutoHideEnabled");
+static const std::string PROPERTY_SCROLL_BAR_HIDE_IF_SIZE_FIT("scrollHideIfSizeFit");
+static const std::string PROPERTY_SCROLL_BAR_POSITION_FROM_CORNER("scrollBarPosition");
+static const std::string PROPERTY_SCROLL_BAR_COLOR("scrollBarColor");
+static const std::string PROPERTY_SCROLL_BAR_OPACITY("scrollBarOpacity");
     
 ScrollListViewLoader *ScrollListViewLoader::create()
 {
@@ -40,9 +46,34 @@ void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSi
     scrollView->setMagneticType(static_cast<cocos2d::ui::ListView::MagneticType>(_magnetic));
     scrollView->setInertiaScrollEnabled(_inertial);
     scrollView->setScrollBarEnabled(_scrollBar);
+    
+    if(_scrollBar)
+    {
+        scrollView->setScrollBarWidth(getAbsoluteScale(mainScale, additionalScale, _scrollBarWidth.scale, _scrollBarWidth.type));
+        scrollView->setScrollBarAutoHideEnabled(_scrollBarAutoHideEnabled);
+        scrollView->setScrollBarPositionFromCorner(getAbsolutePosition(mainScale, additionalScale, _scrollBarPositionFromCorner.pos, _scrollBarPositionFromCorner.referenceCorner, _scrollBarPositionFromCorner.xUnits , _scrollBarPositionFromCorner.yUnits, parentSize));
+        scrollView->setScrollBarColor(_scrollBarColor);
+        scrollView->setScrollBarOpacity(_scrollBarOpacity);
+        scrollView->setScrollBarHideIfSizeFit(_scrollHideIfSizeFit);
+    }
+    
 }
 
-ScrollListViewLoader::ScrollListViewLoader():_horizontal(false),_clipping(true),_bounce(false),_file(nullptr),_gravity(0), _magnetic(0),_inertial(true),_scrollBar(false)
+ScrollListViewLoader::ScrollListViewLoader()
+    :_horizontal(false)
+    ,_clipping(true)
+    ,_bounce(false)
+    ,_file(nullptr)
+    ,_gravity(0)
+    ,_magnetic(0)
+    ,_inertial(true)
+    ,_scrollBar(false)
+    ,_scrollBarWidth{2,12}
+    ,_scrollBarAutoHideEnabled(true)
+    ,_scrollHideIfSizeFit(true)
+    ,_scrollBarPositionFromCorner{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::UIPOINTS, PositionUnit::UIPOINTS, Vec2(20, 20)}
+    ,_scrollBarColor(52, 65, 87)
+    ,_scrollBarOpacity(0.4f)
 {
     
 }
@@ -78,6 +109,42 @@ void ScrollListViewLoader::onHandlePropTypeIntegerLabeled(const std::string &pro
     }
 }
     
+void ScrollListViewLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
+{
+    if(propertyName == PROPERTY_SCROLL_BAR_WIDTH) {
+        _scrollBarWidth = value;
+    } else {
+        NodeLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
+    }
+}
+void ScrollListViewLoader::onHandlePropTypeColor3(const std::string &propertyName, bool isExtraProp, const Color3B &value)
+{
+    if(propertyName == PROPERTY_SCROLL_BAR_COLOR) {
+        _scrollBarColor = value;
+    } else {
+        NodeLoader::onHandlePropTypeColor3(propertyName, isExtraProp, value);
+    }
+}
+    
+void ScrollListViewLoader::onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value)
+{
+    if(propertyName == PROPERTY_SCROLL_BAR_OPACITY) {
+        float opacity = value * 255.0f;
+        _scrollBarOpacity = (opacity<0.0f)?0:((opacity>255.0f)?255:static_cast<GLubyte>(opacity));
+    } else {
+        WidgetLoader::onHandlePropTypeFloat(propertyName, isExtraProp, value);
+    }
+}
+    
+void ScrollListViewLoader::onHandlePropTypePosition(const std::string &propertyName, bool isExtraProp, const PositionDescription &value)
+{
+    if(propertyName == PROPERTY_SCROLL_BAR_POSITION_FROM_CORNER) {
+        _scrollBarPositionFromCorner = value;
+    } else {
+        WidgetLoader::onHandlePropTypePosition(propertyName, isExtraProp, value);
+    }
+}
+    
 void ScrollListViewLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
 {
     if(propertyName == PROPERTY_CLIPCONTENT) {
@@ -90,6 +157,10 @@ void ScrollListViewLoader::onHandlePropTypeCheck(const std::string &propertyName
         _bounce = value;
     } else if(propertyName == PROPERTY_HORIZONRAL) {
         _horizontal = value;
+    } else if(propertyName == PROPERTY_SCROLL_BAR_AUTOHIDE_ENABLED) {
+        _scrollBarAutoHideEnabled = value;
+    } else if(propertyName == PROPERTY_SCROLL_BAR_HIDE_IF_SIZE_FIT) {
+        _scrollHideIfSizeFit = value;
     } else {
         WidgetLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
     }

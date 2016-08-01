@@ -25,6 +25,10 @@ protected:
     virtual void onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, NodeLoader *value) override;
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
+    virtual void onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value) override;
+    virtual void onHandlePropTypeColor3(const std::string &propertyName, bool isExtraProp, const Color3B &value) override;
+    virtual void onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value) override;
+    virtual void onHandlePropTypePosition(const std::string &propertyName, bool isExtraProp, const PositionDescription &value) override;
     
 private:
     bool _horizontal;
@@ -35,6 +39,12 @@ private:
     int _gravity;
     int _magnetic;
     NodeLoader *_file;
+    FloatScaleDescription _scrollBarWidth;
+    bool _scrollBarAutoHideEnabled;
+    bool _scrollHideIfSizeFit;
+    PositionDescription _scrollBarPositionFromCorner;
+    Color3B _scrollBarColor;
+    GLubyte _scrollBarOpacity;
 };
 
 }
