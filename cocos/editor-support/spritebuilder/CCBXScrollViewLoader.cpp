@@ -83,7 +83,7 @@ ScrollViewLoader::ScrollViewLoader()
     ,_scrollHideIfSizeFit(true)
     ,_scrollBarPositionFromCorner{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::UIPOINTS, PositionUnit::UIPOINTS, Vec2(20, 20)}
     ,_scrollBarColor(52, 65, 87)
-    ,_scrollBarOpacity(0.4f)
+    ,_scrollBarOpacity(static_cast<GLubyte>(255 * 0.4f))
 {
     
 }
