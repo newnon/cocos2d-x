@@ -281,7 +281,7 @@ void EditBoxImplEmcc::adjustTextFieldPositionAndSize()
     
     Size contentSize = _editBox->getContentSize();
     Rect rect = Rect(0, 0, contentSize.width, contentSize.height);
-    rect = RectApplyAffineTransform(rect, _editBox->nodeToWorldTransform());
+    rect = RectApplyAffineTransform(rect, _editBox->getNodeToWorldAffineTransform());
 
     Vec2 designCoord = Vec2(rect.origin.x, rect.origin.y + rect.size.height);
     Vec2 visiblePos = Vec2(designCoord.x * glview->getScaleX(), designCoord.y * glview->getScaleY());
