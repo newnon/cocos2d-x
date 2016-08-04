@@ -83,6 +83,11 @@ public:
      */
     virtual std::string getVersion() override;
     
+    /**
+     @brief Get application build version.
+     */
+    virtual std::string getBuildVersion() override;
+    
     
     /**
      *  Sets the Resource root path.
@@ -111,6 +116,7 @@ public:
     virtual bool openURL(const std::string &url) override;
     
     static void setAppVersion(const std::string &version);
+    static void setAppBuildVersion(const std::string &version);
     
     void toggleToFullscreen();
     bool isFullscreen();
@@ -124,6 +130,7 @@ protected:
     
     static Application * sm_pSharedApplication;
     static std::string _appVersion;
+    static std::string _appBuildVersion;
 };
 
 NS_CC_END
