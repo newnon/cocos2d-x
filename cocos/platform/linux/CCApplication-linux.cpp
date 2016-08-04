@@ -146,6 +146,11 @@ std::string Application::getVersion()
     return "";
 }
 
+std::string Application::getBuildVersion()
+{
+    return "";
+}
+
 bool Application::openURL(const std::string &url)
 {
     std::string op = std::string("xdg-open '").append(url).append("'");
