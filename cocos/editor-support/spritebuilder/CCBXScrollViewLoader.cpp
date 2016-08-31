@@ -51,7 +51,7 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
     scrollView->setDirection(direction);
     if(_file)
     {
-        Node *childNode = _file->createNode(parentSize, mainScale, additionalScale, owner);
+        Node *childNode = _file->createNode(scrollView->getContentSize(), mainScale, additionalScale, owner);
         scrollView->setInnerContainerSize(childNode->getContentSize());
         scrollView->getInnerContainer()->addChild(childNode);
         scrollView->setEnabled(true);
