@@ -550,6 +550,17 @@ int GLViewImpl::EventHandler(void *userdata, SDL_Event *event)
         {
             SDL_MouseButtonEvent *mouse = (SDL_MouseButtonEvent*)event;
             thiz->onMouseCallBack(mouse->button, event->type, mouse->x, mouse->y);
+
+            float realScreenWidth = ((thiz->_viewPortRect.size.width - thiz->_viewPortRect.origin.x) * thiz->getFrameZoomFactor()) - 1;
+            float realScreenHeight = ((thiz->_viewPortRect.size.height - thiz->_viewPortRect.origin.y) * thiz->getFrameZoomFactor()) - 1;
+            float cursorX = mouse->x * thiz->getFrameZoomFactor();
+            float cursorY = mouse->y * thiz->getFrameZoomFactor();
+
+            if (event->type == SDL_MOUSEBUTTONUP && (cursorX < 0.0f || cursorX > realScreenWidth || cursorY < 0.0f || cursorY > realScreenHeight))
+            {
+                auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+                glview->clearAllTouches();
+            }
             break;
         }
             
