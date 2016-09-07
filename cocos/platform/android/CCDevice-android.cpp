@@ -183,7 +183,7 @@ void Device::vibrate(float duration)
 
 std::string Device::getDeviceUID()
 {
-    return JniHelper::callStaticStringMethod(helperClassName, "getCurrentLanguage");
+    return JniHelper::callStaticStringMethod(helperClassName, "getDeviceUID");
 }
 
 NS_CC_END
