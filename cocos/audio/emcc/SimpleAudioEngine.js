@@ -90,12 +90,8 @@ var LibrarySimpleAudioEngine = {
     SimpleAudioEngine_playBackgroundMusic: function(filenameP, loop)
     {
         var filename = Pointer_stringify(filenameP);
-<<<<<<< HEAD
         if(Module.CocosDensionState.formats.length > 0)
             filename = filename.substr(0, filename.lastIndexOf('.'));
-=======
-        filename = filename.substr(0, filename.lastIndexOf('.'));
->>>>>>> 3dcc297... emscripten support
 
         _SimpleAudioEngine_stopBackgroundMusic();
 
@@ -133,12 +129,8 @@ var LibrarySimpleAudioEngine = {
     SimpleAudioEngine_preloadBackgroundMusic: function(filenameP)
     {
         var filename = Pointer_stringify(filenameP);
-<<<<<<< HEAD
         if(Module.CocosDensionState.formats.length > 0)
             filename = filename.substr(0, filename.lastIndexOf('.'));
-=======
-        filename = filename.substr(0, filename.lastIndexOf('.'));
->>>>>>> 3dcc297... emscripten support
 
         if(Module.CocosDensionState.musicMap[filename] === undefined)
         {
@@ -185,12 +177,8 @@ var LibrarySimpleAudioEngine = {
         // generated IDs from their filenames in order for this all to
         // function.
         var filename = Pointer_stringify(filenameP);
-<<<<<<< HEAD
         if( Module.CocosDensionState.formats.length > 0)
             filename = filename.substr(0, filename.lastIndexOf('.'));
-=======
-        filename = filename.substr(0, filename.lastIndexOf('.'));
->>>>>>> 3dcc297... emscripten support
         var numEffect = Module.CocosDensionState.numEffectCount;
 
         if(Module.CocosDensionState.effectMap[filename] === undefined)
@@ -231,12 +219,8 @@ var LibrarySimpleAudioEngine = {
     SimpleAudioEngine_preloadEffect: function(filenameP)
     {
         var filename = Pointer_stringify(filenameP);
-<<<<<<< HEAD
         if( Module.CocosDensionState.formats.length > 0)
             filename = filename.substr(0, filename.lastIndexOf('.'));
-=======
-        filename = filename.substr(0, filename.lastIndexOf('.'));
->>>>>>> 3dcc297... emscripten support
 
         if(Module.CocosDensionState.effectMap[filename] === undefined)
         {
