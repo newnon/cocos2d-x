@@ -229,7 +229,6 @@ GLViewImpl::GLViewImpl()
 
 GLViewImpl::~GLViewImpl()
 {
-    SDL_Quit();
 }
 
 bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor)
