@@ -1,4 +1,4 @@
-var LibraryWebSocket = {
+var LibraryCocosWebSocket = {
     WebSocket_init: function(thiz, address)
     {
         Module['cocoswebsocket'] = (Module['cocoswebsocket'] && 
