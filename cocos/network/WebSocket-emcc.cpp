@@ -67,13 +67,13 @@ namespace network {
     
 extern "C"
 {
-    void WebSocket_init(const char *);
-    void WebSocket_send(const char *);
-    void WebSocket_send_data(unsigned char *, unsigned int);
-    void WebSocket_close();
+    void WebSocket_init(void *userData, const char *);
+    void WebSocket_send(void *userData, const char *);
+    void WebSocket_send_data(void *userData, unsigned char *, unsigned int);
+    void WebSocket_close(void *userData);
     
     typedef void (*socket_callback)(void* userData, unsigned char *msg, int length);
-    typedef void (*socket_close_callback)(int err, unsigned char *msg, int length, void* userData);
+    typedef void (*socket_close_callback)(void* userData, int err, unsigned char *msg, int length);
     typedef void (*socket_error_callback)(void* userData);
     
     void WebSocket_set_socket_open_callback(void *userData, socket_callback callback);
@@ -109,6 +109,8 @@ void WebSocket::onOpen(void* userData, unsigned char *msg, int length)
 {
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     
+    webSocket->_readyState = State::OPEN;
+    
     if (webSocket && webSocket->_delegate)
         webSocket->_delegate->onOpen(webSocket);
 }
@@ -142,7 +144,7 @@ void WebSocket::onError(void* userData)
     }
 }
     
-void WebSocket::onClose(int err, unsigned char* msg, int length, void* userData)
+void WebSocket::onClose(void* userData, int err, unsigned char* msg, int length)
 {
     WebSocket* webSocket = static_cast<WebSocket*>(userData);
     
@@ -168,7 +170,7 @@ bool WebSocket::init(const Delegate& delegate,
 {
     _delegate = const_cast<Delegate*>(&delegate);
     
-    WebSocket_init(url.c_str());
+    WebSocket_init(this, url.c_str());
     
 #ifdef __EMSCRIPTEN__
     WebSocket_set_socket_error_callback(static_cast<void*>(this), &WebSocket::onError);
@@ -176,7 +178,7 @@ bool WebSocket::init(const Delegate& delegate,
     WebSocket_set_socket_message_callback(static_cast<void*>(this), &WebSocket::onMessage);
     WebSocket_set_socket_close_callback(static_cast<void*>(this), &WebSocket::onClose);
 #endif
-    _readyState = State::OPEN;
+    _readyState = State::CONNECTING;
     
     return true;
 }
@@ -185,7 +187,7 @@ void WebSocket::send(const std::string& message)
 {
     if (_readyState == State::OPEN)
     {
-        WebSocket_send(message.c_str());
+        WebSocket_send(this, message.c_str());
     }
 }
 
@@ -195,7 +197,7 @@ void WebSocket::send(const unsigned char* binaryMsg, unsigned int len)
     {
         CCASSERT(binaryMsg != nullptr && len > 0, "parameter invalid.");
         
-        WebSocket_send_data((unsigned char*)binaryMsg, len);
+        WebSocket_send_data(this, (unsigned char*)binaryMsg, len);
     }
 }
 
@@ -212,7 +214,7 @@ void WebSocket::close()
     // since websocket instance may be deleted in 'onClose'.
     _delegate->onClose(this);
     
-    WebSocket_close();
+    WebSocket_close(this);
 }
 
 WebSocket::State WebSocket::getReadyState()
