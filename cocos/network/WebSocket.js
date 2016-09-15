@@ -1,34 +1,42 @@
-var LibraryWebSocket = {
-    WebSocket_init: function(address)
+var LibraryCocosWebSocket = {
+    WebSocket_init: function(thiz, address)
     {
-        Module['websocket'] = (Module['websocket'] && 
-                             ('object' === typeof Module['websocket'])) ? Module['websocket'] : {};
-        Module['websocket']._callbacks = {};
-        Module['websocket']['on'] = function(event, callback)
-        {
-            if ('function' === typeof callback)
-            {
-                this._callbacks[event] = callback;
-            }
+        Module['cocoswebsocket'] = (Module['cocoswebsocket'] && 
+                             ('object' === typeof Module['cocoswebsocket'])) ? Module['cocoswebsocket'] : 
+        { 
+            _socketMap : {}, 
+            _callbacks : {},
+            
+            on : function(event, param, callback)
+			{
+				if ('function' === typeof callback)
+				{
+					this._callbacks[param][event] = callback;
+				}
 
-            return this;
-        };
+				return this;
+			},
 
-        Module['websocket'].emit = function(event, data)
-        {
-            if ('function' === typeof this._callbacks[event])
-            {
-                this._callbacks[event].call(this, data);
-            }
+			emit : function(event, param, data)
+			{
+				if ('function' === typeof this._callbacks[param][event])
+				{
+					this._callbacks[param][event].call(this, data);
+				}
+			}
         };
+        
+        Module['cocoswebsocket']._callbacks[thiz] = {};
 
         var serverAddress = Pointer_stringify(address);
-        socket = new WebSocket(serverAddress);
+        var socket = new WebSocket(serverAddress);
         socket.binaryType = "arraybuffer";
+    
+        Module['cocoswebsocket']._socketMap[thiz] = socket;
 
         socket.onopen = function()
         {
-            Module['websocket'].emit('open', [null, 0]);
+            Module['cocoswebsocket'].emit('open', thiz, [null, 0]);
         };
 
         socket.onmessage = function(event)
@@ -37,7 +45,7 @@ var LibraryWebSocket = {
             {
                 var sp = Runtime.stackSave();
                 var msg = allocate(intArrayFromString(event.data), 'i8', ALLOC_STACK);
-                Module['websocket'].emit('message', [msg, event.data.length]);
+                Module['cocoswebsocket'].emit('message', thiz, [msg, event.data.length]);
                 Runtime.stackRestore(sp);
             }
             else if (event.data instanceof ArrayBuffer)
@@ -45,7 +53,7 @@ var LibraryWebSocket = {
                 var byteArray = new Uint8Array(event.data);
                 var buffer = _malloc(byteArray.length);
                 HEAPU8.set(byteArray, buffer);
-                Module['websocket'].emit('message', [buffer, event.data.byteLength]);
+                Module['cocoswebsocket'].emit('message', thiz, [buffer, event.data.byteLength]);
                 _free(buffer);
             }
         };
@@ -85,7 +93,7 @@ var LibraryWebSocket = {
 
             var sp = Runtime.stackSave();
             var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
-            Module['websocket'].emit('close', [event.code, msg, reason.length]);
+            Module['cocoswebsocket'].emit('close', thiz, [event.code, msg, reason.length]);
             Runtime.stackRestore(sp);
         };
         
@@ -93,37 +101,49 @@ var LibraryWebSocket = {
         {
             socket.close();
             
-            Module['websocket'].emit('error', []);
+            Module['cocoswebsocket'].emit('error', thiz, []);
 
             // var reason = "reason socket error";
             // var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
-            // Module['websocket'].emit('close', [1, msg, reason.length]);
+            // Module['cocoswebsocket'].emit('close', [1, msg, reason.length]);
         };
     },
-    WebSocket_close: function()
+    WebSocket_close: function(thiz)
     {
-        socket.onopen = function(){ };
-        socket.onmessage = function(event) { };
-        socket.onclose = function(event){ };
-        socket.onerror = function(error) { };
-        socket.close();
-    },
-    WebSocket_send: function(data)
-    {
-        var sendData = Pointer_stringify(data);
-        socket.send(sendData);
-    },
-    WebSocket_send_data: function(data, length)
-    {
-        var binary = new Uint8Array(length);
-        for (var i = 0; i < length; i++)
+        if(Module['cocoswebsocket']._socketMap[thiz] != undefined)
         {
-            binary[i] = getValue(data + i, 'i8');
+			var socket = Module['cocoswebsocket'].socketMap[thiz];
+			socket.onopen = function(){ };
+			socket.onmessage = function(event) { };
+			socket.onclose = function(event){ };
+			socket.onerror = function(error) { };
+			socket.close();
         }
-
-        socket.send(binary);
     },
-    __set_network_callback: function(event, userData, callback)
+    WebSocket_send: function(thiz, data)
+    {
+        if(Module['cocoswebsocket']._socketMap[thiz] != undefined)
+        {
+			var socket = Module['cocoswebsocket']._socketMap[thiz];
+			var sendData = Pointer_stringify(data);
+			socket.send(sendData);
+		}
+    },
+    WebSocket_send_data: function(thiz, data, length)
+    {
+        if(Module['cocoswebsocket']._socketMap[thiz] != undefined)
+        {
+			var socket = Module['cocoswebsocket']._socketMap[thiz];
+			var binary = new Uint8Array(length);
+			for (var i = 0; i < length; i++)
+			{
+				binary[i] = getValue(data + i, 'i8');
+			}
+
+			socket.send(binary);
+		}
+    },
+    __set_network_callback: function(event, thiz, callback)
     {
         function _callback(data)
         {
@@ -132,19 +152,19 @@ var LibraryWebSocket = {
                 if (event === 'error')
                 {
                     var sp = Runtime.stackSave();
-                    Runtime.dynCall('vi', callback, [userData]);
+                    Runtime.dynCall('vi', callback, [thiz]);
                     Runtime.stackRestore(sp);
                 }
                 else if (event == 'close')
                 {
                     var sp = Runtime.stackSave();
-                    Runtime.dynCall('viiii', callback, [data[0], data[1], data[2], userData]);
+                    Runtime.dynCall('viiii', callback, [thiz, data[0], data[1], data[2]]);
                     Runtime.stackRestore(sp);
                 }
                 else
                 {
                     var sp = Runtime.stackSave();
-                    Runtime.dynCall('viii', callback, [userData, data[0], data[1]]);
+                    Runtime.dynCall('viii', callback, [thiz, data[0], data[1]]);
                     Runtime.stackRestore(sp);
                 }
             }
@@ -163,7 +183,7 @@ var LibraryWebSocket = {
         };
 
         Module['noExitRuntime'] = true;
-        Module['websocket']['on'](event, callback ? _callback : null);
+        Module['cocoswebsocket']['on'](event, thiz, callback ? _callback : null);
     },
     WebSocket_set_socket_error_callback__deps: ['__set_network_callback'],
     WebSocket_set_socket_error_callback: function(userData, callback)
@@ -197,5 +217,5 @@ var LibraryWebSocket = {
     }
 };
 
-mergeInto(LibraryManager.library, LibraryWebSocket);
+mergeInto(LibraryManager.library, LibraryCocosWebSocket);
 
