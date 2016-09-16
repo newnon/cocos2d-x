@@ -112,7 +112,7 @@ var LibraryCocosWebSocket = {
     {
         if(Module['cocoswebsocket']._socketMap[thiz] != undefined)
         {
-			var socket = Module['cocoswebsocket'].socketMap[thiz];
+			var socket = Module['cocoswebsocket']._socketMap[thiz];
 			socket.onopen = function(){ };
 			socket.onmessage = function(event) { };
 			socket.onclose = function(event){ };
