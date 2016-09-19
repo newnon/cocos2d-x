@@ -118,6 +118,9 @@ var LibraryCocosWebSocket = {
 			socket.onclose = function(event){ };
 			socket.onerror = function(error) { };
 			socket.close();
+
+            Module['cocoswebsocket']._callbacks[thiz] = {};
+            Module['cocoswebsocket']._socketMap[thiz] = null;
         }
     },
     WebSocket_send: function(thiz, data)
