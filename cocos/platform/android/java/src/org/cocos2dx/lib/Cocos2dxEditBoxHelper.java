@@ -33,6 +33,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -101,6 +102,9 @@ public class Cocos2dxEditBoxHelper {
                 editBox.setOpenGLViewScaleX(scaleX);
                 editBox.setPadding(getPadding(scaleX), 0, 0, 0);
 
+                editBox.setVerticalScrollBarEnabled(true);
+                editBox.setMaxLines(Integer.MAX_VALUE);
+                editBox.setMovementMethod(new ScrollingMovementMethod());
 
                 FrameLayout.LayoutParams lParams = new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.WRAP_CONTENT,
@@ -168,7 +172,7 @@ public class Cocos2dxEditBoxHelper {
                                     Cocos2dxEditBoxHelper.__editBoxEditingDidBegin(index);
                                 }
                             });
-                            editBox.setSelection(editBox.getText().length());
+//                            editBox.setSelection(editBox.getText().length());
                             mFrameLayout.setEnableForceDoLayout(true);
                             mCocos2dxActivity.getGLSurfaceView().setSoftKeyboardShown(true);
                             Log.d(TAG, "edit box get focus");
