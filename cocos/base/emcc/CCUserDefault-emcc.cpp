@@ -27,6 +27,7 @@ THE SOFTWARE.
 #include "base/ccUtils.h"
 #include "platform/CCCommon.h"
 #include "base/base64.h"
+#include "base/CCDirector.h"
 
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
 #include "platform/CCFileUtils.h"
@@ -49,6 +50,7 @@ NS_CC_BEGIN
 UserDefault* UserDefault::_userDefault = nullptr;
 string UserDefault::_filePath = string("");
 bool UserDefault::_isFilePathInitialized = false;
+std::string UserDefault::_emccPrefix = "";
 
 UserDefault::~UserDefault()
 {
@@ -66,7 +68,7 @@ void UserDefault::purgeSharedUserDefault()
 
 void UserDefault::destroyInstance()
 {
-   CC_SAFE_DELETE(_userDefault);
+    CC_SAFE_DELETE(_userDefault);
 }
 
 bool UserDefault::getBoolForKey(const char* pKey)
@@ -76,7 +78,8 @@ bool UserDefault::getBoolForKey(const char* pKey)
 
 bool UserDefault::getBoolForKey(const char* pKey, bool defaultValue)
 {
-    const char *ret = StorageEngine_load(pKey);
+    const std::string &key = _emccPrefix + "_" + pKey;
+    const char *ret = StorageEngine_load(key.c_str());
     return !ret ? defaultValue : static_cast<bool>(std::stoi(ret, nullptr, 10));
 }
 
@@ -87,7 +90,8 @@ int UserDefault::getIntegerForKey(const char* pKey)
 
 int UserDefault::getIntegerForKey(const char* pKey, int defaultValue)
 {
-    const char *ret = StorageEngine_load(pKey);
+    const std::string &key = _emccPrefix + "_" + pKey;
+    const char *ret = StorageEngine_load(key.c_str());
     return !ret ? defaultValue : std::stoi(ret, nullptr, 10);
 }
 
@@ -98,7 +102,8 @@ float UserDefault::getFloatForKey(const char* pKey)
 
 float UserDefault::getFloatForKey(const char* pKey, float defaultValue)
 {
-    const char *ret = StorageEngine_load(pKey);
+    const std::string &key = _emccPrefix + "_" + pKey;
+    const char *ret = StorageEngine_load(key.c_str());
     return !ret ? defaultValue : std::stof(ret);
 }
 
@@ -109,7 +114,8 @@ double  UserDefault::getDoubleForKey(const char* pKey)
 
 double UserDefault::getDoubleForKey(const char* pKey, double defaultValue)
 {
-    const char *ret = StorageEngine_load(pKey);
+    const std::string &key = _emccPrefix + "_" + pKey;
+    const char *ret = StorageEngine_load(key.c_str());
     return !ret ? defaultValue : std::stod(ret);
 }
 
@@ -120,7 +126,8 @@ std::string UserDefault::getStringForKey(const char* pKey)
 
 string UserDefault::getStringForKey(const char* pKey, const std::string & defaultValue)
 {
-    const char *ret = StorageEngine_load(pKey);
+    const std::string &key = _emccPrefix + "_" + pKey;
+    const char *ret = StorageEngine_load(key.c_str());
     return !ret ? defaultValue : ret;
 }
 
@@ -131,7 +138,8 @@ Data UserDefault::getDataForKey(const char* pKey)
 
 Data UserDefault::getDataForKey(const char* pKey, const Data& defaultValue)
 {
-    const char *encodedStr = StorageEngine_load(pKey);
+    const std::string &key = _emccPrefix + "_" + pKey;
+    const char *encodedStr = StorageEngine_load(key.c_str());
 
     if (encodedStr)
     {
@@ -153,32 +161,36 @@ Data UserDefault::getDataForKey(const char* pKey, const Data& defaultValue)
 
 void UserDefault::setBoolForKey(const char* pKey, bool value)
 {
+    const std::string &key = _emccPrefix + "_" + pKey;
     const std::string &str = std::to_string(value);
-    StorageEngine_save(pKey, str.c_str());
+    StorageEngine_save(key.c_str(), str.c_str());
 }
 
 void UserDefault::setIntegerForKey(const char* pKey, int value)
 {
+    const std::string &key = _emccPrefix + "_" + pKey;
     const std::string &str = std::to_string(value);
-    StorageEngine_save(pKey, str.c_str());
+    StorageEngine_save(key.c_str(), str.c_str());
 }
-
 
 void UserDefault::setFloatForKey(const char* pKey, float value)
 {
+    const std::string &key = _emccPrefix + "_" + pKey;
     const std::string &str = std::to_string(value);
-    StorageEngine_save(pKey, str.c_str());
+    StorageEngine_save(key.c_str(), str.c_str());
 }
 
 void UserDefault::setDoubleForKey(const char* pKey, double value)
 {
+    const std::string &key = _emccPrefix + "_" + pKey;
     const std::string &str = std::to_string(value);
-    StorageEngine_save(pKey, str.c_str());
+    StorageEngine_save(key.c_str(), str.c_str());
 }
 
 void UserDefault::setStringForKey(const char* pKey, const std::string & value)
 {
-    StorageEngine_save(pKey, value.c_str());
+    const std::string &key = _emccPrefix + "_" + pKey;
+    StorageEngine_save(key.c_str(), value.c_str());
 }
 
 void UserDefault::setDataForKey(const char* pKey, const Data& value)
@@ -186,7 +198,8 @@ void UserDefault::setDataForKey(const char* pKey, const Data& value)
     char * encodedData = nullptr;
     unsigned int encodedDataLen = base64Encode(value.getBytes(), value.getSize(), &encodedData);
 
-    StorageEngine_save(pKey, encodedData);
+    const std::string &key = _emccPrefix + "_" + pKey;
+    StorageEngine_save(key.c_str(), encodedData);
 
     if (encodedData)
         free(encodedData);
@@ -232,6 +245,11 @@ void UserDefault::flush()
 {
 }
 
+void UserDefault::setPrefixForEmcc(const std::string &prefix)
+{
+    _emccPrefix = prefix;
+}
+
 void UserDefault::deleteValueForKey(const char* pKey)
 {
     // check the params
@@ -240,7 +258,8 @@ void UserDefault::deleteValueForKey(const char* pKey)
         CCLOG("the key is invalid");
     }
     
-    StorageEngine_remove(pKey);
+    const std::string &key = _emccPrefix + "_" + pKey;
+    StorageEngine_remove(key.c_str());
 }
 NS_CC_END
 
