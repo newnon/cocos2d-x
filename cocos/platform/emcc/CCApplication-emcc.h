@@ -117,6 +117,7 @@ public:
     
     static void setAppVersion(const std::string &version);
     static void setAppBuildVersion(const std::string &version);
+    void setCurrentLocale(const std::string &locale);
     
     void toggleToFullscreen();
     bool isFullscreen();
@@ -127,6 +128,7 @@ public:
 protected:
     long       _animationInterval;  //micro second
     std::string _resourceRootPath;
+    std::string _currentLocale;
     
     static Application * sm_pSharedApplication;
     static std::string _appVersion;
