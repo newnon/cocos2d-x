@@ -64,6 +64,9 @@ Application::Application()
 {
     CCAssert(! sm_pSharedApplication, "");
     sm_pSharedApplication = this;
+    
+    const std::string &localeName = emscripten_run_script_string("navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage)");
+    _currentLocale = !localeName.empty() ? localeName.substr(0, 2).c_str() : "en";
 }
 
 Application::~Application()
@@ -192,8 +195,12 @@ Application* Application::sharedApplication()
 
 const char * Application::getCurrentLanguageCode()
 {
-    const std::string &localeName = emscripten_run_script_string("navigator.languages ? navigator.languages[0] : (navigator.language || navigator.userLanguage)");
-    return !localeName.empty() ? localeName.substr(0, 2).c_str() : "en";
+    return _currentLocale.c_str();
+}
+
+void Application::setCurrentLocale(const std::string &locale)
+{
+    _currentLocale = locale;
 }
 
 LanguageType Application::getCurrentLanguage()
