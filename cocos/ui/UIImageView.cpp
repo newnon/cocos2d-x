@@ -335,6 +335,16 @@ bool ImageView::isFlippedY()const
     return _imageRenderer->isFlippedY();
 }
 
+void ImageView::setBlendFunc(const BlendFunc &blendFunc)
+{
+    _imageRenderer->setBlendFunc(blendFunc);
+}
+    
+const BlendFunc& ImageView::getBlendFunc() const
+{
+    return _imageRenderer->getBlendFunc();
+}
+
 }
 
 NS_CC_END
