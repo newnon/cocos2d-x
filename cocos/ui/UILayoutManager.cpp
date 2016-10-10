@@ -52,6 +52,11 @@ void LinearHorizontalLayoutManager::doLayout(LayoutProtocol* layout)
     {
         if(subWidget && subWidget->isVisible())
         {
+            Vec2 ap = subWidget->getAnchorPoint();
+            Size cs = subWidget->getContentSize();
+            cs.width *= subWidget->getScaleX();
+            cs.height *= subWidget->getScaleY();
+            
             Widget* child = dynamic_cast<Widget*>(subWidget);
             if (child)
             {
@@ -59,8 +64,6 @@ void LinearHorizontalLayoutManager::doLayout(LayoutProtocol* layout)
                 if (layoutParameter)
                 {
                     LinearLayoutParameter::LinearGravity childGravity = layoutParameter->getGravity();
-                    Vec2 ap = child->getAnchorPoint();
-                    Size cs = child->getContentSize();
                     float finalPosX = leftBoundary + (ap.x * cs.width);
                     float finalPosY = layoutSize.height - (1.0f - ap.y) * cs.height;
                     switch (childGravity)
@@ -86,12 +89,10 @@ void LinearHorizontalLayoutManager::doLayout(LayoutProtocol* layout)
             }
             else
             {
-                Vec2 ap = subWidget->getAnchorPoint();
-                Size cs = subWidget->getContentSize();
                 float finalPosX = leftBoundary + (ap.x * cs.width);
                 float finalPosY = layoutSize.height / 2.0f - cs.height * (0.5f - ap.y);
                 subWidget->setPosition(Vec2(finalPosX, finalPosY));
-                leftBoundary = subWidget->getPosition().x - subWidget->getAnchorPoint().x * subWidget->getContentSize().width + subWidget->getContentSize().width + spacing;
+                leftBoundary = subWidget->getPosition().x - subWidget->getAnchorPoint().x * cs.width + cs.width + spacing;
             }
         }
     }
@@ -122,6 +123,11 @@ void LinearVerticalLayoutManager::doLayout(LayoutProtocol* layout)
     {
         if(subWidget && subWidget->isVisible())
         {
+            Vec2 ap = subWidget->getAnchorPoint();
+            Size cs = subWidget->getContentSize();
+            cs.width *= subWidget->getScaleX();
+            cs.height *= subWidget->getScaleY();
+            
             LayoutParameterProtocol* child = dynamic_cast<LayoutParameterProtocol*>(subWidget);
             if (child)
             {
@@ -130,8 +136,6 @@ void LinearVerticalLayoutManager::doLayout(LayoutProtocol* layout)
                 if (layoutParameter)
                 {
                     LinearLayoutParameter::LinearGravity childGravity = layoutParameter->getGravity();
-                    Vec2 ap = subWidget->getAnchorPoint();
-                    Size cs = subWidget->getContentSize();
                     float finalPosX = ap.x * cs.width;
                     float finalPosY = topBoundary - ((1.0f-ap.y) * cs.height);
                     switch (childGravity)
@@ -152,13 +156,11 @@ void LinearVerticalLayoutManager::doLayout(LayoutProtocol* layout)
                     finalPosX += mg.left;
                     finalPosY -= mg.top;
                     subWidget->setPosition(finalPosX, finalPosY);
-                    topBoundary = subWidget->getPosition().y - subWidget->getAnchorPoint().y * subWidget->getContentSize().height - mg.bottom - spacing;
+                    topBoundary = subWidget->getPosition().y - subWidget->getAnchorPoint().y * cs.height - mg.bottom - spacing;
                 }
             }
             else
             {
-                Vec2 ap = subWidget->getAnchorPoint();
-                Size cs = subWidget->getContentSize();
                 float finalPosX = layoutSize.width / 2.0f - cs.width * (0.5f-ap.x);
                 float finalPosY = topBoundary - ((1.0f-ap.y) * cs.height);
                 
@@ -192,7 +194,7 @@ void LinearHorizontalAutoLayoutManager::doLayout(LayoutProtocol* layout)
     {
         if(subWidget->isVisible())
         {
-            layoutSize.width += subWidget->getContentSize().width + spacing;
+            layoutSize.width += subWidget->getContentSize().width * subWidget->getScaleX() + spacing;
             layoutSize.height = std::max(layoutSize.height, subWidget->getContentSize().height);
         }
     }
@@ -203,6 +205,11 @@ void LinearHorizontalAutoLayoutManager::doLayout(LayoutProtocol* layout)
     {
         if(subWidget && subWidget->isVisible())
         {
+            Vec2 ap = subWidget->getAnchorPoint();
+            Size cs = subWidget->getContentSize();
+            cs.width *= subWidget->getScaleX();
+            cs.height *= subWidget->getScaleY();
+            
             Widget* child = dynamic_cast<Widget*>(subWidget);
             if (child)
             {
@@ -210,8 +217,6 @@ void LinearHorizontalAutoLayoutManager::doLayout(LayoutProtocol* layout)
                 if (layoutParameter)
                 {
                     LinearLayoutParameter::LinearGravity childGravity = layoutParameter->getGravity();
-                    Vec2 ap = child->getAnchorPoint();
-                    Size cs = child->getContentSize();
                     float finalPosX = leftBoundary + (ap.x * cs.width);
                     float finalPosY = layoutSize.height - (1.0f - ap.y) * cs.height;
                     switch (childGravity)
@@ -237,12 +242,10 @@ void LinearHorizontalAutoLayoutManager::doLayout(LayoutProtocol* layout)
             }
             else
             {
-                Vec2 ap = subWidget->getAnchorPoint();
-                Size cs = subWidget->getContentSize();
                 float finalPosX = leftBoundary + (ap.x * cs.width);
                 float finalPosY = layoutSize.height / 2.0f - cs.height * (0.5f - ap.y);
                 subWidget->setPosition(Vec2(finalPosX, finalPosY));
-                leftBoundary = subWidget->getPosition().x - subWidget->getAnchorPoint().x * subWidget->getContentSize().width + subWidget->getContentSize().width + spacing;
+                leftBoundary = subWidget->getPosition().x - subWidget->getAnchorPoint().x * cs.width + cs.width + spacing;
             }
         }
     }
@@ -271,7 +274,7 @@ void LinearVerticalAutoLayoutManager::doLayout(LayoutProtocol* layout)
     {
         if(subWidget->isVisible())
         {
-            layoutSize.height += subWidget->getContentSize().height + spacing;
+            layoutSize.height += subWidget->getContentSize().height * subWidget->getScaleY() + spacing;
             layoutSize.width = std::max(layoutSize.width, subWidget->getContentSize().width);
         }
     }
@@ -283,16 +286,18 @@ void LinearVerticalAutoLayoutManager::doLayout(LayoutProtocol* layout)
     {
         if(subWidget && subWidget->isVisible())
         {
+            Vec2 ap = subWidget->getAnchorPoint();
+            Size cs = subWidget->getContentSize();
+            cs.width *= subWidget->getScaleX();
+            cs.height *= subWidget->getScaleY();
+            
             LayoutParameterProtocol* child = dynamic_cast<LayoutParameterProtocol*>(subWidget);
             if (child)
             {
                 LinearLayoutParameter* layoutParameter = dynamic_cast<LinearLayoutParameter*>(child->getLayoutParameter());
-                
                 if (layoutParameter)
                 {
                     LinearLayoutParameter::LinearGravity childGravity = layoutParameter->getGravity();
-                    Vec2 ap = subWidget->getAnchorPoint();
-                    Size cs = subWidget->getContentSize();
                     float finalPosX = ap.x * cs.width;
                     float finalPosY = topBoundary - ((1.0f-ap.y) * cs.height);
                     switch (childGravity)
@@ -313,13 +318,11 @@ void LinearVerticalAutoLayoutManager::doLayout(LayoutProtocol* layout)
                     finalPosX += mg.left;
                     finalPosY -= mg.top;
                     subWidget->setPosition(finalPosX, finalPosY);
-                    topBoundary = subWidget->getPosition().y - subWidget->getAnchorPoint().y * subWidget->getContentSize().height - mg.bottom - spacing;
+                    topBoundary = subWidget->getPosition().y - subWidget->getAnchorPoint().y * cs.height - mg.bottom - spacing;
                 }
             }
             else
             {
-                Vec2 ap = subWidget->getAnchorPoint();
-                Size cs = subWidget->getContentSize();
                 float finalPosX = layoutSize.width / 2.0f - cs.width * (0.5f-ap.x);
                 float finalPosY = topBoundary - ((1.0f-ap.y) * cs.height);
                 
