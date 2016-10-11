@@ -354,7 +354,7 @@ bool FontAtlas::prepareLetterDefinitions(const std::u16string& utf16Text)
             tempDef.width = tempRect.size.width + _letterPadding + _letterEdgeExtend;
             tempDef.height = tempRect.size.height + _letterPadding + _letterEdgeExtend;
             tempDef.offsetX = tempRect.origin.x + adjustForDistanceMap - adjustForExtend;
-            tempDef.offsetY = _fontAscender + tempRect.origin.y - adjustForDistanceMap + adjustForExtend;
+            tempDef.offsetY = _fontAscender + tempRect.origin.y - adjustForDistanceMap - adjustForExtend;
 
             if (_currentPageOrigX + tempDef.width > CacheTextureWidth)
             {
