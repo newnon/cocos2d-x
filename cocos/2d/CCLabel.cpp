@@ -466,7 +466,7 @@ void Label::reset()
     _contentDirty = false;
     _numberOfLines = 0;
     _lengthOfString = 0;
-    _utf16Text.clear();
+    _utf32Text.clear();
     _utf8Text.clear();
 
     TTFConfig temp;
@@ -666,10 +666,10 @@ void Label::setString(const std::string& text)
         _utf8Text = text;
         _contentDirty = true;
 
-        std::u16string utf16String;
-        if (StringUtils::UTF8ToUTF16(_utf8Text, utf16String))
+        std::u32string utf32String;
+        if (StringUtils::UTF8ToUTF32(_utf8Text, utf32String))
         {
-            _utf16Text  = utf16String;
+            _utf32Text  = utf32String;
         }
     }
 }
@@ -760,7 +760,7 @@ void Label::updateLabelLetters()
             else
             {
                 auto& letterInfo = _lettersInfo[letterIndex];
-                auto& letterDef = _fontAtlas->_letterDefinitions[letterInfo.utf16Char];
+                auto& letterDef = _fontAtlas->_letterDefinitions[letterInfo.utf32Char];
                 uvRect.size.height = letterDef.height;
                 uvRect.size.width = letterDef.width;
                 uvRect.origin.x = letterDef.U;
@@ -793,7 +793,7 @@ void Label::updateLabelLetters()
 
 bool Label::alignText()
 {
-    if (_fontAtlas == nullptr || _utf16Text.empty())
+    if (_fontAtlas == nullptr || _utf32Text.empty())
     {
         setContentSize(Size::ZERO);
         return true;
@@ -801,7 +801,7 @@ bool Label::alignText()
 
     bool ret = true;
     do {
-        _fontAtlas->prepareLetterDefinitions(_utf16Text);
+        _fontAtlas->prepareLetterDefinitions(_utf32Text);
         auto& textures = _fontAtlas->getTextures();
         if (textures.size() > static_cast<size_t>(_batchNodes.size()))
         {
@@ -861,7 +861,7 @@ bool Label::alignText()
     return ret;
 }
 
-bool Label::computeHorizontalKernings(const std::u16string& stringToRender)
+bool Label::computeHorizontalKernings(const std::u32string& stringToRender)
 {
     if (_horizontalKernings)
     {
@@ -870,7 +870,7 @@ bool Label::computeHorizontalKernings(const std::u16string& stringToRender)
     }
 
     int letterCount = 0;
-    _horizontalKernings = _fontAtlas->getFont()->getHorizontalKerningForTextUTF16(stringToRender, letterCount);
+    _horizontalKernings = _fontAtlas->getFont()->getHorizontalKerningForTextUTF32(stringToRender, letterCount);
 
     if(!_horizontalKernings)
         return false;
@@ -902,7 +902,7 @@ bool Label::updateQuads()
     {
         if (_lettersInfo[ctr].valid)
         {
-            auto& letterDef = _fontAtlas->_letterDefinitions[_lettersInfo[ctr].utf16Char];
+            auto& letterDef = _fontAtlas->_letterDefinitions[_lettersInfo[ctr].utf32Char];
             
             _reusedRect.size.height = letterDef.height;
             _reusedRect.size.width  = letterDef.width;
@@ -1378,13 +1378,13 @@ void Label::updateContent()
 
     if (_fontAtlas)
     {
-        std::u16string utf16String;
-        if (StringUtils::UTF8ToUTF16(_utf8Text, utf16String))
+        std::u32string utf32String;
+        if (StringUtils::UTF8ToUTF32(_utf8Text, utf32String))
         {
-            _utf16Text = utf16String;
+            _utf32Text = utf32String;
         }
 
-        computeHorizontalKernings(_utf16Text);
+        computeHorizontalKernings(_utf32Text);
         updateFinished = alignText();
     }
     else
@@ -1747,7 +1747,7 @@ Sprite* Label::getLetter(int letterIndex)
 
             if (letter == nullptr)
             {
-                auto& letterDef = _fontAtlas->_letterDefinitions[letterInfo.utf16Char];
+                auto& letterDef = _fontAtlas->_letterDefinitions[letterInfo.utf32Char];
                 auto textureID = letterDef.textureID;
                 Rect uvRect;
                 uvRect.size.height = letterDef.height;
@@ -1836,17 +1836,17 @@ void Label::computeStringNumLines()
 {
     int quantityOfLines = 1;
 
-    if (_utf16Text.empty())
+    if (_utf32Text.empty())
     {
         _numberOfLines = 0;
         return;
     }
 
     // count number of lines
-    size_t stringLen = _utf16Text.length();
+    size_t stringLen = _utf32Text.length();
     for (size_t i = 0; i < stringLen - 1; ++i)
     {
-        if (_utf16Text[i] == (char16_t)TextFormatter::NewLine)
+        if (_utf32Text[i] == (char32_t)TextFormatter::NewLine)
         {
             quantityOfLines++;
         }
@@ -1872,7 +1872,7 @@ int Label::getStringNumLines()
 
 int Label::getStringLength()
 {
-    _lengthOfString = static_cast<int>(_utf16Text.length());
+    _lengthOfString = static_cast<int>(_utf32Text.length());
     return _lengthOfString;
 }
 

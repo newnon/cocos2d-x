@@ -136,6 +136,11 @@ CC_DLL jstring newStringUTFJNI(JNIEnv* env, const std::string& utf8Str, bool* re
  *  @brief Trims the unicode spaces at the end of char16_t vector.
  */
 CC_DLL void trimUTF16Vector(std::vector<char16_t>& str);
+    
+/**
+ *  @brief Trims the unicode spaces at the end of char32_t vector.
+ */
+CC_DLL void trimUTF32Vector(std::vector<char32_t>& str);
 
 /**
  *  @brief Whether the character is a whitespace character.
@@ -146,6 +151,7 @@ CC_DLL void trimUTF16Vector(std::vector<char16_t>& str);
  *
  */
 CC_DLL bool isUnicodeSpace(char16_t ch);
+CC_DLL bool isUnicodeSpace(char32_t ch);
 
 /**
  *  @brief Whether the character is a Chinese/Japanese/Korean character.
@@ -157,6 +163,7 @@ CC_DLL bool isUnicodeSpace(char16_t ch);
  *
  */
 CC_DLL bool isCJKUnicode(char16_t ch);
+CC_DLL bool isCJKUnicode(char32_t ch);
 
 /**
  *  @brief Returns the length of the string in characters.
