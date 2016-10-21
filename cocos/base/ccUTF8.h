@@ -150,7 +150,6 @@ CC_DLL void trimUTF32Vector(std::vector<char32_t>& str);
  *  @see http://en.wikipedia.org/wiki/Whitespace_character#Unicode
  *
  */
-CC_DLL bool isUnicodeSpace(char16_t ch);
 CC_DLL bool isUnicodeSpace(char32_t ch);
 
 /**
@@ -162,7 +161,6 @@ CC_DLL bool isUnicodeSpace(char32_t ch);
  *  @see http://tieba.baidu.com/p/748765987
  *
  */
-CC_DLL bool isCJKUnicode(char16_t ch);
 CC_DLL bool isCJKUnicode(char32_t ch);
 
 /**

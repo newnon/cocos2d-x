@@ -117,11 +117,6 @@ bool isUnicodeSpace(char32_t ch)
     || (ch >= 0x2000 && ch <= 0x200A) || ch == 0x2028 || ch == 0x2029 || ch == 0x202F
     ||  ch == 0x205F || ch == 0x3000;
 }
-    
-bool isUnicodeSpace(char16_t ch)
-{
-    return StringUtils::isUnicodeSpace(static_cast<char32_t>(ch));
-}
 
 bool isCJKUnicode(char32_t ch)
 {
@@ -134,11 +129,6 @@ bool isCJKUnicode(char32_t ch)
         || (ch >= 0xFE30 && ch <= 0xFE4F)   // CJK Compatibility Forms
         || (ch >= 0x31C0 && ch <= 0x4DFF)   // Other extensions
         || (ch >= 0x1f004 && ch <= 0x1f682);// Emoji
-}
-    
-bool isCJKUnicode(char16_t ch)
-{
-    return StringUtils::isCJKUnicode(static_cast<char32_t>(ch));
 }
 
 void trimUTF16Vector(std::vector<char16_t>& str)
