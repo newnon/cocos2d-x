@@ -484,7 +484,7 @@ void Slider::setPercent(int percent)
     _slidBallRenderer->setPosition(dis, _contentSize.height / 2.0f);
     if (_scale9Enabled)
     {
-        _progressBarRenderer->setPreferredSize(Size(dis,_contentSize.height));
+        _progressBarRenderer->setPreferredSize(Size(dis / _imageScale, _contentSize.height));
     }
     else
     {
@@ -505,7 +505,7 @@ void Slider::setImageScale(float scale)
         _imageScale = scale;
         _barRendererAdaptDirty = true;
         _progressBarRendererDirty = true;
-        _slidBallRenderer->setScale(scale);
+//        _slidBallRenderer->setScale(scale);
     }
 }
 
