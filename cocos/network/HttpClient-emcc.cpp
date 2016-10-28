@@ -213,20 +213,21 @@ void HttpClient::update(float time)
     for (auto it = _requestQueue.begin(); it != _requestQueue.end(); )
     {
         HttpRequest* request = (*it);
-        
+
         if (request->getHandler() >= 0)
         {
             double connectTime = request->getConnectTime();
             double sendTime = request->getSendTime();
-            
+
             if (
                 (!request->isConnected() && connectTime > _timeoutForConnect) ||
                 (!request->isSendingCompleted() && sendTime > _timeoutForRead)
                 )
             {
-                onError(0, static_cast<void*>(request), 0, "connect failed");
-
                 emscripten_async_wget2_abort(request->getHandler());
+                
+                onError(0, static_cast<void*>(request), 0, "connect failed");
+                
                 it = _requestQueue.erase(it);
             }
             else
@@ -248,7 +249,6 @@ void HttpClient::update(float time)
             if (!sendOneTime)
             {
                 sendOneTime = true;
-                
                 int handler = emscripten_async_wget2_data(
                                                request->getUrl(),
                                                getRequestType(request->getRequestType()).c_str(),
