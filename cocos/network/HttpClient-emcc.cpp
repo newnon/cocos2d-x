@@ -146,8 +146,6 @@ static void onLoad(unsigned, void* userData, void *buffer, unsigned bufferSize)
     }
     
     response->release();
-    // do not release in other thread
-    request->release();
 };
 
 static void onError(unsigned, void* userData, int errorCode, const char* status)
@@ -176,8 +174,6 @@ static void onError(unsigned, void* userData, int errorCode, const char* status)
     }
     
     response->release();
-    // do not release in other thread
-    request->release();
 };
 
 static void onProgress(unsigned, void* userData, int, int)
@@ -197,8 +193,6 @@ void HttpClient::send(HttpRequest* request)
     
 void HttpClient::sendImmediate(HttpRequest* request)
 {
-    request->retain();
-    
     int handler = emscripten_async_wget2_data(
                                    request->getUrl(),
                                    getRequestType(request->getRequestType()).c_str(),
@@ -254,8 +248,6 @@ void HttpClient::update(float time)
             if (!sendOneTime)
             {
                 sendOneTime = true;
-                
-                request->retain();
                 
                 int handler = emscripten_async_wget2_data(
                                                request->getUrl(),
