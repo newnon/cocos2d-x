@@ -402,7 +402,7 @@ private:
         /* Read version. */
         _version = readInt(false);
         if((_version > CCBX_MAX_VERSION)||(_version < CCBX_MIN_VERSION)) {
-            log("WARNING! Incompatible ccbx file version (file: %d reader min: %d reader max: %d)", _version, CCBX_MIN_VERSION, CCBX_MAX_VERSION);
+            CCLOG("WARNING! Incompatible ccbx file version (file: %d reader min: %d reader max: %d)", _version, CCBX_MIN_VERSION, CCBX_MAX_VERSION);
             return false;
         }
         
@@ -1285,7 +1285,7 @@ private:
         
         if (! ccNodeLoader)
         {
-            log("no corresponding node loader for %s", className.c_str());
+            CCLOG("no corresponding node loader for %s", className.c_str());
             return nullptr;
         }
         
