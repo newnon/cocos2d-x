@@ -949,8 +949,6 @@ void CCBAnimationManager::runAction(Node *pNode, CCBSequenceProperty *pSeqProp, 
 
 void CCBAnimationManager::runAnimationsForSequenceIdTweenDuration(int nSeqId, float fTweenDuration, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback)
 {
-    printf("CCBAnimationManager::runAnimationsForSequenceIdTweenDuration %i %p\n", nSeqId, this);
-    
     CCBSequence *seq = getSequence(nSeqId);
     CCASSERT(seq, "Sequence id couldn't be found");
     
@@ -1112,8 +1110,6 @@ void CCBAnimationManager::debug()
 
 void CCBAnimationManager::sequenceCompleted(const std::function<void(cocos2d::Node*, AnimationCompleteType)> &callback)
 {
-    printf("CCBAnimationManager::sequenceCompleted %i %p\n", _runningSequence.first->getSequenceId(), this);
-    
     const char *runningSequenceName = _runningSequence.first->getName();
     int nextSeqId = _runningSequence.first->getChainedSequenceId();
     _runningSequence.first = nullptr;
