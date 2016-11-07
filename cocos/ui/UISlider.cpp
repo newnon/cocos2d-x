@@ -505,7 +505,7 @@ void Slider::setImageScale(float scale)
         _imageScale = scale;
         _barRendererAdaptDirty = true;
         _progressBarRendererDirty = true;
-//        _slidBallRenderer->setScale(scale);
+        _slidBallRenderer->setScale(scale);
     }
 }
 
