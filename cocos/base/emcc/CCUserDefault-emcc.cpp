@@ -32,8 +32,6 @@ THE SOFTWARE.
 #if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
 #include "platform/CCFileUtils.h"
 
-using namespace std;
-
 extern "C" {
     void StorageEngine_save(const char *, const char *);
     const char *StorageEngine_load(const char *);
@@ -48,7 +46,7 @@ NS_CC_BEGIN
  */
 
 UserDefault* UserDefault::_userDefault = nullptr;
-string UserDefault::_filePath = string("");
+std::string UserDefault::_filePath = std::string("");
 bool UserDefault::_isFilePathInitialized = false;
 std::string UserDefault::_emccPrefix = "";
 
@@ -79,8 +77,12 @@ bool UserDefault::getBoolForKey(const char* pKey)
 bool UserDefault::getBoolForKey(const char* pKey, bool defaultValue)
 {
     const std::string &key = _emccPrefix + "_" + pKey;
-    const char *ret = StorageEngine_load(key.c_str());
-    return !ret ? defaultValue : static_cast<bool>(std::stoi(ret, nullptr, 10));
+    const char *dataPtr = StorageEngine_load(key.c_str());
+    if(!dataPtr)
+        return defaultValue;
+    bool ret = static_cast<bool>(std::stoi(dataPtr, nullptr, 10));
+    free((void*)dataPtr);
+    return ret;
 }
 
 int UserDefault::getIntegerForKey(const char* pKey)
@@ -91,8 +93,12 @@ int UserDefault::getIntegerForKey(const char* pKey)
 int UserDefault::getIntegerForKey(const char* pKey, int defaultValue)
 {
     const std::string &key = _emccPrefix + "_" + pKey;
-    const char *ret = StorageEngine_load(key.c_str());
-    return !ret ? defaultValue : std::stoi(ret, nullptr, 10);
+    const char *dataPtr = StorageEngine_load(key.c_str());
+    if(!dataPtr)
+        return defaultValue;
+    int ret = std::stoi(dataPtr, nullptr, 10);
+    free((void*)dataPtr);
+    return ret;
 }
 
 float UserDefault::getFloatForKey(const char* pKey)
@@ -103,8 +109,12 @@ float UserDefault::getFloatForKey(const char* pKey)
 float UserDefault::getFloatForKey(const char* pKey, float defaultValue)
 {
     const std::string &key = _emccPrefix + "_" + pKey;
-    const char *ret = StorageEngine_load(key.c_str());
-    return !ret ? defaultValue : std::stof(ret);
+    const char *dataPtr = StorageEngine_load(key.c_str());
+    if(!dataPtr)
+        return defaultValue;
+    float ret = std::stof(dataPtr);
+    free((void*)dataPtr);
+    return ret;
 }
 
 double  UserDefault::getDoubleForKey(const char* pKey)
@@ -115,8 +125,12 @@ double  UserDefault::getDoubleForKey(const char* pKey)
 double UserDefault::getDoubleForKey(const char* pKey, double defaultValue)
 {
     const std::string &key = _emccPrefix + "_" + pKey;
-    const char *ret = StorageEngine_load(key.c_str());
-    return !ret ? defaultValue : std::stod(ret);
+    const char *dataPtr = StorageEngine_load(key.c_str());
+    if(!dataPtr)
+        return defaultValue;
+    double ret = std::stod(dataPtr);
+    free((void*)dataPtr);
+    return ret;
 }
 
 std::string UserDefault::getStringForKey(const char* pKey)
@@ -124,11 +138,15 @@ std::string UserDefault::getStringForKey(const char* pKey)
     return getStringForKey(pKey, "");
 }
 
-string UserDefault::getStringForKey(const char* pKey, const std::string & defaultValue)
+std::string UserDefault::getStringForKey(const char* pKey, const std::string & defaultValue)
 {
     const std::string &key = _emccPrefix + "_" + pKey;
-    const char *ret = StorageEngine_load(key.c_str());
-    return !ret ? defaultValue : ret;
+    const char *dataPtr = StorageEngine_load(key.c_str());
+    if(!dataPtr)
+        return defaultValue;
+    std::string ret = dataPtr;
+    free((void*)dataPtr);
+    return ret;
 }
 
 Data UserDefault::getDataForKey(const char* pKey)
@@ -139,23 +157,25 @@ Data UserDefault::getDataForKey(const char* pKey)
 Data UserDefault::getDataForKey(const char* pKey, const Data& defaultValue)
 {
     const std::string &key = _emccPrefix + "_" + pKey;
-    const char *encodedStr = StorageEngine_load(key.c_str());
+    const char *dataPtr = StorageEngine_load(key.c_str());
+    if(!dataPtr)
+        return defaultValue;
 
-    if (encodedStr)
-    {
-        unsigned char * decodedData = NULL;
-        size_t length = strlen(encodedStr);
-        int decodedDataLen = base64Decode((unsigned char*)encodedStr, (unsigned int)length, &decodedData);
+    unsigned char * decodedData = NULL;
+	size_t length = strlen(dataPtr);
+	int decodedDataLen = base64Decode((unsigned char*)dataPtr, (unsigned int)length, &decodedData);
 
-        if (decodedData && decodedDataLen)
-        {
-            Data ret;
-            ret.fastSet(decodedData, decodedDataLen);
-            return ret;
-        }
-    }
-
-    return defaultValue;
+	if (decodedData && decodedDataLen)
+	{
+		Data ret;
+		ret.fastSet(decodedData, decodedDataLen);
+		return ret;
+	}
+	else
+	{
+		free((void*)dataPtr);
+		return defaultValue;
+	}
 }
 
 
@@ -236,7 +256,7 @@ bool UserDefault::createXMLFile()
     return false;
 }
 
-const string& UserDefault::getXMLFilePath()
+const std::string& UserDefault::getXMLFilePath()
 {
     return _filePath;
 }

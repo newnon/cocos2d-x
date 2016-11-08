@@ -263,7 +263,7 @@ var LibraryUIEditBox = {
             if (!UIEditBox.isSafariFullscreenMode())
                 return allocate(intArrayFromString(Module.editBox[id].value), 'i8', ALLOC_NORMAL);
         }
-        return "";
+        return allocate(intArrayFromString("", 'i8', ALLOC_NORMAL));
     },
     UIEditBox_isFocused: function(id)
     {

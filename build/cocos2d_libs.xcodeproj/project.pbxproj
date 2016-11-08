@@ -7089,6 +7089,8 @@
 		A5B57CDF1A3B919900CCBDB4 /* CCBXWidgetloader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXWidgetloader.h; path = spritebuilder/CCBXWidgetloader.h; sourceTree = "<group>"; };
 		A5B57CE01A3B919900CCBDB4 /* SpriteBuilder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SpriteBuilder.cpp; path = spritebuilder/SpriteBuilder.cpp; sourceTree = "<group>"; };
 		A5B57CE11A3B919900CCBDB4 /* SpriteBuilder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SpriteBuilder.h; path = spritebuilder/SpriteBuilder.h; sourceTree = "<group>"; };
+		A5C27CB81DD1E4490069F627 /* UIEditBoxImpl-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UIEditBoxImpl-emcc.cpp"; sourceTree = "<group>"; };
+		A5C27CB91DD1E4490069F627 /* UIEditBoxImpl-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIEditBoxImpl-emcc.h"; sourceTree = "<group>"; };
 		A5FD79BD1D2A63DC00E11101 /* HttpClient-emcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "HttpClient-emcc.cpp"; sourceTree = "<group>"; };
 		A5FD79BF1D2A63EA00E11101 /* WebSocket-emcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "WebSocket-emcc.cpp"; sourceTree = "<group>"; };
 		B20564AA1A6E5744001C1B6E /* ccShader_PositionColorTextureAsPointsize.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_PositionColorTextureAsPointsize.vert; sourceTree = "<group>"; };
@@ -9265,6 +9267,8 @@
 			children = (
 				291A091F1C5F06530068C1D2 /* Mac */,
 				2980F0161BA9A5550059E678 /* iOS */,
+				A5C27CB81DD1E4490069F627 /* UIEditBoxImpl-emcc.cpp */,
+				A5C27CB91DD1E4490069F627 /* UIEditBoxImpl-emcc.h */,
 				A0E749F51BA8FD7F001A8332 /* UIEditBoxImpl-common.cpp */,
 				A0E749F61BA8FD7F001A8332 /* UIEditBoxImpl-common.h */,
 				50ED2BDC19BEAF7900A0AB90 /* UIEditBoxImpl-win32.h */,

@@ -12,7 +12,7 @@ var LibraryStorageEngine = {
         var pname = localStorage.getItem(strkey);
 
         if (pname)
-            return allocate(intArrayFromString(pname), 'i8', ALLOC_STACK);
+            return allocate(intArrayFromString(pname), 'i8', ALLOC_NORMAL);
         return 0;
     },
 

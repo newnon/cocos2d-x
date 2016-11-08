@@ -160,7 +160,10 @@ void EditBoxImplEmcc::setText(const char* pText)
 
 const char* EditBoxImplEmcc::getText(void)
 {
-    return UIEditBox_getText(_id);
+    const char *textPtr = UIEditBox_getText(_id);
+    _text = textPtr ? textPtr : "";
+    free((void*)textPtr);
+    return _text.c_str();
 }
 
 void EditBoxImplEmcc::setPlaceHolder(const char* pText)
