@@ -72,42 +72,114 @@ public:
         if(onAssignCCBMemberVariableFunction)
             return onAssignCCBMemberVariableFunction(memberVariableName, node);
         else
+        {
+            auto it = _assignVariableMap.find(memberVariableName);
+            if (it != _assignVariableMap.end())
+            {
+                return it->second(node);
+            }
             return false;
+        }
     }
     virtual bool onAssignCCBCustomProperty(const std::string &customPropertyName, const Value& value){
         if(onAssignCCBCustomPropertyFunction)
             return onAssignCCBCustomPropertyFunction(customPropertyName, value);
         else
+        {
+            auto it = _assignCustomMap.find(customPropertyName);
+            if (it != _assignCustomMap.end())
+            {
+                it->second = value;
+                return true;
+            }
             return false;
+        }
     }
 
     virtual ccReaderClickCallback onResolveCCBClickSelector(const std::string &selectorName, Node* node){
         if(onResolveCCBClickSelectorFunction)
             return onResolveCCBClickSelectorFunction(selectorName, node);
         else
+        {
+            auto it = _clickCallbacksMap.find(selectorName);
+            if (it != _clickCallbacksMap.end())
+            {
+                return it->second;
+            }
             return ccReaderClickCallback();
+        }
     }
 
     virtual ccReaderTouchCallback onResolveCCBTouchSelector(const std::string &selectorName, Node* node){
         if(onResolveCCBTouchSelectorFunction)
             return onResolveCCBTouchSelectorFunction(selectorName, node);
         else
+        {
+            auto it = _touchCallbacksMap.find(selectorName);
+            if (it != _touchCallbacksMap.end())
+            {
+                return it->second;
+            }
             return ccReaderTouchCallback();
+        }
     }
 
     virtual ccReaderEventCallback onResolveCCBCallFuncSelector(const std::string &selectorName, Node* node){
         if(onResolveCCBCallFuncSelectorFunction)
             return onResolveCCBCallFuncSelectorFunction(selectorName, node);
         else
+        {
+            auto it = _eventCallbacksMap.find(selectorName);
+            if (it != _eventCallbacksMap.end())
+            {
+                return it->second;
+            }
             return ccReaderEventCallback();
+        }
     }
-
+    
+    template<class T> void addVariable(const std::string &memberVariableName, T* &node)
+    {
+        _assignVariableMap.emplace(memberVariableName, [&node](Node *result)
+        {
+            node = dynamic_cast<T*>(result);
+            return node != nullptr;
+        });
+    }
+    
+    void addCustom(const std::string &customPropertyName, Value& value)
+    {
+        _assignCustomMap.emplace(customPropertyName, value);
+    }
+    
+    void addClick(const std::string &selectorName, const ccReaderClickCallback &callback)
+    {
+        _clickCallbacksMap.emplace(selectorName, callback);
+    }
+    
+    void addTouch(const std::string &selectorName, const ccReaderTouchCallback &callback)
+    {
+        _touchCallbacksMap.emplace(selectorName, callback);
+    }
+    
+    void addEvent(const std::string &selectorName, const ccReaderEventCallback &callback)
+    {
+        _eventCallbacksMap.emplace(selectorName, callback);
+    }
+    
     std::function<bool(const std::string&, Node*)> onAssignCCBMemberVariableFunction;
     std::function<bool(const std::string&, const Value&)> onAssignCCBCustomPropertyFunction;
     std::function<ccReaderClickCallback(const std::string&, Node*)> onResolveCCBClickSelectorFunction;
     std::function<ccReaderTouchCallback(const std::string&, Node*)> onResolveCCBTouchSelectorFunction;
     std::function<ccReaderEventCallback(const std::string&, Node*)> onResolveCCBCallFuncSelectorFunction;
     
+private:
+    std::map<std::string, ccReaderClickCallback> _clickCallbacksMap;
+    std::map<std::string, ccReaderTouchCallback> _touchCallbacksMap;
+    std::map<std::string, ccReaderEventCallback> _eventCallbacksMap;
+    
+    std::map<std::string, std::function<bool(Node*)>> _assignVariableMap;
+    std::map<std::string, Value&> _assignCustomMap;
 };
     
 #define CCBX_MEMBERVARIABLEASSIGNER_GLUE(MEMBERVARIABLENAME, MEMBERVARIABLE) \
