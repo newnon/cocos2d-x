@@ -38,6 +38,18 @@ android {
                 }
             }
         }
+        
+        //externalNativeBuild {
+        //    cmake {
+        //        arguments "-DCMAKE_FIND_ROOT_PATH=", "-DANDROID_STL=c++_static", "-DANDROID_TOOLCHAIN=clang", "-DANDROID_ARM_NEON=TRUE", "-DUSE_CHIPMUNK=TRUE", "-DUSE_BULLET=TRUE"
+        //        cppFlags "-frtti -fexceptions"
+        //    }
+        //}
+        
+        //ndk {
+        //    abiFilters.addAll(PROP_APP_ABI.split(':').collect{it as String})
+        //}
+        
     }
 
     sourceSets.main {
@@ -55,6 +67,12 @@ android {
             }
         }
     }
+    
+    //externalNativeBuild {
+    //    cmake {
+    //        path "../../CMakeLists.txt"
+    //    }
+    //}
 
     signingConfigs {
 
