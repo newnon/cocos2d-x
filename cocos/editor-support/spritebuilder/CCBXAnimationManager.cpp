@@ -576,7 +576,7 @@ ActionInterval* CCBAnimationManager::getAction(CCBKeyframe *pKeyframe0, CCBKeyfr
     return nullptr;
 }
 
-void CCBAnimationManager::setAnimatedProperty(const std::string& propName, Node *pNode, const Value& value, Ref* obj, float fTweenDuration)
+void CCBAnimationManager::setAnimatedProperty(const std::string& propName, Node *pNode, const Value& value, Ref* obj, float fTweenDuration, bool isBaseValue)
 {
     if (fTweenDuration > 0)
     {
@@ -676,7 +676,17 @@ void CCBAnimationManager::setAnimatedProperty(const std::string& propName, Node 
             }
             else if (propName == "visible")
             {
-                pNode->setVisible(value.asBool());
+                bool val = value.asBool();
+                
+                if(!isBaseValue)
+                {
+                    bool baseValue = getBaseValue(pNode, propName).asBool();
+                    if(val)
+                        val = !baseValue;
+                    else
+                        val = baseValue;
+                }
+                pNode->setVisible(val);
             }
             else if (propName == "animation")
             {
@@ -712,11 +722,11 @@ void CCBAnimationManager::setFirstFrame(Node *pNode, CCBSequenceProperty *pSeqPr
     
     if (keyframeFirst && keyframeFirst->getTime() == 0)
     {
-        setAnimatedProperty(pSeqProp->getName(), pNode, keyframeFirst->getValue(), keyframeFirst->getObject(), fTweenDuration);
+        setAnimatedProperty(pSeqProp->getName(), pNode, keyframeFirst->getValue(), keyframeFirst->getObject(), fTweenDuration, false);
     }
     else
     {
-        setAnimatedProperty(pSeqProp->getName(), pNode, baseValue, obj, fTweenDuration);
+        setAnimatedProperty(pSeqProp->getName(), pNode, baseValue, obj, fTweenDuration, true);
     }
 }
 
@@ -1077,7 +1087,7 @@ void CCBAnimationManager::stopAnimations(bool reset)
                 }
                 else
                 {
-                    setAnimatedProperty(iter.first, nodeIt.first, iter.second, nullptr, 0);
+                    setAnimatedProperty(iter.first, nodeIt.first, iter.second, nullptr, 0, true);
                 }
             }
         }
@@ -1086,7 +1096,7 @@ void CCBAnimationManager::stopAnimations(bool reset)
         {
             for(const auto &iter:nodeIt.second)
             {
-                setAnimatedProperty(iter.first, nodeIt.first, Value(), iter.second, 0);
+                setAnimatedProperty(iter.first, nodeIt.first, Value(), iter.second, 0, true);
             }
         }
     }

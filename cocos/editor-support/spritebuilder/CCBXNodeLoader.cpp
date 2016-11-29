@@ -194,7 +194,7 @@ NodeLoader *NodeLoader::create()
     return ret;
 }
     
-Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback)
+Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool autoPlay)
 {
     Node *ret;
     if(createNodeFunction)
@@ -204,13 +204,13 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
     if(!ret)
         return nullptr;
     
-    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, parentOwner, defaultAnimationCallback))
+    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, parentOwner, defaultAnimationCallback, autoPlay))
         return nullptr;
 
     return ret;
 }
     
-bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback)
+bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool autoPlay)
 {
     if(!node)
         return false;
@@ -223,8 +223,11 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
         rootNode = node;
     }
     
+    bool newManager = false;
+    
     if(manager == nullptr)
     {
+        newManager = true;
         manager = new CCBAnimationManager(mainScale, additionalScale, node ,owner);
         manager->setSequences(_sequences);
         manager->setAutoPlaySequenceId(_autoPlaySequenceId);
@@ -256,7 +259,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
             node->addChild(childNode);
         }
     }
-    if(rootNode)
+    if(newManager && autoPlay)
     {
         if (node && _autoPlaySequenceId != -1)
         {
