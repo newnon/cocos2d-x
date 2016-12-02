@@ -219,7 +219,7 @@ private:
     
 #define CCBX_SELECTORRESOLVER_TOUCH_GLUE_SIMPLE(SELECTORNAME) \
     if(selectorName == #SELECTORNAME) { \
-        return [this](Ref* ref, ui::WidgetTouchEventType type){ this->SELECTORNAME(ref, type); }; \
+        return [this](Ref* ref, cocos2d::ui::WidgetTouchEventType type){ this->SELECTORNAME(ref, type); }; \
     }
     
 #define CCBX_SELECTORRESOLVER_EVENT_GLUE(TARGET, SELECTORNAME, METHOD) \
