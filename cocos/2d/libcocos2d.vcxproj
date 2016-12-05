@@ -577,6 +577,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\chipmunk\prebuilt\win32\release-lib\*.*
     <ClCompile Include="..\editor-support\spritebuilder\CCBXNodeGradientLoader.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXNodeLoader.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXNodeLoaderLibrary.cpp" />
+    <ClCompile Include="..\editor-support\spritebuilder\CCBXNodeLoaderCache.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXParser.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXParticleSystemQuadLoader.cpp" />
     <ClCompile Include="..\editor-support\spritebuilder\CCBXProgressTimerLoader.cpp" />

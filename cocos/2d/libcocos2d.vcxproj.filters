@@ -2027,6 +2027,9 @@
     <ClCompile Include="..\editor-support\spritebuilder\CCBXNodeLoaderLibrary.cpp">
       <Filter>spritebuilder\Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\editor-support\spritebuilder\CCBXNodeLoaderCache.cpp">
+      <Filter>spritebuilder\Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\editor-support\spritebuilder\CCBXParser.cpp">
       <Filter>spritebuilder\Source Files</Filter>
     </ClCompile>
