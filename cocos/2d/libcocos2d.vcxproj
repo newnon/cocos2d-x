@@ -1223,6 +1223,7 @@ xcopy /Y /Q "$(ProjectDir)..\..\external\chipmunk\prebuilt\win32\release-lib\*.*
     <ClInclude Include="..\editor-support\spritebuilder\CCBXNodeColorLoader.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXNodeGradientLoader.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXNodeLoader.h" />
+    <ClInclude Include="..\editor-support\spritebuilder\CCBXNodeLoaderCache.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXNodeLoaderLibrary.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXParser.h" />
     <ClInclude Include="..\editor-support\spritebuilder\CCBXParticleSystemQuadLoader.h" />
