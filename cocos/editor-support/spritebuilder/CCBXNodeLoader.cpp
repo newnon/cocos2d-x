@@ -194,7 +194,7 @@ NodeLoader *NodeLoader::create()
     return ret;
 }
     
-Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool autoPlay)
+Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab)
 {
     Node *ret;
     if(createNodeFunction)
@@ -204,13 +204,13 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
     if(!ret)
         return nullptr;
     
-    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, parentOwner, defaultAnimationCallback, autoPlay))
+    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, parentOwner, defaultAnimationCallback, nestedPrefab))
         return nullptr;
 
     return ret;
 }
     
-bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool autoPlay)
+bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab)
 {
     if(!node)
         return false;
@@ -259,7 +259,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
             node->addChild(childNode);
         }
     }
-    if(newManager && autoPlay)
+    if(newManager && !nestedPrefab)
     {
         if (node && _autoPlaySequenceId != -1)
         {
@@ -278,7 +278,8 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
     if(owner)
         owner->onNodeLoaded(node);
     
-    onNodeLoaded(node);
+    if(!nestedPrefab)
+        onNodeLoaded(node);
     
     return true;
 }

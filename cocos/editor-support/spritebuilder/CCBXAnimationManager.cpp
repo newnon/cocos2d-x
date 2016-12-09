@@ -1065,7 +1065,7 @@ void CCBAnimationManager::stopAnimations(bool reset)
             _runningSequence.second(_rootNode, AnimationCompleteType::STOPED);
     }
     
-    _rootNode->stopActionByTag(animationTag);
+    _rootNode->stopAllActionsByTag(animationTag);
     
     for (auto nodeSeqIter = _nodeSequences.begin(); nodeSeqIter != _nodeSequences.end(); ++nodeSeqIter)
     {

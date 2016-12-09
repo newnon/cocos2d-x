@@ -19,7 +19,7 @@ Node *FileLoader::createNodeInstance(const Size &parentSize, float mainScale, fl
     if(!_file)
         return nullptr;
     
-    Node *ret = _file->createNode(parentSize, mainScale, additionalScale, owner, nullptr, nullptr, rootOwner, nullptr, nullptr, false);
+    Node *ret = _file->createNode(parentSize, mainScale, additionalScale, owner, nullptr, nullptr, rootOwner, nullptr, nullptr, true);
     return ret;
 }
 
@@ -72,6 +72,7 @@ void FileLoader::onNodeLoaded(Node *node)
                 break;
         }
     }
+    _file->onNodeLoaded(node);
     NodeLoader::onNodeLoaded(node);
 }
 
