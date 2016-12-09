@@ -788,6 +788,7 @@ void Button::onPressStateChangedToPressed()
 void Button::onPressStateChangedToDisabled()
 {
     //if disable resource is null
+    _state = State::DISABLED;
     Scale9Sprite* nextRender = nullptr;
     if (!_disabledTextureLoaded)
     {
@@ -1358,7 +1359,7 @@ void Button::setDisabledBackgroundColor(const Color3B &color)
     _disabledBackgroundColor = color;
     if(_state == State::DISABLED)
     {
-        if(_pressedTextureLoaded)
+        if(_disabledTextureLoaded)
             _buttonDisabledRenderer->setColor(multiplyColors(color, _displayedColor));
         else
             _buttonNormalRenderer->setColor(multiplyColors(color, _displayedColor));
@@ -1422,7 +1423,7 @@ void Button::setDisabledBackgroundOpacity(GLubyte opacity)
     _disabledBackgroundOpacity = opacity;
     if(_state == State::DISABLED)
     {
-        if(_pressedTextureLoaded)
+        if(_disabledTextureLoaded)
             _buttonDisabledRenderer->setOpacity(multiplyOpacity(opacity, _displayedOpacity));
         else
             _buttonNormalRenderer->setOpacity(multiplyOpacity(opacity, _displayedOpacity));
