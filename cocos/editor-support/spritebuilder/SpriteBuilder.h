@@ -209,8 +209,9 @@ public:
     static float getResolutionScale();
     static void setResolutionScale(float scale);
     
-    static CCBXReader* addToCache(const std::string &pCCBFileName, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr);
-    static bool removeFromCache(const std::string &pCCBFileName, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr);
+    static CCBXReader* addToCache(const std::string &pCCBFileName, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr, NodeLoaderCache *cache = nullptr);
+    static bool removeFromCache(const std::string &pCCBFileName);
+    static void clearCache();
     
     const std::string& getRootPath();
     

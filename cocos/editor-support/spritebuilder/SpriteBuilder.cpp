@@ -25,15 +25,15 @@ Map<std::string,CCBReaderParams*> CCBXReader::_paramsMap;
 Map<std::string,CCBXReader*> CCBXReader::_cache;
 bool CCBXReader::_playSound = true;
     
-CCBXReader* CCBXReader::addToCache(const std::string &pCCBFileName, const std::string &rootPath, const NodeLoaderLibrary *library)
+CCBXReader* CCBXReader::addToCache(const std::string &pCCBFileName, const std::string &rootPath, const NodeLoaderLibrary *library, NodeLoaderCache *cache)
 {
-    CCBXReader* reader = CCBXReader::createFromFile(pCCBFileName, rootPath, library);
+    CCBXReader* reader = CCBXReader::createFromFile(pCCBFileName, rootPath, library, cache);
     if(reader)
         _cache.insert(pCCBFileName, reader);
     return reader;
 }
 
-bool CCBXReader::removeFromCache(const std::string &pCCBFileName, const std::string &rootPath, const NodeLoaderLibrary *library)
+bool CCBXReader::removeFromCache(const std::string &pCCBFileName)
 {
     auto it = _cache.find(pCCBFileName);
     if(it!=_cache.end())
@@ -42,6 +42,11 @@ bool CCBXReader::removeFromCache(const std::string &pCCBFileName, const std::str
         return true;
     }
     return false;
+}
+    
+void CCBXReader::clearCache()
+{
+    _cache.clear();
 }
     
 void CCBXReader::setPlaySound(bool value)

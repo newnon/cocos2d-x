@@ -30,11 +30,17 @@ void NodeLoaderCache::add(const std::string &path, NodeLoader* loader)
 {
     assert(loader);
     if(loader)
-        _loaders.insert(path, loader);
+    {
+        loader->retain();
+        assert(_loaders.find(path) == _loaders.end());
+        _loaders.emplace(path, loader);
+    }
 }
     
 void NodeLoaderCache::clear()
 {
+    for(const auto &it:_loaders)
+        it.second->release();
     _loaders.clear();
 }
     

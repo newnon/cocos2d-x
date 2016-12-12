@@ -32,7 +32,7 @@ CC_CONSTRUCTOR_ACCESS:
     NodeLoaderCache() {};
     
 private:
-    Map<std::string, NodeLoader*> _loaders;
+    std::map<std::string, NodeLoader*> _loaders;
 };
     
 }
