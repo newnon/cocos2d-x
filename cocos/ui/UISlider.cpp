@@ -904,6 +904,11 @@ ResourceData Slider::getBallMouseOverFile()
     return rData;
 }
 
+Node *Slider::getSlidBarNode() const
+{
+    return _slidBallRenderer;
+}
+    
 }
 
 NS_CC_END
