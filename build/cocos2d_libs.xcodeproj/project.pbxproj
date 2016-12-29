@@ -7966,6 +7966,7 @@
 		D85F546E1D2BAAE200F49F75 /* CCGLViewImpl-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCGLViewImpl-emcc.h"; sourceTree = "<group>"; };
 		D85F546F1D2BAAE200F49F75 /* CCPlatformDefine-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCPlatformDefine-emcc.h"; sourceTree = "<group>"; };
 		D85F54701D2BAAE200F49F75 /* CCStdC-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCStdC-emcc.h"; sourceTree = "<group>"; };
+		D86D5EDB1E1567EE00AC1C01 /* ccShader_GradientLabel.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_GradientLabel.vert; sourceTree = "<group>"; };
 		DA8C62A019E52C6400000516 /* ioapi_mem.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ioapi_mem.cpp; sourceTree = "<group>"; };
 		DA8C62A119E52C6400000516 /* ioapi_mem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ioapi_mem.h; sourceTree = "<group>"; };
 		DABC9FA719E7DFA900FA252C /* CCClippingRectangleNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCClippingRectangleNode.cpp; sourceTree = "<group>"; };
@@ -9987,6 +9988,7 @@
 		5034CA5D191D591900CE6051 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
+				D86D5EDB1E1567EE00AC1C01 /* ccShader_GradientLabel.vert */,
 				B241A6E21AFB0BE700C5623C /* ccShader_CameraClear.frag */,
 				B241A6E31AFB0BE700C5623C /* ccShader_CameraClear.vert */,
 				B603F1B11AC8F1FD00A9579C /* ccShader_3D_Terrain.frag */,
