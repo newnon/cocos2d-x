@@ -4192,6 +4192,12 @@
 		A5E1A9111DF5A0C80070716C /* CCBXNodeLoaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E1A90D1DF5A0C80070716C /* CCBXNodeLoaderCache.h */; };
 		A5E1A9121DF5A0C80070716C /* CCBXNodeLoaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E1A90D1DF5A0C80070716C /* CCBXNodeLoaderCache.h */; };
 		A5E1A9131DF5A0C80070716C /* CCBXNodeLoaderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = A5E1A90D1DF5A0C80070716C /* CCBXNodeLoaderCache.h */; };
+		A5F963321E4CB83B0028DAB1 /* UIScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F963301E4CB83B0028DAB1 /* UIScrollBar.cpp */; };
+		A5F963331E4CB83B0028DAB1 /* UIScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F963301E4CB83B0028DAB1 /* UIScrollBar.cpp */; };
+		A5F963341E4CB83B0028DAB1 /* UIScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5F963301E4CB83B0028DAB1 /* UIScrollBar.cpp */; };
+		A5F963351E4CB83B0028DAB1 /* UIScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = A5F963311E4CB83B0028DAB1 /* UIScrollBar.h */; };
+		A5F963361E4CB83B0028DAB1 /* UIScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = A5F963311E4CB83B0028DAB1 /* UIScrollBar.h */; };
+		A5F963371E4CB83B0028DAB1 /* UIScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = A5F963311E4CB83B0028DAB1 /* UIScrollBar.h */; };
 		A5FD79BE1D2A63DC00E11101 /* HttpClient-emcc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD79BD1D2A63DC00E11101 /* HttpClient-emcc.cpp */; };
 		A5FD79C01D2A63EA00E11101 /* WebSocket-emcc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A5FD79BF1D2A63EA00E11101 /* WebSocket-emcc.cpp */; };
 		B2165EEA19921124000BE3E6 /* CCPrimitiveCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B257B45E198A353E00D9A687 /* CCPrimitiveCommand.cpp */; };
@@ -7105,6 +7111,8 @@
 		A5C27CB91DD1E4490069F627 /* UIEditBoxImpl-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIEditBoxImpl-emcc.h"; sourceTree = "<group>"; };
 		A5E1A90C1DF5A0C80070716C /* CCBXNodeLoaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXNodeLoaderCache.cpp; path = spritebuilder/CCBXNodeLoaderCache.cpp; sourceTree = "<group>"; };
 		A5E1A90D1DF5A0C80070716C /* CCBXNodeLoaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXNodeLoaderCache.h; path = spritebuilder/CCBXNodeLoaderCache.h; sourceTree = "<group>"; };
+		A5F963301E4CB83B0028DAB1 /* UIScrollBar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIScrollBar.cpp; sourceTree = "<group>"; };
+		A5F963311E4CB83B0028DAB1 /* UIScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScrollBar.h; sourceTree = "<group>"; };
 		A5FD79BD1D2A63DC00E11101 /* HttpClient-emcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "HttpClient-emcc.cpp"; sourceTree = "<group>"; };
 		A5FD79BF1D2A63EA00E11101 /* WebSocket-emcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "WebSocket-emcc.cpp"; sourceTree = "<group>"; };
 		B20564AA1A6E5744001C1B6E /* ccShader_PositionColorTextureAsPointsize.vert */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.glsl; path = ccShader_PositionColorTextureAsPointsize.vert; sourceTree = "<group>"; };
@@ -9410,6 +9418,8 @@
 				B5668D7C1B3838E4003CBD5E /* UIScrollViewBar.h */,
 				2905FA0918CF08D000240AA3 /* UISlider.cpp */,
 				2905FA0A18CF08D100240AA3 /* UISlider.h */,
+				A5F963301E4CB83B0028DAB1 /* UIScrollBar.cpp */,
+				A5F963311E4CB83B0028DAB1 /* UIScrollBar.h */,
 				2905FA0B18CF08D100240AA3 /* UIText.cpp */,
 				2905FA0C18CF08D100240AA3 /* UIText.h */,
 				2905FA0D18CF08D100240AA3 /* UITextAtlas.cpp */,
@@ -12008,6 +12018,7 @@
 				50ED2BE019BEAF7900A0AB90 /* UIEditBoxImpl-win32.h in Headers */,
 				B6CAB5011AF9AA1A00B9B856 /* btConvexHullComputer.h in Headers */,
 				15AE197119AAD35700C27E9E /* CCFrame.h in Headers */,
+				A5F963351E4CB83B0028DAB1 /* UIScrollBar.h in Headers */,
 				15AE1A6519AAD40300C27E9E /* b2TimeStep.h in Headers */,
 				15AE182E19AAD2F700C27E9E /* CCMeshVertexIndexData.h in Headers */,
 				15AE186419AAD31D00C27E9E /* CDConfig.h in Headers */,
@@ -13329,6 +13340,7 @@
 				507B3F3A1C31BDD30067B53E /* CCComBase.h in Headers */,
 				507B3F3B1C31BDD30067B53E /* b2BroadPhase.h in Headers */,
 				507B3F3C1C31BDD30067B53E /* CCDisplayManager.h in Headers */,
+				A5F963371E4CB83B0028DAB1 /* UIScrollBar.h in Headers */,
 				507B3F3D1C31BDD30067B53E /* UIButton.h in Headers */,
 				507B3F3E1C31BDD30067B53E /* ArmatureNodeReader.h in Headers */,
 				507B3F3F1C31BDD30067B53E /* btSubSimplexConvexCast.h in Headers */,
@@ -13999,6 +14011,7 @@
 				50ABBD631925AB0000A911A9 /* Vec4.h in Headers */,
 				5020A1CC1D49912500E80C72 /* PathConstraint.h in Headers */,
 				B665E3A91AA80A6500DDB1C5 /* CCPURandomiser.h in Headers */,
+				A5F963361E4CB83B0028DAB1 /* UIScrollBar.h in Headers */,
 				15AE19AF19AAD39700C27E9E /* PageViewReader.h in Headers */,
 				B6CAB29A1AF9AA1A00B9B856 /* btConcaveShape.h in Headers */,
 				3E2A09C51BAA91B70086B878 /* CCMotionStreak3D.h in Headers */,
@@ -15097,6 +15110,7 @@
 				B603F1A81AC8EA0900A9579C /* CCTerrain.cpp in Sources */,
 				B6CAB2691AF9AA1A00B9B856 /* btSphereBoxCollisionAlgorithm.cpp in Sources */,
 				5020A15C1D49912500E80C72 /* AnimationStateData.c in Sources */,
+				A5F963321E4CB83B0028DAB1 /* UIScrollBar.cpp in Sources */,
 				1A570065180BC5A10088DEC7 /* CCActionCamera.cpp in Sources */,
 				B6CAAFF21AF9A9E100B9B856 /* CCPhysics3DObject.cpp in Sources */,
 				B6CAB23D1AF9AA1A00B9B856 /* btConvex2dConvex2dAlgorithm.cpp in Sources */,
@@ -16588,6 +16602,7 @@
 				507B3C891C31BDD30067B53E /* btConcaveShape.cpp in Sources */,
 				507B3C8A1C31BDD30067B53E /* CCLayerGradientLoader.cpp in Sources */,
 				507B3C8B1C31BDD30067B53E /* btMultimaterialTriangleMeshShape.cpp in Sources */,
+				A5F963341E4CB83B0028DAB1 /* UIScrollBar.cpp in Sources */,
 				507B3C8C1C31BDD30067B53E /* CCActionTimelineCache.cpp in Sources */,
 				507B3C8D1C31BDD30067B53E /* LocalStorage.cpp in Sources */,
 				507B3C8E1C31BDD30067B53E /* UIEditBoxImpl-win32.cpp in Sources */,
@@ -17476,6 +17491,7 @@
 				15B3707919EE414C00ABE682 /* AssetsManagerEx.cpp in Sources */,
 				50ABBDA41925AB4100A911A9 /* CCQuadCommand.cpp in Sources */,
 				B6CAB2981AF9AA1A00B9B856 /* btConcaveShape.cpp in Sources */,
+				A5F963331E4CB83B0028DAB1 /* UIScrollBar.cpp in Sources */,
 				15AE18C319AAD33D00C27E9E /* CCLayerGradientLoader.cpp in Sources */,
 				B6CAB2CE1AF9AA1A00B9B856 /* btMultimaterialTriangleMeshShape.cpp in Sources */,
 				15AE197919AAD35700C27E9E /* CCActionTimelineCache.cpp in Sources */,
