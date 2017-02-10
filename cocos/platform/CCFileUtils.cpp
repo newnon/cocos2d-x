@@ -532,6 +532,332 @@ ValueVector FileUtils::getValueVectorFromFile(const std::string& /*filename*/) {
 bool FileUtils::writeToFile(const ValueMap& /*dict*/, const std::string &/*fullPath*/) {return false;}
 
 #endif /* (CC_TARGET_PLATFORM != CC_PLATFORM_IOS) && (CC_TARGET_PLATFORM != CC_PLATFORM_MAC) */
+ 
+class Archive
+{
+public:
+    Archive(const std::string &id):_id(id) {}
+    virtual ~Archive() {}
+    
+    FileUtils::Status getContents(const std::string& filename, ResizableBuffer* buffer)
+    {
+        if(!_initialized)
+            return FileUtils::Status::NotInitialized;
+        auto it = _files.find(filename);
+        if(it == _files.end())
+            return FileUtils::Status::NotExists;
+        buffer->resize(it->second.size);
+        if(readData(it->second.offset, it->second.size, buffer->buffer()))
+            return FileUtils::Status::OK;
+        else
+            return FileUtils::Status::ReadFailed;
+    }
+    
+    long getFileSize(const std::string &filepath)
+    {
+        if(!_initialized)
+            return -1;
+        auto it = _files.find(filepath);
+        if(it == _files.end())
+            return -1;
+        return it->second.size;
+    }
+    
+    bool isFileExists(const std::string& filename) const
+    {
+        return _files.find(filename) != _files.end();
+    }
+    
+    const std::string& getId() const { return _id; }
+    
+    bool isInitialized() const { return _initialized; }
+    
+protected:
+    void init()
+    {
+        ArchiveHeader header;
+        
+        ArchiveItemHeader* headers = nullptr;
+        char* fileNames = nullptr;
+        
+        do
+        {
+            uint32_t offset = 0;
+            uint32_t size = sizeof(header);
+            CC_BREAK_IF(!readData(offset, sizeof(header), &header));
+            CC_BREAK_IF(strncmp((const char*)header.mark,(const char*)"cxar",4));
+            offset += size;
+            
+            size = sizeof(ArchiveItemHeader) * header.count;
+            headers = new ArchiveItemHeader[header.count];
+            CC_BREAK_IF(!readData(offset, size, headers));
+            offset += size;
+            
+            size = sizeof(char) * header.fileNamesSize;
+            fileNames = new char[header.fileNamesSize];
+            CC_BREAK_IF(!readData(offset, size, fileNames));
+            offset += size;
+            
+            for (unsigned long i = 0 ; i< header.count; i++)
+            {
+                Archive::ArchiveItem item;
+                std::string arcFileKey = fileNames + headers[i].nameOffset;
+                item.size = headers[i].size;
+                item.realSize = headers[i].realSize;
+                item.offset = offset + headers[i].offset;
+                _files.emplace(arcFileKey, item);
+            }
+            
+            _initialized = true;
+            
+        } while(false);
+        
+        CC_SAFE_DELETE_ARRAY(headers);
+        CC_SAFE_DELETE_ARRAY(fileNames);
+    }
+    
+private:
+    Archive(const Archive& other) = delete;
+    Archive& operator=(const Archive&) = delete;
+    
+    virtual bool readData(uint32_t offset, uint32_t size, void* buffer) = 0;
+    
+    struct ArchiveItem
+    {
+        uint32_t size;
+        uint32_t offset;
+        uint32_t realSize;
+    };
+    
+    CC_PACK(
+    struct ArchiveItemHeader
+    {
+        uint32_t nameOffset;  // file name offset
+        uint32_t size;        // file size
+        uint32_t offset;      // file offset in archive
+        uint32_t realSize;    // 0 - no compression else zlib compression
+    });
+
+    CC_PACK(
+    struct ArchiveHeader
+    {
+        uint8_t mark[4];         // mark "cxar"
+        uint32_t checksum;       // control sum by crc32
+        uint32_t version;        // archive version
+        uint32_t count;          // files count
+        uint32_t fileNamesSize;  // file names block size
+    });
+    
+    std::map<std::string, ArchiveItem> _files;
+    const std::string _id;
+    bool _initialized = false;
+};
+
+class FileArchive: public Archive
+{
+public:
+    FileArchive(const std::string &path, const std::string &id):Archive(id)
+    {
+        auto fs = FileUtils::getInstance();
+        std::string fullPath = fs->fullPathForFilename(path);
+        if(!fullPath.empty())
+        {
+            _file = fopen(fs->getSuitableFOpen(path).c_str(), "rb");
+            if(_file)
+                init();
+        }
+    }
+    ~FileArchive()
+    {
+        if(_file)
+            fclose(_file);
+    }
+    
+private:
+    
+    virtual bool readData(uint32_t offset, uint32_t size, void* buffer) override
+    {
+        if(!_file)
+            return false;
+        
+        fseek(_file, offset, SEEK_SET);
+        return size == fread(buffer, 1, size, _file);
+    }
+    
+    FILE *_file = nullptr;
+};
+
+template <class T>
+class MemoryArchive: public Archive
+{
+public:
+    static_assert(sizeof(T)==1, "MemoryArchive base must be 1 char exactly");
+    MemoryArchive(const void *data, uint32_t size, const std::string &id):Archive(id)
+    {
+        _data.resize(size);
+        memcpy(&_data.front(), data, size);
+        init();
+    }
+    
+    MemoryArchive(std::vector<T> &&data, const std::string &id):Archive(id)
+    {
+        _data = std::move(data);
+        init();
+    }
+    
+private:
+    
+    virtual bool readData(uint32_t offset, uint32_t size, void* buffer) override
+    {
+        if(offset + size > _data.size())
+            return false;
+        
+        memcpy(buffer, &_data.front() + offset, size);
+        return true;
+    }
+    
+    std::vector<T> _data;
+};
+
+
+class ArchiveController
+{
+public:
+    bool addArchive(const std::string &path, const std::string &id)
+    {
+        if(findArchive(id) != _archives.end())
+            return false;
+        
+        FileArchive *archive = new FileArchive(path, id);
+        if(!archive->isInitialized())
+        {
+            delete archive;
+            return false;
+        }
+        _archives.emplace_back(id, archive);
+        return true;
+    }
+    
+    bool addArchive(const void *data, uint32_t size, const std::string &id)
+    {
+        if(findArchive(id) != _archives.end())
+            return false;
+        
+        MemoryArchive<uint8_t> *archive = new MemoryArchive<uint8_t>(data, size, id);
+        if(!archive->isInitialized())
+        {
+            delete archive;
+            return false;
+        }
+        _archives.emplace_back(id, archive);
+        return true;
+    }
+    
+    bool addArchive(std::vector<char> &&data, const std::string &id)
+    {
+        if(findArchive(id) != _archives.end())
+            return false;
+        
+        MemoryArchive<char> *archive = new MemoryArchive<char>(std::move(data), id);
+        if(!archive->isInitialized())
+        {
+            delete archive;
+            return false;
+        }
+        _archives.emplace_back(id, archive);
+        return true;
+    }
+
+    bool addArchive(std::vector<unsigned char> &&data, const std::string &id)
+    {
+        if(findArchive(id) != _archives.end())
+            return false;
+        
+        MemoryArchive<unsigned char> *archive = new MemoryArchive<unsigned char>(std::move(data), id);
+        if(!archive->isInitialized())
+        {
+            delete archive;
+            return false;
+        }
+        _archives.emplace_back(id, archive);
+        return true;
+    }
+    
+    bool removeArchive(const std::string &id)
+    {
+        auto it = findArchive(id);
+        if(it == _archives.end())
+            return false;
+        delete it->second;
+        _archives.erase(it);
+        return true;
+    }
+    
+    std::vector<std::pair<std::string, Archive*>>::iterator findArchive(const std::string &id)
+    {
+        for(auto it = _archives.begin(); it != _archives.end(); ++it)
+        {
+            if (it->first == id)
+                return it;
+        }
+        return _archives.end();
+    }
+    
+    std::string getFullPathForDirectoryAndFilename(const std::string& strDirectory, const std::string& strFilename) const
+    {
+        for(auto it = _archives.crbegin(); it != _archives.crend(); ++it)
+        {
+            std::string fullPath = strDirectory+strFilename;
+            if(it->second->isFileExists(fullPath))
+                return fullPath;
+        }
+        return "";
+    }
+    
+    FileUtils::Status getContents(const std::string& filename, ResizableBuffer* buffer) const
+    {
+        for(auto it = _archives.crbegin(); it != _archives.crend(); ++it)
+        {
+            FileUtils::Status status = it->second->getContents(filename, buffer);
+            if(status == FileUtils::Status::OK)
+                return FileUtils::Status::OK;
+        }
+        return FileUtils::Status::NotExists;
+    }
+    
+    long getFileSize(const std::string& filename) const
+    {
+        for(auto it = _archives.crbegin(); it != _archives.crend(); ++it)
+        {
+            long size = it->second->getFileSize(filename);
+            if(size>=0)
+                return size;
+        }
+        return -1;
+    }
+    
+    bool isFileExist(const std::string& filename) const
+    {
+        for(auto it = _archives.crbegin(); it != _archives.crend(); ++it)
+        {
+            if(it->second->isFileExists(filename))
+                return true;
+        }
+        return false;
+    }
+    
+    ~ArchiveController()
+    {
+        for(auto pair : _archives)
+        {
+            delete pair.second;
+        }
+    }
+    
+private:
+    std::vector<std::pair<std::string, Archive*>> _archives;
+};
+
 
 // Implement FileUtils
 FileUtils* FileUtils::s_sharedFileUtils = nullptr;
@@ -551,11 +877,13 @@ void FileUtils::setDelegate(FileUtils *delegate)
 
 FileUtils::FileUtils()
     : _writablePath("")
+    , _archiveContoller(new ArchiveController())
 {
 }
 
 FileUtils::~FileUtils()
 {
+    delete _archiveContoller;
 }
 
 bool FileUtils::writeStringToFile(const std::string& dataStr, const std::string& fullPath)
@@ -662,6 +990,9 @@ FileUtils::Status FileUtils::getContents(const std::string& filename, ResizableB
     std::string fullPath = fs->fullPathForFilename(filename);
     if (fullPath.empty())
         return Status::NotExists;
+    
+    if(_archiveContoller->getContents(fullPath, buffer) == FileUtils::Status::OK)
+        return FileUtils::Status::OK;
 
     FILE *fp = fopen(fs->getSuitableFOpen(fullPath).c_str(), "rb");
     if (!fp)
@@ -798,6 +1129,11 @@ std::string FileUtils::getPathForFilename(const std::string& filename, const std
     std::string path = searchPath;
     path += file_path;
     path += resolutionDirectory;
+    
+    std::string arcPath = _archiveContoller->getFullPathForDirectoryAndFilename(path, file);
+    
+    if(!arcPath.empty())
+        return arcPath;
 
     path = getFullPathForDirectoryAndFilename(path, file);
 
@@ -1060,7 +1396,10 @@ bool FileUtils::isFileExist(const std::string& filename) const
 {
     if (isAbsolutePath(filename))
     {
-        return isFileExistInternal(filename);
+        if(_archiveContoller->isFileExist(filename))
+            return true;
+        else
+            return isFileExistInternal(filename);
     }
     else
     {
@@ -1424,6 +1763,10 @@ long FileUtils::getFileSize(const std::string &filepath)
         if (fullpath.empty())
             return 0;
     }
+    
+    long arcSize = _archiveContoller->getFileSize(filepath);
+    if(arcSize>=0)
+        return arcSize;
 
     struct stat info;
     // Get data associated with "crt_stat.c":
@@ -1527,6 +1870,37 @@ void FileUtils::listFilesRecursively(const std::string& dirPath, std::vector<std
 }
 
 #endif
+
+
+bool FileUtils::addArchive(const std::string& fileName, const std::string& id)
+{
+    _fullPathCache.clear();
+    return _archiveContoller->addArchive(fileName, id);
+}
+
+bool FileUtils::addArchive(const void *data, uint32_t size, const std::string &id)
+{
+    _fullPathCache.clear();
+    return _archiveContoller->addArchive(data, size, id);
+}
+
+bool FileUtils::addArchive(std::vector<char> &&data, const std::string &id)
+{
+    _fullPathCache.clear();
+    return _archiveContoller->addArchive(std::move(data), id);
+}
+
+bool FileUtils::addArchive(std::vector<unsigned char> &&data, const std::string &id)
+{
+    _fullPathCache.clear();
+    return _archiveContoller->addArchive(std::move(data), id);
+}
+
+bool FileUtils::removeArchive(const std::string& fileName)
+{
+    _fullPathCache.clear();
+    return _archiveContoller->removeArchive(fileName);
+}
 
 //////////////////////////////////////////////////////////////////////////
 // Notification support when getFileData from invalid file path.
