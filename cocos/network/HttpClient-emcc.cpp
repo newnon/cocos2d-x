@@ -179,7 +179,7 @@ static void onError(unsigned, void* userData, int errorCode, const char* status)
 static void onProgress(unsigned, void* userData, int, int)
 {
     HttpRequest* request = static_cast<HttpRequest*>(userData);
-    request->setConnected(true);
+//    request->setConnected(true);
     
     CCLOG("HttpClient::onProgress is connected %i\n", request->getHandler());
 };
@@ -193,10 +193,18 @@ void HttpClient::send(HttpRequest* request)
     
 void HttpClient::sendImmediate(HttpRequest* request)
 {
+    std::string postData;
+    if (request->getRequestData() && request->getRequestDataSize() > 0)
+    {
+        postData.resize(request->getRequestDataSize() + 1);
+        memcpy(&postData.front(), request->getRequestData(), request->getRequestDataSize());
+        postData[request->getRequestDataSize()] = '\0';
+    }
+    
     int handler = emscripten_async_wget2_data(
                                    request->getUrl(),
                                    getRequestType(request->getRequestType()).c_str(),
-                                   request->getRequestData(),
+                                   postData.c_str(),
                                    static_cast<void*>(request),
                                    true,
                                    &onLoad,
@@ -204,6 +212,7 @@ void HttpClient::sendImmediate(HttpRequest* request)
                                    &onProgress
                                    );
     request->setHandler(handler);
+    request->setConnected(true);
     _requestQueue.pushBack(request);
 }
     
@@ -248,11 +257,19 @@ void HttpClient::update(float time)
         {
             if (!sendOneTime)
             {
+                std::string postData;
+                if (request->getRequestData() && request->getRequestDataSize() > 0)
+                {
+                    postData.resize(request->getRequestDataSize() + 1);
+                    memcpy(&postData.front(), request->getRequestData(), request->getRequestDataSize());
+                    postData[request->getRequestDataSize()] = '\0';
+                }
+                
                 sendOneTime = true;
                 int handler = emscripten_async_wget2_data(
                                                request->getUrl(),
                                                getRequestType(request->getRequestType()).c_str(),
-                                               request->getRequestData(),
+                                               postData.c_str(),
                                                static_cast<void*>(request),
                                                true,
                                                &onLoad,
@@ -260,6 +277,7 @@ void HttpClient::update(float time)
                                                &onProgress
                                                );
                 request->setHandler(handler);
+                request->setConnected(true);
                 CCLOG("HttpClient::send one time %i\n", handler);
             }
             

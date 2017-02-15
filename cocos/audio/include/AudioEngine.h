@@ -31,6 +31,7 @@
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "platform/CCPlatformMacros.h"
 #include "audio/include/Export.h"
@@ -293,6 +294,12 @@ public:
      * @param callback A callback which will be called after loading is finished.
      */
     static void preload(const std::string& filePath, std::function<void(bool isSuccess)> callback);
+    
+    /**
+     * This is method only for emscripten use. Setup use file extensions.
+     * @param files vector of audio format
+     */
+    static void setUseFileExt(const std::vector<std::string> &exts);
 
 protected:
     static void addTask(const std::function<void()>& task);
