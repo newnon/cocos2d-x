@@ -808,6 +808,8 @@ public:
         for(auto it = _archives.crbegin(); it != _archives.crend(); ++it)
         {
             std::string fullPath = strDirectory+strFilename;
+            if(!fullPath.empty() && fullPath[0] != '/')
+                fullPath = "/" + fullPath;
             if(it->second->isFileExists(fullPath))
                 return fullPath;
         }
@@ -1188,6 +1190,37 @@ std::string FileUtils::fullPathForFilename(const std::string &filename) const
     return "";
 }
 
+std::string FileUtils::shortPathForFilename(const std::string &filename) const
+{
+    if (!isAbsolutePath(filename))
+    {
+        return filename;
+    }
+    
+    std::string fullModelPath;
+    size_t startPos = 0;
+    if(!_defaultResRootPath.empty())
+    {
+        size_t defaultResRootPathPos = filename.find(_defaultResRootPath);
+        if(defaultResRootPathPos == 0)
+        {
+            startPos = _defaultResRootPath.size();
+        }
+        else
+        {
+            if(!filename.empty() && filename[0]=='/')
+                startPos = 1;
+        }
+    }
+    else
+    {
+        if(!filename.empty() && filename[0]=='/')
+            startPos = 1;
+    }
+    ssize_t index = filename.find_last_of('/');
+    return filename.substr(startPos, index + 1 - startPos);
+}
+
 std::string FileUtils::fullPathFromRelativeFile(const std::string &filename, const std::string &relativeFile)
 {
     return relativeFile.substr(0, relativeFile.rfind('/')+1) + getNewFilename(filename);
@@ -1350,13 +1383,23 @@ void FileUtils::addSearchPath(const std::string &searchpath,const bool front)
     }
 }
 
-void FileUtils::setFilenameLookupDictionary(const ValueMap& filenameLookupDict)
+void FileUtils::setFilenameLookupDictionary(const ValueMap& filenameLookupDict, bool replace)
 {
     _fullPathCache.clear();
-    _filenameLookupDict = filenameLookupDict;
+    if(replace)
+    {
+        _filenameLookupDict = filenameLookupDict;
+    }
+    else
+    {
+        for(const auto &pair:filenameLookupDict)
+        {
+            _filenameLookupDict[pair.first] = pair.second;
+        }
+    }
 }
 
-void FileUtils::loadFilenameLookupDictionaryFromFile(const std::string &filename)
+void FileUtils::loadFilenameLookupDictionaryFromFile(const std::string &filename, bool replace)
 {
     const std::string fullPath = fullPathForFilename(filename);
     if (!fullPath.empty())
@@ -1371,7 +1414,7 @@ void FileUtils::loadFilenameLookupDictionaryFromFile(const std::string &filename
                 CCLOG("cocos2d: ERROR: Invalid filenameLookup dictionary version: %d. Filename: %s", version, filename.c_str());
                 return;
             }
-            setFilenameLookupDictionary( dict["filenames"].asValueMap());
+            setFilenameLookupDictionary( dict["filenames"].asValueMap(), replace);
         }
     }
 }

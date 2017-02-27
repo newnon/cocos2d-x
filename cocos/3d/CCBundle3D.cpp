@@ -2143,9 +2143,9 @@ unsigned int Bundle3D::parseGLProgramAttribute(const std::string& str)
 
 void Bundle3D::getModelRelativePath(const std::string& path)
 {
-    ssize_t index = path.find_last_of('/');
-    std::string fullModelPath;
-    _modelPath = path.substr(0, index + 1);
+    std::string shortModelPath = FileUtils::getInstance()->shortPathForFilename(path);
+    ssize_t index = shortModelPath.find_last_of('/');
+    _modelPath = shortModelPath.substr(0, index + 1);
 }
 
 Reference* Bundle3D::seekToFirstType(unsigned int type, const std::string& id)
