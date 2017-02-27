@@ -319,6 +319,10 @@ public:
      @since v2.1
      */
     virtual std::string fullPathForFilename(const std::string &filename) const;
+    
+    /** Returns the fullpath for a given filename.
+     */
+    virtual std::string shortPathForFilename(const std::string &filename) const;
 
     /**
      * Loads the filenameLookup dictionary from the contents of a filename.
@@ -353,7 +357,7 @@ public:
      * @js loadFilenameLookup
      * @lua loadFilenameLookup
      */
-    virtual void loadFilenameLookupDictionaryFromFile(const std::string &filename);
+    virtual void loadFilenameLookupDictionaryFromFile(const std::string &filename, bool replace = true);
 
     /**
      *  Sets the filenameLookup dictionary.
@@ -361,7 +365,7 @@ public:
      *  @param filenameLookupDict The dictionary for replacing filename.
      *  @since v2.1
      */
-    virtual void setFilenameLookupDictionary(const ValueMap& filenameLookupDict);
+    virtual void setFilenameLookupDictionary(const ValueMap& filenameLookupDict, bool replace = true);
 
     /**
      *  Gets full path from a file name and the path of the relative file.
