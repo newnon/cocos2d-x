@@ -4779,6 +4779,12 @@
 		C5F516221C822E060013B695 /* TabControlReader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = C5F516161C8216C60013B695 /* TabControlReader.cpp */; };
 		C5F516231C822E190013B695 /* UITabControl.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F516111C8216660013B695 /* UITabControl.h */; };
 		C5F516251C822E470013B695 /* TabControlReader.h in Headers */ = {isa = PBXBuildFile; fileRef = C5F516171C8216C60013B695 /* TabControlReader.h */; };
+		CEEBF2301E5B30A3004BADFB /* UIScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEEBF22E1E5B30A3004BADFB /* UIScrollBar.cpp */; };
+		CEEBF2311E5B30A3004BADFB /* UIScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEEBF22E1E5B30A3004BADFB /* UIScrollBar.cpp */; };
+		CEEBF2321E5B30A3004BADFB /* UIScrollBar.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CEEBF22E1E5B30A3004BADFB /* UIScrollBar.cpp */; };
+		CEEBF2331E5B30A3004BADFB /* UIScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBF22F1E5B30A3004BADFB /* UIScrollBar.h */; };
+		CEEBF2341E5B30A3004BADFB /* UIScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBF22F1E5B30A3004BADFB /* UIScrollBar.h */; };
+		CEEBF2351E5B30A3004BADFB /* UIScrollBar.h in Headers */ = {isa = PBXBuildFile; fileRef = CEEBF22F1E5B30A3004BADFB /* UIScrollBar.h */; };
 		D0FD03491A3B51AA00825BB5 /* CCAllocatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FD033B1A3B51AA00825BB5 /* CCAllocatorBase.h */; };
 		D0FD034A1A3B51AA00825BB5 /* CCAllocatorBase.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FD033B1A3B51AA00825BB5 /* CCAllocatorBase.h */; };
 		D0FD034B1A3B51AA00825BB5 /* CCAllocatorDiagnostics.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D0FD033C1A3B51AA00825BB5 /* CCAllocatorDiagnostics.cpp */; };
@@ -6557,6 +6563,8 @@
 		C5F516151C8216C60013B695 /* CSTabControl_generated.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CSTabControl_generated.h; path = TabControlReader/CSTabControl_generated.h; sourceTree = "<group>"; };
 		C5F516161C8216C60013B695 /* TabControlReader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TabControlReader.cpp; path = TabControlReader/TabControlReader.cpp; sourceTree = "<group>"; };
 		C5F516171C8216C60013B695 /* TabControlReader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TabControlReader.h; path = TabControlReader/TabControlReader.h; sourceTree = "<group>"; };
+		CEEBF22E1E5B30A3004BADFB /* UIScrollBar.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = UIScrollBar.cpp; sourceTree = "<group>"; };
+		CEEBF22F1E5B30A3004BADFB /* UIScrollBar.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIScrollBar.h; sourceTree = "<group>"; };
 		D0FD033B1A3B51AA00825BB5 /* CCAllocatorBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorBase.h; sourceTree = "<group>"; };
 		D0FD033C1A3B51AA00825BB5 /* CCAllocatorDiagnostics.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CCAllocatorDiagnostics.cpp; sourceTree = "<group>"; };
 		D0FD033D1A3B51AA00825BB5 /* CCAllocatorDiagnostics.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorDiagnostics.h; sourceTree = "<group>"; };
@@ -8097,6 +8105,8 @@
 				B5668D7C1B3838E4003CBD5E /* UIScrollViewBar.h */,
 				2905FA0918CF08D000240AA3 /* UISlider.cpp */,
 				2905FA0A18CF08D100240AA3 /* UISlider.h */,
+				CEEBF22E1E5B30A3004BADFB /* UIScrollBar.cpp */,
+				CEEBF22F1E5B30A3004BADFB /* UIScrollBar.h */,
 				2905FA0B18CF08D100240AA3 /* UIText.cpp */,
 				2905FA0C18CF08D100240AA3 /* UIText.h */,
 				2905FA0D18CF08D100240AA3 /* UITextAtlas.cpp */,
@@ -10566,6 +10576,7 @@
 				50ABBD5A1925AB0000A911A9 /* Vec2.h in Headers */,
 				B665E2581AA80A6500DDB1C5 /* CCPUDoAffectorEventHandlerTranslator.h in Headers */,
 				1A40D15A1E8E56C7002E363A /* ostreamwrapper.h in Headers */,
+				CEEBF2331E5B30A3004BADFB /* UIScrollBar.h in Headers */,
 				B665E2F81AA80A6500DDB1C5 /* CCPUListener.h in Headers */,
 				1A40D12D1E8E56C7002E363A /* dtoa.h in Headers */,
 				15AE1BDB19AAE01E00C27E9E /* CCControlSwitch.h in Headers */,
@@ -10973,6 +10984,7 @@
 				507B3E3A1C31BDD30067B53E /* CCFont.h in Headers */,
 				50864CCF1C7BC1B100B3BAB1 /* cpRotaryLimitJoint.h in Headers */,
 				507B3E3D1C31BDD30067B53E /* UIEditBoxImpl-ios.h in Headers */,
+				CEEBF2351E5B30A3004BADFB /* UIScrollBar.h in Headers */,
 				507B3E401C31BDD30067B53E /* AudioEngine.h in Headers */,
 				507B3E411C31BDD30067B53E /* CCPUMaterialTranslator.h in Headers */,
 				507B3E421C31BDD30067B53E /* CCGLProgramStateCache.h in Headers */,
@@ -12183,6 +12195,7 @@
 				50ABBED61925AB6F00A911A9 /* utlist.h in Headers */,
 				1A57035B180BD0B00088DEC7 /* unzip.h in Headers */,
 				15AE1BA619AADFDF00C27E9E /* UIHBox.h in Headers */,
+				CEEBF2341E5B30A3004BADFB /* UIScrollBar.h in Headers */,
 				505385031B01887A00793096 /* CCProperties.h in Headers */,
 				15AE1A9519AAD40300C27E9E /* b2BlockAllocator.h in Headers */,
 				5034CA48191D591100CE6051 /* ccShader_Label_normal.frag in Headers */,
@@ -13024,6 +13037,7 @@
 				A5B57CFE1A3B919900CCBDB4 /* CCBXLoadingBarLoader.cpp in Sources */,
 				15AE188A19AAD33D00C27E9E /* CCControlLoader.cpp in Sources */,
 				5012168E1AC47380009A4BEA /* CCRenderState.cpp in Sources */,
+				CEEBF2301E5B30A3004BADFB /* UIScrollBar.cpp in Sources */,
 				29DA08F61C63351600F4052B /* UIEditBoxImpl-winrt.cpp in Sources */,
 				B665E35A1AA80A6500DDB1C5 /* CCPUOnRandomObserver.cpp in Sources */,
 				3E2A09C21BAA91B70086B878 /* CCMotionStreak3D.cpp in Sources */,
@@ -13275,6 +13289,7 @@
 			files = (
 				5020A1641D49912500E80C72 /* Atlas.c in Sources */,
 				5020A2121D49912500E80C72 /* SlotData.c in Sources */,
+				CEEBF2321E5B30A3004BADFB /* UIScrollBar.cpp in Sources */,
 				C5F516221C822E060013B695 /* TabControlReader.cpp in Sources */,
 				C5F516211C822DED0013B695 /* UITabControl.cpp in Sources */,
 				507B39C21C31BDD30067B53E /* CCAllocatorGlobalNewDelete.cpp in Sources */,
@@ -14108,6 +14123,7 @@
 				292DB13E19B4574100A80320 /* UIEditBox.cpp in Sources */,
 				3E6176681960F89B00DE83F5 /* CCController-apple.mm in Sources */,
 				A5B57CF71A3B919900CCBDB4 /* CCBXLabelTTFLoader.cpp in Sources */,
+				CEEBF2311E5B30A3004BADFB /* UIScrollBar.cpp in Sources */,
 				15AE18B219AAD33D00C27E9E /* CCBReader.cpp in Sources */,
 				15AE193C19AAD35100C27E9E /* CCArmatureDefine.cpp in Sources */,
 				B665E35F1AA80A6500DDB1C5 /* CCPUOnRandomObserverTranslator.cpp in Sources */,
