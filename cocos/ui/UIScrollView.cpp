@@ -29,6 +29,7 @@ THE SOFTWARE.
 #include "ui/UIScrollViewBar.h"
 #include "2d/CCTweenFunction.h"
 #include "2d/CCCamera.h"
+#include "ui/UIScrollBar.h"
 NS_CC_BEGIN
 
 static const int NUMBER_OF_GATHERED_TOUCHES_FOR_MOVE_SPEED = 5;
@@ -88,6 +89,7 @@ ScrollView::~ScrollView()
     _horizontalScrollBar = nullptr;
     _scrollViewEventListener = nullptr;
     _scrollViewEventSelector = nullptr;
+    _scrollBarEventCallback.clear();
 }
 
 ScrollView* ScrollView::create()
@@ -233,6 +235,14 @@ void ScrollView::setInnerContainerPosition(const Vec2 &position)
     if (_eventCallback)
     {
         _eventCallback(this, EventType::CONTAINER_MOVED);
+    }
+    
+    if (!_scrollBarEventCallback.empty())
+    {
+        for (auto it : _scrollBarEventCallback)
+         {
+             it.second(it.first, this, EventType::CONTAINER_MOVED);
+         }
     }
     if (_ccEventCallback)
     {
@@ -1143,6 +1153,13 @@ void ScrollView::dispatchEvent(ScrollviewEventType scrollEventType, EventType ev
     {
         _eventCallback(this, eventType);
     }
+    
+    if (!_scrollBarEventCallback.empty())
+    {
+        for (auto it : _scrollBarEventCallback)
+            it.second(it.first, this, eventType);
+    }
+    
     if (_ccEventCallback)
     {
         _ccEventCallback(this, static_cast<int>(eventType));
@@ -1159,6 +1176,27 @@ void ScrollView::addEventListenerScrollView(Ref *target, SEL_ScrollViewEvent sel
 void ScrollView::addEventListener(const ccScrollViewCallback& callback)
 {
     _eventCallback = callback;
+}
+    
+void ScrollView::addScrollBarEventListener(cocos2d::ui::ScrollBar *target, const ccScrollBarViewCallback &callback)
+{
+    auto it = _scrollBarEventCallback.find(target);
+    if (it == _scrollBarEventCallback.end())
+    {
+        _scrollBarEventCallback.emplace(target, callback);
+    }
+    else
+    {
+        CCLOG("calback is exist in ScrollView::addScrollBarEventListener");
+    }
+}
+
+void ScrollView::removeScrollBarEventListener(cocos2d::ui::ScrollBar *target)
+{
+    if (_scrollBarEventCallback.find(target) != _scrollBarEventCallback.end())
+    {
+        _scrollBarEventCallback.erase(target);
+    }
 }
 
 void ScrollView::setDirection(Direction dir)
@@ -1504,6 +1542,7 @@ void ScrollView::copySpecialProperties(Widget *widget)
         _scrollViewEventSelector = scrollView->_scrollViewEventSelector;
         _eventCallback = scrollView->_eventCallback;
         _ccEventCallback = scrollView->_ccEventCallback;
+        _scrollBarEventCallback = scrollView->_scrollBarEventCallback;
         
         setScrollBarEnabled(scrollView->isScrollBarEnabled());
         if(isScrollBarEnabled())
