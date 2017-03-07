@@ -81,16 +81,17 @@ _imageScale(1.0f)
 
 ScrollBar::~ScrollBar()
 {
-    if (_dataScrollView)
-    {
-        _dataScrollView->removeScrollBarEventListener(this);
-    }
-    
     _sliderEventListener = nullptr;
     _sliderEventSelector = nullptr;
     
     cocos2d::Director::getInstance()->getEventDispatcher()->removeEventListener(_mouseListener);
     _mouseListener = nullptr;
+    
+    if (_dataScrollView)
+    {
+        _dataScrollView->removeScrollBarEventListener(this);
+        _dataScrollView = nullptr;
+    }
 }
 
 ScrollBar* ScrollBar::create()
@@ -525,6 +526,10 @@ void ScrollBar::addEventListener(const ccSliderCallback& callback)
 
 float ScrollBar::getPercent()const
 {
+    if (BarType::kVertical == _barType)
+    {
+        return 100.0f - _percent;
+    }
     return _percent;
 }
 
@@ -561,40 +566,52 @@ void ScrollBar::barRendererScaleChangedWithSize()
     
 void ScrollBar::setScrollView(cocos2d::ui::ScrollView *scrollView)
 {
-    _dataScrollView = scrollView;
-    assert(_dataScrollView);
-    
-    if (_barType == BarType::kVertical)
+    if (!scrollView)
     {
-        setWindowSize({_dataScrollView->getContentSize().width, _dataScrollView->getContentSize().height});
-        setSizeOfContent({_dataScrollView->getInnerContainer()->getContentSize().width, _dataScrollView->getInnerContainer()->getContentSize().height});
+        if (_dataScrollView)
+        {
+            _dataScrollView->removeScrollBarEventListener(this);
+            _dataScrollView = nullptr;
+        }
     }
     else
     {
-        setWindowSize({_dataScrollView->getContentSize().height, _dataScrollView->getContentSize().width});
-        setSizeOfContent({_dataScrollView->getInnerContainer()->getContentSize().height, _dataScrollView->getInnerContainer()->getContentSize().width});
+        if (_dataScrollView != scrollView)
+        {
+            _dataScrollView = scrollView;
+            _dataScrollView->addScrollBarEventListener(this, [this](cocos2d::ui::ScrollBar *scrollBar, cocos2d::Ref* target, cocos2d::ui::ScrollView::EventType type)
+            {
+                if (scrollBar == this)
+                {
+                    updateBarPosition();
+                }
+            });
+
+            _mouseListener = cocos2d::EventListenerMouse::create();
+            _mouseListener->onMouseScroll = [this](cocos2d::Event *e)
+            {
+                cocos2d::EventMouse *mouseEvent = dynamic_cast<cocos2d::EventMouse *>(e);
+                if (mouseEvent)
+                {
+                    this->updateByWheelMouse(mouseEvent->getScrollX(), -mouseEvent->getScrollY());
+                }
+            };
+            cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_mouseListener, this);
+        }
+        
+        if (_barType == BarType::kVertical)
+        {
+            setWindowSize({_dataScrollView->getContentSize().width, _dataScrollView->getContentSize().height});
+            setSizeOfContent({_dataScrollView->getInnerContainer()->getContentSize().width, _dataScrollView->getInnerContainer()->getContentSize().height});
+        }
+        else
+        {
+            setWindowSize({_dataScrollView->getContentSize().height, _dataScrollView->getContentSize().width});
+            setSizeOfContent({_dataScrollView->getInnerContainer()->getContentSize().height, _dataScrollView->getInnerContainer()->getContentSize().width});
+        }
+        
+        updateBarPosition(true);
     }
-
-    _dataScrollView->addScrollBarEventListener(this, [this](cocos2d::ui::ScrollBar *scrollBar, cocos2d::Ref* target, cocos2d::ui::ScrollView::EventType type)
-    {
-        if (scrollBar == this)
-        {
-            updateBarPosition();
-        }
-    });
-
-    _mouseListener = cocos2d::EventListenerMouse::create();
-    _mouseListener->onMouseScroll = [this](cocos2d::Event *e)
-    {
-        cocos2d::EventMouse *mouseEvent = dynamic_cast<cocos2d::EventMouse *>(e);
-        if (mouseEvent)
-        {
-            this->updateByWheelMouse(mouseEvent->getScrollX(), -mouseEvent->getScrollY());
-        }
-    };
-    cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(_mouseListener, this);
-    
-    updateBarPosition(true);
 }
     
 void ScrollBar::updateBarPosition(bool isSetPercent)
@@ -605,30 +622,44 @@ void ScrollBar::updateBarPosition(bool isSetPercent)
         {
             float minY = _dataScrollView->getContentSize().height - _dataScrollView->getInnerContainerSize().height;
             float h = -minY;
-            float percent = (h - (_dataScrollView->getInnerContainerPosition().y - minY)) * 100.0f / h;
-            
-            if (isSetPercent)
+            if (h > 0)
             {
-                setPercent(percent);
+                float percent = (h - (_dataScrollView->getInnerContainerPosition().y - minY)) * 100.0f / h;
+                
+                if (isSetPercent)
+                {
+                    setPercent(percent);
+                }
+                else
+                {
+                    updatePercent(percent);
+                }
             }
-            else
+            else if (std::fabs(h) < MATH_EPSILON)
             {
-                updatePercent(percent);
+                updatePercent(0);
             }
         }
         else
         {
             float minX = _dataScrollView->getContentSize().width - _dataScrollView->getInnerContainerSize().width;
             float w = -minX;
-            float percent = (w - (_dataScrollView->getInnerContainerPosition().x - minX)) * 100.0f / w;
-            
-            if (isSetPercent)
+            if (w > 0)
             {
-                setPercent(percent);
+                float percent = (w - (_dataScrollView->getInnerContainerPosition().x - minX)) * 100.0f / w;
+                
+                if (isSetPercent)
+                {
+                    setPercent(percent);
+                }
+                else
+                {
+                    updatePercent(percent);
+                }
             }
-            else
+            else if (std::fabs(w) < MATH_EPSILON)
             {
-                updatePercent(percent);
+                updatePercent(0);
             }
         }
 
@@ -657,17 +688,18 @@ void ScrollBar::updatePercent(float percent)
     
     if (_barType == BarType::kHorizontal)
     {
-        sliderPos.x = std::min(std::max(barLen * _percent / 100.f, minPosX), maxPosX);
+        float value = minPosX + ((maxPosX - minPosX) * _percent / 100.f);
+        sliderPos.x = std::min(std::max(value, minPosX), maxPosX);
         sliderPos.y = _contentSize.height/2.f-ballRenderer->getContentSize().height*(0.5f + ballRenderer->getAnchorPoint().y) + ballRenderer->getContentSize().height;
     }
     else
     {
-        sliderPos.y = std::min(std::max(barLen * _percent / 100.f, minPosX), maxPosX);
+        float value = minPosX + ((maxPosX - minPosX) * _percent / 100.f);
+        sliderPos.y = std::min(std::max(value, minPosX), maxPosX);
         sliderPos.x = _contentSize.width/2.f-ballRenderer->getContentSize().width*(0.5f + ballRenderer->getAnchorPoint().x) + ballRenderer->getContentSize().width;
     }
     
     _slidBallRenderer->setPosition(sliderPos);
-    
 }
 
 void ScrollBar::setBallPosition(const cocos2d::Vec2 & pos)
@@ -713,7 +745,7 @@ void ScrollBar::percentChangedEvent(EventType event)
     {
         if (_barType == BarType::kVertical)
         {
-            _dataScrollView->jumpToPercentVertical(100.0f - getPercent());
+            _dataScrollView->jumpToPercentVertical(getPercent());
         }
         else
         {
@@ -744,19 +776,19 @@ void ScrollBar::updateByWheelMouse(float scrollX, float scrollY)
             if (0 <= newPrecent && newPrecent <= 100.0f)
             {
                 updatePercent(newPrecent);
-                _dataScrollView->jumpToPercentVertical(100.0f - getPercent());
+                _dataScrollView->jumpToPercentVertical(getPercent());
             }
             else
             {
                 if (newPrecent < 0)
                 {
                     updatePercent(0);
-                    _dataScrollView->jumpToPercentVertical(100.0f - getPercent());
+                    _dataScrollView->jumpToPercentVertical(getPercent());
                 }
                 else if (newPrecent > 100)
                 {
                     updatePercent(100);
-                    _dataScrollView->jumpToPercentVertical(100.0f - getPercent());
+                    _dataScrollView->jumpToPercentVertical(getPercent());
                 }
             }
         }
@@ -1068,6 +1100,8 @@ void ScrollBar::recalcSizeScrollBar()
             _slidBallMouseOverRenderer->setContentSize(verticalSize);
             _slidBallMouseOverRenderer->setScale(_imageScale);
         }
+        
+        updateBarPosition();
     }
     else
     {
@@ -1093,6 +1127,8 @@ void ScrollBar::recalcSizeScrollBar()
             _slidBallMouseOverRenderer->setContentSize(horizontalSize);
             _slidBallMouseOverRenderer->setScale(_imageScale);
         }
+        
+        updateBarPosition();
     }
 }
     
