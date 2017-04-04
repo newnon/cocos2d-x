@@ -5859,9 +5859,6 @@
 		D0FD035E1A3B51AA00825BB5 /* CCAllocatorStrategyGlobalSmallBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FD03451A3B51AA00825BB5 /* CCAllocatorStrategyGlobalSmallBlock.h */; };
 		D0FD035F1A3B51AA00825BB5 /* CCAllocatorStrategyPool.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FD03461A3B51AA00825BB5 /* CCAllocatorStrategyPool.h */; };
 		D0FD03601A3B51AA00825BB5 /* CCAllocatorStrategyPool.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FD03461A3B51AA00825BB5 /* CCAllocatorStrategyPool.h */; };
-		D82054511E93D88C00397EB0 /* AudioEngine-emcc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D820544B1E93D88C00397EB0 /* AudioEngine-emcc.cpp */; };
-		D82054521E93D88C00397EB0 /* AudioEngine-emcc.h in Headers */ = {isa = PBXBuildFile; fileRef = D820544C1E93D88C00397EB0 /* AudioEngine-emcc.h */; };
-		D82054531E93D88C00397EB0 /* SimpleAudioEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D820544F1E93D88C00397EB0 /* SimpleAudioEngine.cpp */; };
 		DA8C62A219E52C6400000516 /* ioapi_mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA8C62A019E52C6400000516 /* ioapi_mem.cpp */; };
 		DA8C62A319E52C6400000516 /* ioapi_mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA8C62A019E52C6400000516 /* ioapi_mem.cpp */; };
 		DA8C62A419E52C6400000516 /* ioapi_mem.h in Headers */ = {isa = PBXBuildFile; fileRef = DA8C62A119E52C6400000516 /* ioapi_mem.h */; };
@@ -12276,7 +12273,6 @@
 				B665E2481AA80A6500DDB1C5 /* CCPUCollisionAvoidanceAffectorTranslator.h in Headers */,
 				1A570288180BCC900088DEC7 /* CCSpriteFrame.h in Headers */,
 				B6CAB43B1AF9AA1A00B9B856 /* btGpu3DGridBroadphaseSharedTypes.h in Headers */,
-				D82054521E93D88C00397EB0 /* AudioEngine-emcc.h in Headers */,
 				B665E3AC1AA80A6500DDB1C5 /* CCPURandomiserTranslator.h in Headers */,
 				B665E2CC1AA80A6500DDB1C5 /* CCPUGravityAffectorTranslator.h in Headers */,
 				15AE189519AAD33D00C27E9E /* CCLayerLoader.h in Headers */,
@@ -15130,7 +15126,6 @@
 				1A570061180BC5A10088DEC7 /* CCAction.cpp in Sources */,
 				B6CAB4431AF9AA1A00B9B856 /* btParallelConstraintSolver.cpp in Sources */,
 				15AE1BDC19AAE01E00C27E9E /* CCControlUtils.cpp in Sources */,
-				D82054511E93D88C00397EB0 /* AudioEngine-emcc.cpp in Sources */,
 				50ABBEC51925AB6F00A911A9 /* etc1.cpp in Sources */,
 				50643BDE19BFCCA400EF68ED /* LocalStorage-android.cpp in Sources */,
 				15AE1B5B19AADA9900C27E9E /* UITextAtlas.cpp in Sources */,
@@ -15548,7 +15543,6 @@
 				15AE18EA19AAD35000C27E9E /* CCActionNode.cpp in Sources */,
 				B6CAB2391AF9AA1A00B9B856 /* btCompoundCompoundCollisionAlgorithm.cpp in Sources */,
 				2962D6001C61DF1A004821A3 /* CCUIMultilineTextField.m in Sources */,
-				D82054531E93D88C00397EB0 /* SimpleAudioEngine.cpp in Sources */,
 				A5B57D021A3B919900CCBDB4 /* CCBXNodeColorLoader.cpp in Sources */,
 				15AE1A7819AAD40300C27E9E /* b2PolygonAndCircleContact.cpp in Sources */,
 				15AE1A3419AAD3D500C27E9E /* b2EdgeShape.cpp in Sources */,

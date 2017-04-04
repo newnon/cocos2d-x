@@ -4,17 +4,27 @@
 #include <cstring>
 #include "AudioEngine-emcc.h"
 #include "cocos2d.h"
+
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
+#include <emscripten.h>
+
 using namespace cocos2d;
 using namespace cocos2d::experimental;
 
 extern "C" {
-    // Methods implemented in SimpleAudioEngine.js
+    typedef void (*audio_callback)(int audioId, bool result);
+    
+    // Methods implemented in AudioEngine.js
     void AudioEngine_init();
     
+    
     void AudioEngine_rewindBackgroundMusic();
-    void AudioEngine_preloadEffect(const char *);
     void AudioEngine_unloadEffect(const char *);
-    int AudioEngine_play2d(const char *, int);
+    
+    int AudioEngine_preloadEffect(const char *, audio_callback callback);
+    int AudioEngine_play2d(const char *, int, float);
+    
+    
     void AudioEngine_stopEffect(int);
     void AudioEngine_setEffectsVolume(int);
     void AudioEngine_pauseEffect(int);
@@ -26,11 +36,6 @@ extern "C" {
     void AudioEngine_setUseFileExt(const char *);
     
     void AudioEngine_end();
-    
-    typedef void (*audio_callback)(void* userData, bool result);
-    
-    void AudioEngine_set_callback(void *userData, audio_callback callback);
-
 };
 
 
@@ -51,28 +56,27 @@ bool AudioEngineImpl::init()
     
     AudioEngine_init();
     
-    AudioEngine_set_callback(static_cast<void*>(this), &AudioEngineImpl::onCallback);
     return true;
 };
 
-void AudioEngineImpl::onCallback(int audioID, bool success)
+static void onCallback(int audioID, bool success)
 {
 }
 
 int AudioEngineImpl::play2d(const std::string &fileFullPath, bool loop, float volume)
 {
-    int ret = AudioEngine_play2d(fileFullPath, loop, volume);
+    int ret = AudioEngine_play2d(fileFullPath.c_str(), loop, volume);
     return ret;
 };
 
 void AudioEngineImpl::setVolume(int audioID, float volume)
 {
     // Ensure volume is between 0.0 and 1.0.
-    volume = volume > 1.0 ? 1.0 : volume;
-    volume = volume < 0.0 ? 0.0 : volume;
-    
-    SimpleAudioEngine_setBackgroundMusicVolume((int) (volume * 100));
-    s_backgroundVolume = volume;
+//    volume = volume > 1.0 ? 1.0 : volume;
+//    volume = volume < 0.0 ? 0.0 : volume;
+//    
+//    SimpleAudioEngine_setBackgroundMusicVolume((int) (volume * 100));
+//    s_backgroundVolume = volume;
 };
 
 void AudioEngineImpl::setLoop(int audioID, bool loop){
@@ -116,10 +120,21 @@ void AudioEngineImpl::uncacheAll(){
 };
 
     
-int AudioEngineImpl::preload(const std::string& filePath, std::function<void(bool isSuccess)> callback){
-  return 0; 
+int AudioEngineImpl::preload(const std::string& filePath, const Callback &callback)
+{
+    int ret = AudioEngine_preloadEffect(filePath.c_str(), &onCallback);
+    
+    auto it = _preloadCallbacks.find(ret);
+    if (it == _preloadCallbacks.end())
+    {
+    }
+    
+    
+    return 0;
 };
 
 
 void AudioEngineImpl::update(float dt){
 };
+
+#endif

@@ -41,6 +41,7 @@ NS_CC_BEGIN
 
 class CC_DLL AudioEngineImpl : public cocos2d::Ref
 {
+    using Callback = std::function<void(bool isSuccess)>;
 public:
     AudioEngineImpl();
     ~AudioEngineImpl();
@@ -60,15 +61,13 @@ public:
     
     void uncache(const std::string& filePath);
     void uncacheAll();
-    
-    void onCallback(int audioID, bool success);
 
-    int preload(const std::string& filePath, std::function<void(bool isSuccess)> callback);
+    int preload(const std::string& filePath, const Callback &callback);
     
     void update(float dt);
     
 private:
-    
+    std::map<int, Callback>   _preloadCallbacks;
 };
 }
 NS_CC_END

@@ -235,6 +235,7 @@ elseif ( EMSCRIPTEN )
     file(GLOB preJsFiles ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/audio/emcc/buzz.js)
     file(GLOB libraryJsFiles 
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/audio/emcc/SimpleAudioEngine.js
+      ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/audio/emcc/AudioEngine.js
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/base/emcc/StorageEngine.js
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/network/WebSocket.js
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/network/HttpClient.js
