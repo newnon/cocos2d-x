@@ -5859,6 +5859,9 @@
 		D0FD035E1A3B51AA00825BB5 /* CCAllocatorStrategyGlobalSmallBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FD03451A3B51AA00825BB5 /* CCAllocatorStrategyGlobalSmallBlock.h */; };
 		D0FD035F1A3B51AA00825BB5 /* CCAllocatorStrategyPool.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FD03461A3B51AA00825BB5 /* CCAllocatorStrategyPool.h */; };
 		D0FD03601A3B51AA00825BB5 /* CCAllocatorStrategyPool.h in Headers */ = {isa = PBXBuildFile; fileRef = D0FD03461A3B51AA00825BB5 /* CCAllocatorStrategyPool.h */; };
+		D82054511E93D88C00397EB0 /* AudioEngine-emcc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D820544B1E93D88C00397EB0 /* AudioEngine-emcc.cpp */; };
+		D82054521E93D88C00397EB0 /* AudioEngine-emcc.h in Headers */ = {isa = PBXBuildFile; fileRef = D820544C1E93D88C00397EB0 /* AudioEngine-emcc.h */; };
+		D82054531E93D88C00397EB0 /* SimpleAudioEngine.cpp in Sources */ = {isa = PBXBuildFile; fileRef = D820544F1E93D88C00397EB0 /* SimpleAudioEngine.cpp */; };
 		DA8C62A219E52C6400000516 /* ioapi_mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA8C62A019E52C6400000516 /* ioapi_mem.cpp */; };
 		DA8C62A319E52C6400000516 /* ioapi_mem.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DA8C62A019E52C6400000516 /* ioapi_mem.cpp */; };
 		DA8C62A419E52C6400000516 /* ioapi_mem.h in Headers */ = {isa = PBXBuildFile; fileRef = DA8C62A119E52C6400000516 /* ioapi_mem.h */; };
@@ -7973,6 +7976,12 @@
 		D0FD03441A3B51AA00825BB5 /* CCAllocatorStrategyFixedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorStrategyFixedBlock.h; sourceTree = "<group>"; };
 		D0FD03451A3B51AA00825BB5 /* CCAllocatorStrategyGlobalSmallBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorStrategyGlobalSmallBlock.h; sourceTree = "<group>"; };
 		D0FD03461A3B51AA00825BB5 /* CCAllocatorStrategyPool.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CCAllocatorStrategyPool.h; sourceTree = "<group>"; };
+		D820544B1E93D88C00397EB0 /* AudioEngine-emcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "AudioEngine-emcc.cpp"; sourceTree = "<group>"; };
+		D820544C1E93D88C00397EB0 /* AudioEngine-emcc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "AudioEngine-emcc.h"; sourceTree = "<group>"; };
+		D820544D1E93D88C00397EB0 /* AudioEngine.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = AudioEngine.js; sourceTree = "<group>"; };
+		D820544E1E93D88C00397EB0 /* buzz.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = buzz.js; sourceTree = "<group>"; };
+		D820544F1E93D88C00397EB0 /* SimpleAudioEngine.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SimpleAudioEngine.cpp; sourceTree = "<group>"; };
+		D82054501E93D88C00397EB0 /* SimpleAudioEngine.js */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.javascript; path = SimpleAudioEngine.js; sourceTree = "<group>"; };
 		D85F54661D2BAAE200F49F75 /* CCApplication-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CCApplication-emcc.cpp"; sourceTree = "<group>"; };
 		D85F54671D2BAAE200F49F75 /* CCApplication-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CCApplication-emcc.h"; sourceTree = "<group>"; };
 		D85F54681D2BAAE200F49F75 /* CCCommon-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "CCCommon-emcc.cpp"; sourceTree = "<group>"; };
@@ -9548,6 +9557,7 @@
 		46A15FD01807A56F005B8026 /* audio */ = {
 			isa = PBXGroup;
 			children = (
+				D820544A1E93D88C00397EB0 /* emcc */,
 				3E2BDAEB19C0436F0055CDCD /* AudioEngine.cpp */,
 				46A15FE01807A56F005B8026 /* include */,
 				50CB246E19D9C5A100687767 /* apple */,
@@ -11652,6 +11662,19 @@
 			path = ../base/allocator;
 			sourceTree = "<group>";
 		};
+		D820544A1E93D88C00397EB0 /* emcc */ = {
+			isa = PBXGroup;
+			children = (
+				D820544B1E93D88C00397EB0 /* AudioEngine-emcc.cpp */,
+				D820544C1E93D88C00397EB0 /* AudioEngine-emcc.h */,
+				D820544D1E93D88C00397EB0 /* AudioEngine.js */,
+				D820544E1E93D88C00397EB0 /* buzz.js */,
+				D820544F1E93D88C00397EB0 /* SimpleAudioEngine.cpp */,
+				D82054501E93D88C00397EB0 /* SimpleAudioEngine.js */,
+			);
+			path = emcc;
+			sourceTree = "<group>";
+		};
 		D85F54651D2BAAE200F49F75 /* emcc */ = {
 			isa = PBXGroup;
 			children = (
@@ -12253,6 +12276,7 @@
 				B665E2481AA80A6500DDB1C5 /* CCPUCollisionAvoidanceAffectorTranslator.h in Headers */,
 				1A570288180BCC900088DEC7 /* CCSpriteFrame.h in Headers */,
 				B6CAB43B1AF9AA1A00B9B856 /* btGpu3DGridBroadphaseSharedTypes.h in Headers */,
+				D82054521E93D88C00397EB0 /* AudioEngine-emcc.h in Headers */,
 				B665E3AC1AA80A6500DDB1C5 /* CCPURandomiserTranslator.h in Headers */,
 				B665E2CC1AA80A6500DDB1C5 /* CCPUGravityAffectorTranslator.h in Headers */,
 				15AE189519AAD33D00C27E9E /* CCLayerLoader.h in Headers */,
@@ -15106,6 +15130,7 @@
 				1A570061180BC5A10088DEC7 /* CCAction.cpp in Sources */,
 				B6CAB4431AF9AA1A00B9B856 /* btParallelConstraintSolver.cpp in Sources */,
 				15AE1BDC19AAE01E00C27E9E /* CCControlUtils.cpp in Sources */,
+				D82054511E93D88C00397EB0 /* AudioEngine-emcc.cpp in Sources */,
 				50ABBEC51925AB6F00A911A9 /* etc1.cpp in Sources */,
 				50643BDE19BFCCA400EF68ED /* LocalStorage-android.cpp in Sources */,
 				15AE1B5B19AADA9900C27E9E /* UITextAtlas.cpp in Sources */,
@@ -15523,6 +15548,7 @@
 				15AE18EA19AAD35000C27E9E /* CCActionNode.cpp in Sources */,
 				B6CAB2391AF9AA1A00B9B856 /* btCompoundCompoundCollisionAlgorithm.cpp in Sources */,
 				2962D6001C61DF1A004821A3 /* CCUIMultilineTextField.m in Sources */,
+				D82054531E93D88C00397EB0 /* SimpleAudioEngine.cpp in Sources */,
 				A5B57D021A3B919900CCBDB4 /* CCBXNodeColorLoader.cpp in Sources */,
 				15AE1A7819AAD40300C27E9E /* b2PolygonAndCircleContact.cpp in Sources */,
 				15AE1A3419AAD3D500C27E9E /* b2EdgeShape.cpp in Sources */,

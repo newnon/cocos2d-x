@@ -7,28 +7,72 @@
 using namespace cocos2d;
 using namespace cocos2d::experimental;
 
+extern "C" {
+    // Methods implemented in SimpleAudioEngine.js
+    void AudioEngine_init();
+    
+    void AudioEngine_rewindBackgroundMusic();
+    void AudioEngine_preloadEffect(const char *);
+    void AudioEngine_unloadEffect(const char *);
+    int AudioEngine_play2d(const char *, int);
+    void AudioEngine_stopEffect(int);
+    void AudioEngine_setEffectsVolume(int);
+    void AudioEngine_pauseEffect(int);
+    void AudioEngine_resumeEffect(int);
+    void AudioEngine_pauseAllEffects();
+    void AudioEngine_resumeAllEffects();
+    void AudioEngine_stopAllEffects();
+    
+    void AudioEngine_setUseFileExt(const char *);
+    
+    void AudioEngine_end();
+    
+    typedef void (*audio_callback)(void* userData, bool result);
+    
+    void AudioEngine_set_callback(void *userData, audio_callback callback);
+
+};
+
+
 AudioEngineImpl * g_AudioEngineImpl = nullptr;
 
 
-AudioEngineImpl::AudioEngineImpl(){
+AudioEngineImpl::AudioEngineImpl()
+{
 };
 
 AudioEngineImpl::~AudioEngineImpl(){
 };
 
     
-bool AudioEngineImpl::init(){
-  
-  g_AudioEngineImpl = this; 
-  
-  return true;
+bool AudioEngineImpl::init()
+{
+    g_AudioEngineImpl = this;
+    
+    AudioEngine_init();
+    
+    AudioEngine_set_callback(static_cast<void*>(this), &AudioEngineImpl::onCallback);
+    return true;
 };
 
-int AudioEngineImpl::play2d(const std::string &fileFullPath ,bool loop ,float volume){
-  return 0;
+void AudioEngineImpl::onCallback(int audioID, bool success)
+{
+}
+
+int AudioEngineImpl::play2d(const std::string &fileFullPath, bool loop, float volume)
+{
+    int ret = AudioEngine_play2d(fileFullPath, loop, volume);
+    return ret;
 };
 
-void AudioEngineImpl::setVolume(int audioID,float volume){
+void AudioEngineImpl::setVolume(int audioID, float volume)
+{
+    // Ensure volume is between 0.0 and 1.0.
+    volume = volume > 1.0 ? 1.0 : volume;
+    volume = volume < 0.0 ? 0.0 : volume;
+    
+    SimpleAudioEngine_setBackgroundMusicVolume((int) (volume * 100));
+    s_backgroundVolume = volume;
 };
 
 void AudioEngineImpl::setLoop(int audioID, bool loop){

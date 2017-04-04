@@ -61,6 +61,7 @@ public:
     void uncache(const std::string& filePath);
     void uncacheAll();
     
+    void onCallback(int audioID, bool success);
 
     int preload(const std::string& filePath, std::function<void(bool isSuccess)> callback);
     
