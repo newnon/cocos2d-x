@@ -195,9 +195,11 @@ int AudioEngine::play2d(const std::string& filePath, bool loop, float volume, co
             break;
         }
 
+#if CC_TARGET_PLATFORM != CC_PLATFORM_EMSCRIPTEN
         if ( !FileUtils::getInstance()->isFileExist(filePath)){
             break;
         }
+#endif
 
         auto profileHelper = _defaultProfileHelper;
         if (profile && profile != &profileHelper->profile){
@@ -233,6 +235,7 @@ int AudioEngine::play2d(const std::string& filePath, bool loop, float volume, co
         }
         
         ret = _audioEngineImpl->play2d(filePath, loop, volume);
+        
         if (ret != INVALID_AUDIO_ID)
         {
             _audioPathIDMap[filePath].push_back(ret);
@@ -530,6 +533,7 @@ void AudioEngine::preload(const std::string& filePath, std::function<void(bool i
 
     if (_audioEngineImpl)
     {
+#if CC_TARGET_PLATFORM != CC_PLATFORM_EMSCRIPTEN
         if (!FileUtils::getInstance()->isFileExist(filePath)){
             if (callback)
             {
@@ -537,9 +541,22 @@ void AudioEngine::preload(const std::string& filePath, std::function<void(bool i
             }
             return;
         }
-
+#endif
         _audioEngineImpl->preload(filePath, callback);
     }
+}
+
+void AudioEngine::setUseFileExt(const std::vector<std::string> &exts)
+{
+#if CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
+    
+    lazyInit();
+    
+    if (_audioEngineImpl)
+    {
+        _audioEngineImpl->setUseFileExt(exts);
+    }
+#endif
 }
 
 void AudioEngine::addTask(const std::function<void()>& task)

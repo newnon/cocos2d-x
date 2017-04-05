@@ -48,26 +48,33 @@ public:
     
     bool init();
     int play2d(const std::string &fileFullPath ,bool loop ,float volume);
-    void setVolume(int audioID,float volume);
-    void setLoop(int audioID, bool loop);
-    bool pause(int audioID);
-    bool resume(int audioID);
-    bool stop(int audioID);
+    void setVolume(int audioId,float volume);
+    void setLoop(int audioId, bool loop);
+    bool pause(int audioId);
+    bool resume(int audioId);
+    bool stop(int audioId);
     void stopAll();
-    float getDuration(int audioID);
-    float getCurrentTime(int audioID);
-    bool setCurrentTime(int audioID, float time);
-    void setFinishCallback(int audioID, const std::function<void (int, const std::string &)> &callback);
+    float getDuration(int audioId);
+    float getCurrentTime(int audioId);
+    bool setCurrentTime(int audioId, float time);
+    void setFinishCallback(int audioId, const std::function<void (int, const std::string &)> &callback);
     
     void uncache(const std::string& filePath);
     void uncacheAll();
 
     int preload(const std::string& filePath, const Callback &callback);
     
+    void setUseFileExt(const std::vector<std::string> &exts);
+    
     void update(float dt);
     
+protected:
+    static void onCallback(int audioId, bool success);
+    void callCallback(int audioId, bool success);
+    
 private:
-    std::map<int, Callback>   _preloadCallbacks;
+    std::map<int, std::string> _audioFiles;
+    std::map<int, Callback> _preloadCallbacks;
 };
 }
 NS_CC_END
