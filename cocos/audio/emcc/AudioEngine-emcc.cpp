@@ -19,7 +19,7 @@ extern "C" {
     
     int AudioEngine_preload(const char *);
     void AudioEngine_unload(const char *);
-    int AudioEngine_play2d(const char *, int, float);
+    int AudioEngine_play2d(const char *, int, float, audio_callback callback);
     
     void AudioEngine_setLoop(int, bool);
     void AudioEngine_setVolume(int, int);
@@ -30,7 +30,6 @@ extern "C" {
     int AudioEngine_getDuration(int);
     int AudioEngine_getCurrentTime(int);
     void AudioEngine_setCurrentTime(int, float);
-    
     
     void AudioEngine_set_callback(int audioId, audio_callback callback);
     
@@ -59,21 +58,25 @@ bool AudioEngineImpl::init()
 
 void AudioEngineImpl::onCallback(int audioId, bool success)
 {
-    printf("!!!! AudioEngineImpl::onCallback 1\n");
-    
     if (g_AudioEngineImpl)
     {
-        g_AudioEngineImpl->callCallback(audioId, success);
+        auto callback = g_AudioEngineImpl->_preloadCallbacks.find(audioId);
+        if (callback != g_AudioEngineImpl->_preloadCallbacks.end())
+        {
+            callback->second(success);
+            g_AudioEngineImpl->_preloadCallbacks.erase(callback);
+        }
     }
 }
 
-void AudioEngineImpl::callCallback(int audioId, bool success)
+void AudioEngineImpl::onPlay2dCallback(int audioId, bool success)
 {
-    auto callback = _preloadCallbacks.find(audioId);
-    if (callback != _preloadCallbacks.end())
+    if (g_AudioEngineImpl && success)
     {
-        callback->second(success);
-        _preloadCallbacks.erase(callback);
+        if (AudioEngine::_audioIDInfoMap.find(audioId) != AudioEngine::_audioIDInfoMap.end())
+        {
+            AudioEngine::_audioIDInfoMap[audioId].state = AudioEngine::AudioState::PLAYING;
+        }
     }
 }
 
@@ -82,15 +85,15 @@ int AudioEngineImpl::play2d(const std::string &fileFullPath, bool loop, float vo
     volume = volume > 1.0 ? 1.0 : volume;
     volume = volume < 0.0 ? 0.0 : volume;
     
-    int ret = AudioEngine_play2d(fileFullPath.c_str(), loop, (int)(volume * 100));
-    
-    
-    auto fileIt = _audioFiles.find(ret);
-    if (fileIt == _audioFiles.end())
+    int ret = AudioEngine_play2d(fileFullPath.c_str(), loop, (int)(volume * 100), &AudioEngineImpl::onPlay2dCallback);
+    if (ret != -1)
     {
-        _audioFiles[ret] = fileFullPath;
+        auto fileIt = _audioFiles.find(ret);
+        if (fileIt == _audioFiles.end())
+        {
+            _audioFiles[ret] = fileFullPath;
+        }
     }
-    
     return ret;
 };
 
@@ -133,17 +136,21 @@ void AudioEngineImpl::stopAll()
 
 float AudioEngineImpl::getDuration(int audioId)
 {
-    
-    return AudioEngine_getDuration(audioId);
+    float value = AudioEngine_getDuration(audioId);
+    printf("!!!! AudioEngineImpl::getDuration %i %f\n", audioId, value);
+    return value;
 };
 
 float AudioEngineImpl::getCurrentTime(int audioId)
 {
-    return AudioEngine_getCurrentTime(audioId);
+    float value = AudioEngine_getCurrentTime(audioId);
+    printf("!!!! AudioEngineImpl::getCurrentTime %i %f\n", audioId, value);
+    return value;
 };
 
 bool AudioEngineImpl::setCurrentTime(int audioId, float time)
 {
+    printf("!!!! AudioEngineImpl::setCurrentTime %i %f\n", audioId, time);
     AudioEngine_setCurrentTime(audioId, time);
     return true;
 };
@@ -187,6 +194,12 @@ void AudioEngineImpl::uncache(const std::string& path)
 
 void AudioEngineImpl::uncacheAll()
 {
+    for (auto &it : _audioFiles)
+    {
+        AudioEngine_unload(it.second.c_str());
+        _audioFiles.erase(it.first);
+    }
+    
     _preloadCallbacks.clear();
 };
 
@@ -211,9 +224,8 @@ int AudioEngineImpl::preload(const std::string& filePath, const Callback &callba
         }
     }
     
-    return 0;
+    return ret;
 };
-
 
 void AudioEngineImpl::setUseFileExt(const std::vector<std::string> &exts)
 {

@@ -70,7 +70,7 @@ public:
     
 protected:
     static void onCallback(int audioId, bool success);
-    void callCallback(int audioId, bool success);
+    static void onPlay2dCallback(int audioId, bool success);
     
 private:
     std::map<int, std::string> _audioFiles;
