@@ -32,6 +32,7 @@ extern "C" {
     void AudioEngine_setCurrentTime(int, float);
     
     void AudioEngine_set_callback(int audioId, audio_callback callback);
+    void AudioEngine_set_finish_callback(int audioId, audio_callback callback);
     
     void AudioEngine_setUseFileExt(const char *);
     
@@ -78,6 +79,32 @@ void AudioEngineImpl::onPlay2dCallback(int audioId, bool success)
             AudioEngine::_audioIDInfoMap[audioId].state = AudioEngine::AudioState::PLAYING;
         }
     }
+}
+
+void AudioEngineImpl::onFinishCallback(int audioId, bool success)
+{
+    printf("!@#! AudioEngineImpl::onFinishCallback 1 \n");
+    if (g_AudioEngineImpl)
+    {
+        printf("!@#! AudioEngineImpl::onFinishCallback 2 \n");
+        auto it = g_AudioEngineImpl->_finishCallbacks.find(audioId);
+        if (it != g_AudioEngineImpl->_finishCallbacks.end())
+        {
+            printf("!@#! AudioEngineImpl::onFinishCallback 3 \n");
+            auto fileIt = g_AudioEngineImpl->_audioFiles.find(audioId);
+            if (fileIt != g_AudioEngineImpl->_audioFiles.end())
+            {
+                printf("!@#! AudioEngineImpl::onFinishCallback 4 \n");
+                it->second(audioId, fileIt->second);
+            }
+            
+            printf("!@#! AudioEngineImpl::onFinishCallback 5 \n");
+        }
+        
+        printf("!@#! AudioEngineImpl::onFinishCallback 6 \n");
+    }
+    
+    printf("!@#! AudioEngineImpl::onFinishCallback 7 \n");
 }
 
 int AudioEngineImpl::play2d(const std::string &fileFullPath, bool loop, float volume)
@@ -137,43 +164,31 @@ void AudioEngineImpl::stopAll()
 float AudioEngineImpl::getDuration(int audioId)
 {
     float value = AudioEngine_getDuration(audioId);
-    printf("!!!! AudioEngineImpl::getDuration %i %f\n", audioId, value);
     return value;
 };
 
 float AudioEngineImpl::getCurrentTime(int audioId)
 {
     float value = AudioEngine_getCurrentTime(audioId);
-    printf("!!!! AudioEngineImpl::getCurrentTime %i %f\n", audioId, value);
     return value;
 };
 
 bool AudioEngineImpl::setCurrentTime(int audioId, float time)
 {
-    printf("!!!! AudioEngineImpl::setCurrentTime %i %f\n", audioId, time);
     AudioEngine_setCurrentTime(audioId, time);
     return true;
 };
 
-void AudioEngineImpl::setFinishCallback(int audioId, const std::function<void (int, const std::string &)> &callback)
+void AudioEngineImpl::setFinishCallback(int audioId, const FinishCallback &callback)
 {
     if (audioId != -1)
     {
-        AudioEngine_set_callback(audioId, &AudioEngineImpl::onCallback);
+        AudioEngine_set_finish_callback(audioId, &AudioEngineImpl::onFinishCallback);
         
-        auto it = _preloadCallbacks.find(audioId);
-        if (it == _preloadCallbacks.end())
+        auto callbackIt = _finishCallbacks.find(audioId);
+        if (callbackIt == _finishCallbacks.end())
         {
-            int saveAudioId = audioId;
-            auto saveCallback = callback;
-            _preloadCallbacks[audioId] = [this, saveAudioId, saveCallback](bool result)
-            {
-                auto fileIt = _audioFiles.find(saveAudioId);
-                if (fileIt != _audioFiles.end())
-                {
-                    saveCallback(saveAudioId, fileIt->second);
-                }
-            };
+            _finishCallbacks[audioId] = callback;
         }
     }
 };
@@ -187,6 +202,7 @@ void AudioEngineImpl::uncache(const std::string& path)
             AudioEngine_unload(path.c_str());
             _preloadCallbacks.erase(it.first);
             _audioFiles.erase(it.first);
+            _finishCallbacks.erase(it.first);
             break;
         }
     }
@@ -198,6 +214,7 @@ void AudioEngineImpl::uncacheAll()
     {
         AudioEngine_unload(it.second.c_str());
         _audioFiles.erase(it.first);
+        _finishCallbacks.erase(it.first);
     }
     
     _preloadCallbacks.clear();

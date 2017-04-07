@@ -42,6 +42,7 @@ NS_CC_BEGIN
 class CC_DLL AudioEngineImpl : public cocos2d::Ref
 {
     using Callback = std::function<void(bool isSuccess)>;
+    using FinishCallback = std::function<void (int, const std::string &)>;
 public:
     AudioEngineImpl();
     ~AudioEngineImpl();
@@ -57,7 +58,7 @@ public:
     float getDuration(int audioId);
     float getCurrentTime(int audioId);
     bool setCurrentTime(int audioId, float time);
-    void setFinishCallback(int audioId, const std::function<void (int, const std::string &)> &callback);
+    void setFinishCallback(int audioId, const FinishCallback &callback);
     
     void uncache(const std::string& filePath);
     void uncacheAll();
@@ -71,10 +72,12 @@ public:
 protected:
     static void onCallback(int audioId, bool success);
     static void onPlay2dCallback(int audioId, bool success);
+    static void onFinishCallback(int audioId, bool success);
     
 private:
     std::map<int, std::string> _audioFiles;
     std::map<int, Callback> _preloadCallbacks;
+    std::map<int, FinishCallback> _finishCallbacks;
 };
 }
 NS_CC_END

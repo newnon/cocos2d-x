@@ -7,7 +7,8 @@ var LibraryAudioEngine = {
             numAudioCount: 0,
             formats: [],
             preloadCallbacks: {},
-            play2dCallbacks: {}
+            play2dCallbacks: {},
+            finishCallbacks: {}
         };
     },
 
@@ -54,12 +55,22 @@ var LibraryAudioEngine = {
         {
             Module.CocosAudioState.preloadCallbacks[audioId] = _callback;
         }
+        else if (event == "finish")
+        {
+            Module.CocosAudioState.finishCallbacks[audioId] = _callback;
+        }
     },
 
     AudioEngine_set_callback__deps: ['__set_callback'],
     AudioEngine_set_callback: function(audioId, callback)
     {
         ___set_callback(audioId, "preload", callback);
+    },
+
+    AudioEngine_set_callback__deps: ['__set_callback'],
+    AudioEngine_set_finish_callback: function(audioId, callback)
+    {
+        ___set_callback(audioId, "finish", callback);
     },
 
     AudioEngine_play2d__deps: ['__set_callback'],
@@ -86,12 +97,20 @@ var LibraryAudioEngine = {
             ___set_callback(numAudio, "play2d", callback);
             sound.bind("loadeddata", function ()
             {
-                Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, true);
+                if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
+                    Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, true);
             });
 
             sound.bind("error", function ()
             {
-                Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, false); 
+                if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
+                    Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, false); 
+            });
+
+            sound.bind("ended", function ()
+            {
+                if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
+                    Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
             });
         }
         else
@@ -111,7 +130,15 @@ var LibraryAudioEngine = {
             ___set_callback(numAudio, "play2d", callback);
             sound.bind("playing", function ()
             {
-                Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, true);
+                if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
+                    Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, true);
+            });
+
+            sound.bind("ended", function ()
+            {
+                console.log("!@# ended !!!");
+                if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
+                    Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
             });
 
             sound.setVolume(volume);            
@@ -143,12 +170,21 @@ var LibraryAudioEngine = {
 
             sound.bind("loadeddata", function ()
             {
-                Module.CocosAudioState.preloadCallbacks[numAudio].call(this, numAudio, true);
+                if (Module.CocosAudioState.preloadCallbacks[numAudio] != undefined)
+                    Module.CocosAudioState.preloadCallbacks[numAudio].call(this, numAudio, true);
             });
 
             sound.bind("error", function ()
             {
-                Module.CocosAudioState.preloadCallbacks[numAudio].call(this, numAudio, false); 
+                if (Module.CocosAudioState.preloadCallbacks[numAudio] != undefined)
+                    Module.CocosAudioState.preloadCallbacks[numAudio].call(this, numAudio, false); 
+            });
+
+            sound.bind("ended", function ()
+            {
+                console.log("!@# ended !!!");
+                if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
+                    Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
             });
 
             sound.load();
@@ -173,6 +209,9 @@ var LibraryAudioEngine = {
 
             if (Module.CocosAudioState.play2dCallbacks[audioId] != undefined)
                 Module.CocosAudioState.play2dCallbacks[audioId] = null;
+
+            if (Module.CocosAudioState.finishCallbacks[audioId] != undefined)
+                Module.CocosAudioState.finishCallbacks[audioId] = null;
             
             delete Module.CocosAudioState.audioMap[filename];
             delete Module.CocosAudioState.audioMapNum[filename];
@@ -193,6 +232,9 @@ var LibraryAudioEngine = {
 
                 if (Module.CocosAudioState.play2dCallbacks[audioId] != undefined)
                     Module.CocosAudioState.play2dCallbacks[audioId] = null;
+
+                if (Module.CocosAudioState.finishCallbacks[audioId] != undefined)
+                    Module.CocosAudioState.finishCallbacks[audioId] = null;
 
                 delete Module.CocosAudioState.audioMap[key];
                 delete Module.CocosAudioState.audioMapNum[key];
