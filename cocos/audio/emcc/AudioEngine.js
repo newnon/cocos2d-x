@@ -136,7 +136,6 @@ var LibraryAudioEngine = {
 
             sound.bind("ended", function ()
             {
-                console.log("!@# ended !!!");
                 if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
                     Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
             });
@@ -182,7 +181,6 @@ var LibraryAudioEngine = {
 
             sound.bind("ended", function ()
             {
-                console.log("!@# ended !!!");
                 if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
                     Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
             });

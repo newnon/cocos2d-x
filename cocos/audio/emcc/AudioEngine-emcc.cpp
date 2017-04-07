@@ -83,28 +83,19 @@ void AudioEngineImpl::onPlay2dCallback(int audioId, bool success)
 
 void AudioEngineImpl::onFinishCallback(int audioId, bool success)
 {
-    printf("!@#! AudioEngineImpl::onFinishCallback 1 \n");
     if (g_AudioEngineImpl)
     {
-        printf("!@#! AudioEngineImpl::onFinishCallback 2 \n");
         auto it = g_AudioEngineImpl->_finishCallbacks.find(audioId);
         if (it != g_AudioEngineImpl->_finishCallbacks.end())
         {
-            printf("!@#! AudioEngineImpl::onFinishCallback 3 \n");
             auto fileIt = g_AudioEngineImpl->_audioFiles.find(audioId);
             if (fileIt != g_AudioEngineImpl->_audioFiles.end())
             {
-                printf("!@#! AudioEngineImpl::onFinishCallback 4 \n");
                 it->second(audioId, fileIt->second);
+                g_AudioEngineImpl->_finishCallbacks.erase(it);
             }
-            
-            printf("!@#! AudioEngineImpl::onFinishCallback 5 \n");
         }
-        
-        printf("!@#! AudioEngineImpl::onFinishCallback 6 \n");
     }
-    
-    printf("!@#! AudioEngineImpl::onFinishCallback 7 \n");
 }
 
 int AudioEngineImpl::play2d(const std::string &fileFullPath, bool loop, float volume)
