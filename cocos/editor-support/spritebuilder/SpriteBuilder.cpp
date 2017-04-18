@@ -23,7 +23,7 @@ namespace spritebuilder {
 float CCBXReader::_resolutionScale = 1.0f;
 Map<std::string,CCBReaderParams*> CCBXReader::_paramsMap;
 Map<std::string,CCBXReader*> CCBXReader::_cache;
-bool CCBXReader::_playSound = true;
+CCBXReaderSoundManager* CCBXReader::_soundEngine = nullptr;
     
 CCBXReader* CCBXReader::addToCache(const std::string &pCCBFileName, const std::string &rootPath, const NodeLoaderLibrary *library, NodeLoaderCache *cache)
 {
@@ -49,14 +49,14 @@ void CCBXReader::clearCache()
     _cache.clear();
 }
     
-void CCBXReader::setPlaySound(bool value)
+void CCBXReader::setSoundManager(CCBXReaderSoundManager *manager)
 {
-    _playSound = value;
+    _soundEngine = manager;
 }
     
-bool CCBXReader::getPlaySound()
+CCBXReaderSoundManager* CCBXReader::getSoundManager()
 {
-    return _playSound;
+    return _soundEngine;
 }
     
 CCBXReader* CCBXReader::createFromFile(const std::string &pCCBFileName, const std::string &rootPath, const NodeLoaderLibrary *library, NodeLoaderCache *cache)

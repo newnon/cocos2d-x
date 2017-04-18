@@ -1,7 +1,6 @@
 #include "CCBXAnimationManager.h"
 
 #include "SpriteBuilder.h"
-#include "audio/include/SimpleAudioEngine.h"
 #include "CCBXNodeLoader.h"
 #include "2d/CCSprite.h"
 
@@ -1195,8 +1194,9 @@ CCBSoundEffect* CCBSoundEffect::reverse() const
 
 void CCBSoundEffect::update(float time)
 {
-    if(CCBXReader::getPlaySound())
-        CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(_soundFile.c_str());
+    CCBXReaderSoundManager* manager = CCBXReader::getSoundManager();
+    if(manager)
+        manager->playSound(_soundFile);
 }
 
 

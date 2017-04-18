@@ -1,6 +1,5 @@
 #include "CCBXWidgetLoader.h"
-#include "ui/UIWidget.h"
-#include "audio/include/SimpleAudioEngine.h"
+#include "ui/UIWidget.h""
 
 NS_CC_BEGIN
 namespace spritebuilder {
@@ -150,16 +149,18 @@ void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNo
         if(!sound.empty() && click)
         {
             widget->addClickEventListener([click, sound](Ref* ref){
-                if(CCBXReader::getPlaySound())
-                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str());
+                CCBXReaderSoundManager* manager = CCBXReader::getSoundManager();
+                if(manager)
+                    manager->playSound(sound);
                 click(ref);
             });
         }
         else if(!sound.empty())
         {
             widget->addClickEventListener([sound](Ref* ref){
-                if(CCBXReader::getPlaySound())
-                    CocosDenshion::SimpleAudioEngine::getInstance()->playEffect(sound.c_str());
+                CCBXReaderSoundManager* manager = CCBXReader::getSoundManager();
+                if(manager)
+                    manager->playSound(sound);
             });
         }
         else if(click)

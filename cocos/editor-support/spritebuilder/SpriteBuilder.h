@@ -185,6 +185,14 @@ class NodeLoaderCache;
 class CCBReaderParams;
     
 typedef std::function<Node*(const Size &parentSize, float mainScale, float additionalScale)> CreateNodeFunction;
+    
+class CCBXReaderSoundManager
+{
+public:
+    virtual ~CCBXReaderSoundManager() {}
+    virtual int playSound(const std::string &path) = 0;
+    virtual void stopSound(int id) = 0;
+};
 
 class CC_DLL CCBXReader : public Ref
 {
@@ -221,8 +229,8 @@ public:
     void calcScales(SceneScaleType scaleType, const Size &parentSize, float &mainScale, float &additionalScale) const;
     static void calcScales(SceneScaleType scaleType, const Size &parentSize, const Size &designResolution, float designScale, float &mainScale, float &additionalScale);
     
-    static void setPlaySound(bool value);
-    static bool getPlaySound();
+    static void setSoundManager(CCBXReaderSoundManager *manager);
+    static CCBXReaderSoundManager* getSoundManager();
     
     static CCBReaderParams* createParams(const std::string &rootPath);
     
@@ -233,7 +241,7 @@ CC_CONSTRUCTOR_ACCESS:
 private:
     static Map<std::string,CCBReaderParams*> _paramsMap;
     static Map<std::string,CCBXReader*> _cache;
-    static bool _playSound;
+    static CCBXReaderSoundManager *_soundEngine;
     std::string _rootPath;
     NodeLoader *_rootNodeLoader;
     CCBReaderParams *_params;
