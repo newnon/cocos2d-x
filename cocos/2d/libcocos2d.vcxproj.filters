@@ -916,6 +916,9 @@
     <ClCompile Include="..\ui\UIImageView.cpp">
       <Filter>ui\UIWidgets</Filter>
     </ClCompile>
+    <ClCompile Include="..\ui\UITileImageView.cpp">
+      <Filter>ui\UIWidgets</Filter>
+    </ClCompile>
     <ClCompile Include="..\ui\UILoadingBar.cpp">
       <Filter>ui\UIWidgets</Filter>
     </ClCompile>
@@ -2720,6 +2723,9 @@
       <Filter>ui\UIWidgets</Filter>
     </ClInclude>
     <ClInclude Include="..\ui\UIImageView.h">
+      <Filter>ui\UIWidgets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\ui\UITileImageView.h">
       <Filter>ui\UIWidgets</Filter>
     </ClInclude>
     <ClInclude Include="..\ui\UILoadingBar.h">

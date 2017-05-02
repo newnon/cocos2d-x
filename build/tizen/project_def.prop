@@ -404,6 +404,7 @@ USER_SRCS = ../../cocos/2d/CCAction.cpp \
             ../../cocos/ui/UIHBox.cpp \
             ../../cocos/ui/UIHelper.cpp \
             ../../cocos/ui/UIImageView.cpp \
+            ../../cocos/ui/UITileImageView.cpp \
             ../../cocos/ui/UILayout.cpp \
             ../../cocos/ui/UILayoutComponent.cpp \
             ../../cocos/ui/UILayoutManager.cpp \
