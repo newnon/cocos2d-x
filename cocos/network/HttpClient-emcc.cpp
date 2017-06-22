@@ -193,10 +193,18 @@ void HttpClient::send(HttpRequest* request)
     
 void HttpClient::sendImmediate(HttpRequest* request)
 {
+    std::string postData;
+    if (request->getRequestData() && request->getRequestDataSize() > 0)
+    {
+        postData.resize(request->getRequestDataSize() + 1);
+        memcpy(&postData.front(), request->getRequestData(), request->getRequestDataSize());
+        postData[request->getRequestDataSize()] = '\0';
+    }
+    
     int handler = emscripten_async_wget2_data(
                                    request->getUrl(),
                                    getRequestType(request->getRequestType()).c_str(),
-                                   request->getRequestData(),
+                                   postData.c_str(),
                                    static_cast<void*>(request),
                                    true,
                                    &onLoad,
@@ -248,11 +256,19 @@ void HttpClient::update(float time)
         {
             if (!sendOneTime)
             {
+                std::string postData;
+                if (request->getRequestData() && request->getRequestDataSize() > 0)
+                {
+                    postData.resize(request->getRequestDataSize() + 1);
+                    memcpy(&postData.front(), request->getRequestData(), request->getRequestDataSize());
+                    postData[request->getRequestDataSize()] = '\0';
+                }
+                
                 sendOneTime = true;
                 int handler = emscripten_async_wget2_data(
                                                request->getUrl(),
                                                getRequestType(request->getRequestType()).c_str(),
-                                               request->getRequestData(),
+                                               postData.c_str(),
                                                static_cast<void*>(request),
                                                true,
                                                &onLoad,
