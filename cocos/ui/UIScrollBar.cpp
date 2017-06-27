@@ -631,6 +631,10 @@ void ScrollBar::updateBarPosition(bool isSetPercent)
                     updatePercent(percent);
                 }
             }
+            else if (std::fabs(h) < MATH_EPSILON)
+            {
+                updatePercent(0);
+            }
         }
         else
         {
@@ -648,6 +652,10 @@ void ScrollBar::updateBarPosition(bool isSetPercent)
                 {
                     updatePercent(percent);
                 }
+            }
+            else if (std::fabs(w) < MATH_EPSILON)
+            {
+                updatePercent(0);
             }
         }
 
