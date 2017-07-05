@@ -49,6 +49,7 @@ Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, fl
 {
     ui::Text *text = ui::Text::create(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
     text->setAnchorPoint(Vec2(0.0f, 0.0f));
+    text->ignoreContentAdaptWithSize(false);
     return text;
 }
 
