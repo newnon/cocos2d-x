@@ -26,7 +26,6 @@ extern "C" {
     void AudioEngine_pause(int);
     void AudioEngine_resume(int);
     void AudioEngine_stop(int);
-    void AudioEngine_stopAll();
     int AudioEngine_getDuration(int);
     int AudioEngine_getCurrentTime(int);
     void AudioEngine_setCurrentTime(int, float);
@@ -149,7 +148,10 @@ bool AudioEngineImpl::stop(int audioId)
 
 void AudioEngineImpl::stopAll()
 {
-    AudioEngine_stopAll();
+    for (const auto &it : _audioFiles)
+    {
+        AudioEngine_stop(it.first);
+    }
 };
 
 float AudioEngineImpl::getDuration(int audioId)
