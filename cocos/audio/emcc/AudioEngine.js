@@ -77,6 +77,9 @@ var LibraryAudioEngine = {
     AudioEngine_play2d: function(filenameP, loop, volume, callback)
     {
         var filename = Pointer_stringify(filenameP);
+        if (filename.length <= 0)
+            return -1;
+
         if (Module.CocosAudioState.formats.length > 0)
             filename = filename.substr(0, filename.lastIndexOf('.'));
         var numAudio = Module.CocosAudioState.numAudioCount;
