@@ -179,7 +179,7 @@ static void onError(unsigned, void* userData, int errorCode, const char* status)
 static void onProgress(unsigned, void* userData, int, int)
 {
     HttpRequest* request = static_cast<HttpRequest*>(userData);
-    request->setConnected(true);
+//    request->setConnected(true);
     
     CCLOG("HttpClient::onProgress is connected %i\n", request->getHandler());
 };
@@ -212,6 +212,7 @@ void HttpClient::sendImmediate(HttpRequest* request)
                                    &onProgress
                                    );
     request->setHandler(handler);
+    request->setConnected(true);
     _requestQueue.pushBack(request);
 }
     
@@ -276,6 +277,7 @@ void HttpClient::update(float time)
                                                &onProgress
                                                );
                 request->setHandler(handler);
+                request->setConnected(true);
                 CCLOG("HttpClient::send one time %i\n", handler);
             }
             
