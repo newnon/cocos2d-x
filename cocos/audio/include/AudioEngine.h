@@ -31,6 +31,7 @@
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #include "platform/CCPlatformMacros.h"
 #include "audio/include/Export.h"
