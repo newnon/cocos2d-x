@@ -160,12 +160,12 @@ void ScrollBar::initRenderer()
 
 void ScrollBar::visit(cocos2d::Renderer *renderer, const Mat4 &parentTransform, uint32_t parentFlags)
 {
-    Widget::visit(renderer, parentTransform, parentFlags);
-    
     if (_doLayoutDirty)
     {
         doLayout();
     }
+    
+    Widget::visit(renderer, parentTransform, parentFlags);
 }
 
 void ScrollBar::loadBarTexture(const std::string& fileName, TextureResType texType)
