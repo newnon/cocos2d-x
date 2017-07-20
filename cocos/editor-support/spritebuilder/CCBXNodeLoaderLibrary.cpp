@@ -29,6 +29,7 @@
 #include "CCBXScissorsNodeLoader.h"
 #include "CCBXScrollListViewLoader.h"
 #include "CCBXEditBoxLoader.h"
+#include "CCBXScrollBarLoader.h"
 
 NS_CC_BEGIN
 namespace spritebuilder {
@@ -125,6 +126,7 @@ void NodeLoaderLibrary::registerDefaultLoaders()
     _loaders.emplace("CCScissorsNode", NodeLoaderCreateFuntion(&ScissorsNodeLoader::create));
     _loaders.emplace("CCScrollListView", NodeLoaderCreateFuntion(&ScrollListViewLoader::create));
     _loaders.emplace("CCEditBox", NodeLoaderCreateFuntion(&EditBoxLoader::create));
+    _loaders.emplace("CCScrollBar", NodeLoaderCreateFuntion(&ScrollBarLoader::create));
 }
 
 }
