@@ -113,6 +113,11 @@ Director* Director::getInstance()
     return s_SharedDirector;
 }
 
+bool Director::hasInstance()
+{
+    return s_SharedDirector != nullptr;
+}
+
 Director::Director()
 : _isStatusLabelUpdated(true)
 , _invalid(true)
@@ -388,12 +393,14 @@ void Director::calculateDeltaTime()
         _deltaTime = MAX(0, _deltaTime);
     }
 
-#if COCOS2D_DEBUG
+#if CC_TARGET_PLATFORM != CC_PLATFORM_EMSCRIPTEN
+#   if COCOS2D_DEBUG
     // If we are debugging our code, prevent big delta time
     if (_deltaTime > 0.2f)
     {
         _deltaTime = 1 / 60.0f;
     }
+#   endif
 #endif
 }
 
