@@ -338,6 +338,58 @@ public:
         return _headers;
     }
 
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
+    inline void setHandler(int handler)
+    {
+        _handler = handler;
+    }
+    
+    inline int getHandler() const
+    {
+        return _handler;
+    }
+    
+    inline void setSendTime(double sendTime)
+    {
+        _sendTime = sendTime;
+    }
+    
+    inline float getSendTime() const
+    {
+        return _sendTime;
+    }
+    
+    inline void setConnectTime(double connectTime)
+    {
+        _connectTime = connectTime;
+    }
+    
+    inline float getConnectTime() const
+    {
+        return _connectTime;
+    }
+    
+    inline void setConnected(bool isConnected)
+    {
+        _isConnected = isConnected;
+    }
+    
+    inline bool isConnected() const
+    {
+        return _isConnected;
+    }
+    
+    inline void setSendingCompleted(bool isSendingCompleted)
+    {
+        _isSendingCompleted = isSendingCompleted;
+    }
+    
+    inline bool isSendingCompleted() const
+    {
+        return _isSendingCompleted;
+    }
+    
+#endif
 private:
     void doSetResponseCallback(Ref* pTarget, SEL_HttpResponse pSelector)
     {
@@ -365,6 +417,15 @@ protected:
     ccHttpRequestCallback       _pCallback;      /// C++11 style callbacks
     void*                       _pUserData;      /// You can add your customed data here
     std::vector<std::string>    _headers;        /// custom http headers
+    
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN)
+    int _handler = -1;
+    double _sendTime = 0.0;
+    double _connectTime = 0.0;
+    
+    bool _isConnected = false;
+    bool _isSendingCompleted = false;
+#endif
 };
 
 }

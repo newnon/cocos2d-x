@@ -32,6 +32,7 @@
 #include <list>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 #ifdef ERROR
 #undef ERROR
@@ -291,6 +292,12 @@ public:
      * @param callback A callback which will be called after loading is finished.
      */
     static void preload(const std::string& filePath, std::function<void(bool isSuccess)> callback);
+    
+    /**
+     * This is method only for emscripten use. Setup use file extensions.
+     * @param files vector of audio format
+     */
+    static void setUseFileExt(const std::vector<std::string> &exts);
 
     /**
      * Gets playing audio count.
