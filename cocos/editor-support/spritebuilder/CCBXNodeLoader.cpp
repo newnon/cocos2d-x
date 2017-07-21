@@ -377,6 +377,11 @@ void NodeLoader::setAnimation(Node* node, CCBAnimationManager *manager) const
 {
     manager->addNode(node, _nodeSequences);
 }
+    
+void NodeLoader::setSceneScaleType(SceneScaleType sceneScaleType)
+{
+    _sceneScaleType = sceneScaleType;
+}
 
 Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
 {
@@ -454,6 +459,7 @@ NodeLoader::NodeLoader()
     ,_memberVarAssignmentType(TargetType::NONE)
     ,_physicsLoader(nullptr)
     ,_autoPlaySequenceId(-1)
+    ,_sceneScaleType(SceneScaleType::PROJECT_DEFAULT)
 {
 }
 

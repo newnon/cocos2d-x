@@ -22,7 +22,8 @@ namespace spritebuilder {
     
 enum class SceneScaleType
 {
-    DEFAULT,
+    DEFAULT = -1,
+    PROJECT_DEFAULT,
     NONE,
     CUSTOM,
     MINSIZE,
@@ -201,18 +202,18 @@ public:
     static CCBXReader* createFromFile(const std::string &pCCBFileName, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr, NodeLoaderCache *cache= nullptr);
     static CCBXReader* createFromData(const Data &data, const std::string &rootPath = "", const NodeLoaderLibrary *library = nullptr, NodeLoaderCache *cache= nullptr);
     
-    Node *createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType = SceneScaleType::NONE, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
+    Node *createNode(CCBXReaderOwner *pOwner, SceneScaleType scaleType = SceneScaleType::DEFAULT, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     Node *createNode(CCBXReaderOwner *pOwner, float mainScale, float additionalScale, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     
-    Node *createNode(CCBXReaderOwner *pOwner, const Size& parentSize, SceneScaleType scaleType = SceneScaleType::NONE, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
-    Node *createNode(CCBXReaderOwner *pOwner, const Size& parentSize, const Size& screenSize, SceneScaleType scaleType = SceneScaleType::NONE, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
+    Node *createNode(CCBXReaderOwner *pOwner, const Size& parentSize, SceneScaleType scaleType = SceneScaleType::DEFAULT, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
+    Node *createNode(CCBXReaderOwner *pOwner, const Size& parentSize, const Size& screenSize, SceneScaleType scaleType = SceneScaleType::DEFAULT, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     Node *createNode(CCBXReaderOwner *pOwner, const Size& parentSize, float mainScale, float additionalScale, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     
-    bool loadNode(Node * node, CCBXReaderOwner *pOwner, SceneScaleType scaleType = SceneScaleType::NONE, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
+    bool loadNode(Node * node, CCBXReaderOwner *pOwner, SceneScaleType scaleType = SceneScaleType::DEFAULT, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     bool loadNode(Node * node, CCBXReaderOwner *pOwner, float mainScale, float additionalScale, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     
-    bool loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& parentSize, SceneScaleType scaleType = SceneScaleType::NONE, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
-    bool loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& parentSize, const Size& screenSize, SceneScaleType scaleType = SceneScaleType::NONE, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
+    bool loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& parentSize, SceneScaleType scaleType = SceneScaleType::DEFAULT, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
+    bool loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& parentSize, const Size& screenSize, SceneScaleType scaleType = SceneScaleType::DEFAULT, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     bool loadNode(Node * node, CCBXReaderOwner *pOwner, const Size& parentSize, float mainScale, float additionalScale, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr) const;
     
     static float getResolutionScale();
@@ -225,6 +226,8 @@ public:
     const std::string& getRootPath();
     
     CCBReaderParams* getParams() const;
+    
+    SceneScaleType getSceneScaleType() const;
     
     void calcScales(SceneScaleType scaleType, const Size &parentSize, float &mainScale, float &additionalScale) const;
     static void calcScales(SceneScaleType scaleType, const Size &parentSize, const Size &designResolution, float designScale, float &mainScale, float &additionalScale);
