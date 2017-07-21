@@ -148,6 +148,8 @@ public:
     Node *createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr, CCBAnimationManager *manager = nullptr, Node *rootNode = nullptr, CCBXReaderOwner *parentOwner = nullptr, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false) const;
     bool loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr,CCBAnimationManager *manager = nullptr, Node *parentOwner = nullptr, CCBXReaderOwner *rootOwner = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false) const;
     
+    SceneScaleType getSceneScaleType() const { return _sceneScaleType; }
+    
     
 CC_CONSTRUCTOR_ACCESS:
     NodeLoader();
@@ -193,6 +195,8 @@ private:
     void setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr) const;
     void setAnimation(Node* node, CCBAnimationManager *manager) const;
     
+    void setSceneScaleType(SceneScaleType sceneScaleType);
+    
     virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr) const;
     
     virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr) const;
@@ -234,6 +238,7 @@ private:
     std::unordered_map<std::string, cocos2d::Value> _baseValues;
     std::unordered_map<std::string, cocos2d::Ref*> _objects;
     cocos2d::ValueMap _customProperties;
+    SceneScaleType _sceneScaleType;
 };
     
 template <class CustomNode, class ParentNodeLoader = NodeLoader>

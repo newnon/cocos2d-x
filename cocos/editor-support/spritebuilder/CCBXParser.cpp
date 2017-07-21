@@ -22,7 +22,7 @@
 #include "CCBXReaderParams.h"
 
 #define CCBX_MIN_VERSION 7
-#define CCBX_MAX_VERSION 8
+#define CCBX_MAX_VERSION 9
 #define ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(PROPERTYTYPE) cocos2d::log("Unexpected property type: '%d'!\n", PROPERTYTYPE); assert(false)
 
 NS_CC_BEGIN
@@ -251,6 +251,14 @@ private:
             return nullptr;
         }
         
+        if(_version > 8)
+        {
+            if(!readProperties())
+            {
+                return nullptr;
+            }
+        }
+        
         Vector<CCBSequence*> sequences;
         int autoPlaySequenceId = -1;
         
@@ -259,33 +267,61 @@ private:
             return nullptr;
         }
         
-        //setAnimationManagers(am);
-        
         NodeLoader* loader = readNodeGraph(library, cache);
         
         if(loader)
         {
             loader->setSequences(sequences);
             loader->setAutoPlaySequenceId(autoPlaySequenceId);
+            auto sceneScaleTypeIt = _properties.find("sceneScaleType");
+            if(sceneScaleTypeIt != _properties.end())
+                loader->setSceneScaleType(static_cast<SceneScaleType>(sceneScaleTypeIt->second.asInt()));
         }
         
         return loader;
-        
-        /*_animationManagers->insert(pNode, _animationManager);
-        
-        if (bCleanUp)
-        {
-            cleanUpNodeGraph(pNode);
-        }
-        
-        return pNode;*/
     }
     
-    bool readStringCache() {
+    bool readStringCache()
+    {
         int numStrings = readInt(false);
         
         for(int i = 0; i < numStrings; i++) {
             _stringCache.push_back(readUTF8());
+        }
+        
+        return true;
+    }
+    
+    Value readProperty(PropertyType type)
+    {
+        switch(type)
+        {
+            case PropertyType::FLOAT:
+                return Value(parsePropTypeFloat());
+            
+            case PropertyType::INTEGER:
+                return Value(parsePropTypeInteger());
+
+            case PropertyType::CHECK:
+                return Value(parsePropTypeCheck());
+
+            case PropertyType::STRING:
+                return Value(parsePropTypeText());
+            
+            default:
+                ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(type);
+                return Value();
+        }
+    }
+    
+    bool readProperties()
+    {
+        int numProperties = readInt(false);
+        
+        for(int i = 0; i < numProperties; i++) {
+            PropertyType type = (PropertyType)readInt(false);
+            std::string propertyName = readCachedString();
+            _properties.emplace(propertyName, readProperty(type));
         }
         
         return true;
@@ -643,10 +679,6 @@ private:
                 }
             }
         }
-        /*if (ccbReader->getAnimatedProperties()->find(pPropertyName) != ccbReader->getAnimatedProperties()->end())
-        {
-            ccbReader->getAnimationManager()->setObject(spriteFrame, pNode, pPropertyName);
-        }*/
         return ret;
     }
     
@@ -783,7 +815,6 @@ private:
         ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
         
         // Load sub file
-        //std::string path = FileUtils::getInstance()->fullPathForFilename(ccbFileName.c_str());
         NodeLoader *ret = cache.get(ccbFileName);
         if(!ret)
         {
@@ -792,65 +823,6 @@ private:
             if(ret)
                 cache.add(ccbFileName, ret);
         }
-        
-        
-        /*reader->_bytes = dataPtr.getBytes();
-        reader->_currentByte = 0;
-        reader->_currentBit = 0;
-        CC_SAFE_RETAIN(pCCBReader->_owner);
-        reader->_owner = pCCBReader->_owner;
-        
-        reader->getAnimationManager()->_owner = reader->_owner;
-        
-        // The assignments below are done in the CCBReader constructor.
-        //     reader->_ownerOutletNames = pCCBReader->_ownerOutletNames;
-        //     reader->_ownerOutletNodes = pCCBReader->_ownerOutletNodes;
-        //     reader->_ownerOutletNodes->retain();
-        //     reader->_ownerCallbackNames = pCCBReader->_ownerCallbackNames;
-        //     reader->_ownerCallbackNodes = pCCBReader->_ownerCallbackNodes;
-        //     reader->_ownerCallbackNodes->retain();
-        
-        
-        Node * ccbFileNode = reader->readFileWithCleanUp(false, pCCBReader->getAnimationManagers());
-        
-        if (ccbFileNode && reader->getAnimationManager()->getAutoPlaySequenceId() != -1)
-        {
-            // Auto play animations
-            reader->getAnimationManager()->runAnimationsForSequenceIdTweenDuration(reader->getAnimationManager()->getAutoPlaySequenceId(), 0);
-        }
-        
-        if (reader->isJSControlled() && pCCBReader->isJSControlled() && nullptr == reader->_owner)
-        {
-            //set variables and callback to owner
-            //set callback
-            auto ownerCallbackNames = reader->getOwnerCallbackNames();
-            auto& ownerCallbackNodes = reader->getOwnerCallbackNodes();
-            if (!ownerCallbackNames.empty() && !ownerCallbackNodes.empty())
-            {
-                CCASSERT(ownerCallbackNames.size() == ownerCallbackNodes.size(), "");
-                ssize_t nCount = ownerCallbackNames.size();
-                
-                for (ssize_t i = 0 ; i < nCount; i++)
-                {
-                    pCCBReader->addOwnerCallbackName(ownerCallbackNames[i].asString());
-                    pCCBReader->addOwnerCallbackNode(ownerCallbackNodes.at(i));
-                }
-            }
-            //set variables
-            auto ownerOutletNames = reader->getOwnerOutletNames();
-            auto ownerOutletNodes = reader->getOwnerOutletNodes();
-            if (!ownerOutletNames.empty() && !ownerOutletNodes.empty())
-            {
-                CCASSERT(ownerOutletNames.size() == ownerOutletNodes.size(), "");
-                ssize_t nCount = ownerOutletNames.size();
-                
-                for (ssize_t i = 0 ; i < nCount; i++)
-                {
-                    pCCBReader->addOwnerOutletName(ownerOutletNames.at(i).asString());
-                    pCCBReader->addOwnerOutletNode(ownerOutletNodes.at(i));
-                }
-            }
-        }*/
         return std::pair<std::string, NodeLoader*>(ccbFileName, ret);
     }
     
@@ -879,48 +851,11 @@ private:
         
         std::unordered_map<std::string, cocos2d::Value> baseValues;
         std::unordered_map<std::string, cocos2d::Ref*> objects;
-        //cocos2d::ValueMap customProperties;
         
         for(int i = 0; i < propertyCount; i++) {
             bool isExtraProp = (i >= numRegularProps);
             PropertyType type = (PropertyType)readInt(false);
             std::string propertyName = readCachedString();
-            
-            // Forward properties for sub ccb files
-            /*if (dynamic_cast<CCBFile*>(pNode) != nullptr)
-            {
-                CCBFile *ccbNode = (CCBFile*)pNode;
-                if (ccbNode->getCCBFileNode() && isExtraProp)
-                {
-                    pNode = ccbNode->getCCBFileNode();
-                    
-                    // Skip properties that doesn't have a value to override
-                    __Array *extraPropsNames = (__Array*)pNode->getUserObject();
-                    Ref* pObj = nullptr;
-                    bool bFound = false;
-                    CCARRAY_FOREACH(extraPropsNames, pObj)
-                    {
-                        __String* pStr = static_cast<__String*>(pObj);
-                        if (0 == pStr->compare(propertyName.c_str()))
-                        {
-                            bFound = true;
-                            break;
-                        }
-                    }
-                    setProp &= bFound;
-                }
-            }
-            else if (isExtraProp && pNode == ccbReader->getAnimationManager()->getRootNode())
-            {
-                __Array *extraPropsNames = static_cast<__Array*>(pNode->getUserObject());
-                if (! extraPropsNames)
-                {
-                    extraPropsNames = Array::create();
-                    pNode->setUserObject(extraPropsNames);
-                }
-                
-                extraPropsNames->addObject(String::create(propertyName));
-            }*/
             
             switch(type)
             {
@@ -1307,14 +1242,6 @@ private:
             ccNodeLoader->setMemberVarAssignment(memberVarAssignmentType, memberVarAssignmentName);
         }
         
-        //Node *node = ccNodeLoader->loadNode(pParent, this);
-        
-        // Set root node
-        /*if (! _animationManager->getRootNode())
-        {
-            _animationManager->setRootNode(node);
-        }*/
-        
         // Read animated properties
         std::unordered_map<int, Map<std::string, CCBSequenceProperty*>> seqs;
         std::set<std::string> animatedProps;
@@ -1483,6 +1410,7 @@ private:
     std::vector<std::string> _stringCache;
     std::string _rootPath;
     const CCBReaderParams *_params;
+    ValueMap _properties;
 };
     
 NodeLoader* ParseCCBXData(const Data &data, const NodeLoaderLibrary &library, NodeLoaderCache &cache, const std::string &rootPath, const CCBReaderParams* params)
