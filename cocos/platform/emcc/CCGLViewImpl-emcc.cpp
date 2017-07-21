@@ -625,7 +625,24 @@ void GLViewImpl::onMouseCallBack(int button, int action, double x, double y)
         
         EventMouse event(SDL_MOUSEBUTTONDOWN == action ? EventMouse::MouseEventType::MOUSE_DOWN : EventMouse::MouseEventType::MOUSE_UP);
         event.setCursorPosition(cursorX, cursorY);
-        event.setMouseButton(button);
+        
+        switch (button) {
+            case SDL_BUTTON_LEFT:
+                event.setMouseButton(EventMouse::MouseButton::BUTTON_LEFT);
+                break;
+                
+            case SDL_BUTTON_MIDDLE:
+                event.setMouseButton(EventMouse::MouseButton::BUTTON_MIDDLE);
+                break;
+                
+            case SDL_BUTTON_RIGHT:
+                event.setMouseButton(EventMouse::MouseButton::BUTTON_RIGHT);
+                break;
+                
+            default:
+                break;
+        }
+        
         Director::getInstance()->getEventDispatcher()->dispatchEvent(&event);
     }
 }
@@ -644,15 +661,15 @@ void GLViewImpl::onMouseMoveCallBack(double x, double y)
 	// Set current button
 	if (mouseState & SDL_BUTTON(SDL_BUTTON_LEFT))
 	{
-		event.setMouseButton(SDL_BUTTON_LEFT);
+		event.setMouseButton(EventMouse::MouseButton::BUTTON_LEFT);
 	}
 	else if (mouseState & SDL_BUTTON(SDL_BUTTON_RIGHT))
 	{
-		event.setMouseButton(SDL_BUTTON_RIGHT);
+		event.setMouseButton(EventMouse::MouseButton::BUTTON_RIGHT);
 	}
 	else if (mouseState & SDL_BUTTON(SDL_BUTTON_MIDDLE))
 	{
-		event.setMouseButton(SDL_BUTTON_MIDDLE);
+		event.setMouseButton(EventMouse::MouseButton::BUTTON_MIDDLE);
 	}
     
 	event.setCursorPosition(cursorX, cursorY);

@@ -167,6 +167,11 @@ int Application::run()
 	return 0;          
 }
 
+void Application::setAnimationInterval(float interval, SetIntervalReason /*reason*/)
+{
+    setAnimationInterval(interval);
+}
+
 void Application::setAnimationInterval(float interval)
 {
 	CCLOG("Animation interval %f", interval);
