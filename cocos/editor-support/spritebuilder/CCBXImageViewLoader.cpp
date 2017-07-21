@@ -15,6 +15,7 @@ static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
 static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
 static const std::string PROPERTY_IMAGE_SCALE("imageScale");
 static const std::string PROPERTY_FLIP("flip");
+static const std::string PROPERTY_RENDERINGTYPE("renderingType");
 
 ImageViewLoader *ImageViewLoader::create()
 {
@@ -135,6 +136,15 @@ void ImageViewLoader::onHandlePropTypeFlip(const std::string &propertyName, bool
         _flipped = value;
     } else {
         NodeLoader::onHandlePropTypeFlip(propertyName, isExtraProp, value);
+    }
+}
+    
+void ImageViewLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
+{
+    if(propertyName == PROPERTY_RENDERINGTYPE) {
+        //just don't crash
+    } else {
+        WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
 }
 

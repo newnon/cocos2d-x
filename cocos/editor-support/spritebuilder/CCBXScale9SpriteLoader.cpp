@@ -13,6 +13,7 @@ static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
 static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
 static const std::string PROPERTY_FLIP("flip");
+static const std::string PROPERTY_RENDERINGTYPE("renderingType");
 
 Scale9SpriteLoader *Scale9SpriteLoader::create()
 {
@@ -97,6 +98,15 @@ void Scale9SpriteLoader::onHandlePropTypeFlip(const std::string &propertyName, b
         _flipped = value;
     } else {
         NodeLoader::onHandlePropTypeFlip(propertyName, isExtraProp, value);
+    }
+}
+    
+void Scale9SpriteLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
+{
+    if(propertyName == PROPERTY_RENDERINGTYPE) {
+        //just don't crash
+    } else {
+        NodeLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
 }
 
