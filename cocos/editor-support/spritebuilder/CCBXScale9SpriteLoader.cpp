@@ -34,7 +34,7 @@ void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize
     ui::Scale9Sprite *sprite = static_cast<ui::Scale9Sprite*>(node);
     Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     Size size = sprite->getOriginalSize();
-    sprite->setRenderingType(_margins == Vec4::ZERO?ui::Scale9Sprite::RenderingType::SIMPLE:ui::Scale9Sprite::RenderingType::SLICE);
+    sprite->setRenderingType((_margins == Vec4::ZERO ||_renderingType==RenderingType::SIMPLE) ? ui::Scale9Sprite::RenderingType::SIMPLE : ui::Scale9Sprite::RenderingType::SLICE);
     sprite->setCapInsets(Rect(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height));
     sprite->setBlendFunc(_blendFunc);
     sprite->setFlippedX(_flipped.first);
@@ -44,6 +44,7 @@ void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize
 Scale9SpriteLoader::Scale9SpriteLoader()
     :_blendFunc(BlendFunc::ALPHA_PREMULTIPLIED)
     ,_flipped(false, false)
+    ,_renderingType(RenderingType::AUTO)
 {
     
 }
@@ -104,7 +105,8 @@ void Scale9SpriteLoader::onHandlePropTypeFlip(const std::string &propertyName, b
 void Scale9SpriteLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if(propertyName == PROPERTY_RENDERINGTYPE) {
-        //just don't crash
+        _renderingType = static_cast<RenderingType>(value);
+        assert(_renderingType != RenderingType::TILED);
     } else {
         NodeLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }

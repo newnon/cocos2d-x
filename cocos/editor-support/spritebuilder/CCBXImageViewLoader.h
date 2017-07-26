@@ -14,7 +14,15 @@ public:
     virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const override;
     
 CC_CONSTRUCTOR_ACCESS:
-    ImageViewLoader();
+    enum class RenderingType
+    {
+        AUTO = -1,
+        SIMPLE,
+        SLICE,
+        TILED
+    };
+    
+    ImageViewLoader(RenderingType renderingType = RenderingType::AUTO);
     ~ImageViewLoader();
 
 protected:
@@ -27,12 +35,27 @@ protected:
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
 
 private:
+    
     SizeDescription _size;
     FloatScaleDescription _imageScale;
     SpriteFrameDescription _spriteFrame;
     Vec4 _margins;
     BlendFunc _blendFunc;
     std::pair<bool,bool> _flipped;
+    RenderingType _renderingType;
+};
+    
+class CC_DLL TileImageViewLoader : public ImageViewLoader
+{
+public:
+    
+    static TileImageViewLoader *create();
+    
+CC_CONSTRUCTOR_ACCESS:
+    TileImageViewLoader();
+    
+protected:
+    virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
 };
 
 }
