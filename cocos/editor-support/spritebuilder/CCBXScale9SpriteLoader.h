@@ -18,6 +18,14 @@ CC_CONSTRUCTOR_ACCESS:
     ~Scale9SpriteLoader();
 
 protected:
+    enum class RenderingType
+    {
+        AUTO = -1,
+        SIMPLE,
+        SLICE,
+        TILED
+    };
+    
     virtual void onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const BlendFunc &value) override;
     virtual void onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value) override;
     virtual void onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value) override;
@@ -31,6 +39,7 @@ private:
     SpriteFrameDescription _spriteFrame;
     BlendFunc _blendFunc;
     std::pair<bool,bool> _flipped;
+    RenderingType _renderingType;
 };
 
 }
