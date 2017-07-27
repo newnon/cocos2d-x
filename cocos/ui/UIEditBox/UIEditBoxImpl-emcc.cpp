@@ -31,8 +31,8 @@ extern "C"
     void UIEditBox_close(int id);
     void UIEditBox_blur(int id);
     
-    typedef void (*eventCallback)(void *userData);
-    void UIEditBox_setCallback(int id, void *userData, eventCallback callback, eventCallback focusCallback);
+    typedef void (*EventCallback)(void *userData);
+    void UIEditBox_setCallback(int id, void *userData, EventCallback callback, EventCallback focusCallback);
 }
 
 namespace ui {

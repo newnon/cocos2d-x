@@ -197,30 +197,28 @@ var LibraryUIEditBox = {
         keyboardListeningElement.addEventListener("keyup", SDL.receiveEvent);
         keyboardListeningElement.addEventListener("keydown", SDL.receiveEvent);
 
-        // window.removeEventListener('click', UIEditBox.UIEditBox_onClick);
         window.removeEventListener('resize', UIEditBox.UIEditBox_onResize);
 
-        if (Module.target != null)
+        if(Module.target != null && Module.editBox !== undefined && Module.editBox[id] !== undefined)
         {
-            if(Module.editBox !== undefined && Module.editBox[id] !== undefined)
-            {
-                var child = document.querySelector('.editBoxStyle' + id);
-                if (child != null)
-                    document.querySelector('body').removeChild(child);
+            var child = document.querySelector('.editBoxStyle' + id);
+            if (child != null)
+                document.querySelector('body').removeChild(child);
 
-                Module.target.removeChild(Module.editBox[id]);
+            if (Module.callback !== undefined && Module.callback[id] !== undefined && Module.callback[id] != null)
+                delete Module.callback[id];
 
-                if (Module.callback !== undefined && Module.callback[id] !== undefined && Module.callback[id] != null)
-                    delete Module.callback[id];
+            if (Module.focusCallback !== undefined && Module.focusCallback[id] !== undefined && Module.focusCallback[id] != null)
+                delete Module.focusCallback[id];
+            
+            if (Module.data !== undefined && Module.data[id] !== undefined && Module.data[id] != null)
+                delete Module.data[id];
 
-                if (Module.focusCallback !== undefined && Module.focusCallback[id] !== undefined && Module.focusCallback[id] != null)
-                    delete Module.focusCallback[id];
-                
-                if (Module.data !== undefined && Module.data[id] !== undefined && Module.data[id] != null)
-                    delete Module.data[id];
-
-                delete Module.editBox[id];
-            }
+            var editbox = Module.editBox[id];
+            delete Module.editBox[id];
+            Module.editBox[id] = undefined;
+            
+            Module.target.removeChild(editbox);
         }
     },
     UIEditBox_setColor: function(id, colorR, colorG, colorB)
