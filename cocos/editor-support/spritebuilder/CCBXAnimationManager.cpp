@@ -1197,6 +1197,7 @@ void CCBSoundEffect::update(float time)
     CCBXReaderSoundManager* manager = CCBXReader::getSoundManager();
     if(manager)
         manager->playSound(_soundFile);
+    ActionInstant::update(time);
 }
 
 
