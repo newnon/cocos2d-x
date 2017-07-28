@@ -1090,6 +1090,7 @@ CCBSetSpriteFrame* CCBSetSpriteFrame::reverse() const
 void CCBSetSpriteFrame::update(float time)
 {
     static_cast<Sprite*>(_target)->setSpriteFrame(_spriteFrame);
+    ActionInstant::update(time);
 }
     
 /************************************************************
