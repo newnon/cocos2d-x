@@ -101,25 +101,33 @@ var LibraryAudioEngine = {
             sound.bind("loadeddata", function ()
             {
                 if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
+                {
                     Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, true);
+                }
             });
 
             sound.bind("error", function ()
             {
                 if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
+                {
                     Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, false); 
+                }
             });
 
             sound.bind("ended", function ()
             {
                 if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
+                {
                     Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
+                }
             });
         }
         else
         {
             numAudio = Module.CocosAudioState.audioMapNum[filename];
             var sound = Module.CocosAudioState.audioMap[filename];
+
+            sound.stop();
 
             if (loop) 
             {
@@ -134,18 +142,23 @@ var LibraryAudioEngine = {
             sound.bind("playing", function ()
             {
                 if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
+                {
                     Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, true);
+                }
             });
 
             sound.bind("ended", function ()
             {
                 if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
+                {
                     Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
+                }
             });
 
             sound.setVolume(volume);            
             sound.play();
         }
+
         return numAudio;
     },
 
