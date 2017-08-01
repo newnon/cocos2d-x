@@ -24,8 +24,11 @@ void ScissorsNodeLoader::setSpecialProperties(Node* node, const Size &parentSize
 {
     WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
     ui::Layout *layout = dynamic_cast<ui::Layout*>(node);
-    layout->setClippingType(ui::Layout::ClippingType::SCISSOR);
-    layout->setClippingEnabled(true);
+    if(layout)
+    {
+        layout->setClippingType(ui::Layout::ClippingType::SCISSOR);
+        layout->setClippingEnabled(true);
+    }
 }
 
 ScissorsNodeLoader::ScissorsNodeLoader()
