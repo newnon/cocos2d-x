@@ -35,8 +35,8 @@ void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, f
         else
             layout->setLayoutType(ui::Layout::Type::VERTICAL_AUTO);
         layout->setSpacing(getAbsoluteScale(mainScale, additionalScale, _spacing.scale, _spacing.type));
+        layout->setContentSize(Size(dimensions.width, dimensions.height));
     }
-    layout->setContentSize(Size(dimensions.width, dimensions.height));
 }
 
 LayoutBoxLoader::LayoutBoxLoader()
