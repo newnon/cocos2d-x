@@ -375,7 +375,8 @@ Vector<Widget*> RelativeLayoutManager::getAllWidgets(cocos2d::ui::LayoutProtocol
         if (child)
         {
             RelativeLayoutParameter* layoutParameter = dynamic_cast<RelativeLayoutParameter*>(child->getLayoutParameter());
-            layoutParameter->_put = false;
+            if(layoutParameter)
+                layoutParameter->_put = false;
             _unlayoutChildCount++;
             widgetChildren.pushBack(child);
         }
@@ -388,7 +389,7 @@ Widget* RelativeLayoutManager::getRelativeWidget(Widget* widget)
 {
     Widget* relativeWidget = nullptr;
     RelativeLayoutParameter* layoutParameter = dynamic_cast<RelativeLayoutParameter*>(widget->getLayoutParameter());
-    const std::string relativeName = layoutParameter->getRelativeToWidgetName();
+    const std::string relativeName = layoutParameter ? layoutParameter->getRelativeToWidgetName() : "";
     
     if (!relativeName.empty())
     {
@@ -421,7 +422,7 @@ bool RelativeLayoutManager::calculateFinalPositionWithRelativeWidget(LayoutProto
     
     RelativeLayoutParameter* layoutParameter = dynamic_cast<RelativeLayoutParameter*>(_widget->getLayoutParameter());
 
-    RelativeLayoutParameter::RelativeAlign align = layoutParameter->getAlign();
+    RelativeLayoutParameter::RelativeAlign align = layoutParameter ? layoutParameter->getAlign() : RelativeLayoutParameter::RelativeAlign::NONE;
 
     Size layoutSize = layout->getLayoutContentSize();
 
@@ -636,10 +637,9 @@ void RelativeLayoutManager::calculateFinalPositionWithRelativeAlign()
 {
     RelativeLayoutParameter* layoutParameter = dynamic_cast<RelativeLayoutParameter*>(_widget->getLayoutParameter());
     
-    Margin mg = layoutParameter->getMargin();
-   
+    Margin mg = layoutParameter ? layoutParameter->getMargin() : Margin();
     
-    RelativeLayoutParameter::RelativeAlign align = layoutParameter->getAlign();
+    RelativeLayoutParameter::RelativeAlign align = layoutParameter ? layoutParameter->getAlign() : RelativeLayoutParameter::RelativeAlign::NONE;
     
     //handle margin
     switch (align)
