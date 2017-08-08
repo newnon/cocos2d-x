@@ -100,6 +100,7 @@ const char *Director::EVENT_BEFORE_UPDATE = "director_before_update";
 const char *Director::EVENT_AFTER_UPDATE = "director_after_update";
 const char *Director::EVENT_RESET = "director_reset";
 const char *Director::EVENT_BEFORE_DRAW = "director_before_draw";
+const char *Director::EVENT_BEFORE_POLL_EVENTS = "director_before_poll_events";
 
 Director* Director::getInstance()
 {
@@ -180,6 +181,8 @@ bool Director::init(void)
     _beforeSetNextScene->setUserData(this);
     _afterSetNextScene = new (std::nothrow) EventCustom(EVENT_AFTER_SET_NEXT_SCENE);
     _afterSetNextScene->setUserData(this);
+    _eventBeforePollEvents = new (std::nothrow) EventCustom(EVENT_BEFORE_POLL_EVENTS);
+    _eventBeforePollEvents->setUserData(this);
     _eventAfterDraw = new (std::nothrow) EventCustom(EVENT_AFTER_DRAW);
     _eventAfterDraw->setUserData(this);
     _eventBeforeDraw = new (std::nothrow) EventCustom(EVENT_BEFORE_DRAW);
@@ -226,6 +229,7 @@ Director::~Director(void)
     CC_SAFE_RELEASE(_eventAfterUpdate);
     CC_SAFE_RELEASE(_eventAfterDraw);
     CC_SAFE_RELEASE(_eventBeforeDraw);
+    CC_SAFE_RELEASE(_eventBeforePollEvents);
     CC_SAFE_RELEASE(_eventAfterVisit);
     CC_SAFE_RELEASE(_eventProjectionChanged);
     CC_SAFE_RELEASE(_eventResetDirector);
@@ -293,6 +297,8 @@ void Director::drawScene()
     calculateDeltaTime();
     
     ui::Widget::_mouseOverWidget = nullptr;
+    
+    _eventDispatcher->dispatchEvent(_eventBeforePollEvents);
 
     if (_openGLView)
     {
