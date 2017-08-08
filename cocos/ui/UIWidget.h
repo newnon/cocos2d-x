@@ -41,6 +41,7 @@ NS_CC_BEGIN
 class EventListenerTouchOneByOne;
 class EventListenerMouse;
 class EventMouse;
+class EventListenerCustom;
 class Camera;
 
 namespace ui {
@@ -1028,10 +1029,10 @@ protected:
     Widget* getMouseOverWidget() const { return _mouseOverWidget; }
     
 private:
-    friend class ::cocos2d::Director;
     class FocusNavigationController;
     static FocusNavigationController* _focusNavigationController;
     static Widget *_mouseOverWidget;
+    static EventListenerCustom* _customEventListener;
 };
 }
 

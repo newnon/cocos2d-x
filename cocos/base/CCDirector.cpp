@@ -296,8 +296,6 @@ void Director::drawScene()
     // calculate "global" dt
     calculateDeltaTime();
     
-    ui::Widget::_mouseOverWidget = nullptr;
-    
     _eventDispatcher->dispatchEvent(_eventBeforePollEvents);
 
     if (_openGLView)

@@ -42,6 +42,8 @@ THE SOFTWARE.
 NS_CC_BEGIN
 
 namespace ui {
+    
+cocos2d::EventListenerCustom *Widget::_customEventListener = nullptr;
 
 class Widget::FocusNavigationController
 {
@@ -174,7 +176,13 @@ _ccEventCallback(nullptr),
 _callbackType(""),
 _callbackName("")
 {
-
+    if (!_customEventListener)
+    {
+        _customEventListener = _eventDispatcher->addCustomEventListener(cocos2d::Director::EVENT_BEFORE_POLL_EVENTS, [](cocos2d::EventCustom *event)
+        {
+            _mouseOverWidget = nullptr;
+        });
+    }
 }
 
 Widget::~Widget()
