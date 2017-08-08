@@ -252,6 +252,9 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, _glContextAttrs.depthBits);
     SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, _glContextAttrs.stencilBits);
     
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, _glContextAttrs.multisamplingCount>0?1:0 );
+    SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, _glContextAttrs.multisamplingCount);
+    
     _frameZoomFactor = frameZoomFactor;
     int bpp = _glContextAttrs.redBits + _glContextAttrs.greenBits + _glContextAttrs.blueBits + _glContextAttrs.alphaBits;
     _screenSurface = SDL_SetVideoMode(rect.size.width * frameZoomFactor, rect.size.height * frameZoomFactor, bpp, SDL_OPENGL);

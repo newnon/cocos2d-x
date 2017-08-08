@@ -56,6 +56,7 @@ public:
     static void convertAttrs();
     static void* _pixelFormat;
     static int _depthFormat;
+    static int _multisamplingCount;
     
     void screenSizeChanged(int newWidth, int newHeight);
 
