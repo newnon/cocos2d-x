@@ -37,6 +37,7 @@ NS_CC_BEGIN
 
 void* GLViewImpl::_pixelFormat = kEAGLColorFormatRGB565;
 int GLViewImpl::_depthFormat = GL_DEPTH_COMPONENT16;
+int GLViewImpl::_multisamplingCount = 0;
 
 GLViewImpl* GLViewImpl::createWithEAGLView(void *eaglview)
 {
@@ -105,6 +106,8 @@ void GLViewImpl::convertAttrs()
     {
         CCASSERT(0, "Unsupported format for depth and stencil buffers. Using default");
     }
+    
+    _multisamplingCount = _glContextAttrs.multisamplingCount;
 }
 
 GLViewImpl::GLViewImpl()
