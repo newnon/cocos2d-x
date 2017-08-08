@@ -116,6 +116,8 @@ public:
     static const char* EVENT_AFTER_DRAW;
     /** Director will trigger an event before a scene is drawn, right after clear. */
     static const char* EVENT_BEFORE_DRAW;
+    /** Director will trigger an event before openGLView->pollEvents() is invoked. */
+    static const char* EVENT_BEFORE_POLL_EVENTS;
 
     /**
      * @brief Possible OpenGL projections used by director
@@ -636,7 +638,7 @@ protected:
      @since v3.0
      */
     EventDispatcher* _eventDispatcher;
-    EventCustom *_eventProjectionChanged, *_eventBeforeDraw, *_eventAfterDraw, *_eventAfterVisit, *_eventBeforeUpdate, *_eventAfterUpdate, *_eventResetDirector, *_beforeSetNextScene, *_afterSetNextScene;
+    EventCustom *_eventProjectionChanged, *_eventBeforePollEvents, *_eventBeforeDraw, *_eventAfterDraw, *_eventAfterVisit, *_eventBeforeUpdate, *_eventAfterUpdate, *_eventResetDirector, *_beforeSetNextScene, *_afterSetNextScene;
         
     /* delta time since last tick to main loop */
 	float _deltaTime;
