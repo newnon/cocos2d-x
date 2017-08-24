@@ -98,6 +98,9 @@ typedef SSIZE_T ssize_t;
 #endif
 // Structure timeval has define in winsock.h, include windows.h for it.
 #include <Windows.h>
+#ifdef ERROR
+#undef ERROR
+#endif
 
 #ifndef __MINGW32__
 
