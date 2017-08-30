@@ -71,11 +71,11 @@ void AudioEngineImpl::onCallback(int audioId, bool success)
 
 void AudioEngineImpl::onPlay2dCallback(int audioId, bool success)
 {
-    if (g_AudioEngineImpl && success)
+    if (g_AudioEngineImpl)
     {
         if (AudioEngine::_audioIDInfoMap.find(audioId) != AudioEngine::_audioIDInfoMap.end())
         {
-            AudioEngine::_audioIDInfoMap[audioId].state = AudioEngine::AudioState::PLAYING;
+            AudioEngine::_audioIDInfoMap[audioId].state = success ? AudioEngine::AudioState::PLAYING : AudioEngine::AudioState::ERROR;
         }
     }
 }
