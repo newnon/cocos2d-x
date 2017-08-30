@@ -401,7 +401,7 @@ void GLViewImpl::toggleToFullscreen()
 {
     if(isFullscreen())
     {
-        emscripten_run_script("Module['canvas'].cancelFullScreen();");
+        EM_ASM(Module['canvas'].cancelFullScreen(););
     }
     else
     {
@@ -418,7 +418,7 @@ void GLViewImpl::toggleToFullscreen()
                
                var canvas = Module['canvas'];
                function fullScreenChange() {
-                   Browser.isFullScreen = false;
+                   Browser.isFullscreen = false;
                    var canvasContainer = canvas.parentNode;
                    if ((document['webkitFullScreenElement'] || document['webkitFullscreenElement'] ||
                         document['mozFullScreenElement'] || document['mozFullscreenElement'] ||
@@ -435,8 +435,8 @@ void GLViewImpl::toggleToFullscreen()
                        canvas.cancelFullScreen = canvas.cancelFullScreen.bind(document);
                        
                        if (Browser.lockPointer) canvas.requestPointerLock();
-                       Browser.isFullScreen = true;
-                       if (Browser.resizeCanvas) Browser.setFullScreenCanvasSize();
+                       Browser.isFullscreen = true;
+                       if (Browser.resizeCanvas) Browser.setFullscreenCanvasSize();
                    } else {
                        
                        // remove the full screen specific parent of the canvas again to restore the HTML structure from before going full screen
@@ -446,7 +446,7 @@ void GLViewImpl::toggleToFullscreen()
                        if (Browser.resizeCanvas) Browser.setWindowedCanvasSize();
                    }
                    
-                   if (Module['onFullScreen']) Module['onFullScreen'](Browser.isFullScreen);
+                   if (Module['onFullscreen']) Module['onFullscreen'](Browser.isFullscreen);
                    Browser.updateCanvasDimensions(canvas);
                }
                
