@@ -127,7 +127,8 @@ var LibraryAudioEngine = {
             numAudio = Module.CocosAudioState.audioMapNum[filename];
             var sound = Module.CocosAudioState.audioMap[filename];
 
-            sound.stop();
+            sound.setTime(0);
+            // sound.stop();
 
             if (loop) 
             {
@@ -155,8 +156,12 @@ var LibraryAudioEngine = {
                 }
             });
 
-            sound.setVolume(volume);            
-            sound.play();
+            sound.setVolume(volume);
+
+            if (sound.isPaused())
+            {
+                sound.play();
+            }
         }
 
         return numAudio;
