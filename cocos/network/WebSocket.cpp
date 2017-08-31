@@ -131,7 +131,7 @@ static void wsLog(const char * format, ...)
 
     #define LOGE(...)  __android_log_print(ANDROID_LOG_ERROR, LOG_TAG,__VA_ARGS__)
 #else
-    #if COCOS2D_DEBUG > 0
+    #if WEBSOCKET_COCOS2D_DEBUG > 0
         #define LOGD(fmt, ...) wsLog("D/" LOG_TAG " (" QUOTEME(__LINE__) "): " fmt "", ##__VA_ARGS__)
     #else
         #define LOGD(fmt, ...)
@@ -142,7 +142,7 @@ static void wsLog(const char * format, ...)
 
 static void printWebSocketLog(int level, const char *line)
 {
-#if COCOS2D_DEBUG > 0
+#if WEBSOCKET_COCOS2D_DEBUG > 0
     static const char * const log_level_names[] = {
         "ERR",
         "WARN",
