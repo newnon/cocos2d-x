@@ -40,7 +40,7 @@ def packFolder(source, dest, prefix):
         for i in range(0, 4-mod):
             fileNamesData.append(0)
             
-    with open(os.path.join(destPath, dest), 'w') as outfile:
+    with open(dest, 'w') as outfile:
         outfile.write(struct.pack('<4sIIII', "cxar", 0, 1, len(fileList), len(fileNamesData)))
         outfile.write(fileHeadersData)
         outfile.write(fileNamesData)
