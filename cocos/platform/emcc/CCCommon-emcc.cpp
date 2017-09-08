@@ -34,7 +34,7 @@ NS_CC_BEGIN
 
 void MessageBox(const char * msg, const char * title)
 {
-	EM_ASM({ Module.print($0); }, msg);
+	EM_ASM_({ Module.print($0); }, msg);
     //log("%s: %s", title, msg);
 }
 
