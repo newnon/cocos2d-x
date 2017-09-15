@@ -478,6 +478,17 @@ const Color4B &Text::getRightBottomTopColor() const
     return _labelRenderer->getRightBottomTopColor();
 }
 
+
+void Text::setBlendFunc(const BlendFunc &blendFunc)
+{
+    _labelRenderer->setBlendFunc(blendFunc);
+}
+
+const BlendFunc& Text::getBlendFunc() const
+{
+    return _labelRenderer->getBlendFunc();
+}
+    
 Widget* Text::createCloneInstance()
 {
     return Text::create();
