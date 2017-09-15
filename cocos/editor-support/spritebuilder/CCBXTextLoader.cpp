@@ -59,7 +59,6 @@ void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float 
     ui::Text *text = static_cast<ui::Text*>(node);
     if(_dimensions.size.width == 0 || _dimensions.size.height == 0)
         text->ignoreContentAdaptWithSize(true);
-    text->setBlendFunc(_blendFunc);
     float outlineWidth = getAbsoluteScale(mainScale, additionalScale, _outlineWidth.scale, _outlineWidth.type);
     float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, _shadowBlurRadius.scale, _shadowBlurRadius.type);
     Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, _shadowOffset.pos, _shadowOffset.referenceCorner, _shadowOffset.xUnits, _shadowOffset.yUnits, parentSize);
@@ -83,6 +82,7 @@ void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float 
     else if (static_cast<int>(GradientType::kVertical) == _gradientType) {
         text->setVGradientColor(_gradientColor1, _gradientColor2);
     }
+    text->setBlendFunc(_blendFunc==BlendFunc::ALPHA_PREMULTIPLIED ? BlendFunc::ALPHA_NON_PREMULTIPLIED : _blendFunc);
 }
 
 TextLoader::TextLoader()

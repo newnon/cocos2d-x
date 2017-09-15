@@ -74,7 +74,6 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
         
         label->setDimensions(dimensions.width, dimensions.height);
         label->setString(_label);
-        label->setBlendFunc(_blendFunc);
         float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, _shadowBlurRadius.scale, _shadowBlurRadius.type);
         Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, _shadowOffset.pos, _shadowOffset.referenceCorner, _shadowOffset.xUnits, _shadowOffset.yUnits, parentSize);
         if (_outlineColor.a > 0 && outlineWidth > 0)
@@ -94,6 +93,7 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
         else if (static_cast<int>(GradientType::kVertical) == _gradientType) {
             label->setVGradientColor(_gradientColor1, _gradientColor2);
         }
+        label->setBlendFunc(_blendFunc==BlendFunc::ALPHA_PREMULTIPLIED ? BlendFunc::ALPHA_NON_PREMULTIPLIED : _blendFunc);
     }
 }
 
