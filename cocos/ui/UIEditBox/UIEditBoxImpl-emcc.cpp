@@ -256,7 +256,7 @@ void EditBoxImplEmcc::onEnterCallback(void *userData)
 void EditBoxImplEmcc::onFocusCallback(void *userData)
 {
     EditBoxImplEmcc *editBoxEmcc = static_cast<EditBoxImplEmcc*>(userData);
-    editBoxEmcc->editBoxEditingDidEnd(editBoxEmcc->getNativeText(), EditBoxDelegate::EditBoxEndAction::RETURN);
+    editBoxEmcc->editBoxEditingDidEnd(editBoxEmcc->getNativeText(), EditBoxDelegate::EditBoxEndAction::UNKNOWN);
     
     UIEditBox_close(editBoxEmcc->_id);
 }
