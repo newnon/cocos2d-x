@@ -675,6 +675,8 @@ protected:
      //when finding the next focused widget, use this variable to pass focus between layout & widget
     bool _isFocusPassing;
     float _spacing;
+    
+    std::vector<bool> _childVisibility;
 };
     
 }

@@ -181,6 +181,7 @@ void Layout::addChild(Node *child, int zOrder, int tag)
     }
     child->setGlobalZOrder(_globalZOrder);
     Widget::addChild(child, zOrder, tag);
+    _childVisibility.clear();
     _doLayoutDirty = true;
 }
     
@@ -191,24 +192,28 @@ void Layout::addChild(Node* child, int zOrder, const std::string &name)
     }
     child->setGlobalZOrder(_globalZOrder);
     Widget::addChild(child, zOrder, name);
+    _childVisibility.clear();
     _doLayoutDirty = true;
 }
     
 void Layout::removeChild(Node *child, bool cleanup)
 {
     Widget::removeChild(child, cleanup);
+    _childVisibility.clear();
     _doLayoutDirty = true;
 }
     
 void Layout::removeAllChildren()
 {
     Widget::removeAllChildren();
+    _childVisibility.clear();
     _doLayoutDirty = true;
 }
     
 void Layout::removeAllChildrenWithCleanup(bool cleanup)
 {
     Widget::removeAllChildrenWithCleanup(cleanup);
+    _childVisibility.clear();
     _doLayoutDirty = true;
 }
 
@@ -227,8 +232,34 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
     if(FLAGS_TRANSFORM_DIRTY & parentFlags)
         _clippingRectDirty = true;
     
+    if(_childVisibility.size() != _children.size())
+    {
+        _doLayoutDirty = true;
+    }
+    else
+    {
+        for(size_t i=0; i<_childVisibility.size(); ++i)
+        {
+            if(_childVisibility[i] != _children.at(i)->isVisible())
+            {
+                _doLayoutDirty = true;
+                _childVisibility.clear();
+                break;
+            }
+        }
+    }
+    
     adaptRenderers();
     doLayout();
+    
+    if(_childVisibility.empty())
+    {
+        _childVisibility.reserve(_children.size());
+        for(size_t i=0; i<_children.size(); ++i)
+        {
+            _childVisibility.push_back(_children.at(i)->isVisible());
+        }
+    }
     
     if (_clippingEnabled)
     {
