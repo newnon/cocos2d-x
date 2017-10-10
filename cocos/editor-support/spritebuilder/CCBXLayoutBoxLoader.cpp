@@ -16,7 +16,7 @@ LayoutBoxLoader *LayoutBoxLoader::create()
     ret->autorelease();
     return ret;
 }
-Node *LayoutBoxLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *LayoutBoxLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::Layout *layoutBox = ui::Layout::create();
     layoutBox->setAnchorPoint(Vec2(0.0f, 0.0f));

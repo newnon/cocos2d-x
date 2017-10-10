@@ -16,7 +16,7 @@ WidgetLoader *WidgetLoader::create()
     return ret;
 }
     
-Node *WidgetLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *WidgetLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::Widget *widget = ui::Widget::create();
     widget->setAnchorPoint(Vec2(0.0f, 0.0f));

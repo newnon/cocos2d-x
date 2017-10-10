@@ -35,7 +35,7 @@ ScrollBarLoader *ScrollBarLoader::create()
     ret->autorelease();
     return ret;
 }
-Node *ScrollBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *ScrollBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::ScrollBar *slider = ui::ScrollBar::create();
     slider->setAnchorPoint(Vec2(0.0f, 0.0f));

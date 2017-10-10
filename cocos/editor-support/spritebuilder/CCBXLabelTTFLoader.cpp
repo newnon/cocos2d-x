@@ -45,7 +45,7 @@ LabelTTFLoader *LabelTTFLoader::create()
     return ret;
 }
 
-Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     Label *label = Label::create();
     label->setAnchorPoint(cocos2d::Vec2(0,0));

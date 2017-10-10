@@ -201,7 +201,7 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
     if(createNodeFunction)
         ret = createNodeFunction(parentSize, mainScale, additionalScale);
     else
-        ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode, parentOwner);
+        ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode, parentOwner, customProperties);
     if(!ret)
         return nullptr;
     
@@ -383,7 +383,7 @@ void NodeLoader::setSceneScaleType(SceneScaleType sceneScaleType)
     _sceneScaleType = sceneScaleType;
 }
 
-Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     return Node::create();
 }

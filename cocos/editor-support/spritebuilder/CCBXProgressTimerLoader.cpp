@@ -21,7 +21,7 @@ ProgressTimerLoader *ProgressTimerLoader::create()
     return ret;
 }
 
-Node *ProgressTimerLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *ProgressTimerLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ProgressTimer *progressTimer = ProgressTimer::create(_spriteFrame.spriteFrame?Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame):Sprite::create());
     progressTimer->setAnchorPoint(Vec2(0.0f, 0.0f));

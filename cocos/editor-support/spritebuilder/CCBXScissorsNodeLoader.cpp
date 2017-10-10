@@ -14,7 +14,7 @@ ScissorsNodeLoader *ScissorsNodeLoader::create()
     ret->autorelease();
     return ret;
 }
-Node *ScissorsNodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *ScissorsNodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::Layout *layout = ui::Layout::create();
     layout->setAnchorPoint(cocos2d::Vec2(0.0f, 0.0f));

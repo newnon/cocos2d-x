@@ -83,7 +83,7 @@ ParticleSystemQuadLoader *ParticleSystemQuadLoader::create()
     return ret;
 }
     
-Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     BuilderParticleSystemQuad *builderParticleSystemQuad =  BuilderParticleSystemQuad::createWithTotalParticles(_totalParticles);
     builderParticleSystemQuad->setAnchorPoint(Vec2(0.0f, 0.0f));

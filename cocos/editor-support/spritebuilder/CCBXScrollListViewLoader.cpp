@@ -27,7 +27,7 @@ ScrollListViewLoader *ScrollListViewLoader::create()
     return ret;
 }
 
-Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ScrollListView *scrollListView = ScrollListView::create(_file, mainScale, additionalScale);
     scrollListView->setAnchorPoint(Vec2(0.0f, 0.0f));
