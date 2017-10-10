@@ -183,7 +183,8 @@ CCBAnimationManager::~CCBAnimationManager()
     {
         for (auto iter2 = iter->second.begin(); iter2 != iter->second.end(); ++iter2)
         {
-            iter2->second->release();
+            if (iter2->second)
+                iter2->second->release();
         }
     }
 }
@@ -280,11 +281,12 @@ void CCBAnimationManager::setObject(Ref* obj, Node *pNode, const std::string& pr
 {
     auto& props = _objects[pNode];
     auto iter = props.find(propName);
-    if (iter != props.end())
+    if (iter != props.end() && iter->second)
         iter->second->release();
         
     props[propName] = obj;
-    obj->retain();
+    if (obj)
+        obj->retain();
 }
 
 Ref* CCBAnimationManager::getObject(Node *pNode, const std::string& propName)
