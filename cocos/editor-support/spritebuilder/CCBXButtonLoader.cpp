@@ -88,7 +88,7 @@ ButtonLoader *ButtonLoader::create()
     return ret;
 }
 
-Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::Button *button = ui::Button::create();
     button->setAnchorPoint(Vec2(0.0f, 0.0f));

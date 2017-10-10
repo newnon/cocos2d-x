@@ -22,7 +22,7 @@ Scale9SpriteLoader *Scale9SpriteLoader::create()
     return ret;
 }
 
-Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::Scale9Sprite *sprite = _spriteFrame.spriteFrame?ui::Scale9Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame.get()):ui::Scale9Sprite::create();
     sprite->setAnchorPoint(Vec2(0.0f, 0.0f));

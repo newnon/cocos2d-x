@@ -32,7 +32,7 @@ SliderLoader *SliderLoader::create()
     ret->autorelease();
     return ret;
 }
-Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *SliderLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::Slider *slider = ui::Slider::create();
     slider->setAnchorPoint(Vec2(0.0f, 0.0f));

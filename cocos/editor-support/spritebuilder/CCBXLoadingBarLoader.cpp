@@ -24,7 +24,7 @@ LoadingBarLoader *LoadingBarLoader::create()
     return ret;
 }
 
-Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::LoadingBar *loadingBar = ui::LoadingBar::create();
     loadingBar->setAnchorPoint(Vec2(0.0f, 0.0f));

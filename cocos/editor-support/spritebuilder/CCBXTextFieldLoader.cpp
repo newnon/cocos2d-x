@@ -27,7 +27,7 @@ TextFieldLoader *TextFieldLoader::create()
     return ret;
 }
 
-Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::TextField *textField = ui::TextField::create(_placeholder, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
     textField->setAnchorPoint(Vec2(0.0f, 0.0f));

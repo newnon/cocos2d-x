@@ -13,7 +13,7 @@ NodeColorLoader *NodeColorLoader::create()
     return ret;
 }
 
-Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     LayerColor *layer = LayerColor::create();
     layer->setAnchorPoint(cocos2d::Vec2(0.0f, 0.0f));

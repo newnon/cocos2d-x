@@ -27,7 +27,7 @@ ScrollViewLoader *ScrollViewLoader::create()
     return ret;
 }
 
-Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
 {
     ui::ScrollView *scrollView = ui::ScrollView::create();
     scrollView->setAnchorPoint(Vec2(0.0f, 0.0f));
