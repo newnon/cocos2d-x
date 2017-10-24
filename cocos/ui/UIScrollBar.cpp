@@ -770,7 +770,7 @@ void ScrollBar::updateByWheelMouse(float scrollX, float scrollY)
         {
             float oneRow = _dataScrollView->getInnerContainerSize().height / _dataScrollView->getChildren().size();
             if (_dataScrollView->getChildren().size() == 1)
-                oneRow = _dataScrollView->getInnerContainerSize().height / bbox.height;
+                oneRow = (_dataScrollView->getInnerContainerSize().height / bbox.height) * 2.0f;
             
             float onePercent = oneRow / (_dataScrollView->getInnerContainerSize().height - bbox.height);
             float addPercent = scrollY * onePercent;
