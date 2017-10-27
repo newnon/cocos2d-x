@@ -68,6 +68,7 @@ void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, f
             default:
                 break;
         };
+        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
         imageView->setFlippedX(_flipped.first);
         imageView->setFlippedY(_flipped.second);
     }
