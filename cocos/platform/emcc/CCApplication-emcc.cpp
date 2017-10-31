@@ -80,7 +80,7 @@ extern "C" void mainLoopIter()
     if (useMainLoopTiming)
     {
         float animationInterval = Director::getInstance()->getAnimationInterval();
-        emscripten_set_main_loop_timing(EM_TIMING_RAF, animationInterval * 60);
+        emscripten_set_main_loop_timing(EM_TIMING_RAF, (int)(animationInterval * 60.0f + 0.5f));
         useMainLoopTiming = false;
     }
     
@@ -175,11 +175,11 @@ void Application::setAnimationInterval(float interval, SetIntervalReason /*reaso
 void Application::setAnimationInterval(float interval)
 {
 	CCLOG("Animation interval %f", interval);
-	_animationInterval = (long)(interval * 1000);
+    _animationInterval = (int)(interval * 60.0f + 0.5f);
     
     if (!useMainLoopTiming)
     {
-        emscripten_set_main_loop_timing(EM_TIMING_RAF, _animationInterval * 60 / 1000);
+        emscripten_set_main_loop_timing(EM_TIMING_RAF, _animationInterval);
     }
 }
 

@@ -128,7 +128,7 @@ public:
     void setBackgroundMainLoop();
     
 protected:
-    long       _animationInterval;  //micro second
+    int       _animationInterval;  // 1/60 seconds
     std::string _resourceRootPath;
     std::string _currentLocale;
     
