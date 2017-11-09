@@ -465,10 +465,12 @@ void FrameBuffer::applyFBO()
         CCLOG("FBO is %d _fbo %d color, %d ds", _fbo, RenderTargetBase::Type::Texture2D == _rt->getType() ? _rt->getTexture()->getName() : _rt->getBuffer(), nullptr == _rtDepthStencil ? 0 : _rtDepthStencil->getBuffer());
         _fboBindingDirty = false;
     }
+#if COCOS2D_DEBUG > 0
     if(GL_FRAMEBUFFER_COMPLETE != glCheckFramebufferStatus(GL_FRAMEBUFFER))
     {
         CCLOG("FrameBuffer Status Error %d", (int)glCheckFramebufferStatus(GL_FRAMEBUFFER));
     }
+#endif
     CHECK_GL_ERROR_DEBUG();
 }
 
