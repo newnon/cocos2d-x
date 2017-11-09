@@ -87,6 +87,8 @@ private:
     int _defaultWindowHeight = 0;
     int _windowFullscreen = 0;
     int _wheelScrollScale = 1;
+    
+    GLfloat _scissorBox[4];
 
 private:
     CC_DISALLOW_COPY_AND_ASSIGN(GLViewImpl);

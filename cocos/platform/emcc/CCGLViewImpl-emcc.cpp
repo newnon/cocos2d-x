@@ -271,6 +271,11 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
 	CCLOG("Version %s", glVersion);
 	CCLOG("Extensions %s", glExtensions);
     
+    _scissorBox[0] = 0;
+    _scissorBox[1] = 0;
+    _scissorBox[2] = _windowWidth;
+    _scissorBox[3] = _windowHeight;
+    
     _wheelScrollScale = EM_ASM_INT(
     {
         var nAgt = navigator.userAgent;
@@ -363,6 +368,10 @@ void GLViewImpl::swapBuffers()
 	{
         SDL_GL_SwapBuffers();
 	}
+    _scissorBox[0] = 0;
+    _scissorBox[1] = 0;
+    _scissorBox[2] = _windowWidth;
+    _scissorBox[3] = _windowHeight;
 }
 
 void GLViewImpl::pollEvents()
@@ -719,6 +728,10 @@ void GLViewImpl::setViewPortInPoints(float x , float y , float w , float h)
 
 void GLViewImpl::setScissorInPoints(float x , float y , float w , float h)
 {
+    _scissorBox[0] = x;
+    _scissorBox[1] = y;
+    _scissorBox[2] = w;
+    _scissorBox[3] = h;
     glScissor((GLint)(x * _scaleX * _frameZoomFactor + _viewPortRect.origin.x * _frameZoomFactor),
               (GLint)(y * _scaleY * _frameZoomFactor + _viewPortRect.origin.y * _frameZoomFactor),
               (GLsizei)(w * _scaleX * _frameZoomFactor),
@@ -727,13 +740,7 @@ void GLViewImpl::setScissorInPoints(float x , float y , float w , float h)
 
 Rect GLViewImpl::getScissorRect() const
 {
-    GLfloat params[4];
-    glGetFloatv(GL_SCISSOR_BOX, params);
-    float x = (params[0] - _viewPortRect.origin.x * _frameZoomFactor) / (_scaleX * _frameZoomFactor);
-    float y = (params[1] - _viewPortRect.origin.y * _frameZoomFactor) / (_scaleY * _frameZoomFactor);
-    float w = params[2] / (_scaleX * _frameZoomFactor);
-    float h = params[3] / (_scaleY * _frameZoomFactor);
-    return Rect(x, y, w, h);
+    return Rect(_scissorBox[0], _scissorBox[1], _scissorBox[2], _scissorBox[3]);
 }
 
 void GLViewImpl::onCharCallback(unsigned int character)
