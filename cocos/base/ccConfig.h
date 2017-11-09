@@ -66,6 +66,22 @@ THE SOFTWARE.
 #define CC_ENABLE_GL_STATE_CACHE 1
 #endif
 
+/** @def CC_DISABLE_GL_STATE_READ
+ * If enabled, cocos2d will maintain an OpenGL state internally to avoid unnecessary reads.
+ * In order to use them, you have to use the following functions, instead of the GL ones:
+ *  - ccGLUseProgram() instead of glUseProgram().
+ *  - GL::deleteProgram() instead of glDeleteProgram().
+ *  - GL::blendFunc() instead of glBlendFunc().
+ 
+ * Default value: Enabled by default
+ 
+ * @since v3.17
+ */
+#ifndef CC_DISABLE_GL_STATE_READ
+#define CC_DISABLE_GL_STATE_READ 1
+#endif
+
+
 /** @def CC_FIX_ARTIFACTS_BY_STRECHING_TEXEL
  * If enabled, the texture coordinates will be calculated by using this formula:
  * - texCoord.left = (rect.origin.x*2+1) / (texture.wide*2);

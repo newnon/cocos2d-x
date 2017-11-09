@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
 Copyright (c) 2008-2010 Ricardo Quesada
 Copyright (c) 2010-2013 cocos2d-x.org
 Copyright (c) 2011      Zynga Inc.
@@ -333,6 +333,15 @@ void Director::drawScene()
 #endif
         //clear draw stats
         _renderer->clearDrawStats();
+        
+#if CC_DISABLE_GL_STATE_READ
+        const experimental::Viewport& vieport = Camera::getDefaultViewport();
+        
+        Camera::_currentViewport[0] = vieport._left;
+        Camera::_currentViewport[1] = vieport._bottom;
+        Camera::_currentViewport[2] = vieport._width;
+        Camera::_currentViewport[3] = vieport._height;
+#endif
         
         //render the scene
         if(_openGLView)

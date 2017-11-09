@@ -40,6 +40,9 @@ NS_CC_BEGIN
 
 Camera* Camera::_visitingCamera = nullptr;
 experimental::Viewport Camera::_defaultViewport;
+#if CC_DISABLE_GL_STATE_READ
+GLint Camera::_currentViewport[4];
+#endif
 
 // start static methods
 
@@ -465,16 +468,29 @@ void Camera::applyFrameBufferObject()
 
 void Camera::applyViewport()
 {
+#if CC_DISABLE_GL_STATE_READ
+    memcpy(_oldViewport, _currentViewport, sizeof(_oldViewport));
+    GLint* viewport = _currentViewport;
+#else
     glGetIntegerv(GL_VIEWPORT, _oldViewport);
-
+    GLint viewport[4];
+#endif
+    
     if(nullptr == _fbo)
     {
-        glViewport(getDefaultViewport()._left, getDefaultViewport()._bottom, getDefaultViewport()._width, getDefaultViewport()._height);
+        viewport[0] = getDefaultViewport()._left;
+        viewport[1] = getDefaultViewport()._bottom;
+        viewport[2] = getDefaultViewport()._width;
+        viewport[3] = getDefaultViewport()._height;
+        glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     }
     else
     {
-        glViewport(_viewport._left * _fbo->getWidth(), _viewport._bottom * _fbo->getHeight(),
-                   _viewport._width * _fbo->getWidth(), _viewport._height * _fbo->getHeight());
+        _currentViewport[0] = _viewport._left * _fbo->getWidth();
+        _currentViewport[1] = _viewport._bottom * _fbo->getHeight();
+        _currentViewport[2] = _viewport._width * _fbo->getWidth();
+        _currentViewport[3] = _viewport._height * _fbo->getHeight();
+        glViewport(viewport[0], viewport[1], viewport[2], viewport[3]);
     }
 }
 

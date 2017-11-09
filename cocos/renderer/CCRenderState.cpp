@@ -775,6 +775,11 @@ void RenderState::StateBlock::setBlendDst(Blend blend)
     }
 }
 
+bool RenderState::StateBlock::getCullFace() const
+{
+    return _bits & RS_CULL_FACE;
+}
+
 void RenderState::StateBlock::setCullFace(bool enabled)
 {
     _cullFaceEnabled = enabled;
@@ -816,6 +821,11 @@ void RenderState::StateBlock::setFrontFace(FrontFace winding)
     }
 }
 
+bool RenderState::StateBlock::getDepthTest() const
+{
+    return _bits & RS_DEPTH_TEST;
+}
+
 void RenderState::StateBlock::setDepthTest(bool enabled)
 {
     _depthTestEnabled = enabled;
@@ -827,6 +837,11 @@ void RenderState::StateBlock::setDepthTest(bool enabled)
     {
         _bits |= RS_DEPTH_TEST;
     }
+}
+
+bool RenderState::StateBlock::getDepthWrite() const
+{
+    return _bits & RS_DEPTH_WRITE;
 }
 
 void RenderState::StateBlock::setDepthWrite(bool enabled)

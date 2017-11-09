@@ -151,9 +151,17 @@ void RenderQueue::realloc(size_t reserveSize)
 
 void RenderQueue::saveRenderState()
 {
+#if CC_DISABLE_GL_STATE_READ
+    _isDepthEnabled = RenderState::StateBlock::_defaultState->getDepthWrite();
+    _isCullEnabled = RenderState::StateBlock::_defaultState->getCullFace();
+    _isDepthWrite = RenderState::StateBlock::_defaultState->getDepthWrite();
+#else
     _isDepthEnabled = glIsEnabled(GL_DEPTH_TEST) != GL_FALSE;
     _isCullEnabled = glIsEnabled(GL_CULL_FACE) != GL_FALSE;
-    glGetBooleanv(GL_DEPTH_WRITEMASK, &_isDepthWrite);
+    GLboolean isDepthWrite;
+    glGetBooleanv(GL_DEPTH_WRITEMASK, &isDepthWrite);
+    _isDepthWrite = isDepthWrite != GL_FALSE;
+#endif
     
     CHECK_GL_ERROR_DEBUG();
 }

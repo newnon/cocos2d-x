@@ -258,6 +258,11 @@ public:
          * @param enabled true to enable, false to disable.
          */
         void setCullFace(bool enabled);
+        
+        /**
+         * get backface culling status.
+         */
+        bool getCullFace() const;
 
         /**
          * Sets the side of the facets to cull.
@@ -278,6 +283,11 @@ public:
         void setFrontFace(FrontFace winding);
 
         /**
+         * get depth testing status.
+         */
+        bool getDepthTest() const;
+        
+        /**
          * Toggles depth testing.
          *
          * By default, depth testing is disabled.
@@ -286,6 +296,11 @@ public:
          */
         void setDepthTest(bool enabled);
 
+        /**
+         * get depth writing status.
+         */
+        bool getDepthWrite() const;
+        
         /**
          * Toggles depth writing.
          *

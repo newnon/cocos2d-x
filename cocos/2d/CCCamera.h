@@ -333,6 +333,9 @@ protected:
     experimental::Viewport _viewport;
     experimental::FrameBuffer* _fbo;
     GLint _oldViewport[4];
+#if CC_DISABLE_GL_STATE_READ
+    static GLint _currentViewport[4];
+#endif
 };
 
 NS_CC_END
