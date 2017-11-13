@@ -497,10 +497,13 @@ const Rect& Layout::getClippingRect()
 {
     if (_clippingRectDirty)
     {
-        Vec2 worldPos = convertToWorldSpace(Vec2::ZERO);
-        AffineTransform t = getNodeToWorldAffineTransform();
-        float scissorWidth = _contentSize.width*t.a;
-        float scissorHeight = _contentSize.height*t.d;
+        Vec2 worldPos1 = convertToWorldSpace(Vec2::ZERO);
+        Vec2 worldPos2 = convertToWorldSpace(Vec2(_contentSize.width, _contentSize.height));
+        
+        Vec2 worldPos = Vec2(std::min(worldPos1.x, worldPos2.x), std::min(worldPos1.y, worldPos2.y));
+        float scissorWidth = fabs(worldPos2.x - worldPos1.x);
+        float scissorHeight = fabs(worldPos2.y - worldPos1.y);
+         
         Rect parentClippingRect;
         Node* parent = this;
 
