@@ -63,20 +63,20 @@ public:
     void uncache(const std::string& filePath);
     void uncacheAll();
 
-    int preload(const std::string& filePath, const Callback &callback);
+    void preload(const std::string& filePath, const Callback &callback);
     
     void setUseFileExt(const std::vector<std::string> &exts);
     
     void update(float dt);
     
 protected:
-    static void onCallback(int audioId, bool success);
-    static void onPlay2dCallback(int audioId, bool success);
-    static void onFinishCallback(int audioId, bool success);
+    
+    static void onPreloadCallback(const char* path, bool success);
+    static void onPlayCallback(int audioId, bool success);
+    static void onEndCallback(int audioId);
     
 private:
-    std::map<int, std::string> _audioFiles;
-    std::map<int, Callback> _preloadCallbacks;
+    std::map<std::string, Callback> _preloadCallbacks;
     std::map<int, FinishCallback> _finishCallbacks;
 };
 }

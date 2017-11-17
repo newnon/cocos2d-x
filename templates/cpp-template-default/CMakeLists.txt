@@ -288,6 +288,7 @@ elseif ( EMSCRIPTEN )
     set(CMAKE_EXE_LINKER_FLAGS_MINSIZEREL "${CMAKE_EXE_LINKER_FLAGS_MINSIZEREL} -s DEMANGLE_SUPPORT=0 -s ELIMINATE_DUPLICATE_FUNCTIONS=1 --llvm-lto 1")
 
     file(GLOB preJsFiles ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/audio/emcc/buzz.js)
+    file(GLOB preJsFiles ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/audio/emcc/howler.core.min.js)
     file(GLOB libraryJsFiles 
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/audio/emcc/SimpleAudioEngine.js
       ${CMAKE_CURRENT_SOURCE_DIR}/cocos2d/cocos/audio/emcc/AudioEngine.js

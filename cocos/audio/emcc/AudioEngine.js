@@ -1,372 +1,253 @@
 var LibraryAudioEngine = {
-    AudioEngine_init: function()
-    {
+    AudioEngine_init: function(playCallback, endCallback, preloadCallback) {
         Module.CocosAudioState = {
-            audioMap: {},
-            audioMapNum: {},
-            numAudioCount: 0,
+            nameToSoundMap: {},
+            idToSoundMap: {},
             formats: [],
-            preloadCallbacks: {},
-            play2dCallbacks: {},
-            finishCallbacks: {}
+            preloadCallback: preloadCallback,
+            playCallback: playCallback,
+            endCallback: endCallback
         };
     },
 
-    AudioEngine_setUseFileExt: function(extFiles)
-    {
+    AudioEngine_setUseFileExt: function(extFiles) {
         var exts = Pointer_stringify(extFiles);
         Module.CocosAudioState.formats = exts.split(',');
     },
 
-    AudioEngine_end: function()
-    {
-        buzz.all().stop();
+    AudioEngine_end: function() {
+        for(var key in Module.CocosAudioState.nameToSoundMap) {
+            if (Module.CocosAudioState.nameToSoundMap.hasOwnProperty(key)) {    
+                var value = Module.CocosAudioState.nameToSoundMap[key];
+                value.unload();
+            }
+        }
+        Module.CocosAudioState.nameToSoundMap = {};
     },
-    
-    __set_callback: function(audioId, event, callback)
-    {
-        function _callback(audioId, result)
-        {
-            try
-            {
+
+    __createHowl: function(filename) {
+        var fileNames = []
+
+        if (Module.CocosAudioState.formats.length > 0) {
+            var short_filename = filename.substr(0, filename.lastIndexOf('.'));
+            for(var i in Module.CocosAudioState.formats) {
+                fileNames.push(short_filename + '.' + Module.CocosAudioState.formats[i]);
+            }
+        }
+        else {
+            fileNames.push(filename);
+        }
+
+        var sound = new Howl({
+            src: fileNames,
+            preload: true,
+            onload: function() {
+                //console.log('onload ' + filename);
+                var len = lengthBytesUTF8(filename);
+                var bufferSize = len+1;
+                var buffer = _malloc(bufferSize);
+                stringToUTF8(filename, buffer, bufferSize);
                 var sp = Runtime.stackSave();
-                Runtime.dynCall('vii', callback, [audioId, result]);
+                Runtime.dynCall('vii', Module.CocosAudioState.preloadCallback, [buffer, 1]);
                 Runtime.stackRestore(sp);
+                _free(buffer);
+            },
+            onloaderror: function(i) {
+                //console.log('onloaderror ' + filename);
+                var len = lengthBytesUTF8(filename);
+                var bufferSize = len+1;
+                var buffer = _malloc(bufferSize);
+                stringToUTF8(filename, buffer, bufferSize);
+                var sp = Runtime.stackSave();
+                Runtime.dynCall('vii', Module.CocosAudioState.preloadCallback, [buffer, 0]);
+                Runtime.stackRestore(sp);
+                _free(buffer);
+            },
+            onplay: function(id) {
+                //console.log('onplay');
+                var sp = Runtime.stackSave();
+                Runtime.dynCall('vii', Module.CocosAudioState.playCallback, [id, 1]);
+                Runtime.stackRestore(sp);
+            },
+            onplayerror: function(id) {
+                //console.log('onplayerror');
+                var sp = Runtime.stackSave();
+                Runtime.dynCall('vii', Module.CocosAudioState.playCallback, [id, 0]);
+                Runtime.stackRestore(sp);
+            },
+            onend: function(id) {
+                //console.log('onend');
+                var sound = Module.CocosAudioState.idToSoundMap[id];
+
+                if(sound !== undefined) {
+                    if(!sound.loop(id)) {
+                        delete Module.CocosAudioState.idToSoundMap[id];
+                        var sp = Runtime.stackSave();
+                        Runtime.dynCall('vi', Module.CocosAudioState.endCallback, [id]);
+                        Runtime.stackRestore(sp);
+                    }
+                } 
             }
-            catch (e)
-            {
-                if (e instanceof ExitStatus)
-                {
-                    return;
-                }
-                else
-                {
-                    if (e && typeof e === 'object' && e.stack) 
-                        console.log('exception thrown: ' + [e, e.stack]);
-                }
-            }
-        };
-
-        if (event == "play2d")
-        {
-            Module.CocosAudioState.play2dCallbacks[audioId] = _callback;
-        }
-        else if (event == "preload")
-        {
-            Module.CocosAudioState.preloadCallbacks[audioId] = _callback;
-        }
-        else if (event == "finish")
-        {
-            Module.CocosAudioState.finishCallbacks[audioId] = _callback;
-        }
+        });
+        return sound;
     },
 
-    AudioEngine_set_callback__deps: ['__set_callback'],
-    AudioEngine_set_callback: function(audioId, callback)
-    {
-        ___set_callback(audioId, "preload", callback);
-    },
-
-    AudioEngine_set_callback__deps: ['__set_callback'],
-    AudioEngine_set_finish_callback: function(audioId, callback)
-    {
-        ___set_callback(audioId, "finish", callback);
-    },
-
-    AudioEngine_play2d__deps: ['__set_callback'],
-    AudioEngine_play2d: function(filenameP, loop, volume, callback)
+    AudioEngine_play2d__deps: ['__createHowl'],
+    AudioEngine_play2d: function(filenameP, loop, volume)
     {
         var filename = Pointer_stringify(filenameP);
         if (filename.length <= 0)
             return -1;
 
-        if (Module.CocosAudioState.formats.length > 0)
-            filename = filename.substr(0, filename.lastIndexOf('.'));
-        var numAudio = Module.CocosAudioState.numAudioCount;
+        //console.log('AudioEngine_play2d ' + filename + ' ' + loop + ' ' + volume);
 
-        if(Module.CocosAudioState.audioMap[filename] === undefined)
+        var sound = Module.CocosAudioState.nameToSoundMap[filename];
+
+        if(sound === undefined)
         {
-            var sound = new buzz.sound(filename, {
-                                                formats: Module.CocosAudioState.formats,
-                                                preload: true,
-                                                autoplay: true,
-                                                loop: loop,
-                                                volume: volume
-                                                });
-            Module.CocosAudioState.audioMap[filename] = sound;
-            Module.CocosAudioState.audioMapNum[filename] = numAudio;
-            Module.CocosAudioState.numAudioCount++;
-
-            ___set_callback(numAudio, "play2d", callback);
-            sound.bind("loadeddata", function ()
-            {
-                if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
-                {
-                    Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, true);
-                }
-            });
-
-            sound.bind("error", function ()
-            {
-                if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
-                {
-                    Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, false); 
-                }
-            });
-
-            sound.bind("ended", function ()
-            {
-                if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
-                {
-                    Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
-                }
-            });
-        }
-        else
-        {
-            numAudio = Module.CocosAudioState.audioMapNum[filename];
-            var sound = Module.CocosAudioState.audioMap[filename];
-
-            sound.setTime(0);
-            // sound.stop();
-
-            if (loop) 
-            {
-                sound.loop();
-            }
-            else
-            {
-                sound.unloop();
-            }
-
-            ___set_callback(numAudio, "play2d", callback);
-            sound.bind("playing", function ()
-            {
-                if (Module.CocosAudioState.play2dCallbacks[numAudio] != undefined)
-                {
-                    Module.CocosAudioState.play2dCallbacks[numAudio].call(this, numAudio, true);
-                }
-            });
-
-            sound.bind("ended", function ()
-            {
-                if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
-                {
-                    Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
-                }
-            });
-
-            sound.setVolume(volume);
-
-            if (sound.isPaused())
-            {
-                sound.play();
-            }
+            sound = ___createHowl(filename);
+            Module.CocosAudioState.nameToSoundMap[filename] = sound;
         }
 
-        return numAudio;
+        var id = sound.play();
+        Module.CocosAudioState.idToSoundMap[id] = sound;
+        sound.loop(loop, id);
+        sound.volume(volume, id);
+        return id;
     },
 
+    AudioEngine_preload__deps: ['__createHowl'],
     AudioEngine_preload: function(filenameP)
     {
         var filename = Pointer_stringify(filenameP);
-        if( Module.CocosAudioState.formats.length > 0)
-            filename = filename.substr(0, filename.lastIndexOf('.'));
+        if (filename.length <= 0)
+            return ;
 
-        if(Module.CocosAudioState.audioMap[filename] === undefined)
-        {
-            var numAudio = Module.CocosAudioState.numAudioCount;
+        //console.log('AudioEngine_preload ' + filename);
 
-            var sound = new buzz.sound(filename, {
-                                                formats: Module.CocosAudioState.formats,
-                                                preload: true,
-                                                autoplay: false,
-                                                volume: 100
-                                                });
+        var sound = Module.CocosAudioState.nameToSoundMap[filename];
 
-            Module.CocosAudioState.audioMap[filename] = sound;
-            Module.CocosAudioState.audioMapNum[filename] = numAudio;
-            Module.CocosAudioState.numAudioCount++;
-
-            sound.bind("loadeddata", function ()
-            {
-                if (Module.CocosAudioState.preloadCallbacks[numAudio] != undefined)
-                    Module.CocosAudioState.preloadCallbacks[numAudio].call(this, numAudio, true);
-            });
-
-            sound.bind("error", function ()
-            {
-                if (Module.CocosAudioState.preloadCallbacks[numAudio] != undefined)
-                    Module.CocosAudioState.preloadCallbacks[numAudio].call(this, numAudio, false); 
-            });
-
-            sound.bind("ended", function ()
-            {
-                if (Module.CocosAudioState.finishCallbacks[numAudio] != undefined)
-                    Module.CocosAudioState.finishCallbacks[numAudio].call(this, numAudio, false); 
-            });
-
-            sound.load();
-            return numAudio;
-        }
-
-        return -1;
+        if(sound === undefined) {
+            sound = ___createHowl(filename);
+            Module.CocosAudioState.nameToSoundMap[filename] = sound;
+        } 
     },
     
     AudioEngine_unload: function(filenameP)
     {
         var filename = Pointer_stringify(filenameP);
-        if( Module.CocosAudioState.formats.length > 0)
-            filename = filename.substr(0, filename.lastIndexOf('.'));
-            
-        var value = Module.CocosAudioState.audioMap[filename];
-        if(value != undefined)
-        {
-            var audioId = Module.CocosAudioState.audioMapNum[filename];
-            if (Module.CocosAudioState.preloadCallbacks[audioId] != undefined)
-                Module.CocosAudioState.preloadCallbacks[audioId] = null;
+        if (filename.length <= 0)
+            return ;
 
-            if (Module.CocosAudioState.play2dCallbacks[audioId] != undefined)
-                Module.CocosAudioState.play2dCallbacks[audioId] = null;
+        //console.log('AudioEngine_unload ' + filename);
 
-            if (Module.CocosAudioState.finishCallbacks[audioId] != undefined)
-                Module.CocosAudioState.finishCallbacks[audioId] = null;
-            
-            delete Module.CocosAudioState.audioMap[filename];
-            delete Module.CocosAudioState.audioMapNum[filename];
-        }
+        var sound = Module.CocosAudioState.nameToSoundMap[filename];
+
+        if(sound !== undefined) {
+
+            for(var key in Module.CocosAudioState.idToSoundMap) {
+                if (Module.CocosAudioState.idToSoundMap.hasOwnProperty(key)) {    
+                    if(Module.CocosAudioState.idToSoundMap[key] === sound)
+                        delete Module.CocosAudioState.idToSoundMap[key];
+                }
+            }
+
+            sound.unload();
+            delete Module.CocosAudioState.nameToSoundMap[filename];
+        } 
     },
 
     AudioEngine_stop: function(audioId)
     {
-        for(var key in Module.CocosAudioState.audioMapNum)
-        {
-            var value = Module.CocosAudioState.audioMapNum[key];
+        //console.log('AudioEngine_stop ' + audioId);
 
-            if (value == audioId)
-            {
-                Module.CocosAudioState.audioMap[key].stop();
-                if (Module.CocosAudioState.preloadCallbacks[audioId] != undefined)
-                    Module.CocosAudioState.preloadCallbacks[audioId] = null;
+        var sound = Module.CocosAudioState.idToSoundMap[audioId];
 
-                if (Module.CocosAudioState.play2dCallbacks[audioId] != undefined)
-                    Module.CocosAudioState.play2dCallbacks[audioId] = null;
-
-                if (Module.CocosAudioState.finishCallbacks[audioId] != undefined)
-                    Module.CocosAudioState.finishCallbacks[audioId] = null;
-
-                delete Module.CocosAudioState.audioMap[key];
-                delete Module.CocosAudioState.audioMapNum[key];
-            }
-        }
+        if(sound !== undefined) {
+            sound.stop();
+            delete Module.CocosAudioState.idToSoundMap[audioId];
+        } 
     },
 
     AudioEngine_setVolume: function(audioId, volume)
     {
-        if(volume > 100) volume = 100;
-        if(volume < 0) volume = 0;
+        //console.log('AudioEngine_setVolume ' + audioId + ' ' + volume);
 
-        for(var key in Module.CocosAudioState.audioMapNum)
-        {
-            var value = Module.CocosAudioState.audioMapNum[key];
+        var sound = Module.CocosAudioState.idToSoundMap[audioId];
 
-            if (value == audioId)
-            {
-                Module.CocosAudioState.audioMap[key].setVolume(volume);
-            }
-        }
+        if(sound !== undefined) {
+            sound.volume(volume, audioId);
+        } 
     },
 
     AudioEngine_getDuration: function(audioId)
     {
-        for(var key in Module.CocosAudioState.audioMapNum)
-        {
-            var value = Module.CocosAudioState.audioMapNum[key];
+        //console.log('AudioEngine_getDuration ' + audioId);
+        
+        var sound = Module.CocosAudioState.idToSoundMap[audioId];
 
-            if (value == audioId)
-            {
-                return Module.CocosAudioState.audioMap[key].getDuration();
-            }
-        }
+        if(sound !== undefined) {
+            return sound.duration();
+        } 
 
         return 0;
     },
 
     AudioEngine_getCurrentTime: function(audioId)
     {
-        for(var key in Module.CocosAudioState.audioMapNum)
-        {
-            var value = Module.CocosAudioState.audioMapNum[key];
+        //console.log('AudioEngine_getCurrentTime ' + audioId);
+        
+        var sound = Module.CocosAudioState.idToSoundMap[audioId];
 
-            if (value == audioId)
-            {
-                return Module.CocosAudioState.audioMap[key].getTime();
-            }
-        }
+        if(sound !== undefined) {
+            return sound.seek(audioId);
+        } 
         
         return 0;
     },
 
     AudioEngine_setCurrentTime: function(audioId, time)
     {
-        for(var key in Module.CocosAudioState.audioMapNum)
-        {
-            var value = Module.CocosAudioState.audioMapNum[key];
+        //console.log('AudioEngine_setCurrentTime ' + audioId + ' ' + time);
+        
+        var sound = Module.CocosAudioState.idToSoundMap[audioId];
 
-            if (value == audioId)
-            {
-                Module.CocosAudioState.audioMap[key].setTime(time);
-            }
-        }
+        if(sound !== undefined) {
+            sound.seek(time, audioId);
+        } 
     },
 
     AudioEngine_setLoop: function(audioId, loop)
     {
-        for(var key in Module.CocosAudioState.audioMapNum)
-        {
-            var value = Module.CocosAudioState.audioMapNum[key];
+        //console.log('AudioEngine_setLoop ' + audioId + ' ' + loop);
+        
+        var sound = Module.CocosAudioState.idToSoundMap[audioId];
 
-            if (value == audioId)
-            {
-                if (loop)
-                {
-                    Module.CocosAudioState.audioMap[key].loop();
-                }
-                else
-                {
-                    Module.CocosAudioState.audioMap[key].unloop();
-                }
-            }
-        }
+        if(sound !== undefined) {
+            sound.loop(loop, audioId);
+        } 
     },
 
     AudioEngine_pause: function(audioId)
     {
-        for(var key in Module.CocosAudioState.audioMapNum)
-        {
-            var value = Module.CocosAudioState.audioMapNum[key];
+        //console.log('AudioEngine_pause ' + audioId);
+        
+        var sound = Module.CocosAudioState.idToSoundMap[audioId];
 
-            if (value == audioId)
-            {
-                Module.CocosAudioState.audioMap[key].pause();
-            }
-        }
+        if(sound !== undefined) {
+            sound.pause(audioId);
+        } 
     },
 
     AudioEngine_resume: function(audioId)
     {
-        for(var key in Module.CocosAudioState.audioMapNum)
-        {
-            var value = Module.CocosAudioState.audioMapNum[key];
+        //console.log('AudioEngine_resume ' + audioId);
+        
+        var sound = Module.CocosAudioState.idToSoundMap[audioId];
 
-            if (value == audioId)
-            {
-                if (Module.CocosAudioState.audioMap[key].isPaused())
-                {
-                    Module.CocosAudioState.audioMap[key].togglePlay();
-                }
-            }
-        }
+        if(sound !== undefined) {
+            sound.play(audioId);
+        } 
     }
 };
 
