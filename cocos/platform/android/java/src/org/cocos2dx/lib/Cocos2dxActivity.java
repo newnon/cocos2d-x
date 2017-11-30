@@ -92,6 +92,10 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         this.showVirtualButton = value;
     }
 
+    public void setEnableAudioFocusGain(boolean value) {
+        Cocos2dxAudioFocusManager.gainAudioFocus = value;
+    }
+
     protected void onLoadNativeLibraries() {
         try {
             ApplicationInfo ai = getPackageManager().getApplicationInfo(getPackageName(), PackageManager.GET_META_DATA);
@@ -184,7 +188,7 @@ public abstract class Cocos2dxActivity extends Activity implements Cocos2dxHelpe
         this.hasFocus = hasFocus;
         resumeIfHasFocus();
     }
-    
+
     private void resumeIfHasFocus() {
         if(hasFocus) {
             this.hideVirtualButton();

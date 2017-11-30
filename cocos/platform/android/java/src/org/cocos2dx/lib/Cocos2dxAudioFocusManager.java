@@ -36,6 +36,7 @@ class Cocos2dxAudioFocusManager {
     private final static int AUDIOFOCUS_LOST = 1;
     private final static int AUDIOFOCUS_LOST_TRANSIENT = 2;
     private final static int AUDIOFOCUS_LOST_TRANSIENT_CAN_DUCK = 3;
+    public static boolean gainAudioFocus = true;
 
     private static AudioManager.OnAudioFocusChangeListener sAfChangeListener =
             new AudioManager.OnAudioFocusChangeListener() {
@@ -91,18 +92,20 @@ class Cocos2dxAudioFocusManager {
             };
 
     static boolean registerAudioFocusListener(Context context) {
-        AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
+        if (gainAudioFocus) {
+            AudioManager am = (AudioManager) context.getSystemService(Context.AUDIO_SERVICE);
 
-        // Request audio focus for playback
-        int result = am.requestAudioFocus(sAfChangeListener,
+            // Request audio focus for playback
+            int result = am.requestAudioFocus(sAfChangeListener,
                 // Use the music stream.
                 AudioManager.STREAM_MUSIC,
                 // Request permanent focus.
                 AudioManager.AUDIOFOCUS_GAIN);
 
-        if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
-            Log.d(TAG, "requestAudioFocus succeed");
-            return true;
+            if (result == AudioManager.AUDIOFOCUS_REQUEST_GRANTED) {
+                Log.d(TAG, "requestAudioFocus succeed");
+                return true;
+            }
         }
 
         Log.e(TAG, "requestAudioFocus failed!");
