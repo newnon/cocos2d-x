@@ -237,6 +237,21 @@ GLViewImpl::~GLViewImpl()
     emscripten_SDL_SetEventHandler(nullptr, 0);
 }
 
+extern "C"
+{
+    int EMSCRIPTEN_KEEPALIVE onTouchCancel(int _this, int value)
+    {
+        intptr_t touchId = (intptr_t)value;
+        float mouseX = 0;
+        float mouseY = 0;
+        
+        auto glview = cocos2d::Director::getInstance()->getOpenGLView();
+        glview->handleTouchesEnd(1, &touchId, &mouseX, &mouseY);
+       
+        return 0;
+    }
+}
+
 bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float frameZoomFactor)
 {
 	setViewName(viewName); 
@@ -275,6 +290,26 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     _scissorBox[1] = 0;
     _scissorBox[2] = _windowWidth;
     _scissorBox[3] = _windowHeight;
+    
+    EM_ASM_({
+            Module["canvas"].addEventListener("touchcancel", function(event) {
+                event.preventDefault();
+                var touches = event.changedTouches;
+            
+                for (var i = 0; i < touches.length; i++) {
+                    var touch = event.changedTouches[i];
+                    tempI64    = [touch.identifier >>> 0,
+                                    (tempDouble = touch.identifier, +Math_abs(tempDouble) >= 1 ? tempDouble > 0 ?
+                                    (Math_min(+Math_floor(tempDouble / 4294967296), 4294967295) | 0) >>> 0
+                                    : ~~+Math_ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0
+                                    : 0) ];
+                    var result = Module.ccall('onTouchCancel',
+                                                'number',
+                                                ['number', 'number'], // argument types
+                                                [$0, tempI64[0]]);
+            }
+        });
+    }, (int)this );
     
     _wheelScrollScale = EM_ASM_INT(
     {
