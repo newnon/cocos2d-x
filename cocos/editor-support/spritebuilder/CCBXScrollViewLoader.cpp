@@ -90,7 +90,6 @@ ScrollViewLoader::ScrollViewLoader()
     
 ScrollViewLoader::~ScrollViewLoader()
 {
-    CC_SAFE_RELEASE(_file);
 }
     
 void ScrollViewLoader::onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value)
