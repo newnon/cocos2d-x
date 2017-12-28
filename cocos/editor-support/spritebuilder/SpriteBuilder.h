@@ -187,11 +187,20 @@ class CCBReaderParams;
     
 typedef std::function<Node*(const Size &parentSize, float mainScale, float additionalScale)> CreateNodeFunction;
     
+/**
+ * Play sound effect with a file path, pitch, pan and gain.
+ *
+ * @param path The path of the effect file.
+ * @param pitch Frequency, normal value is 1.0. Will also change effect play time.
+ * @param pan   Stereo effect, in the range of [-1..1] where -1 enables only left channel.
+ * @param gain  Volume, in the range of [0..1]. The normal value is 1.
+ */
+    
 class CCBXReaderSoundManager
 {
 public:
     virtual ~CCBXReaderSoundManager() {}
-    virtual int playSound(const std::string &path) = 0;
+    virtual int playSound(const std::string &path, float pitch = 1.0f, float pan = 0.0f, float gain = 1.0f) = 0;
     virtual void stopSound(int id) = 0;
 };
 
