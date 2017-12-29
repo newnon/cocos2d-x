@@ -104,8 +104,21 @@ CCBXReader* CCBXReader::createFromData(const Data &data, const std::string &root
     return ret;
 }
     
-void CCBXReader::calcScales(SceneScaleType scaleType, const Size &parentSize, const Size &designResolution, float designScale, float &mainScale, float &additionalScale)
+void CCBXReader::calcScales(SceneScaleType scaleType, const Size &parentSize, const Size &loadedDesignResolution, float designScale, float &mainScale, float &additionalScale)
 {
+    const Size &winSize = Director::getInstance()->getWinSize();
+    Size designResolution;
+    if(winSize.width>winSize.height)
+    {
+        designResolution.width = std::max(loadedDesignResolution.width, loadedDesignResolution.height);
+        designResolution.height = std::min(loadedDesignResolution.width, loadedDesignResolution.height);
+    }
+    else
+    {
+        designResolution.height = std::max(loadedDesignResolution.width, loadedDesignResolution.height);
+        designResolution.width = std::min(loadedDesignResolution.width, loadedDesignResolution.height);
+    }
+    
     assert(scaleType != SceneScaleType::DEFAULT && scaleType != SceneScaleType::PROJECT_DEFAULT); // not possible to calc scales for default scaleType
     if(scaleType == SceneScaleType::NONE)
     {
