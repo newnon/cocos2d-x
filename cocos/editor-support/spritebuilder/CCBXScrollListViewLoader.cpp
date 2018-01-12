@@ -27,7 +27,7 @@ ScrollListViewLoader *ScrollListViewLoader::create()
     return ret;
 }
 
-Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
 {
     ScrollListView *scrollListView = ScrollListView::create(_file, mainScale, additionalScale);
     scrollListView->setAnchorPoint(Vec2(0.0f, 0.0f));
@@ -35,9 +35,9 @@ Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mai
     return scrollListView;
 }
 
-void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
     ScrollListView *scrollView = static_cast<ScrollListView*>(node);
     scrollView->setBounceEnabled(_bounce);
     scrollView->setClippingEnabled(_clipping);

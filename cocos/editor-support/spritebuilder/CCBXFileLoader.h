@@ -9,7 +9,7 @@ namespace spritebuilder {
 class CC_DLL FileLoader : public NodeLoader {
 public:
     static FileLoader *create();
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const override;
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const override;
     
 CC_CONSTRUCTOR_ACCESS:
     FileLoader();

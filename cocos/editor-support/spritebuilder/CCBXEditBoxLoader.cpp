@@ -39,7 +39,7 @@ EditBoxLoader *EditBoxLoader::create()
     return ret;
 }
 
-Node *EditBoxLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *EditBoxLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
 {
     Size editBoxSize(200,100);
     Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
@@ -56,9 +56,9 @@ Node *EditBoxLoader::createNodeInstance(const Size &parentSize, float mainScale,
     return editBox;
 }
 
-void EditBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void EditBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
     ui::EditBox *editBox = static_cast<ui::EditBox*>(node);
     editBox->setText(_label.c_str());
     editBox->setPlaceHolder(_placeholder.c_str());

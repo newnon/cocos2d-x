@@ -45,7 +45,7 @@ TextLoader *TextLoader::create()
     return ret;
 }
 
-Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
 {
     ui::Text *text = ui::Text::create(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
     text->setAnchorPoint(Vec2(0.0f, 0.0f));
@@ -53,9 +53,9 @@ Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, fl
     return text;
 }
 
-void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
     ui::Text *text = static_cast<ui::Text*>(node);
     if(_dimensions.size.width == 0 || _dimensions.size.height == 0)
         text->ignoreContentAdaptWithSize(true);

@@ -1280,7 +1280,7 @@ private:
         ccNodeLoader->setNodeSequences(seqs);
         
         if(this->_version >= 8)
-        /*int uuid = */readInt(false);
+            ccNodeLoader->setUUID(readInt(false));
         
         // Read properties
         parseProperties(ccNodeLoader, library, cache, animatedProps);

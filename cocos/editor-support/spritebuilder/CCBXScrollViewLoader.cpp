@@ -27,7 +27,7 @@ ScrollViewLoader *ScrollViewLoader::create()
     return ret;
 }
 
-Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
 {
     ui::ScrollView *scrollView = ui::ScrollView::create();
     scrollView->setAnchorPoint(Vec2(0.0f, 0.0f));
@@ -35,9 +35,9 @@ Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainSca
     return scrollView;
 }
 
-void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
     ui::ScrollView *scrollView = static_cast<ui::ScrollView*>(node);
     ui::ScrollView::Direction direction = ui::ScrollView::Direction::NONE;
     if(_horizontalScrollEnabled && _verticalScrollEnabled)

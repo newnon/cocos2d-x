@@ -145,8 +145,9 @@ class CC_DLL NodeLoader : public Ref
 friend class InternalReader;
 public:
     static NodeLoader *create();
-    Node *createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr, CCBAnimationManager *manager = nullptr, Node *rootNode = nullptr, CCBXReaderOwner *parentOwner = nullptr, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false, const cocos2d::ValueMap &customProperties = cocos2d::ValueMap()) const;
-    bool loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr,CCBAnimationManager *manager = nullptr, Node *parentOwner = nullptr, CCBXReaderOwner *rootOwner = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false, const cocos2d::ValueMap &customProperties = cocos2d::ValueMap()) const;
+    Node *createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr, CCBAnimationManager *manager = nullptr, Node *rootNode = nullptr, CCBXReaderOwner *parentOwner = nullptr, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false, const cocos2d::ValueMap *customProperties = nullptr) const;
+    
+    bool loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr,CCBAnimationManager *manager = nullptr, Node *parentOwner = nullptr, CCBXReaderOwner *rootOwner = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false, const cocos2d::ValueMap *customProperties = nullptr) const;
     
     SceneScaleType getSceneScaleType() const { return _sceneScaleType; }
     
@@ -189,21 +190,22 @@ protected:
     virtual void onLoaded();
     virtual void onNodeLoaded(Node *node) const;
     
-    const ValueMap& getCustomProperties() const { return  _customProperties; }
+    //const ValueMap& getCustomProperties() const { return  _customProperties; }
     
 private:
-    void setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr) const;
+    void setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) const;
     void setAnimation(Node* node, CCBAnimationManager *manager) const;
     
     void setSceneScaleType(SceneScaleType sceneScaleType);
     
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr, const cocos2d::ValueMap &customProperties = cocos2d::ValueMap()) const;
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const;
     
-    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner = nullptr) const;
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const;
     virtual void setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner) const;
     virtual void setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner) const;
     
     void setMemberVarAssignment(TargetType type, const std::string &name);
+    void setUUID(unsigned value);
     void setPhysicsLoader(PhysicsBodyLoader *loader);
     
     void addChild(NodeLoader *loader);
@@ -213,6 +215,7 @@ private:
     void setObjects(const std::unordered_map<std::string, cocos2d::Ref*> &objects);
     void setNodeSequences(const std::unordered_map<int, Map<std::string, CCBSequenceProperty*>> &sequences);
     
+    unsigned _uuid;
     Vector<NodeLoader*> _children;
     PositionDescription _position;
     bool _anchorPointLoaded;
@@ -251,7 +254,7 @@ public:
         return ret;
     }
     
-    virtual cocos2d::Node *createNodeInstance(const cocos2d::Size &parentSize, float mainScale, float additionalScale, cocos2d::spritebuilder::CCBXReaderOwner *owner, cocos2d::Node *rootNode, cocos2d::spritebuilder::CCBXReaderOwner *parentOwner, const cocos2d::ValueMap &customProperties = cocos2d::ValueMap()) const override
+    virtual cocos2d::Node *createNodeInstance(const cocos2d::Size &parentSize, float mainScale, float additionalScale, cocos2d::spritebuilder::CCBXReaderOwner *owner, cocos2d::Node *rootNode, cocos2d::spritebuilder::CCBXReaderOwner *parentOwner, const cocos2d::ValueMap &customProperties) const override
     {
         CustomNode *node = CustomNode::create();
         node->setAnchorPoint(Vec2(0.0f,0.0f));
@@ -269,7 +272,7 @@ public:
         return ret;
     }
     
-    virtual cocos2d::Node *createNodeInstance(const cocos2d::Size &parentSize, float mainScale, float additionalScale, cocos2d::spritebuilder::CCBXReaderOwner *owner, cocos2d::Node *rootNode, cocos2d::spritebuilder::CCBXReaderOwner *parentOwner, const cocos2d::ValueMap &customProperties = cocos2d::ValueMap()) const override
+    virtual cocos2d::Node *createNodeInstance(const cocos2d::Size &parentSize, float mainScale, float additionalScale, cocos2d::spritebuilder::CCBXReaderOwner *owner, cocos2d::Node *rootNode, cocos2d::spritebuilder::CCBXReaderOwner *parentOwner, const cocos2d::ValueMap &customProperties) const override
     {
         CustomNode *node = CustomNode::create();
         node->setAnchorPoint(Vec2(0.0f,0.0f));

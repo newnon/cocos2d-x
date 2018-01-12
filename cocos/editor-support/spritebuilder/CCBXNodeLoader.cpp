@@ -195,13 +195,13 @@ NodeLoader *NodeLoader::create()
     return ret;
 }
     
-Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap &customProperties) const
+Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap *customProperties) const
 {
     Node *ret;
     if(createNodeFunction)
         ret = createNodeFunction(parentSize, mainScale, additionalScale);
     else
-        ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode, parentOwner, customProperties);
+        ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode, parentOwner, customProperties ? *customProperties : _customProperties);
     if(!ret)
         return nullptr;
     
@@ -211,11 +211,12 @@ Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float addi
     return ret;
 }
     
-bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap &customProperties) const
+bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap *customProperties) const
 {
     if(!node)
         return false;
     setProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
+    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties ? *customProperties : _customProperties);
     setCallbacks(node, owner, rootNode, parentOwner);
     setVariables(node, owner, rootNode, parentOwner);
     
@@ -350,7 +351,7 @@ void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode
     }
 }
 
-void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) const
 {
     node->setVisible(_visible);
     node->setPosition(getAbsolutePosition(mainScale, additionalScale, _position.pos, _position.referenceCorner, _position.xUnits , _position.yUnits, parentSize));
@@ -370,7 +371,6 @@ void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainSca
     node->setOpacity(_opacity);
     node->setSkewX(_skew.x);
     node->setSkewY(_skew.y);
-    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
 }
     
 void NodeLoader::setAnimation(Node* node, CCBAnimationManager *manager) const
@@ -383,12 +383,12 @@ void NodeLoader::setSceneScaleType(SceneScaleType sceneScaleType)
     _sceneScaleType = sceneScaleType;
 }
 
-Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
 {
     return Node::create();
 }
     
-void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
 {
     
 }
@@ -402,6 +402,11 @@ void NodeLoader::setMemberVarAssignment(TargetType type, const std::string &name
 {
     _memberVarAssignmentType = type;
     _memberVarAssignmentName = name;
+}
+    
+void NodeLoader::setUUID(unsigned value)
+{
+    _uuid = value;
 }
     
 void NodeLoader::setPhysicsLoader(PhysicsBodyLoader *loader)
@@ -442,7 +447,8 @@ void NodeLoader::setNodeSequences(const std::unordered_map<int, Map<std::string,
 }
     
 NodeLoader::NodeLoader()
-    :_position(PositionDescription{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
+    :_uuid(0)
+    ,_position(PositionDescription{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
     ,_anchorPointLoaded(false)
     ,_anchorPoint(0,0)
     ,_sizeLoaded(false)
