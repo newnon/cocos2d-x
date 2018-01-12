@@ -57,7 +57,7 @@ private:
     Color4F _startColorVar;
     Color4F _endColor;
     Color4F _endColorVar;
-    cocos2d::Texture2D * _texture;
+    RefPtr<cocos2d::Texture2D> _texture;
     BlendFunc _blendFunc;
 };
 

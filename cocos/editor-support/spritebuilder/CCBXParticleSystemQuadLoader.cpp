@@ -143,8 +143,7 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
 }
  
 ParticleSystemQuadLoader::ParticleSystemQuadLoader()
-    :_texture(nullptr)
-    ,_blendFunc({GL_SRC_ALPHA, GL_ONE})
+    :_blendFunc({GL_SRC_ALPHA, GL_ONE})
     ,_emitterMode(ParticleSystem::Mode::GRAVITY)
     ,_positionType(ParticleSystem::PositionType::FREE)
     ,_posVar(40.0f, 20.0f)

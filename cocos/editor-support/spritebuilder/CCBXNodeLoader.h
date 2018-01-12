@@ -139,15 +139,18 @@ struct SpriteFrameDescription
 class CCBSequenceProperty;
 class CCBAnimationManager;
 class CCBSequence;
+    
+using NodeParams = cocos2d::ValueMap;
+using PrefabParams = std::map<unsigned, cocos2d::ValueMap>;
 
 class CC_DLL NodeLoader : public Ref
 {
 friend class InternalReader;
 public:
     static NodeLoader *create();
-    Node *createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr, CCBAnimationManager *manager = nullptr, Node *rootNode = nullptr, CCBXReaderOwner *parentOwner = nullptr, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false, const cocos2d::ValueMap *customProperties = nullptr) const;
+    Node *createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr, CCBAnimationManager *manager = nullptr, Node *rootNode = nullptr, CCBXReaderOwner *parentOwner = nullptr, const CreateNodeFunction &createNodeFunction = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false, const cocos2d::ValueMap *customProperties = nullptr, const PrefabParams *paramsProperties = nullptr) const;
     
-    bool loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr,CCBAnimationManager *manager = nullptr, Node *parentOwner = nullptr, CCBXReaderOwner *rootOwner = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false, const cocos2d::ValueMap *customProperties = nullptr) const;
+    bool loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner = nullptr,CCBAnimationManager *manager = nullptr, Node *parentOwner = nullptr, CCBXReaderOwner *rootOwner = nullptr, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback = nullptr, bool nestedPrefab = false, const cocos2d::ValueMap *customProperties = nullptr, const PrefabParams *paramsProperties = nullptr) const;
     
     SceneScaleType getSceneScaleType() const { return _sceneScaleType; }
     
