@@ -84,11 +84,6 @@ enum class ScaleType
     INVERT_SCALE = 16,
 };
 
-Vec2 getAbsolutePosition(float mainScale, float additionalScale, const Vec2 &pt, PositionReferenceCorner corner, PositionUnit xUnit, PositionUnit yUnit, const Size &containerSize);
-Size getAbsoluteSize(float mainScale, float additionalScale, const Size &contentSize, SizeUnit widthUnit, SizeUnit heightUnit, const Size &containerSize);
-Vec2 getAbsoluteScale(float mainScale, float additionalScale, float scaleX, float scaleY, unsigned int type);
-float getAbsoluteScale(float mainScale, float additionalScale, float scale, unsigned int type);
-
 struct PositionDescription
 {
     PositionReferenceCorner referenceCorner;
@@ -142,6 +137,16 @@ struct TextureDescription
     std::string path;
     RefPtr<Texture2D> texture;
 };
+    
+Vec2 getAbsolutePosition(float mainScale, float additionalScale, const Vec2 &pt, PositionReferenceCorner corner, PositionUnit xUnit, PositionUnit yUnit, const Size &containerSize);
+Size getAbsoluteSize(float mainScale, float additionalScale, const Size &contentSize, SizeUnit widthUnit, SizeUnit heightUnit, const Size &containerSize);
+Vec2 getAbsoluteScale(float mainScale, float additionalScale, float scaleX, float scaleY, unsigned int type);
+float getAbsoluteScale(float mainScale, float additionalScale, float scale, unsigned int type);
+    
+Vec2 getAbsolutePosition(float mainScale, float additionalScale, const PositionDescription &position, const Size &containerSize);
+Size getAbsoluteSize(float mainScale, float additionalScale, const SizeDescription &size, const Size &containerSize);
+Vec2 getAbsoluteScale(float mainScale, float additionalScale, const ScaleDescription &scale);
+float getAbsoluteScale(float mainScale, float additionalScale, const FloatScaleDescription &scale);
     
 struct NodeLoaderDescription;
     

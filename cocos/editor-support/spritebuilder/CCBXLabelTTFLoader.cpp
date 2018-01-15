@@ -25,7 +25,7 @@ static const std::string PROPERTY_SHADOWWIDTH("shadowWidth");
 static const std::string PROPERTY_SHADOWOFFSET("shadowOffset");
     
 static const std::string PROPERTY_CONTENTSIZE("contentSize");
-static const std::string PROPERTY_ADJUSTS_FONT_SIZE_TO_FIT("adjustsFontSizeToFit");
+static const std::string PROPERTY_ADJUSTSFONTSIZETOFIT("adjustsFontSizeToFit");
 static const std::string PROPERTY_OVERFLOW("overflowType");
 static const std::string PROPERTY_WORDWRAP("wordWrap");
     
@@ -57,43 +57,55 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
     Label *label = dynamic_cast<Label*>(node);
     if(label)
     {
-        Size dimensions = getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize);
-        float fontSize = getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type);
-        float outlineWidth = getAbsoluteScale(mainScale, additionalScale, _outlineWidth.scale, _outlineWidth.type);
-        if (FileUtils::getInstance()->isFileExist(_font))
+        Size dimensions = getAbsoluteSize(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_DIMENSIONS, _dimensions), parentSize);
+        float fontSize = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_FONTSIZE, _fontSize));
+        float outlineWidth = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_OUTLINEWIDTH, _outlineWidth));
+        const std::string font = getNodeParamValue(params, PROPERTY_FONTNAME, _font);
+        if (FileUtils::getInstance()->isFileExist(font))
         {
-            TTFConfig ttfConfig(_font, fontSize, GlyphCollection::DYNAMIC);
+            TTFConfig ttfConfig(font, fontSize, GlyphCollection::DYNAMIC);
             ttfConfig.outlineSize = outlineWidth;
             label->setTTFConfig(ttfConfig);
         }
         else
         {
-            label->setSystemFontName(_font);
+            label->setSystemFontName(font);
             label->setSystemFontSize(fontSize);
         }
         
         label->setDimensions(dimensions.width, dimensions.height);
         label->setString(getNodeParamValue(params, PROPERTY_STRING, _label));
-        float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, _shadowBlurRadius.scale, _shadowBlurRadius.type);
-        Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, _shadowOffset.pos, _shadowOffset.referenceCorner, _shadowOffset.xUnits, _shadowOffset.yUnits, parentSize);
-        if (_outlineColor.a > 0 && outlineWidth > 0)
-            label->enableOutline(_outlineColor, outlineWidth);
-        if (_shadowColor.a > 0)
-            label->enableShadow(_shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
-        if(_fontColor != Color4B::WHITE)
-            label->setTextColor(_fontColor);
         
-        Label::Overflow overflow = static_cast<Label::Overflow>(_overflowLabel);
-        label->setOverflow((_adjustsFontSizeToFit && overflow == Label::Overflow::NONE) ? Label::Overflow::SHRINK : overflow);
-        label->setLineBreakWithoutSpace(!_wordWrapLabel);
-        label->setAlignment(_textHAlignment, _textVAlignment);
-        if (static_cast<int>(GradientType::kHorizontal) == _gradientType) {
-            label->setHGradientColor(_gradientColor1, _gradientColor2);
+        float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SHADOWBLURRADIUS, _shadowBlurRadius));
+        Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SHADOWOFFSET, _shadowOffset), parentSize);
+        
+        const cocos2d::Color4B &outlineColor = getNodeParamValue(params, PROPERTY_OUTLINECOLOR, _outlineColor);
+        if (outlineColor.a > 0 && outlineWidth > 0)
+            label->enableOutline(outlineColor, outlineWidth);
+        const cocos2d::Color4B &shadowColor = getNodeParamValue(params, PROPERTY_SHADOWCOLOR, _shadowColor);
+        if (shadowColor.a > 0)
+            label->enableShadow(shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
+        const Color4B &fontColor = getNodeParamValue(params, PROPERTY_FONTCOLOR, _fontColor);
+        if(fontColor != Color4B::WHITE)
+            label->setTextColor(fontColor);
+        
+        Label::Overflow overflow = static_cast<Label::Overflow>(getNodeParamValue(params, PROPERTY_OVERFLOW, _overflowLabel));
+        label->setOverflow((getNodeParamValue(params, PROPERTY_ADJUSTSFONTSIZETOFIT, _adjustsFontSizeToFit) && overflow == Label::Overflow::NONE) ? Label::Overflow::SHRINK : overflow);
+        label->setLineBreakWithoutSpace(!getNodeParamValue(params, PROPERTY_WORDWRAP, _wordWrapLabel));
+        label->setAlignment(static_cast<TextHAlignment>(getNodeParamValue(params, PROPERTY_HORIZONTALALIGNMENT, _textHAlignment)), static_cast<TextVAlignment>(getNodeParamValue(params, PROPERTY_VERTICALALIGNMENT, _textVAlignment)));
+        
+        int gradientType = getNodeParamValue(params, PROPERTY_GRADIENTTYPE, _gradientType);
+        const Color4B &gradientColor1 = getNodeParamValue(params, PROPERTY_GRADIENTCOLOR1, _gradientColor1);
+        const Color4B &gradientColor2 = getNodeParamValue(params, PROPERTY_GRADIENTCOLOR2, _gradientColor2);
+        
+        if (static_cast<int>(GradientType::kHorizontal) == gradientType) {
+            label->setHGradientColor(gradientColor1, gradientColor2);
         }
-        else if (static_cast<int>(GradientType::kVertical) == _gradientType) {
-            label->setVGradientColor(_gradientColor1, _gradientColor2);
+        else if (static_cast<int>(GradientType::kVertical) == gradientType) {
+            label->setVGradientColor(gradientColor1, gradientColor2);
         }
-        label->setBlendFunc(_blendFunc==BlendFunc::ALPHA_PREMULTIPLIED ? BlendFunc::ALPHA_NON_PREMULTIPLIED : _blendFunc);
+        const BlendFunc &blendFunc = getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc);
+        label->setBlendFunc(blendFunc==BlendFunc::ALPHA_PREMULTIPLIED ? BlendFunc::ALPHA_NON_PREMULTIPLIED : blendFunc);
     }
 }
 
@@ -104,8 +116,8 @@ LabelTTFLoader::LabelTTFLoader()
 	,_outlineWidth(FloatScaleDescription{0, 0.0f})
 	,_shadowBlurRadius(FloatScaleDescription{0, 0.0f})
 	,_shadowOffset(PositionDescription{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
-    ,_textHAlignment(TextHAlignment::LEFT)
-    ,_textVAlignment(TextVAlignment::TOP)
+    ,_textHAlignment((int)TextHAlignment::LEFT)
+    ,_textVAlignment((int)TextVAlignment::TOP)
 	,_dimensions(SizeDescription{SizeUnit::POINTS, SizeUnit::POINTS, {0, 0}})
     ,_fontColor(Color4B::WHITE)
     ,_adjustsFontSizeToFit(false)
@@ -125,7 +137,7 @@ LabelTTFLoader::~LabelTTFLoader()
     
 void LabelTTFLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
 {
-    if(propertyName == PROPERTY_ADJUSTS_FONT_SIZE_TO_FIT){
+    if(propertyName == PROPERTY_ADJUSTSFONTSIZETOFIT){
         _adjustsFontSizeToFit = value;
     } else {
         NodeLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
@@ -192,9 +204,9 @@ void LabelTTFLoader::onHandlePropTypeFloatScale(const std::string &propertyName,
 void LabelTTFLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if(propertyName == PROPERTY_HORIZONTALALIGNMENT) {
-        _textHAlignment = static_cast<TextHAlignment>(value);
+        _textHAlignment = value;
     } else if(propertyName == PROPERTY_VERTICALALIGNMENT) {
-        _textVAlignment = static_cast<TextVAlignment>(value);
+        _textVAlignment = value;
     }else if (propertyName == PROPERTY_OVERFLOW) {
         _overflowLabel = value;
     }else if (propertyName == PROPERTY_WORDWRAP) {

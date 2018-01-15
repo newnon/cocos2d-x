@@ -170,6 +170,23 @@ Size getAbsoluteSize(float mainScale, float additionalScale, const Size &content
     
     return size;
 }
+    
+Vec2 getAbsolutePosition(float mainScale, float additionalScale, const PositionDescription &position, const Size &containerSize)
+{
+    return getAbsolutePosition(mainScale, additionalScale, position.pos, position.referenceCorner, position.xUnits, position.yUnits, containerSize);
+}
+Size getAbsoluteSize(float mainScale, float additionalScale, const SizeDescription &size, const Size &containerSize)
+{
+    return getAbsoluteSize(mainScale, additionalScale, size.size, size.widthUnits, size.heightUnits, containerSize);
+}
+Vec2 getAbsoluteScale(float mainScale, float additionalScale, const ScaleDescription &scale)
+{
+    return getAbsoluteScale(mainScale, additionalScale, scale.xScale, scale.yScale, scale.type);
+}
+float getAbsoluteScale(float mainScale, float additionalScale, const FloatScaleDescription &scale)
+{
+    return getAbsoluteScale(mainScale, additionalScale, scale.scale, scale.type);
+}
 
 
 #define ASSERT_FAIL_UNEXPECTED_PROPERTY(PROPERTY) log("Unexpected property: '%s'!\n", PROPERTY.c_str()); assert(false)
