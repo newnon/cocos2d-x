@@ -212,10 +212,10 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
     //button->getTitleRenderer()->setSystemFontName(_font);
     button->setTitleFontSize(getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
     button->setTitleAlignment(_textHAlignment, _textVAlignment);
-    button->setPaddingPadding(getAbsoluteScale(mainScale, additionalScale, _leftPadding.scale, _leftPadding.type),
-                              getAbsoluteScale(mainScale, additionalScale, _topPadding.scale, _topPadding.type),
-                              getAbsoluteScale(mainScale, additionalScale, _rightPadding.scale, _rightPadding.type),
-                              getAbsoluteScale(mainScale, additionalScale, _bottomPadding.scale, _bottomPadding.type));
+    button->setPadding(getAbsoluteScale(mainScale, additionalScale, _leftPadding.scale, _leftPadding.type),
+                       getAbsoluteScale(mainScale, additionalScale, _topPadding.scale, _topPadding.type),
+                       getAbsoluteScale(mainScale, additionalScale, _rightPadding.scale, _rightPadding.type),
+                       getAbsoluteScale(mainScale, additionalScale, _bottomPadding.scale, _bottomPadding.type));
     button->setOffsets(_offset.x, _offset.y, _offset.z, _offset.w);
     button->setTitleText(_label);
     
@@ -231,39 +231,6 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
     Label* titleRenderer = button->getTitleRenderer();
     if(titleRenderer)
     {
-        button->setPressedActionEnabled(true);
-        button->setZoomScale(_zoomOnClick - 1.0);
-        button->setNormalTitleColor(_normalLabelColor);
-        button->setNormalBackgroundColor(_normalBackgroundColor);
-        button->setNormalTitleOpacity(_normalLabelOpacity);
-        button->setNormalBackgroundOpacity(_normalBackgroundOpacity);
-        
-        button->setPressedTitleColor(_selectedLabelColor);
-        button->setPressedBackgroundColor(_selectedBackgroundColor);
-        button->setPressedTitleOpacity(_selectedLabelOpacity);
-        button->setPressedBackgroundOpacity(_selectedBackgroundOpacity);
-        
-        button->setDisabledTitleColor(_disabledLabelColor);
-        button->setDisabledBackgroundColor(_disabledBackgroundColor);
-        button->setDisabledTitleOpacity(_disabledLabelOpacity);
-        button->setDisabledBackgroundOpacity(_disabledBackgroundOpacity);
-        
-        button->setMouseOverTitleColor(_mouseOverLabelColor);
-        button->setMouseOverBackgroundColor(_mouseOverBackgroundColor);
-        button->setMouseOverTitleOpacity(_mouseOverLabelOpacity);
-        button->setMouseOverBackgroundOpacity(_mouseOverBackgroundOpacity);
-        
-        button->setTitleFontName(_font);
-        //button->getTitleRenderer()->setSystemFontName(_font);
-        button->setTitleFontSize(getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
-        button->setTitleAlignment(_textHAlignment, _textVAlignment);
-        button->setPaddingPadding(getAbsoluteScale(mainScale, additionalScale, _leftPadding.scale, _leftPadding.type),
-                                  getAbsoluteScale(mainScale, additionalScale, _topPadding.scale, _topPadding.type),
-                                  getAbsoluteScale(mainScale, additionalScale, _rightPadding.scale, _rightPadding.type),
-                                  getAbsoluteScale(mainScale, additionalScale, _bottomPadding.scale, _bottomPadding.type));
-        button->setOffsets(_offset.x, _offset.y, _offset.z, _offset.w);
-        button->setTitleText(_label);
-        
         if (_outlineColor.a > 0 && outlineWidth > 0)
             titleRenderer->enableOutline(_outlineColor, outlineWidth);
         if (_shadowColor.a > 0)
