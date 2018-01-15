@@ -38,7 +38,7 @@ private:
     
     SizeDescription _size;
     FloatScaleDescription _imageScale;
-    SpriteFrameDescription _spriteFrame;
+    SpriteFrameDescription _spriteFrameDesc;
     Vec4 _margins;
     BlendFunc _blendFunc;
     std::pair<bool,bool> _flipped;

@@ -14,7 +14,7 @@ static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
 static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
 static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
-static const std::string PROPERTY_IMAGE_SCALE("imageScale");
+static const std::string PROPERTY_IMAGESCALE("imageScale");
 static const std::string PROPERTY_FLIP("flip");
 static const std::string PROPERTY_RENDERINGTYPE("renderingType");
 
@@ -44,25 +44,28 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
 void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
+    
+    const SpriteFrameDescription &spriteFrameDesc = getNodeParamValue(params, PROPERTY_SPRITEFRAME, _spriteFrameDesc);
+    
     if(_renderingType == RenderingType::TILED)
     {
         ui::TileImageView *imageView = static_cast<ui::TileImageView*>(node);
         
         Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
         imageView->ignoreContentAdaptWithSize(false);
-        switch(_spriteFrame.type)
+        switch(spriteFrameDesc.type)
         {
             case SpriteFrameDescription::TextureResType::LOCAL:
             {
-                Size size = _spriteFrame.spriteFrame->getOriginalSize();
-                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
+                Size size = spriteFrameDesc.spriteFrame->getOriginalSize();
+                imageView->loadTexture(spriteFrameDesc.path, ui::Widget::TextureResType::LOCAL);
             }
                 break;
             case SpriteFrameDescription::TextureResType::PLIST:
             {
-                Size size = _spriteFrame.spriteFrame->getOriginalSize();
+                Size size = spriteFrameDesc.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
+                imageView->loadTexture(spriteFrameDesc.path, ui::Widget::TextureResType::PLIST);
             }
                 break;
             default:
@@ -78,22 +81,22 @@ void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, f
         
         Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
         imageView->ignoreContentAdaptWithSize(false);
-        switch(_spriteFrame.type)
+        switch(spriteFrameDesc.type)
         {
             case SpriteFrameDescription::TextureResType::LOCAL:
             {
-                Size size = _spriteFrame.spriteFrame->getOriginalSize();
+                Size size = spriteFrameDesc.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
+                imageView->loadTexture(spriteFrameDesc.path, ui::Widget::TextureResType::LOCAL);
                 imageView->setScale9Enabled(_renderingType == RenderingType::SIMPLE ? false : _margins != Vec4::ZERO);
                 imageView->setCapInsets(realMargins);
             }
                 break;
             case SpriteFrameDescription::TextureResType::PLIST:
             {
-                Size size = _spriteFrame.spriteFrame->getOriginalSize();
+                Size size = spriteFrameDesc.spriteFrame->getOriginalSize();
                 Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
+                imageView->loadTexture(spriteFrameDesc.path, ui::Widget::TextureResType::PLIST);
                 imageView->setScale9Enabled(_renderingType == RenderingType::SIMPLE ? false : _margins != Vec4::ZERO);
                 imageView->setCapInsets(realMargins);
             }
@@ -101,10 +104,11 @@ void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, f
             default:
                 break;
         };
-        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
-        imageView->setBlendFunc(_blendFunc);
-        imageView->setFlippedX(_flipped.first);
-        imageView->setFlippedY(_flipped.second);
+        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGESCALE, _imageScale)) / CCBXReader::getResolutionScale());
+        imageView->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
+        const std::pair<bool,bool> &flipped = getNodeParamValue(params, PROPERTY_FLIP, _flipped);
+        imageView->setFlippedX(flipped.first);
+        imageView->setFlippedY(flipped.second);
     }
 }
 
@@ -131,7 +135,7 @@ void ImageViewLoader::onHandlePropTypeBlendFunc(const std::string &propertyName,
 void ImageViewLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value)
 {
     if(propertyName == PROPERTY_SPRITEFRAME) {
-        _spriteFrame = value;
+        _spriteFrameDesc = value;
     } else {
         WidgetLoader::onHandlePropTypeSpriteFrame(propertyName, isExtraProp, value);
     }
@@ -163,7 +167,7 @@ void ImageViewLoader::onHandlePropTypeFloat(const std::string &propertyName, boo
     
 void ImageViewLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
 {
-    if(propertyName == PROPERTY_IMAGE_SCALE) {
+    if(propertyName == PROPERTY_IMAGESCALE) {
         _imageScale = value;
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
