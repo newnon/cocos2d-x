@@ -682,17 +682,14 @@ private:
         return ret;
     }
     
-    Texture2D * parsePropTypeTexture() {
-        std::string spriteFile = _rootPath + readCachedString();
+    TextureDescription parsePropTypeTexture() {
+        TextureDescription ret;
+        ret.path = _rootPath + readCachedString();
         
-        if (spriteFile.length() > 0)
-        {
-            return Director::getInstance()->getTextureCache()->addImage(spriteFile.c_str());
-        }
-        else
-        {
-            return nullptr;
-        }
+        if (ret.path.length() > 0)
+            ret.texture = Director::getInstance()->getTextureCache()->addImage(ret.path.c_str());
+        
+        return ret;
     }
     
     Color3B parsePropTypeColor3()
@@ -803,14 +800,15 @@ private:
         return ret;
     }
     
-    std::pair<std::string, NodeLoader*> parsePropTypeCCBFile(const NodeLoaderLibrary &library, NodeLoaderCache &cache)
+    /*
+    NodeLoaderDescription parsePropTypeCCBFile(const NodeLoaderLibrary &library, NodeLoaderCache &cache)
     {
         std::string ccbFileName = _rootPath + readCachedString();
         
         if(ccbFileName.empty())
             return std::pair<std::string, NodeLoader*>(ccbFileName, nullptr);
         
-        /* Change path extension to .ccbi. */
+        // Change path extension to .ccbi.
         std::string ccbFileWithoutPathExtension = deletePathExtension(ccbFileName.c_str());
         ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
         
@@ -824,6 +822,30 @@ private:
                 cache.add(ccbFileName, ret);
         }
         return std::pair<std::string, NodeLoader*>(ccbFileName, ret);
+    }*/
+    
+    NodeLoaderDescription parsePropTypeCCBFile(const NodeLoaderLibrary &library, NodeLoaderCache &cache)
+    {
+        NodeLoaderDescription ret;
+        std::string ccbFileName = _rootPath + readCachedString();
+        
+        if(ccbFileName.empty())
+            return ret;
+        
+        // Change path extension to .ccbi.
+        std::string ccbFileWithoutPathExtension = deletePathExtension(ccbFileName.c_str());
+        ret.path = ccbFileWithoutPathExtension + ".ccbi";
+        
+        // Load sub file
+        ret.loader = cache.get(ret.path);
+        if(!ret.loader)
+        {
+            Data data = FileUtils::getInstance()->getDataFromFile(ret.path);
+            ret.loader = InternalReader::parse(data, library, cache, _rootPath, _params);
+            if(ret.loader)
+                cache.add(ret.path, ret.loader);
+        }
+        return ret;
     }
     
     std::string parsePropTypeSoundFile()
@@ -998,8 +1020,8 @@ private:
                 }
                 case PropertyType::TEXTURE:
                 {
-                    Texture2D * ccTexture2D = parsePropTypeTexture();
-                    loader->onHandlePropTypeTexture(propertyName, isExtraProp, ccTexture2D);
+                    TextureDescription texture = parsePropTypeTexture();
+                    loader->onHandlePropTypeTexture(propertyName, isExtraProp, texture);
                     break;
                 }
                 case PropertyType::COLOR3:
@@ -1073,8 +1095,8 @@ private:
                 }
                 case PropertyType::CCB_FILE:
                 {
-                    std::pair<std::string, NodeLoader*> loaderPair = parsePropTypeCCBFile(library, cache);
-                    loader->onHandlePropTypeCCBFile(propertyName, isExtraProp, loaderPair);
+                    NodeLoaderDescription loaderDesc = parsePropTypeCCBFile(library, cache);
+                    loader->onHandlePropTypeCCBFile(propertyName, isExtraProp, loaderDesc);
                     break;
                 }
                 case PropertyType::COLOR4:
@@ -1111,6 +1133,181 @@ private:
         }
         loader->setBaseValues(baseValues);
         loader->setObjects(objects);
+    }
+    
+    void parseParamsProperties(NodeLoader * loader, const NodeLoaderLibrary &library, NodeLoaderCache &cache)
+    {
+        PrefabParams params;
+        int propertyCount = readInt(false);
+        
+        std::unordered_map<std::string, cocos2d::Value> baseValues;
+        std::unordered_map<std::string, cocos2d::Ref*> objects;
+        
+        for(int i = 0; i < propertyCount; i++) {
+            int uid = readInt(false);
+            PropertyType type = (PropertyType)readInt(false);
+            std::string propertyName = readCachedString();
+            
+            switch(type)
+            {
+                case PropertyType::POSITION:
+                {
+                    params[uid][propertyName] = parsePropTypePosition();
+                    break;
+                }
+                case PropertyType::POINT:
+                {
+                    params[uid][propertyName] = parsePropTypePoint();
+                    break;
+                }
+                case PropertyType::POINT_LOCK:
+                {
+                    params[uid][propertyName] = parsePropTypePoint();
+                }
+                case PropertyType::SIZE:
+                {
+                    params[uid][propertyName] = parsePropTypeSize();
+                    break;
+                }
+                case PropertyType::SCALE_LOCK:
+                {
+                    params[uid][propertyName] = parsePropTypeScale();
+                    break;
+                }
+                case PropertyType::FLOAT:
+                {
+                    params[uid][propertyName] = parsePropTypeFloat();
+                    break;
+                }
+                case PropertyType::FLOAT_XY:
+                {
+                    params[uid][propertyName] = parsePropTypeFloatXY();
+                    break;
+                }
+                    
+                case PropertyType::DEGREES:
+                {
+                    params[uid][propertyName] = parsePropTypeDegrees();
+                    break;
+                }
+                case PropertyType::FLOAT_SCALE:
+                {
+                    params[uid][propertyName] = parsePropTypeFloatScale();
+                    break;
+                }
+                case PropertyType::INTEGER:
+                {
+                    params[uid][propertyName] = parsePropTypeInteger();
+                    break;
+                }
+                case PropertyType::INTEGER_LABELED:
+                {
+                    params[uid][propertyName] = parsePropTypeInteger();
+                    break;
+                }
+                case PropertyType::ANIMATION:
+                {
+                    params[uid][propertyName] = parsePropTypeInteger();
+                    break;
+                }
+                case PropertyType::FLOAT_VAR:
+                {
+                    params[uid][propertyName] = parsePropTypeFloatVar();
+                    break;
+                }
+                case PropertyType::CHECK:
+                {
+                    params[uid][propertyName] = parsePropTypeCheck();
+                    break;
+                }
+                case PropertyType::SPRITEFRAME:
+                {
+                    params[uid][propertyName] = parsePropTypeSpriteFrame();
+                    break;
+                }
+                case PropertyType::TEXTURE:
+                {
+                    params[uid][propertyName] = parsePropTypeTexture();
+                    break;
+                }
+                case PropertyType::COLOR3:
+                {
+                    params[uid][propertyName] = parsePropTypeColor3();
+                    break;
+                }
+                case PropertyType::COLOR4F_VAR:
+                {
+                    params[uid][propertyName] = parsePropTypeColor4FVar();
+                    break;
+                }
+                case PropertyType::FLIP:
+                {
+                    params[uid][propertyName] = parsePropTypeFlip();
+                    break;
+                }
+                case PropertyType::BLEND_MODE:
+                {
+                    params[uid][propertyName] = parsePropTypeBlendFunc();
+                    break;
+                }
+                case PropertyType::FNT_FILE:
+                {
+                    params[uid][propertyName] = parsePropTypeFntFile();
+                    break;
+                }
+                case PropertyType::FONT_TTF:
+                {
+                    params[uid][propertyName] = parsePropTypeFontTTF();
+                    break;
+                }
+                case PropertyType::STRING:
+                {
+                    params[uid][propertyName] = parsePropTypeText();
+                    break;
+                }
+                case PropertyType::TEXT:
+                {
+                    params[uid][propertyName] = parsePropTypeText();
+                    break;
+                }
+                case PropertyType::BLOCK:
+                {
+                    params[uid][propertyName] = parsePropTypeBlock();
+                    break;
+                }
+                case PropertyType::BLOCK_CONTROL:
+                {
+                    params[uid][propertyName] = parsePropTypeBlockControl();
+                    break;
+                }
+                case PropertyType::CCB_FILE:
+                {
+                    params[uid][propertyName] = parsePropTypeCCBFile(library, cache);
+                    break;
+                }
+                case PropertyType::COLOR4:
+                {
+                    params[uid][propertyName] = parsePropTypeColor4();
+                    break;
+                }
+                case PropertyType::SOUND_FILE:
+                {
+                    params[uid][propertyName] = parsePropTypeSoundFile();
+                    break;
+                }
+                case PropertyType::OFFSETS:
+                {
+                    params[uid][propertyName] = parsePropTypeOffsets();
+                    break;
+                }
+                default:
+                    ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(type);
+                    break;
+            }
+        }
+        loader->setPrefabParams(params);
+        //loader->setBaseValues(baseValues);
+        //loader->setObjects(objects);
     }
     
     CCBKeyframe* readKeyframe(PropertyType type)
@@ -1284,6 +1481,10 @@ private:
         
         // Read properties
         parseProperties(ccNodeLoader, library, cache, animatedProps);
+        
+        // Read params properties
+        if(this->_version >= 10)
+            parseParamsProperties(ccNodeLoader, library, cache);
         
         bool hasPhysicsBody = false;
         

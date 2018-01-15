@@ -27,16 +27,16 @@ TextFieldLoader *TextFieldLoader::create()
     return ret;
 }
 
-Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     ui::TextField *textField = ui::TextField::create(_placeholder, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
     textField->setAnchorPoint(Vec2(0.0f, 0.0f));
     return textField;
 }
 
-void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::TextField *textField = static_cast<ui::TextField*>(node);
     textField->setString(_label);
     textField->setTextVerticalAlignment(_textVAlignment);

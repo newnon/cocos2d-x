@@ -14,8 +14,8 @@ class CC_DLL ParticleSystemQuadLoader : public NodeLoader {
 public:
     
     static ParticleSystemQuadLoader *create();
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const override;
-    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const override;
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const override;
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const override;
     
 CC_CONSTRUCTOR_ACCESS:
     ParticleSystemQuadLoader();
@@ -23,13 +23,13 @@ CC_CONSTRUCTOR_ACCESS:
 
 protected:
     virtual void onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value) override;
-    virtual void onHandlePropTypePoint(const std::string &propertyName, bool isExtraProp, const cocos2d::Point &value) override;
+    virtual void onHandlePropTypePoint(const std::string &propertyName, bool isExtraProp, const Point &value) override;
     virtual void onHandlePropTypeFloat(const std::string &propertyName, bool isExtraProp, float value) override;
     virtual void onHandlePropTypeInteger(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onHandlePropTypeFloatVar(const std::string &propertyName, bool isExtraProp, const Vec2 &value) override;
     virtual void onHandlePropTypeColor4FVar(const std::string &propertyName, bool isExtraProp, const std::pair<Color4F, Color4F> &value) override;
-    virtual void onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const cocos2d::BlendFunc &pBlendFunc) override;
-    virtual void onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, cocos2d::Texture2D * pTexture2D) override;
+    virtual void onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const BlendFunc &pBlendFunc) override;
+    virtual void onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, const TextureDescription &texture) override;
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
     
 private:
@@ -57,7 +57,7 @@ private:
     Color4F _startColorVar;
     Color4F _endColor;
     Color4F _endColorVar;
-    RefPtr<cocos2d::Texture2D> _texture;
+    TextureDescription _texture;
     BlendFunc _blendFunc;
 };
 

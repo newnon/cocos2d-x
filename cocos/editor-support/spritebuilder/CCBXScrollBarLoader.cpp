@@ -35,16 +35,16 @@ ScrollBarLoader *ScrollBarLoader::create()
     ret->autorelease();
     return ret;
 }
-Node *ScrollBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *ScrollBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     ui::ScrollBar *slider = ui::ScrollBar::create();
     slider->setAnchorPoint(Vec2(0.0f, 0.0f));
     return slider;
 
 }
-void ScrollBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void ScrollBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::ScrollBar *slider = static_cast<ui::ScrollBar*>(node);
     slider->setBarType(_isVertical?cocos2d::ui::ScrollBar::BarType::kVertical:cocos2d::ui::ScrollBar::BarType::kHorizontal);
     Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);

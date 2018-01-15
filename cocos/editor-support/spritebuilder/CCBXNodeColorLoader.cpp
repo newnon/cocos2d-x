@@ -13,7 +13,7 @@ NodeColorLoader *NodeColorLoader::create()
     return ret;
 }
 
-Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     LayerColor *layer = LayerColor::create();
     layer->setAnchorPoint(cocos2d::Vec2(0.0f, 0.0f));
@@ -23,7 +23,7 @@ Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScal
     return layer;
 }
 
-void NodeColorLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void NodeColorLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     LayerColor *layerColor = static_cast<LayerColor*>(node);
     layerColor->setBlendFunc(_blendFunc);

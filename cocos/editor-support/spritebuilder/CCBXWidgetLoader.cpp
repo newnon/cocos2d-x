@@ -16,14 +16,14 @@ WidgetLoader *WidgetLoader::create()
     return ret;
 }
     
-Node *WidgetLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *WidgetLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     ui::Widget *widget = ui::Widget::create();
     widget->setAnchorPoint(Vec2(0.0f, 0.0f));
     return widget;
 }
     
-void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     ui::Widget *widget = dynamic_cast<ui::Widget*>(node);
     if(widget)
@@ -33,7 +33,7 @@ void WidgetLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
     }
 }
     
-void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner) const
+void WidgetLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner, const NodeParams& params) const
 {
     ccReaderClickCallback click;
     ccReaderTouchCallback touch;

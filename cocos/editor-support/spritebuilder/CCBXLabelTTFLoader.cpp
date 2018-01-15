@@ -45,14 +45,14 @@ LabelTTFLoader *LabelTTFLoader::create()
     return ret;
 }
 
-Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *LabelTTFLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     Label *label = Label::create();
     label->setAnchorPoint(cocos2d::Vec2(0,0));
     return label;
 }
 
-void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     Label *label = dynamic_cast<Label*>(node);
     if(label)
@@ -73,7 +73,7 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
         }
         
         label->setDimensions(dimensions.width, dimensions.height);
-        label->setString(_label);
+        label->setString(getNodeParamValue(params, PROPERTY_STRING, _label));
         float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, _shadowBlurRadius.scale, _shadowBlurRadius.type);
         Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, _shadowOffset.pos, _shadowOffset.referenceCorner, _shadowOffset.xUnits, _shadowOffset.yUnits, parentSize);
         if (_outlineColor.a > 0 && outlineWidth > 0)

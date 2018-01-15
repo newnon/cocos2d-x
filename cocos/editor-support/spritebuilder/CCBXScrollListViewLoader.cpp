@@ -27,17 +27,17 @@ ScrollListViewLoader *ScrollListViewLoader::create()
     return ret;
 }
 
-Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    ScrollListView *scrollListView = ScrollListView::create(_file, mainScale, additionalScale);
+    ScrollListView *scrollListView = ScrollListView::create(_loader.loader, mainScale, additionalScale);
     scrollListView->setAnchorPoint(Vec2(0.0f, 0.0f));
     scrollListView->setClippingType(ui::Layout::ClippingType::SCISSOR);
     return scrollListView;
 }
 
-void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ScrollListView *scrollView = static_cast<ScrollListView*>(node);
     scrollView->setBounceEnabled(_bounce);
     scrollView->setClippingEnabled(_clipping);
@@ -63,7 +63,6 @@ ScrollListViewLoader::ScrollListViewLoader()
     :_horizontal(false)
     ,_clipping(true)
     ,_bounce(false)
-    ,_file(nullptr)
     ,_gravity(0)
     ,_magnetic(0)
     ,_inertial(true)
@@ -87,11 +86,10 @@ void ScrollListViewLoader::onHandlePropTypeSize(const std::string &propertyName,
     WidgetLoader::onHandlePropTypeSize(propertyName, isExtraProp, value);
 }
 
-void ScrollListViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value)
+void ScrollListViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value)
 {
     if(propertyName == PROPERTY_TEMPLATE) {
-        _filePath =value.first;
-        _file = value.second;
+        _loader = value;
     } else {
         WidgetLoader::onHandlePropTypeCCBFile(propertyName, isExtraProp, value);
     }

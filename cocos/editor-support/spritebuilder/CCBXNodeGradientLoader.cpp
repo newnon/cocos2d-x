@@ -18,7 +18,7 @@ NodeGradientLoader *NodeGradientLoader::create()
     return ret;
 }
 
-Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     LayerGradient *layer = LayerGradient::create();
     layer->setAnchorPoint(cocos2d::Vec2(0.0f, 0.0f));
@@ -28,9 +28,9 @@ Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainS
     return layer;
 }
 
-void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
-    NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
+    NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     LayerGradient *layerColor = static_cast<LayerGradient*>(node);
     layerColor->setStartColor(_startColor);
     layerColor->setEndColor(_endColor);

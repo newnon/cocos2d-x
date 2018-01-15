@@ -27,7 +27,7 @@ ScrollViewLoader *ScrollViewLoader::create()
     return ret;
 }
 
-Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     ui::ScrollView *scrollView = ui::ScrollView::create();
     scrollView->setAnchorPoint(Vec2(0.0f, 0.0f));
@@ -35,9 +35,9 @@ Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainSca
     return scrollView;
 }
 
-void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::ScrollView *scrollView = static_cast<ui::ScrollView*>(node);
     ui::ScrollView::Direction direction = ui::ScrollView::Direction::NONE;
     if(_horizontalScrollEnabled && _verticalScrollEnabled)
@@ -49,9 +49,9 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
     scrollView->setBounceEnabled(_bounce);
     scrollView->setClippingEnabled(_clipping);
     scrollView->setDirection(direction);
-    if(_file)
+    if(_loader.loader)
     {
-        Node *childNode = _file->createNode(scrollView->getContentSize(), mainScale, additionalScale, owner);
+        Node *childNode = _loader.loader->createNode(scrollView->getContentSize(), mainScale, additionalScale, owner);
         scrollView->setInnerContainerSize(childNode->getContentSize());
         scrollView->getInnerContainer()->addChild(childNode);
         scrollView->setEnabled(true);
@@ -73,7 +73,6 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
 ScrollViewLoader::ScrollViewLoader()
     :_clipping(true)
     ,_bounce(false)
-    ,_file(nullptr)
     ,_verticalScrollEnabled(true)
     ,_horizontalScrollEnabled(true)
     ,_inertial(true)
@@ -97,11 +96,10 @@ void ScrollViewLoader::onHandlePropTypeSize(const std::string &propertyName, boo
     WidgetLoader::onHandlePropTypeSize(propertyName, isExtraProp, value);
 }
 
-void ScrollViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value)
+void ScrollViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value)
 {
     if(propertyName == PROPERTY_CONTENTNODE) {
-        _filePath = value.first;
-        _file = value.second;
+        _loader = value;
     } else {
         WidgetLoader::onHandlePropTypeCCBFile(propertyName, isExtraProp, value);
     }

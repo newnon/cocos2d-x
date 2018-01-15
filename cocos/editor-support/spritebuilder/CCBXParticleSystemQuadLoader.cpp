@@ -83,14 +83,14 @@ ParticleSystemQuadLoader *ParticleSystemQuadLoader::create()
     return ret;
 }
     
-Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     BuilderParticleSystemQuad *builderParticleSystemQuad =  BuilderParticleSystemQuad::createWithTotalParticles(_totalParticles);
     builderParticleSystemQuad->setAnchorPoint(Vec2(0.0f, 0.0f));
     return builderParticleSystemQuad;
 }
     
-void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     BuilderParticleSystemQuad *particle = static_cast<BuilderParticleSystemQuad*>(node);
     
@@ -110,7 +110,7 @@ void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &pare
     particle->setEndSpinVar(_endSpin.y);
     particle->setAngle(_angle.x);
     particle->setAngleVar(_angle.y);
-    particle->setTexture(_texture);
+    particle->setTexture(_texture.texture.get());
     particle->setBlendFunc(_blendFunc);
     particle->setEmitterMode(_emitterMode);
     particle->setPositionType(_positionType);
@@ -256,7 +256,7 @@ void ParticleSystemQuadLoader::onHandlePropTypeColor4FVar(const std::string &pro
     }
 }
 
-void ParticleSystemQuadLoader::onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const cocos2d::BlendFunc &pBlendFunc)
+void ParticleSystemQuadLoader::onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const BlendFunc &pBlendFunc)
 {
     if(propertyName == PROPERTY_BLENDFUNC) {
         _blendFunc = pBlendFunc;
@@ -265,12 +265,12 @@ void ParticleSystemQuadLoader::onHandlePropTypeBlendFunc(const std::string &prop
     }
 }
 
-void ParticleSystemQuadLoader::onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, cocos2d::Texture2D * pTexture2D)
+void ParticleSystemQuadLoader::onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, const TextureDescription &texture)
 {
     if(propertyName == PROPERTY_TEXTURE) {
-        _texture = pTexture2D;
+        _texture = texture;
     } else {
-        NodeLoader::onHandlePropTypeTexture(propertyName, isExtraProp, pTexture2D);
+        NodeLoader::onHandlePropTypeTexture(propertyName, isExtraProp, texture);
     }
 }
     

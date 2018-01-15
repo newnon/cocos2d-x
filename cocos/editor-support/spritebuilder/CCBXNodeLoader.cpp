@@ -197,11 +197,20 @@ NodeLoader *NodeLoader::create()
     
 Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap *customProperties, const PrefabParams *paramsProperties) const
 {
+    const NodeParams* params = nullptr;
+    
+    if(paramsProperties)
+    {
+        auto it = paramsProperties->find(_uuid);
+        if(it != paramsProperties->end())
+            params = &(it->second);
+    }
+    
     Node *ret;
     if(createNodeFunction)
         ret = createNodeFunction(parentSize, mainScale, additionalScale);
     else
-        ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode, parentOwner, customProperties ? *customProperties : _customProperties);
+        ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode, parentOwner, customProperties ? *customProperties : _customProperties, params ? *params : NodeParams());
     if(!ret)
         return nullptr;
     
@@ -215,9 +224,20 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
 {
     if(!node)
         return false;
-    setProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
-    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties ? *customProperties : _customProperties);
-    setCallbacks(node, owner, rootNode, parentOwner);
+    
+    const NodeParams emptyParams;
+    const NodeParams* params = &emptyParams;
+    
+    if(paramsProperties)
+    {
+        auto it = paramsProperties->find(_uuid);
+        if(it != paramsProperties->end())
+            params = &(it->second);
+    }
+    
+    setProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, params ? *params : NodeParams());
+    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties ? *customProperties : _customProperties, params ? *params : NodeParams());
+    setCallbacks(node, owner, rootNode, parentOwner, params ? *params : NodeParams());
     setVariables(node, owner, rootNode, parentOwner);
     
     if(!rootNode)
@@ -255,7 +275,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
         parentOwner = newParentOwner;
     for(auto child:_children)
     {
-        Node *childNode = child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode, parentOwner);
+        Node *childNode = child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode, parentOwner, nullptr, nullptr, false, nullptr, paramsProperties);
         
         if (childNode)
         {
@@ -351,26 +371,78 @@ void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode
     }
 }
 
-void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode) const
+void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const NodeParams& params) const
 {
-    node->setVisible(_visible);
-    node->setPosition(getAbsolutePosition(mainScale, additionalScale, _position.pos, _position.referenceCorner, _position.xUnits , _position.yUnits, parentSize));
-    cocos2d::Vec2 scales = getAbsoluteScale(mainScale, additionalScale, _scale.xScale, _scale.yScale, _scale.type);
-    if(_anchorPointLoaded)
-        node->setAnchorPoint(_anchorPoint);
-    if(_sizeLoaded)
-        node->setContentSize(getAbsoluteSize(mainScale, additionalScale, _size.size, _size.widthUnits, _size.heightUnits, parentSize));
-    node->setScaleX(scales.x);
-    node->setScaleY(scales.y);
-    node->setRotation(_rotation);
-    node->setTag(_tag);
-    node->setName(_name);
-    node->setCascadeColorEnabled(_cascadeColorEnabled);
-    node->setCascadeOpacityEnabled(_cascadeOpacityEnabled);
-    node->setColor(_color);
-    node->setOpacity(_opacity);
-    node->setSkewX(_skew.x);
-    node->setSkewY(_skew.y);
+    //don't check params if tey are empty
+    if(params.empty())
+    {
+        node->setVisible(_visible);
+        node->setPosition(getAbsolutePosition(mainScale, additionalScale, _position.pos, _position.referenceCorner, _position.xUnits , _position.yUnits, parentSize));
+        cocos2d::Vec2 scales = getAbsoluteScale(mainScale, additionalScale, _scale.xScale, _scale.yScale, _scale.type);
+        if(_anchorPointLoaded)
+            node->setAnchorPoint(_anchorPoint);
+        if(_sizeLoaded)
+            node->setContentSize(getAbsoluteSize(mainScale, additionalScale, _size.size, _size.widthUnits, _size.heightUnits, parentSize));
+        node->setScaleX(scales.x);
+        node->setScaleY(scales.y);
+        node->setRotation(_rotation);
+        node->setTag(_tag);
+        node->setName(_name);
+        node->setCascadeColorEnabled(_cascadeColorEnabled);
+        node->setCascadeOpacityEnabled(_cascadeOpacityEnabled);
+        node->setColor(_color);
+        node->setOpacity(_opacity);
+        node->setSkewX(_skew.x);
+        node->setSkewY(_skew.y);
+    }
+    else
+    {
+        node->setVisible(getNodeParamValue(params, PROPERTY_VISIBLE, _visible));
+        const PositionDescription &position = getNodeParamValue(params, PROPERTY_POSITION, _position);
+        node->setPosition(getAbsolutePosition(mainScale, additionalScale, position.pos, position.referenceCorner, position.xUnits , position.yUnits, parentSize));
+        const ScaleDescription &scale = getNodeParamValue(params, PROPERTY_SCALE, _scale);
+        cocos2d::Vec2 scales = getAbsoluteScale(mainScale, additionalScale, scale.xScale, scale.yScale, scale.type);
+        
+        auto anchorPointIt = params.find(PROPERTY_ANCHORPOINT);
+        if(anchorPointIt != params.end())
+            node->setAnchorPoint(mpark::get<Vec2>(anchorPointIt->second));
+        else
+            if(_anchorPointLoaded) node->setAnchorPoint(_anchorPoint);
+        
+        auto contentSizeIt = params.find(PROPERTY_CONTENTSIZE);
+        if(contentSizeIt != params.end())
+        {
+            const SizeDescription &size = mpark::get<SizeDescription>(contentSizeIt->second);
+            node->setContentSize(getAbsoluteSize(mainScale, additionalScale, size.size, size.widthUnits, size.heightUnits, parentSize));
+        }
+        else
+        {
+            if(_sizeLoaded)
+                node->setContentSize(getAbsoluteSize(mainScale, additionalScale, _size.size, _size.widthUnits, _size.heightUnits, parentSize));
+        }
+        node->setScaleX(scales.x);
+        node->setScaleY(scales.y);
+        node->setRotation(getNodeParamValue(params, PROPERTY_ROTATION, _rotation));
+        node->setTag(getNodeParamValue(params, PROPERTY_TAG, _tag));
+        node->setName(getNodeParamValue(params, PROPERTY_NAME, _name));
+        node->setCascadeColorEnabled(getNodeParamValue(params, PROPERTY_CASCADECOLOR, _cascadeColorEnabled));
+        node->setCascadeOpacityEnabled(getNodeParamValue(params, PROPERTY_CASCADEOPACITY, _cascadeOpacityEnabled));
+        node->setColor(getNodeParamValue(params, PROPERTY_COLOR, _color));
+        
+        auto opacityIt = params.find(PROPERTY_OPACITY);
+        if(opacityIt != params.end())
+        {
+            float opacity = mpark::get<float>(opacityIt->second) * 255.0f;
+            node->setOpacity((opacity<0.0f)?0:((opacity>255.0f)?255:static_cast<GLubyte>(opacity)));
+        }
+        else
+        {
+            node->setOpacity(_opacity);
+        }
+        const Vec2 &skew = getNodeParamValue(params, PROPERTY_SKEW, _skew);
+        node->setSkewX(skew.x);
+        node->setSkewY(skew.y);
+    }
 }
     
 void NodeLoader::setAnimation(Node* node, CCBAnimationManager *manager) const
@@ -383,17 +455,17 @@ void NodeLoader::setSceneScaleType(SceneScaleType sceneScaleType)
     _sceneScaleType = sceneScaleType;
 }
 
-Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     return Node::create();
 }
     
-void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties) const
+void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     
 }
     
-void NodeLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner) const
+void NodeLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner, const NodeParams& params) const
 {
     
 }
@@ -444,6 +516,11 @@ void NodeLoader::setObjects(const std::unordered_map<std::string, cocos2d::Ref*>
 void NodeLoader::setNodeSequences(const std::unordered_map<int, Map<std::string, CCBSequenceProperty*>> &sequences)
 {
     _nodeSequences = sequences;
+}
+    
+void NodeLoader::setPrefabParams(const PrefabParams &params)
+{
+    _params = params;
 }
     
 NodeLoader::NodeLoader()
@@ -596,7 +673,7 @@ void NodeLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, bo
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }
 
-void NodeLoader::onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, Texture2D * value)
+void NodeLoader::onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, const TextureDescription &value)
 {
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }
@@ -667,7 +744,7 @@ void NodeLoader::onHandlePropTypeTouchCallback(const std::string &propertyName, 
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }
 
-void NodeLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value)
+void NodeLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value)
 {
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }

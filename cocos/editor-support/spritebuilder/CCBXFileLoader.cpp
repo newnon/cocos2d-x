@@ -14,18 +14,17 @@ FileLoader *FileLoader::create()
     return ret;
 }
 
-Node *FileLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const
+Node *FileLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    if(!_file)
+    if(!_loader.loader)
         return nullptr;
     
-    Node *ret = _file->createNode(parentSize, mainScale, additionalScale, owner, nullptr, nullptr, rootOwner, nullptr, nullptr, true, &customProperties);
+    Node *ret = _loader.loader->createNode(parentSize, mainScale, additionalScale, owner, nullptr, nullptr, rootOwner, nullptr, nullptr, true, &customProperties, &getPrefabParams());
     return ret;
 }
 
 FileLoader::FileLoader()
-    :_file(nullptr)
-    ,_sequenceId(-2)
+    :_sequenceId(-2)
 {
     
 }
@@ -34,11 +33,10 @@ FileLoader::~FileLoader()
 {
 }
     
-void FileLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value)
+void FileLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value)
 {
     if(propertyName == PROPERTY_CCBFILE) {
-        _filePath = value.first;
-        _file = value.second;
+        _loader = value;
     } else {
         NodeLoader::onHandlePropTypeCCBFile(propertyName, isExtraProp, value);
     }
@@ -79,7 +77,7 @@ void FileLoader::onNodeLoaded(Node *node) const
                 break;
         }
     }
-    static_cast<FileLoaderHackAcces*>(_file.get())->callOnNodeLoaded(node);
+    static_cast<FileLoaderHackAcces*>(_loader.loader.get())->callOnNodeLoaded(node);
     NodeLoader::onNodeLoaded(node);
 }
 

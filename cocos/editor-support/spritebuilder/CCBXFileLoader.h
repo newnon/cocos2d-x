@@ -9,20 +9,19 @@ namespace spritebuilder {
 class CC_DLL FileLoader : public NodeLoader {
 public:
     static FileLoader *create();
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties) const override;
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const override;
     
 CC_CONSTRUCTOR_ACCESS:
     FileLoader();
     ~FileLoader();
 
 protected:
-    virtual void onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value) override;
+    virtual void onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value) override;
     virtual void onHandlePropTypeAnimation(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onNodeLoaded(Node *node) const override;
     
 private:
-    RefPtr<NodeLoader> _file;
-    std::string _filePath;
+    NodeLoaderDescription _loader;
     int _sequenceId;
 };
 
