@@ -1029,12 +1029,12 @@ private:
                     Color3B color3B = parsePropTypeColor3();
                     if (animatedProperties.find(propertyName) != animatedProperties.end())
                     {
-                        ValueMap colorMap;
-                        colorMap["r"] = color3B.r;
-                        colorMap["g"] = color3B.g;
-                        colorMap["b"] = color3B.b;
-                        colorMap["a"] = 255;
-                        baseValues.emplace(propertyName, Value(colorMap));
+                        ValueVector colorVector;
+                        colorVector[0] = color3B.r;
+                        colorVector[1] = color3B.g;
+                        colorVector[2] = color3B.b;
+                        colorVector[3] = 255;
+                        baseValues.emplace(propertyName, Value(colorVector));
                     }
                     loader->onHandlePropTypeColor3(propertyName, isExtraProp, color3B);
                     break;
@@ -1104,12 +1104,12 @@ private:
                     Color4B color4B = parsePropTypeColor4();
                     if (animatedProperties.find(propertyName) != animatedProperties.end())
                     {
-                        ValueMap colorMap;
-                        colorMap["r"] = color4B.r;
-                        colorMap["g"] = color4B.g;
-                        colorMap["b"] = color4B.b;
-                        colorMap["a"] = color4B.a;
-                        baseValues.emplace(propertyName, Value(colorMap));
+                        ValueVector colorVector;
+                        colorVector[0] = color4B.r;
+                        colorVector[1] = color4B.g;
+                        colorVector[2] = color4B.b;
+                        colorVector[3] = color4B.a;
+                        baseValues.emplace(propertyName, Value(colorVector));
                     }
                     loader->onHandlePropTypeColor4(propertyName, isExtraProp, color4B);
                     break;
@@ -1347,22 +1347,22 @@ private:
         }
         else if (type == PropertyType::COLOR3)
         {
-            ValueMap colorMap;
+            ValueVector colorVector;
             if(this->_version<6)
             {
-                colorMap["r"] = readByte();
-                colorMap["g"] = readByte();
-                colorMap["b"] = readByte();
+                colorVector[0] = readByte();
+                colorVector[1] = readByte();
+                colorVector[2] = readByte();
             }
             else
             {
-                colorMap["r"] = static_cast<unsigned char>(readFloat()*255.0);
-                colorMap["g"] = static_cast<unsigned char>(readFloat()*255.0);
-                colorMap["b"] = static_cast<unsigned char>(readFloat()*255.0);
-                colorMap["a"] = static_cast<unsigned char>(readFloat()*255.0);
+                colorVector[0] = static_cast<unsigned char>(readFloat()*255.0);
+                colorVector[1] = static_cast<unsigned char>(readFloat()*255.0);
+                colorVector[2] = static_cast<unsigned char>(readFloat()*255.0);
+                colorVector[3] = static_cast<unsigned char>(readFloat()*255.0);
             }
             
-            value = colorMap;
+            value = colorVector;
         }
         else if (type == PropertyType::DEGREES)
         {
