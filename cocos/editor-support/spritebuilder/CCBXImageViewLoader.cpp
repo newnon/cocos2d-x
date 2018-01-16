@@ -59,9 +59,10 @@ void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, f
         imageView->ignoreContentAdaptWithSize(false);
         if(spriteFrameDesc.type != SpriteFrameDescription::TextureResType::NONE)
             imageView->loadTexture(spriteFrameDesc.path, convertTextureResType(spriteFrameDesc.type));
-        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
-        imageView->setFlippedX(_flipped.first);
-        imageView->setFlippedY(_flipped.second);
+        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGESCALE, _imageScale)) / CCBXReader::getResolutionScale());
+        const std::pair<bool,bool> &flipped = getNodeParamValue(params, PROPERTY_FLIP, _flipped);
+        imageView->setFlippedX(flipped.first);
+        imageView->setFlippedY(flipped.second);
     }
     else
     {
