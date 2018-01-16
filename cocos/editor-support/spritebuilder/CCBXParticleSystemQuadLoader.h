@@ -1,9 +1,6 @@
 #ifndef _CCB_CCPARTICLESYSTEMQUADLOADER_H_
 #define _CCB_CCPARTICLESYSTEMQUADLOADER_H_
 
-#include "base/CCRef.h"
-#include "2d/CCParticleSystemQuad.h"
-
 #include "CCBXNodeLoader.h"
 
 NS_CC_BEGIN
@@ -33,8 +30,8 @@ protected:
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
     
 private:
-    ParticleSystem::Mode _emitterMode;
-    ParticleSystem::PositionType _positionType;
+    int _emitterMode;
+    int _positionType;
     Vec2 _posVar;
     Vec2 _gravity;
     float _emissionRate;
@@ -53,10 +50,8 @@ private:
     Vec2 _startRadius;
     Vec2 _endRadius;
     Vec2 _rotatePerSecond;
-    Color4F _startColor;
-    Color4F _startColorVar;
-    Color4F _endColor;
-    Color4F _endColorVar;
+    std::pair<Color4F, Color4F> _startColor;
+    std::pair<Color4F, Color4F> _endColor;
     TextureDescription _texture;
     BlendFunc _blendFunc;
 };

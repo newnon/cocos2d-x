@@ -29,7 +29,8 @@ ScrollListViewLoader *ScrollListViewLoader::create()
 
 Node *ScrollListViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    ScrollListView *scrollListView = ScrollListView::create(_loader.loader, mainScale, additionalScale);
+    const NodeLoaderDescription &loader = getNodeParamValue(params, PROPERTY_TEMPLATE, _loader);
+    ScrollListView *scrollListView = ScrollListView::create(loader.loader, mainScale, additionalScale);
     scrollListView->setAnchorPoint(Vec2(0.0f, 0.0f));
     scrollListView->setClippingType(ui::Layout::ClippingType::SCISSOR);
     return scrollListView;
@@ -39,22 +40,23 @@ void ScrollListViewLoader::setSpecialProperties(Node* node, const Size &parentSi
 {
     WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ScrollListView *scrollView = static_cast<ScrollListView*>(node);
-    scrollView->setBounceEnabled(_bounce);
-    scrollView->setClippingEnabled(_clipping);
-    scrollView->setDirection(_horizontal?ScrollListView::Direction::HORIZONTAL:ScrollListView::Direction::VERTICAL);
-    scrollView->setGravity(static_cast<cocos2d::ui::ListView::Gravity>(_gravity));
-    scrollView->setMagneticType(static_cast<cocos2d::ui::ListView::MagneticType>(_magnetic));
-    scrollView->setInertiaScrollEnabled(_inertial);
-    scrollView->setScrollBarEnabled(_scrollBar);
+    scrollView->setBounceEnabled(getNodeParamValue(params, PROPERTY_BOUNCES, _bounce));
+    scrollView->setClippingEnabled(getNodeParamValue(params, PROPERTY_CLIPCONTENT, _clipping));
+    scrollView->setDirection(getNodeParamValue(params, PROPERTY_HORIZONRAL, _horizontal)?ScrollListView::Direction::HORIZONTAL:ScrollListView::Direction::VERTICAL);
+    scrollView->setGravity(static_cast<cocos2d::ui::ListView::Gravity>(getNodeParamValue(params, PROPERTY_GRAVITY, _gravity)));
+    scrollView->setMagneticType(static_cast<cocos2d::ui::ListView::MagneticType>(getNodeParamValue(params, PROPERTY_MAGNETIC, _magnetic)));
+    scrollView->setInertiaScrollEnabled(getNodeParamValue(params, PROPERTY_INERTIAL_SCROLL, _inertial));
+    bool scrollBar = getNodeParamValue(params, PROPERTY_SCROLL_BAR_ENABLED, _scrollBar);
+    scrollView->setScrollBarEnabled(scrollBar);
     
-    if(_scrollBar)
+    if(scrollBar)
     {
-        scrollView->setScrollBarWidth(getAbsoluteScale(mainScale, additionalScale, _scrollBarWidth.scale, _scrollBarWidth.type));
-        scrollView->setScrollBarAutoHideEnabled(_scrollBarAutoHideEnabled);
-        scrollView->setScrollBarPositionFromCorner(getAbsolutePosition(mainScale, additionalScale, _scrollBarPositionFromCorner.pos, _scrollBarPositionFromCorner.referenceCorner, _scrollBarPositionFromCorner.xUnits , _scrollBarPositionFromCorner.yUnits, parentSize));
-        scrollView->setScrollBarColor(_scrollBarColor);
-        scrollView->setScrollBarOpacity(_scrollBarOpacity);
-        scrollView->setScrollBarHideIfSizeFit(_scrollHideIfSizeFit);
+        scrollView->setScrollBarWidth(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SCROLL_BAR_WIDTH, _scrollBarWidth)));
+        scrollView->setScrollBarAutoHideEnabled(getNodeParamValue(params, PROPERTY_SCROLL_BAR_AUTOHIDE_ENABLED, _scrollBarAutoHideEnabled));
+        scrollView->setScrollBarPositionFromCorner(getAbsolutePosition(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SCROLL_BAR_POSITION_FROM_CORNER, _scrollBarPositionFromCorner), parentSize));
+        scrollView->setScrollBarColor(getNodeParamValue(params, PROPERTY_SCROLL_BAR_COLOR, _scrollBarColor));
+        scrollView->setScrollBarOpacity(getNodeOpacityParamValue(params, PROPERTY_SCROLL_BAR_OPACITY, _scrollBarOpacity));
+        scrollView->setScrollBarHideIfSizeFit(getNodeParamValue(params, PROPERTY_SCROLL_BAR_HIDE_IF_SIZE_FIT, _scrollHideIfSizeFit));
     }
     
 }

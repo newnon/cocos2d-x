@@ -26,15 +26,16 @@ Node *LayoutBoxLoader::createNodeInstance(const Size &parentSize, float mainScal
 void LayoutBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
-    Size dimensions = getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize);
+    Size dimensions = getAbsoluteSize(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_DIMENSIONS, _dimensions), parentSize);
+    LayoutBoxDirection direction = static_cast<LayoutBoxDirection>(getNodeParamValue(params, PROPERTY_DIRECTION, (int)_direction));
     ui::Layout *layout = dynamic_cast<ui::Layout*>(node);
     if(layout)
     {
-        if(_direction == Horizontal)
+        if(direction == Horizontal)
             layout->setLayoutType(ui::Layout::Type::HORIZONTAL_AUTO);
         else
             layout->setLayoutType(ui::Layout::Type::VERTICAL_AUTO);
-        layout->setSpacing(getAbsoluteScale(mainScale, additionalScale, _spacing.scale, _spacing.type));
+        layout->setSpacing(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SPACING, _spacing)));
         layout->setContentSize(Size(dimensions.width, dimensions.height));
     }
 }
