@@ -32,11 +32,11 @@ void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize
 {
     NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     LayerGradient *layerColor = static_cast<LayerGradient*>(node);
-    layerColor->setStartColor(_startColor);
-    layerColor->setEndColor(_endColor);
-    layerColor->setStartOpacity(_startOpacity);
-    layerColor->setEndOpacity(_endOpacity);
-    layerColor->setVector(_vector);
+    layerColor->setStartColor(getNodeParamValue(params, PROPERTY_STARTCOLOR, _startColor));
+    layerColor->setEndColor(getNodeParamValue(params, PROPERTY_ENDCOLOR, _endColor));
+    layerColor->setStartOpacity(getNodeParamValue(params, PROPERTY_STARTOPACITY, _startOpacity));
+    layerColor->setEndOpacity(getNodeParamValue(params, PROPERTY_ENDOPACITY, _endOpacity));
+    layerColor->setVector(getNodeParamValue(params, PROPERTY_VECTOR, _vector));
 }
     
 NodeGradientLoader::NodeGradientLoader()

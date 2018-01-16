@@ -26,7 +26,7 @@ Node *NodeColorLoader::createNodeInstance(const Size &parentSize, float mainScal
 void NodeColorLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     LayerColor *layerColor = static_cast<LayerColor*>(node);
-    layerColor->setBlendFunc(_blendFunc);
+    layerColor->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
 }
 
 NodeColorLoader::NodeColorLoader()

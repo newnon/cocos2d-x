@@ -2,7 +2,6 @@
 #define _CCBX_CCLOADINGBARLOADER_H_
 
 #include "CCBXWidgetLoader.h"
-#include "ui/UILoadingBar.h"
 
 NS_CC_BEGIN
 
@@ -31,7 +30,7 @@ protected:
 private:
     float _percentage;
     SpriteFrameDescription _spriteFrame;
-    ui::LoadingBar::Direction _direction;
+    int _direction;
     std::pair<bool,bool> _flipped;
     Vec4 _margins;
     FloatScaleDescription _imageScale;

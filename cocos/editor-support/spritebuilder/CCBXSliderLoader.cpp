@@ -68,7 +68,7 @@ void SliderLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
     if(progressSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
         slider->loadProgressBarTexture(progressSpriteFrame.path, convertTextureResType(progressSpriteFrame.type));
-        slider->setCapInsetsBarRenderer(calcMargins(margins, progressSpriteFrame.spriteFrame->getOriginalSize()));
+        slider->setCapInsetProgressBarRenderer(calcMargins(margins, progressSpriteFrame.spriteFrame->getOriginalSize()));
     }
     
     if(handleNormalSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)

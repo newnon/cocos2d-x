@@ -42,14 +42,14 @@ EditBoxLoader *EditBoxLoader::create()
 Node *EditBoxLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     Size editBoxSize(200,100);
-    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
     
+    const SpriteFrameDescription &normalSpriteFrame = getNodeParamValue(params, PROPERTY_BACKGROUNDSPRITEFRAME, _normalSpriteFrame);
     //noramal sprite frame must be set for EditBox
-    assert(_normalSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE);
+    assert(normalSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE);
     
-    Size size = _normalSpriteFrame.spriteFrame->getOriginalSize();
-    Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-    ui::Scale9Sprite *normalSprite = ui::Scale9Sprite::createWithSpriteFrame(_normalSpriteFrame.spriteFrame, realMargins);
+    Size size = normalSpriteFrame.spriteFrame->getOriginalSize();
+    const Vec4 &margins = getNodeParamValue(params, PROPERTY_MARGIN, _margins);
+    ui::Scale9Sprite *normalSprite = ui::Scale9Sprite::createWithSpriteFrame(_normalSpriteFrame.spriteFrame, calcMargins(margins, size));
     
     ui::EditBox *editBox = ui::EditBox::create(editBoxSize, normalSprite);
     editBox->setAnchorPoint(Vec2(0.0f, 0.0f));
@@ -60,17 +60,18 @@ void EditBoxLoader::setSpecialProperties(Node* node, const Size &parentSize, flo
 {
     WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::EditBox *editBox = static_cast<ui::EditBox*>(node);
-    editBox->setText(_label.c_str());
-    editBox->setPlaceHolder(_placeholder.c_str());
-    editBox->setMaxLength(_maxLength==0?INT_MAX:_maxLength);
-    editBox->setFont(_font.c_str(), getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
-    editBox->setFontColor(_fontColor);
-    editBox->setPlaceholderFont(_placeholderFont.c_str(), getAbsoluteScale(mainScale, additionalScale, _placeholderFontSize.scale, _placeholderFontSize.type));
-    editBox->setPlaceholderFontColor(_placeholderFontColor);
+    editBox->setText(getNodeParamValue(params, PROPERTY_STRING, _label).c_str());
+    editBox->setPlaceHolder(getNodeParamValue(params, PROPERTY_PLACEHOLDER, _placeholder).c_str());
+    int maxLength = getNodeParamValue(params, PROPERTY_MAXLENGTH, _maxLength);
+    editBox->setMaxLength(maxLength==0?INT_MAX:maxLength);
+    editBox->setFont(getNodeParamValue(params, PROPERTY_FONTNAME, _font).c_str(), getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_FONTSIZE, _fontSize)));
+    editBox->setFontColor(getNodeParamValue(params, PROPERTY_FONTCOLOR, _fontColor));
+    editBox->setPlaceholderFont(getNodeParamValue(params, PROPERTY_PLACEHOLDERFONTNAME, _placeholderFont).c_str(), getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_PLACEHOLDERFONTSIZE, _placeholderFontSize)));
+    editBox->setPlaceholderFontColor(getNodeParamValue(params, PROPERTY_PLACEHOLDERFONTCOLOR, _placeholderFontColor));
     
-    editBox->setInputMode(static_cast<ui::EditBox::InputMode>(_inputMode));
-    editBox->setInputFlag(static_cast<ui::EditBox::InputFlag>(_inputFlag));
-    editBox->setReturnType(static_cast<ui::EditBox::KeyboardReturnType>(_keyboardReturnType));
+    editBox->setInputMode(static_cast<ui::EditBox::InputMode>(getNodeParamValue(params, PROPERTY_INPUTMODE, _inputMode)));
+    editBox->setInputFlag(static_cast<ui::EditBox::InputFlag>(getNodeParamValue(params, PROPERTY_INPUTFLAG, _inputFlag)));
+    editBox->setReturnType(static_cast<ui::EditBox::KeyboardReturnType>(getNodeParamValue(params, PROPERTY_KEYBOARDRETURNTYPE, _keyboardReturnType)));
 }
 
 EditBoxLoader::EditBoxLoader()
