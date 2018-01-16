@@ -124,6 +124,8 @@ void TextLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isE
 {
     if(propertyName == PROPERTY_ADJUSTSFONTSIZETOFIT){
         _adjustsFontSizeToFit = value;
+    } else if (propertyName == PROPERTY_WORDWRAP) {
+        _wordWrapLabel = value;
     } else {
         WidgetLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
     }

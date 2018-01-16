@@ -139,6 +139,8 @@ void LabelTTFLoader::onHandlePropTypeCheck(const std::string &propertyName, bool
 {
     if(propertyName == PROPERTY_ADJUSTSFONTSIZETOFIT){
         _adjustsFontSizeToFit = value;
+    } else if (propertyName == PROPERTY_WORDWRAP) {
+        _wordWrapLabel = value;
     } else {
         NodeLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
     }

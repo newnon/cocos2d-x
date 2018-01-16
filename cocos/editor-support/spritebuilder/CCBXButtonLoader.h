@@ -71,8 +71,8 @@ private:
     FloatScaleDescription _topPadding;
     FloatScaleDescription _bottomPadding;
     
-    TextHAlignment _textHAlignment;
-    TextVAlignment _textVAlignment;
+    int _textHAlignment;
+    int _textVAlignment;
     bool _adjustsFontSizeToFit;
     
     int _overflowLabel;

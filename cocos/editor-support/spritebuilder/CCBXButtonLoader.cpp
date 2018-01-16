@@ -77,7 +77,7 @@ static const std::string PROPERTY_OFFSET_TOP("offsetTop");
 static const std::string PROPERTY_OFFSET_RIGHT("offsetRight");
 static const std::string PROPERTY_OFFSET_BOTTOM("offsetBottom");
     
-static const std::string PROPERTY_IMAGE_SCALE("imageScale");
+static const std::string PROPERTY_IMAGESCALE("imageScale");
 static const std::string PROPERTY_OVERFLOW("overflowType");
 static const std::string PROPERTY_WORDWRAP("wordWrap");
     
@@ -94,150 +94,101 @@ Node *ButtonLoader::createNodeInstance(const Size &parentSize, float mainScale, 
     button->setAnchorPoint(Vec2(0.0f, 0.0f));
     return button;
 }
+    
+inline ui::Widget::TextureResType convertTextureResType(SpriteFrameDescription::TextureResType value)
+{
+    return static_cast<ui::Widget::TextureResType>(static_cast<int>(value) - 1);
+}
 
 void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::Button *button = static_cast<ui::Button*>(node);
-    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
-    switch(_normalSpriteFrame.type)
+    
+    const Vec4 &margins = getNodeParamValue(params, PROPERTY_MARGIN, _margins);
+    
+    const SpriteFrameDescription &normalSpriteFrame = getNodeParamValue(params, PROPERTY_BACKGROUNDSPRITEFRAME_NORMAL, _normalSpriteFrame);
+    if(normalSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            Size size = _normalSpriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            button->loadTextureNormal(_normalSpriteFrame.path, ui::Widget::TextureResType::LOCAL);
-            button->setCapInsetsNormalRenderer(realMargins);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            Size size = _normalSpriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            button->loadTextureNormal(_normalSpriteFrame.path, ui::Widget::TextureResType::PLIST);
-            button->setCapInsetsNormalRenderer(realMargins);
-        }
-            break;
-        default:
-            break;
-    };
-    switch(_selectedSpriteFrame.type)
+        button->loadTextureNormal(normalSpriteFrame.path, convertTextureResType(normalSpriteFrame.type));
+        button->setCapInsetsNormalRenderer(calcMargins(margins, normalSpriteFrame.spriteFrame->getOriginalSize()));
+    }
+    const SpriteFrameDescription &selectedSpriteFrame = getNodeParamValue(params, PROPERTY_BACKGROUNDSPRITEFRAME_HIGHLIGHTED, _selectedSpriteFrame);
+    if(selectedSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            Size size = _selectedSpriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            button->loadTexturePressed(_selectedSpriteFrame.path, ui::Widget::TextureResType::LOCAL);
-            button->setCapInsetsPressedRenderer(realMargins);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            Size size = _selectedSpriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            button->loadTexturePressed(_selectedSpriteFrame.path, ui::Widget::TextureResType::PLIST);
-            button->setCapInsetsPressedRenderer(realMargins);
-        }
-            break;
-        default:
-            break;
-    };
-    switch(_disabledSpriteFrame.type)
+        button->loadTexturePressed(selectedSpriteFrame.path, convertTextureResType(selectedSpriteFrame.type));
+        button->setCapInsetsPressedRenderer(calcMargins(margins, selectedSpriteFrame.spriteFrame->getOriginalSize()));
+    }
+    const SpriteFrameDescription &disabledSpriteFrame = getNodeParamValue(params, PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED, _disabledSpriteFrame);
+    if(disabledSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            Size size = _disabledSpriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            button->loadTextureDisabled(_disabledSpriteFrame.path, ui::Widget::TextureResType::LOCAL);
-            button->setCapInsetsDisabledRenderer(realMargins);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            Size size = _disabledSpriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            button->loadTextureDisabled(_disabledSpriteFrame.path, ui::Widget::TextureResType::PLIST);
-            button->setCapInsetsDisabledRenderer(realMargins);
-        }
-            break;
-        default:
-            break;
-    };
-    switch(_mouseOverSpriteFrame.type)
+        button->loadTexturePressed(disabledSpriteFrame.path, convertTextureResType(disabledSpriteFrame.type));
+        button->setCapInsetsPressedRenderer(calcMargins(margins, disabledSpriteFrame.spriteFrame->getOriginalSize()));
+    }
+    const SpriteFrameDescription &mouseOverSpriteFrame = getNodeParamValue(params, PROPERTY_BACKGROUNDSPRITEFRAME_MOUSEOVER, _mouseOverSpriteFrame);
+    if(mouseOverSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            Size size = _mouseOverSpriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            button->loadTextureMouseOver(_mouseOverSpriteFrame.path, ui::Widget::TextureResType::LOCAL);
-            button->setCapInsetsMouseOverRenderer(realMargins);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            Size size = _mouseOverSpriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            button->loadTextureMouseOver(_mouseOverSpriteFrame.path, ui::Widget::TextureResType::PLIST);
-            button->setCapInsetsMouseOverRenderer(realMargins);
-        }
-            break;
-        default:
-            break;
-    };
+        button->loadTexturePressed(mouseOverSpriteFrame.path, convertTextureResType(mouseOverSpriteFrame.type));
+        button->setCapInsetsPressedRenderer(calcMargins(margins, mouseOverSpriteFrame.spriteFrame->getOriginalSize()));
+    }
+    
     button->setScale9Enabled(true);
-    button->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
+    button->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGESCALE, _imageScale)) / CCBXReader::getResolutionScale());
     button->setPressedActionEnabled(true);
-    button->setZoomScale(_zoomOnClick - 1.0);
-    button->setNormalTitleColor(_normalLabelColor);
-    button->setNormalBackgroundColor(_normalBackgroundColor);
-    button->setNormalTitleOpacity(_normalLabelOpacity);
-    button->setNormalBackgroundOpacity(_normalBackgroundOpacity);
+    button->setZoomScale(getNodeParamValue(params, PROPERTY_ZOOMONCLICK, _zoomOnClick) - 1.0);
     
-    button->setPressedTitleColor(_selectedLabelColor);
-    button->setPressedBackgroundColor(_selectedBackgroundColor);
-    button->setPressedTitleOpacity(_selectedLabelOpacity);
-    button->setPressedBackgroundOpacity(_selectedBackgroundOpacity);
+    button->setNormalTitleColor(getNodeParamValue(params, PROPERTY_TITLECOLOR_NORMAL, _normalLabelColor));
+    button->setNormalBackgroundColor(getNodeParamValue(params, PROPERTY_BACKGROUNDCOLOR_NORMAL, _normalBackgroundColor));
+    button->setNormalTitleOpacity(getNodeOpacityParamValue(params, PROPERTY_LABELOPACITY_NORMAL, _normalLabelOpacity));
+    button->setNormalBackgroundOpacity(getNodeOpacityParamValue(params, PROPERTY_BACKGROUNDOPACITY_NORMAL, _normalBackgroundOpacity));
     
-    button->setDisabledTitleColor(_disabledLabelColor);
-    button->setDisabledBackgroundColor(_disabledBackgroundColor);
-    button->setDisabledTitleOpacity(_disabledLabelOpacity);
-    button->setDisabledBackgroundOpacity(_disabledBackgroundOpacity);
+    button->setPressedTitleColor(getNodeParamValue(params, PROPERTY_TITLECOLOR_HIGHLIGHTED, _selectedLabelColor));
+    button->setPressedBackgroundColor(getNodeParamValue(params, PROPERTY_BACKGROUNDCOLOR_HIGHLIGHTED, _selectedBackgroundColor));
+    button->setPressedTitleOpacity(getNodeOpacityParamValue(params, PROPERTY_LABELOPACITY_HIGHLIGHTED, _selectedLabelOpacity));
+    button->setPressedBackgroundOpacity(getNodeOpacityParamValue(params, PROPERTY_BACKGROUNDOPACITY_HIGHLIGHTED, _selectedBackgroundOpacity));
     
-    button->setMouseOverTitleColor(_mouseOverLabelColor);
-    button->setMouseOverBackgroundColor(_mouseOverBackgroundColor);
-    button->setMouseOverTitleOpacity(_mouseOverLabelOpacity);
-    button->setMouseOverBackgroundOpacity(_mouseOverBackgroundOpacity);
+    button->setDisabledTitleColor(getNodeParamValue(params, PROPERTY_TITLECOLOR_DISABLED, _disabledLabelColor));
+    button->setDisabledBackgroundColor(getNodeParamValue(params, PROPERTY_BACKGROUNDCOLOR_DISABLED, _disabledBackgroundColor));
+    button->setDisabledTitleOpacity(getNodeOpacityParamValue(params, PROPERTY_LABELOPACITY_DISABLED, _disabledLabelOpacity));
+    button->setDisabledBackgroundOpacity(getNodeOpacityParamValue(params, PROPERTY_BACKGROUNDOPACITY_DISABLED, _disabledBackgroundOpacity));
     
-    button->setTitleFontName(_font);
+    button->setMouseOverTitleColor(getNodeParamValue(params, PROPERTY_TITLECOLOR_MOUSEOVER, _mouseOverLabelColor));
+    button->setMouseOverBackgroundColor(getNodeParamValue(params, PROPERTY_BACKGROUNDCOLOR_MOUSEOVER, _mouseOverBackgroundColor));
+    button->setMouseOverTitleOpacity(getNodeOpacityParamValue(params, PROPERTY_LABELOPACITY_MOUSEOVER, _mouseOverLabelOpacity));
+    button->setMouseOverBackgroundOpacity(getNodeOpacityParamValue(params, PROPERTY_BACKGROUNDOPACITY_MOUSEOVER, _mouseOverBackgroundOpacity));
+    
+    button->setTitleFontName(getNodeParamValue(params, PROPERTY_FONTNAME, _font));
     //button->getTitleRenderer()->setSystemFontName(_font);
-    button->setTitleFontSize(getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
-    button->setTitleAlignment(_textHAlignment, _textVAlignment);
-    button->setPadding(getAbsoluteScale(mainScale, additionalScale, _leftPadding.scale, _leftPadding.type),
-                       getAbsoluteScale(mainScale, additionalScale, _topPadding.scale, _topPadding.type),
-                       getAbsoluteScale(mainScale, additionalScale, _rightPadding.scale, _rightPadding.type),
-                       getAbsoluteScale(mainScale, additionalScale, _bottomPadding.scale, _bottomPadding.type));
-    button->setOffsets(_offset.x, _offset.y, _offset.z, _offset.w);
-    button->setTitleText(_label);
+    button->setTitleFontSize(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_FONTSIZE, _fontSize)));
+    button->setTitleAlignment(static_cast<TextHAlignment>(getNodeParamValue(params, PROPERTY_HORIZONTALALIGMENT, _textHAlignment)), static_cast<TextVAlignment>(getNodeParamValue(params, PROPERTY_VERTICALALIGMENT, _textVAlignment)));
+    
+    button->setPadding(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_LEFTPADDING, _leftPadding)),
+                       getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_TOPPADDING, _topPadding)),
+                       getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_RIGHTPADDING, _rightPadding)),
+                       getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_BOTTOMPADDING, _bottomPadding)));
+    
+    const Vec4 &offset = getNodeParamValue(params, PROPERTY_OFFSET, _offset);
+    button->setOffsets(offset.x, offset.y, offset.z, offset.w);
+    button->setTitleText(getNodeParamValue(params, PROPERTY_TITLE, _label));
     
     Label::Overflow overflow = static_cast<Label::Overflow>(_overflowLabel);
-    button->setOverflow((_adjustsFontSizeToFit && overflow == Label::Overflow::NONE) ? static_cast<int>(Label::Overflow::SHRINK) : _overflowLabel);
-    button->setLabelWordWrap(_wordWrapLabel);
+    button->setOverflow((getNodeParamValue(params, PROPERTY_ADJUSTS_FONT_SIZE_TO_FIT, _adjustsFontSizeToFit) && overflow == Label::Overflow::NONE) ? static_cast<int>(Label::Overflow::SHRINK) : getNodeParamValue(params, PROPERTY_OVERFLOW, _overflowLabel));
+    button->setLabelWordWrap(getNodeParamValue(params, PROPERTY_WORDWRAP, _wordWrapLabel));
     
-    float outlineWidth = getAbsoluteScale(mainScale, additionalScale, _outlineWidth.scale, _outlineWidth.type);
-    float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, _shadowBlurRadius.scale, _shadowBlurRadius.type);
-    Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, _shadowOffset.pos, _shadowOffset.referenceCorner, _shadowOffset.xUnits, _shadowOffset.yUnits, parentSize);
-    
+    float outlineWidth = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_OUTLINEWIDTH, _outlineWidth));
+    float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SHADOWBLURRADIUS, _shadowBlurRadius));
+    Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SHADOWOFFSET, _shadowOffset), parentSize);
 
     Label* titleRenderer = button->getTitleRenderer();
     if(titleRenderer)
     {
-        if (_outlineColor.a > 0 && outlineWidth > 0)
-            titleRenderer->enableOutline(_outlineColor, outlineWidth);
-        if (_shadowColor.a > 0)
-            titleRenderer->enableShadow(_shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
+        const cocos2d::Color4B &outlineColor = getNodeParamValue(params, PROPERTY_OUTLINECOLOR, _outlineColor);
+        if (outlineColor.a > 0 && outlineWidth > 0)
+            titleRenderer->enableOutline(outlineColor, outlineWidth);
+        const cocos2d::Color4B &shadowColor = getNodeParamValue(params, PROPERTY_SHADOWCOLOR, _shadowColor);
+        if (shadowColor.a > 0)
+            titleRenderer->enableShadow(shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
     }
-
-    
 }
 
 ButtonLoader::ButtonLoader()
@@ -263,8 +214,8 @@ ButtonLoader::ButtonLoader()
     ,_mouseOverBackgroundColor(Color3B::WHITE)
     ,_mouseOverLabelOpacity(255)
     ,_mouseOverBackgroundOpacity(255)
-    ,_textHAlignment(TextHAlignment::LEFT)
-    ,_textVAlignment(TextVAlignment::TOP)
+    ,_textHAlignment((int)TextHAlignment::LEFT)
+    ,_textVAlignment((int)TextVAlignment::TOP)
     ,_leftPadding(FloatScaleDescription{0, 0.0f})
     ,_rightPadding(FloatScaleDescription{0, 0.0f})
     ,_topPadding(FloatScaleDescription{0, 0.0f})
@@ -382,7 +333,7 @@ void ButtonLoader::onHandlePropTypeFloatScale(const std::string &propertyName, b
         _outlineWidth = value;
     } else if(propertyName == PROPERTY_SHADOWBLURRADIUS) {
         _shadowBlurRadius = value;
-    } else if(propertyName == PROPERTY_IMAGE_SCALE) {
+    } else if(propertyName == PROPERTY_IMAGESCALE) {
         _imageScale = value;
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
@@ -463,9 +414,9 @@ void ButtonLoader::onHandlePropTypePosition(const std::string &propertyName, boo
 void ButtonLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if(propertyName == PROPERTY_HORIZONTALALIGMENT){
-        _textHAlignment = static_cast<TextHAlignment>(value);
+        _textHAlignment = value;
     } else if(propertyName == PROPERTY_VERTICALALIGMENT) {
-        _textVAlignment = static_cast<TextVAlignment>(value);
+        _textVAlignment = value;
     }else if (propertyName == PROPERTY_OVERFLOW) {
         _overflowLabel = value;
     }else if (propertyName == PROPERTY_WORDWRAP) {
@@ -479,6 +430,8 @@ void ButtonLoader::onHandlePropTypeCheck(const std::string &propertyName, bool i
 {
     if(propertyName == PROPERTY_ADJUSTS_FONT_SIZE_TO_FIT){
         _adjustsFontSizeToFit = value;
+    } else if (propertyName == PROPERTY_WORDWRAP) {
+        _wordWrapLabel = value;
     } else {
         WidgetLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
     }

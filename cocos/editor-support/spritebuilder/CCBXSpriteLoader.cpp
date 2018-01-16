@@ -28,7 +28,7 @@ void SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
     const SpriteFrameDescription &spriteFrame = getNodeParamValue(params, PROPERTY_SPRITEFRAME, _spriteFrame);
     if(spriteFrame.spriteFrame)
         sprite->setSpriteFrame(spriteFrame.spriteFrame);
-    //sprite->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
+    sprite->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
     const std::pair<bool,bool> &flipped = getNodeParamValue(params, PROPERTY_FLIP, _flipped);
     sprite->setFlippedX(flipped.first);
     sprite->setFlippedY(flipped.second);

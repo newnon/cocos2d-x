@@ -286,6 +286,20 @@ inline const T& getNodeParamValue(const NodeParams& params, const std::string &p
         return defaultValue;
 }
     
+inline GLubyte getNodeOpacityParamValue(const NodeParams& params, const std::string &paramName, GLubyte defaultValue)
+{
+    auto paramIt = params.find(paramName);
+    if(paramIt != params.end())
+    {
+        float opacity = mpark::get<float>(paramIt->second) * 255.0f;
+        return (opacity<0.0f)?0:((opacity>255.0f)?255:static_cast<GLubyte>(opacity));
+    }
+    else
+    {
+        return defaultValue;
+    }
+}
+    
 template <class CustomNode, class ParentNodeLoader = NodeLoader>
 class SimpleNodeLoader : public ParentNodeLoader {
 public:

@@ -20,6 +20,8 @@ protected:
     virtual void onHandlePropTypeAnimation(const std::string &propertyName, bool isExtraProp, int value) override;
     virtual void onNodeLoaded(Node *node) const override;
     
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const override;
+    
 private:
     NodeLoaderDescription _loader;
     int _sequenceId;
