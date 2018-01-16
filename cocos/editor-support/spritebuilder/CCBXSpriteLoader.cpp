@@ -25,11 +25,13 @@ Node *SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, 
 void SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     Sprite *sprite = static_cast<Sprite*>(node);
-    if(_spriteFrame.spriteFrame)
-        sprite->setSpriteFrame(_spriteFrame.spriteFrame);
-    sprite->setBlendFunc(_blendFunc);
-    sprite->setFlippedX(_flipped.first);
-    sprite->setFlippedY(_flipped.second);
+    const SpriteFrameDescription &spriteFrame = getNodeParamValue(params, PROPERTY_SPRITEFRAME, _spriteFrame);
+    if(spriteFrame.spriteFrame)
+        sprite->setSpriteFrame(spriteFrame.spriteFrame);
+    sprite->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
+    const std::pair<bool,bool> &flipped = getNodeParamValue(params, PROPERTY_FLIP, _flipped);
+    sprite->setFlippedX(flipped.first);
+    sprite->setFlippedY(flipped.second);
 }
 
 SpriteLoader::SpriteLoader():_flipped(false, false), _blendFunc(BlendFunc::ALPHA_PREMULTIPLIED)

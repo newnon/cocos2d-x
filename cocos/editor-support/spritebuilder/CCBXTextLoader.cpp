@@ -47,9 +47,8 @@ TextLoader *TextLoader::create()
 
 Node *TextLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    ui::Text *text = ui::Text::create(_label, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
+    ui::Text *text = ui::Text::create(getNodeParamValue(params, PROPERTY_STRING, _label), getNodeParamValue(params, PROPERTY_FONTNAME, _font), getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_FONTSIZE, _fontSize)));
     text->setAnchorPoint(Vec2(0.0f, 0.0f));
-    text->ignoreContentAdaptWithSize(false);
     return text;
 }
 
@@ -57,32 +56,42 @@ void TextLoader::setSpecialProperties(Node* node, const Size &parentSize, float 
 {
     WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::Text *text = static_cast<ui::Text*>(node);
-    if(_dimensions.size.width == 0 || _dimensions.size.height == 0)
+    Size dimensions = getAbsoluteSize(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_DIMENSIONS, _dimensions), parentSize);
+    if(dimensions.width == 0 || dimensions.height == 0)
         text->ignoreContentAdaptWithSize(true);
-    float outlineWidth = getAbsoluteScale(mainScale, additionalScale, _outlineWidth.scale, _outlineWidth.type);
-    float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, _shadowBlurRadius.scale, _shadowBlurRadius.type);
-    Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, _shadowOffset.pos, _shadowOffset.referenceCorner, _shadowOffset.xUnits, _shadowOffset.yUnits, parentSize);
-    if (_outlineColor.a > 0 && outlineWidth > 0)
-        text->enableOutline(_outlineColor, outlineWidth);
-    if (_shadowColor.a > 0)
-        text->enableShadow(_shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
-    if(_fontColor != Color4B::WHITE)
-        text->setTextColor(_fontColor);
-    text->setTextHorizontalAlignment(_textHAlignment);
-    text->setTextVerticalAlignment(_textVAlignment);
-    text->setTextAreaSize(getAbsoluteSize(mainScale, additionalScale, _dimensions.size, _dimensions.widthUnits, _dimensions.heightUnits, parentSize));
-//    text->setAdjustsFontSizeToFit(_adjustsFontSizeToFit);
+    float outlineWidth = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_OUTLINEWIDTH, _outlineWidth));
+    float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SHADOWBLURRADIUS, _shadowBlurRadius));
+    Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SHADOWOFFSET, _shadowOffset), parentSize);
     
-    Label::Overflow overflow = static_cast<Label::Overflow>(_overflowLabel);
-    text->setOverflow((_adjustsFontSizeToFit && overflow == Label::Overflow::NONE) ? static_cast<int>(Label::Overflow::SHRINK) : _overflowLabel);
-    text->setLabelWordWrap(_wordWrapLabel);
-    if (static_cast<int>(GradientType::kHorizontal) == _gradientType) {
-        text->setHGradientColor(_gradientColor1, _gradientColor2);
+    const cocos2d::Color4B &outlineColor = getNodeParamValue(params, PROPERTY_OUTLINECOLOR, _outlineColor);
+    if (outlineColor.a > 0 && outlineWidth > 0)
+        text->enableOutline(outlineColor, outlineWidth);
+    const cocos2d::Color4B &shadowColor = getNodeParamValue(params, PROPERTY_SHADOWCOLOR, _shadowColor);
+    if (shadowColor.a > 0)
+        text->enableShadow(shadowColor, Size(shadowOffset.x, shadowOffset.y), shadowBlurRadius);
+    const Color4B &fontColor = getNodeParamValue(params, PROPERTY_FONTCOLOR, _fontColor);
+    if(fontColor != Color4B::WHITE)
+        text->setTextColor(fontColor);
+    text->setTextHorizontalAlignment(static_cast<TextHAlignment>(getNodeParamValue(params, PROPERTY_HORIZONTALALIGNMENT, _textHAlignment)));
+    text->setTextVerticalAlignment(static_cast<TextVAlignment>(getNodeParamValue(params, PROPERTY_VERTICALALIGNMENT, _textVAlignment)));
+    text->setTextAreaSize(dimensions);
+    
+    Label::Overflow overflow = static_cast<Label::Overflow>(getNodeParamValue(params, PROPERTY_OVERFLOW, _overflowLabel));
+    text->setOverflow((getNodeParamValue(params, PROPERTY_ADJUSTSFONTSIZETOFIT, _adjustsFontSizeToFit) && overflow == Label::Overflow::NONE) ? static_cast<int>(Label::Overflow::SHRINK) : (int)overflow);
+    text->setLabelWordWrap(getNodeParamValue(params, PROPERTY_WORDWRAP, _wordWrapLabel));
+    
+    const Color4B &gradientColor1 = getNodeParamValue(params, PROPERTY_GRADIENTCOLOR1, _gradientColor1);
+    const Color4B &gradientColor2 = getNodeParamValue(params, PROPERTY_GRADIENTCOLOR2, _gradientColor2);
+    
+    int gradientType = getNodeParamValue(params, PROPERTY_GRADIENTTYPE, _gradientType);
+    if (static_cast<int>(GradientType::kHorizontal) == gradientType) {
+        text->setHGradientColor(gradientColor1, gradientColor2);
     }
-    else if (static_cast<int>(GradientType::kVertical) == _gradientType) {
-        text->setVGradientColor(_gradientColor1, _gradientColor2);
+    else if (static_cast<int>(GradientType::kVertical) == gradientType) {
+        text->setVGradientColor(gradientColor1, gradientColor2);
     }
-    text->setBlendFunc(_blendFunc==BlendFunc::ALPHA_PREMULTIPLIED ? BlendFunc::ALPHA_NON_PREMULTIPLIED : _blendFunc);
+    const BlendFunc &blendFunc = getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc);
+    text->setBlendFunc(blendFunc==BlendFunc::ALPHA_PREMULTIPLIED ? BlendFunc::ALPHA_NON_PREMULTIPLIED : blendFunc);
 }
 
 TextLoader::TextLoader()
@@ -92,8 +101,8 @@ TextLoader::TextLoader()
 	,_outlineWidth(FloatScaleDescription{0, 0.0f})
 	,_shadowBlurRadius(FloatScaleDescription{0, 0.0f})
 	,_shadowOffset(PositionDescription{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
-    ,_textHAlignment(TextHAlignment::LEFT)
-    ,_textVAlignment(TextVAlignment::TOP)
+    ,_textHAlignment((int)TextHAlignment::LEFT)
+    ,_textVAlignment((int)TextVAlignment::TOP)
 	,_dimensions(SizeDescription{SizeUnit::POINTS, SizeUnit::POINTS, {0, 0}})
     ,_fontColor(Color4B::WHITE)
     ,_adjustsFontSizeToFit(false)
@@ -180,9 +189,9 @@ void TextLoader::onHandlePropTypeFloatScale(const std::string &propertyName, boo
 void TextLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if(propertyName == PROPERTY_HORIZONTALALIGNMENT) {
-        _textHAlignment = static_cast<TextHAlignment>(value);
+        _textHAlignment = value;
     } else if(propertyName == PROPERTY_VERTICALALIGNMENT) {
-        _textVAlignment = static_cast<TextVAlignment>(value);
+        _textVAlignment = value;
     }else if (propertyName == PROPERTY_OVERFLOW) {
         _overflowLabel = value;
     }else if (propertyName == PROPERTY_WORDWRAP) {

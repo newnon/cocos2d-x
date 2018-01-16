@@ -39,8 +39,8 @@ private:
     std::string _label;
     std::string _font;
     FloatScaleDescription _fontSize;
-    TextHAlignment _textHAlignment;
-    TextVAlignment _textVAlignment;
+    int _textHAlignment;
+    int _textVAlignment;
     BlendFunc _blendFunc;
     Color4B _fontColor;
     SizeDescription _dimensions;

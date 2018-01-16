@@ -29,12 +29,12 @@ protected:
     virtual void onHandlePropTypeOffsets(const std::string &propertyName, bool isExtraProp, const Vec4 &value) override;
     
 private:
-    SpriteFrameDescription _background;
-    SpriteFrameDescription _progress;
-    SpriteFrameDescription _handleNormal;
-    SpriteFrameDescription _handleDisabled;
-    SpriteFrameDescription _handleHiglihted;
-    SpriteFrameDescription _handleMouseOver;
+    SpriteFrameDescription _backgroundSpriteFrame;
+    SpriteFrameDescription _progressSpriteFrame;
+    SpriteFrameDescription _handleNormalSpriteFrame;
+    SpriteFrameDescription _handleDisabledSpriteFrame;
+    SpriteFrameDescription _handleHiglihtedSpriteFrame;
+    SpriteFrameDescription _handleMouseOverSpriteFrame;
     FloatScaleDescription _imageScale;
     Vec4 _margins;
     float _zoomScale;

@@ -16,13 +16,12 @@ public:
 CC_CONSTRUCTOR_ACCESS:
     enum class RenderingType
     {
-        AUTO = -1,
-        SIMPLE,
+        SIMPLE = 0,
         SLICE,
         TILED
     };
     
-    ImageViewLoader(RenderingType renderingType = RenderingType::AUTO);
+    ImageViewLoader(RenderingType renderingType = RenderingType::SLICE);
     ~ImageViewLoader();
 
 protected:
