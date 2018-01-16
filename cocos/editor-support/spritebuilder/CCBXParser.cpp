@@ -22,7 +22,7 @@
 #include "CCBXReaderParams.h"
 
 #define CCBX_MIN_VERSION 7
-#define CCBX_MAX_VERSION 9
+#define CCBX_MAX_VERSION 10
 #define ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(PROPERTYTYPE) cocos2d::log("Unexpected property type: '%d'!\n", PROPERTYTYPE); assert(false)
 
 NS_CC_BEGIN
@@ -667,6 +667,7 @@ private:
             {
                 ret.type = SpriteFrameDescription::TextureResType::PLIST;
                 ret.path = spriteFile;
+                assert(ret.spriteFrame->getTexture());
             }
             else
             {
@@ -1030,6 +1031,7 @@ private:
                     if (animatedProperties.find(propertyName) != animatedProperties.end())
                     {
                         ValueVector colorVector;
+                        colorVector.resize(4);
                         colorVector[0] = color3B.r;
                         colorVector[1] = color3B.g;
                         colorVector[2] = color3B.b;
@@ -1105,6 +1107,7 @@ private:
                     if (animatedProperties.find(propertyName) != animatedProperties.end())
                     {
                         ValueVector colorVector;
+                        colorVector.resize(4);
                         colorVector[0] = color4B.r;
                         colorVector[1] = color4B.g;
                         colorVector[2] = color4B.b;
@@ -1350,12 +1353,15 @@ private:
             ValueVector colorVector;
             if(this->_version<6)
             {
+                colorVector.resize(4);
                 colorVector[0] = readByte();
                 colorVector[1] = readByte();
                 colorVector[2] = readByte();
+                colorVector[3] = 255;
             }
             else
             {
+                colorVector.resize(4);
                 colorVector[0] = static_cast<unsigned char>(readFloat()*255.0);
                 colorVector[1] = static_cast<unsigned char>(readFloat()*255.0);
                 colorVector[2] = static_cast<unsigned char>(readFloat()*255.0);
