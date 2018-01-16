@@ -209,9 +209,12 @@ protected:
     virtual void onLoaded();
     virtual void onNodeLoaded(Node *node) const;
     
-    //const ValueMap& getCustomProperties() const { return  _customProperties; }
-    
     const PrefabParams& getPrefabParams() const { return _params; }
+    
+    static inline Rect calcMargins(const Vec4 &margins, const Size &size)
+    {
+        return Rect(margins.x * size.width, margins.y * size.height, (1.0 - margins.z - margins.x) * size.width, (1.0 - margins.w - margins.y) * size.height);
+    }
     
 private:
     void setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const NodeParams& params) const;

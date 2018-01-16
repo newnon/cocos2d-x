@@ -23,11 +23,6 @@ protected:
     virtual void onHandlePropTypeSoundFile(const std::string &propertyName, bool isExtraProp, const std::string &value) override;
     virtual void setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner, const NodeParams& params) const override;
     
-    static inline Rect calcMargins(const Vec4 &margins, const Size &size)
-    {
-        return Rect(margins.x * size.width, margins.y * size.height, (1.0 - margins.z - margins.x) * size.width, (1.0 - margins.w - margins.y) * size.height);
-    }
-    
 private:
     CallbackDescription _touchDesc;
     CallbackDescription _clickDesc;
