@@ -229,9 +229,7 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
         return;
     }
     
-    uint32_t flags = processParentFlags(parentTransform, parentFlags);
-    
-    if(FLAGS_TRANSFORM_DIRTY & flags)
+    if(FLAGS_TRANSFORM_DIRTY & parentFlags || _transformUpdated || _contentSizeDirty)
         _clippingRectDirty = true;
     
     if(_childVisibility.size() != _children.size())
@@ -268,10 +266,10 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
         switch (_clippingType)
         {
             case ClippingType::STENCIL:
-                stencilClippingVisit(renderer, parentTransform, flags);
+                stencilClippingVisit(renderer, parentTransform, parentFlags);
                 break;
             case ClippingType::SCISSOR:
-                scissorClippingVisit(renderer, parentTransform, flags);
+                scissorClippingVisit(renderer, parentTransform, parentFlags);
                 break;
             default:
                 break;
@@ -412,10 +410,6 @@ void Layout::onAfterVisitScissor()
     
 void Layout::scissorClippingVisit(Renderer *renderer, const Mat4& parentTransform, uint32_t parentFlags)
 {
-    if (parentFlags & FLAGS_DIRTY_MASK)
-    {
-        _clippingRectDirty = true;
-    }
     _beforeVisitCmdScissor.init(_globalZOrder);
     _beforeVisitCmdScissor.func = CC_CALLBACK_0(Layout::onBeforeVisitScissor, this);
     renderer->addCommand(&_beforeVisitCmdScissor);
