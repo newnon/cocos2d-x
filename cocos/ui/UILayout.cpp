@@ -229,7 +229,9 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
         return;
     }
     
-    if(FLAGS_TRANSFORM_DIRTY & parentFlags)
+    uint32_t flags = processParentFlags(parentTransform, parentFlags);
+    
+    if(FLAGS_TRANSFORM_DIRTY & flags)
         _clippingRectDirty = true;
     
     if(_childVisibility.size() != _children.size())
@@ -266,10 +268,10 @@ void Layout::visit(Renderer *renderer, const Mat4 &parentTransform, uint32_t par
         switch (_clippingType)
         {
             case ClippingType::STENCIL:
-                stencilClippingVisit(renderer, parentTransform, parentFlags);
+                stencilClippingVisit(renderer, parentTransform, flags);
                 break;
             case ClippingType::SCISSOR:
-                scissorClippingVisit(renderer, parentTransform, parentFlags);
+                scissorClippingVisit(renderer, parentTransform, flags);
                 break;
             default:
                 break;
