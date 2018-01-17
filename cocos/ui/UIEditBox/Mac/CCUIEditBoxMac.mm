@@ -121,7 +121,8 @@
 
 - (void)dealloc
 {
-    self.textInput = nil;
+    [_textInput removeFromSuperview];
+    [_textInput release];
     
     [super dealloc];
 }
