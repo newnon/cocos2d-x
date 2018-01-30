@@ -204,6 +204,7 @@ static const std::string PROPERTY_COLOR("color");
 static const std::string PROPERTY_CASCADECOLOR("cascadeColorEnabled");
 static const std::string PROPERTY_OPACITY("opacity");
 static const std::string PROPERTY_CASCADEOPACITY("cascadeOpacityEnabled");
+static const std::string PROPERTY_MEMBERVARASSIGNMENT("memberVarAssignment");
 
 NodeLoader *NodeLoader::create()
 {
@@ -255,7 +256,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
     setProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, params ? *params : NodeParams());
     setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties ? *customProperties : _customProperties, params ? *params : NodeParams());
     setCallbacks(node, owner, rootNode, parentOwner, params ? *params : NodeParams());
-    setVariables(node, owner, rootNode, parentOwner);
+    setVariables(node, owner, rootNode, parentOwner, params ? *params : NodeParams());
     
     if(!rootNode)
     {
@@ -324,13 +325,15 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
     return true;
 }
     
-void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner) const
+void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner, const NodeParams& params) const
 {
-    if(!_memberVarAssignmentName.empty())
+    VarAssignmentDescription memberVarAssignment = getNodeParamValue(params, PROPERTY_MEMBERVARASSIGNMENT, _memberVarAssignment);
+    
+    if(!memberVarAssignment.name.empty())
     {
-        switch (_memberVarAssignmentType) {
+        switch (memberVarAssignment.type) {
             case TargetType::NONE:
-                CCLOG("no assigment type for name:%s", _memberVarAssignmentName.c_str());
+                CCLOG("no assigment type for name:%s", memberVarAssignment.name.c_str());
                 break;
                 
             case TargetType::DOCUMENT_ROOT:
@@ -338,14 +341,14 @@ void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode
                 CCBXReaderOwner *rootOwner = dynamic_cast<CCBXReaderOwner*>(rootNode);
                 if(rootOwner)
                 {
-                    if(!rootOwner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
+                    if(!rootOwner->onAssignCCBMemberVariable(memberVarAssignment.name, node))
                     {
-                        CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
+                        CCLOG("variable not assigned for name:%s", memberVarAssignment.name.c_str());
                     }
                 }
                 else
                 {
-                    CCLOG("assigment document_root but root node is not CCBXReaderOwner for name:%s", _memberVarAssignmentName.c_str());
+                    CCLOG("assigment document_root but root node is not CCBXReaderOwner for name:%s", memberVarAssignment.name.c_str());
                 }
             }
                 break;
@@ -353,37 +356,37 @@ void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode
             case TargetType::OWNER:
                 if(owner)
                 {
-                    if(!owner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
+                    if(!owner->onAssignCCBMemberVariable(memberVarAssignment.name, node))
                     {
-                        CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
+                        CCLOG("variable not assigned for name:%s", memberVarAssignment.name.c_str());
                     }
                 }
                 else
                 {
-                    CCLOG("assigment type owner but no owner for name:%s", _memberVarAssignmentName.c_str());
+                    CCLOG("assigment type owner but no owner for name:%s", memberVarAssignment.name.c_str());
                 }
                 break;
                 
             case TargetType::PARENT_OWNER:
                 if(parentOwner)
                 {
-                    if(!parentOwner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
+                    if(!parentOwner->onAssignCCBMemberVariable(memberVarAssignment.name, node))
                     {
-                        CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
+                        CCLOG("variable not assigned for name:%s", memberVarAssignment.name.c_str());
                     }
                 }
                 else
                 {
-                    CCLOG("assigment type owner but no parent owner for name:%s", _memberVarAssignmentName.c_str());
+                    CCLOG("assigment type owner but no parent owner for name:%s", memberVarAssignment.name.c_str());
                 }
                 break;
         }
     }
     else
     {
-        if(_memberVarAssignmentType != TargetType::NONE)
+        if(memberVarAssignment.type != TargetType::NONE)
         {
-            CCLOG("variable name set but no assigment type for name:%s", _memberVarAssignmentName.c_str());
+            CCLOG("variable name set but no assigment type for name:%s", memberVarAssignment.name.c_str());
         }
     }
 }
@@ -489,8 +492,8 @@ void NodeLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode
     
 void NodeLoader::setMemberVarAssignment(TargetType type, const std::string &name)
 {
-    _memberVarAssignmentType = type;
-    _memberVarAssignmentName = name;
+    _memberVarAssignment.type = type;
+    _memberVarAssignment.name = name;
 }
     
 void NodeLoader::setUUID(unsigned value)
@@ -556,7 +559,7 @@ NodeLoader::NodeLoader()
     ,_cascadeColorEnabled(false)
     ,_cascadeOpacityEnabled(false)
     ,_color(Color3B::WHITE)
-    ,_memberVarAssignmentType(TargetType::NONE)
+    ,_memberVarAssignment{TargetType::NONE, ""}
     ,_physicsLoader(nullptr)
     ,_autoPlaySequenceId(-1)
     ,_sceneScaleType(SceneScaleType::PROJECT_DEFAULT)

@@ -138,6 +138,12 @@ struct TextureDescription
     RefPtr<Texture2D> texture;
 };
     
+struct VarAssignmentDescription
+{
+    TargetType type;
+    std::string name;
+};
+    
 Vec2 getAbsolutePosition(float mainScale, float additionalScale, const Vec2 &pt, PositionReferenceCorner corner, PositionUnit xUnit, PositionUnit yUnit, const Size &containerSize);
 Size getAbsoluteSize(float mainScale, float additionalScale, const Size &contentSize, SizeUnit widthUnit, SizeUnit heightUnit, const Size &containerSize);
 Vec2 getAbsoluteScale(float mainScale, float additionalScale, float scaleX, float scaleY, unsigned int type);
@@ -154,7 +160,7 @@ class CCBSequenceProperty;
 class CCBAnimationManager;
 class CCBSequence;
     
-using ParamValue = mpark::variant<PositionDescription, Vec2, SizeDescription, ScaleDescription, float, FloatScaleDescription, int, bool, SpriteFrameDescription, TextureDescription, Color3B, std::pair<Color4F, Color4F>, std::pair<bool,bool>, Color4B, BlendFunc, std::string, CallbackDescription, NodeLoaderDescription, Vec4>;
+using ParamValue = mpark::variant<PositionDescription, Vec2, SizeDescription, ScaleDescription, float, FloatScaleDescription, int, bool, SpriteFrameDescription, TextureDescription, Color3B, std::pair<Color4F, Color4F>, std::pair<bool,bool>, Color4B, BlendFunc, std::string, CallbackDescription, NodeLoaderDescription, Vec4, VarAssignmentDescription>;
     
 using NodeParams = std::unordered_map<std::string, ParamValue>;
 using PrefabParams = std::map<unsigned, NodeParams>;
@@ -226,7 +232,7 @@ private:
     
     virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const;
     virtual void setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner, const NodeParams& params) const;
-    virtual void setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner) const;
+    virtual void setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner, const NodeParams& params) const;
     
     void setMemberVarAssignment(TargetType type, const std::string &name);
     void setUUID(unsigned value);
@@ -257,8 +263,7 @@ private:
     bool _cascadeOpacityEnabled;
     Color3B _color;
     std::string _name;
-    TargetType _memberVarAssignmentType;
-    std::string _memberVarAssignmentName;
+    VarAssignmentDescription _memberVarAssignment;
     PhysicsBodyLoader *_physicsLoader;
     Vector<CCBSequence*> _sequences;
     PrefabParams _params;

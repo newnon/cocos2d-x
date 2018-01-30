@@ -222,6 +222,7 @@ private:
         EFFECT_CONTROL,
         SOUND_FILE,
         OFFSETS,
+        VAR_ASSIGNMENT
     };
     
     
@@ -801,30 +802,6 @@ private:
         return ret;
     }
     
-    /*
-    NodeLoaderDescription parsePropTypeCCBFile(const NodeLoaderLibrary &library, NodeLoaderCache &cache)
-    {
-        std::string ccbFileName = _rootPath + readCachedString();
-        
-        if(ccbFileName.empty())
-            return std::pair<std::string, NodeLoader*>(ccbFileName, nullptr);
-        
-        // Change path extension to .ccbi.
-        std::string ccbFileWithoutPathExtension = deletePathExtension(ccbFileName.c_str());
-        ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
-        
-        // Load sub file
-        NodeLoader *ret = cache.get(ccbFileName);
-        if(!ret)
-        {
-            Data data = FileUtils::getInstance()->getDataFromFile(ccbFileName);
-            ret = InternalReader::parse(data, library, cache, _rootPath, _params);
-            if(ret)
-                cache.add(ccbFileName, ret);
-        }
-        return std::pair<std::string, NodeLoader*>(ccbFileName, ret);
-    }*/
-    
     NodeLoaderDescription parsePropTypeCCBFile(const NodeLoaderLibrary &library, NodeLoaderCache &cache)
     {
         NodeLoaderDescription ret;
@@ -864,7 +841,15 @@ private:
         ret.w = readFloat();
         return ret;
     }
-
+    
+    VarAssignmentDescription parseVarAssignmentDescription()
+    {
+        VarAssignmentDescription ret;
+        ret.type = static_cast<TargetType>(readInt(false));
+        if(ret.type != TargetType::NONE)
+            ret.name = readCachedString();
+        return ret;
+    }
     
     void parseProperties(NodeLoader * loader, const NodeLoaderLibrary &library, NodeLoaderCache &cache, const std::set<std::string> &animatedProperties)
     {
@@ -1301,6 +1286,11 @@ private:
                 case PropertyType::OFFSETS:
                 {
                     params[uid][propertyName] = parsePropTypeOffsets();
+                    break;
+                }
+                case PropertyType::VAR_ASSIGNMENT:
+                {
+                    params[uid][propertyName] = parseVarAssignmentDescription();
                     break;
                 }
                 default:
