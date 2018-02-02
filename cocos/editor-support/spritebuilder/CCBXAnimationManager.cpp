@@ -5,7 +5,6 @@
 #include "2d/CCSprite.h"
 
 #include <string>
-#include <sstream>
 #include <set>
 
 NS_CC_BEGIN
@@ -793,24 +792,8 @@ Sequence*  CCBAnimationManager::actionForSoundChannel(CCBSequenceProperty* chann
             actions.pushBack(DelayTime::create(timeSinceLastKeyframe));
         }
 	
-        std::stringstream ss (std::stringstream::in | std::stringstream::out);
         auto& keyVal = keyframe->getValue().asValueVector();
-        std::string soundFile = keyVal[0].asString();
-    
-        float pitch, pan, gain;
-        ss << keyVal[1].asString();
-        ss >> pitch;
-        ss.flush();
-    
-        ss << keyVal[2].asString();
-        ss >> pan;
-        ss.flush();
-        
-        ss << keyVal[3].asString();
-        ss >> gain;
-        ss.flush();
-        
-        actions.pushBack(CCBSoundEffect::actionWithSoundFile(soundFile, pitch, pan, gain));
+        actions.pushBack(CCBSoundEffect::actionWithSoundFile(keyVal[0].asString(), keyVal[1].asFloat(), keyVal[2].asFloat(), keyVal[3].asFloat()));
     }
 
     if(actions.size() < 1) return nullptr;
