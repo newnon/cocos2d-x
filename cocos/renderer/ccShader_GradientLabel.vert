@@ -26,8 +26,7 @@ void main()
     vec4 colorText34 = vec4(mix(leftBottomColor, rightBottomColor, (textSize.y - a_position.y) / textSize.y));
     vec4 colorText = vec4(mix(colorText12, colorText34, a_position.x / textSize.x));
 
-    v_fragmentColor = colorText;
-    v_fragmentColor.a = colorText.a * a_color.a;
+    v_fragmentColor = colorText * a_color;
     v_texCoord = a_texCoord;
 }
 );
