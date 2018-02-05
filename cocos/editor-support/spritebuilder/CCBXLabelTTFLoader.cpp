@@ -60,11 +60,12 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
         Size dimensions = getAbsoluteSize(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_DIMENSIONS, _dimensions), parentSize);
         float fontSize = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_FONTSIZE, _fontSize));
         float outlineWidth = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_OUTLINEWIDTH, _outlineWidth));
+        const cocos2d::Color4B &outlineColor = getNodeParamValue(params, PROPERTY_OUTLINECOLOR, _outlineColor);
         const std::string font = getNodeParamValue(params, PROPERTY_FONTNAME, _font);
         if (FileUtils::getInstance()->isFileExist(font))
         {
             TTFConfig ttfConfig(font, fontSize, GlyphCollection::DYNAMIC);
-            ttfConfig.outlineSize = outlineWidth;
+            ttfConfig.outlineSize = outlineColor.a > 0 ? outlineWidth : 0;
             label->setTTFConfig(ttfConfig);
         }
         else
@@ -79,7 +80,6 @@ void LabelTTFLoader::setSpecialProperties(Node* node, const Size &parentSize, fl
         float shadowBlurRadius = getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SHADOWBLURRADIUS, _shadowBlurRadius));
         Vec2 shadowOffset = getAbsolutePosition(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SHADOWOFFSET, _shadowOffset), parentSize);
         
-        const cocos2d::Color4B &outlineColor = getNodeParamValue(params, PROPERTY_OUTLINECOLOR, _outlineColor);
         if (outlineColor.a > 0 && outlineWidth > 0)
             label->enableOutline(outlineColor, outlineWidth);
         const cocos2d::Color4B &shadowColor = getNodeParamValue(params, PROPERTY_SHADOWCOLOR, _shadowColor);
