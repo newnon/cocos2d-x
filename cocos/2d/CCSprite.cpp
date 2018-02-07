@@ -429,6 +429,266 @@ void Sprite::setTextureRect(const Rect& rect, bool rotated, const Size& untrimme
     updatePoly();
 }
 
+std::vector<Vec2> Sprite::calculateUV(const Rect& capInsets, const Size& originalSize, const Vec4& offsets)
+{
+    auto atlasWidth = _texture->getPixelsWide();
+    auto atlasHeight = _texture->getPixelsHigh();
+    
+    auto textureRect = _rect;
+    
+    //calculate texture coordinate
+    std::vector<Vec2> uvCoordinates;
+    {
+        
+        float leftWidth = 0, centerWidth = 0, rightWidth = 0;
+        float topHeight = 0, centerHeight = 0, bottomHeight = 0;
+        
+        if (_rectRotated)
+        {
+            rightWidth = capInsets.origin.y - offsets.y;
+            centerWidth = capInsets.size.height;
+            leftWidth = originalSize.height - centerWidth - capInsets.origin.y - offsets.w;
+            
+            topHeight = capInsets.origin.x - offsets.x;
+            centerHeight = capInsets.size.width;
+            bottomHeight = originalSize.width - (capInsets.origin.x + centerHeight) - offsets.z;
+        }
+        else
+        {
+            leftWidth = capInsets.origin.x - offsets.x;
+            centerWidth = capInsets.size.width;
+            rightWidth = originalSize.width - (capInsets.origin.x + centerWidth) - offsets.z;
+            
+            topHeight = capInsets.origin.y - offsets.y;
+            centerHeight = capInsets.size.height;
+            bottomHeight = originalSize.height - (capInsets.origin.y + centerHeight) - offsets.w;
+        }
+        
+        
+        if(leftWidth<0)
+        {
+            centerWidth += leftWidth;
+            leftWidth = 0;
+        }
+        if(rightWidth<0)
+        {
+            centerWidth += rightWidth;
+            rightWidth = 0;
+        }
+        
+        if(topHeight<0)
+        {
+            centerHeight += topHeight;
+            topHeight = 0;
+        }
+        if(bottomHeight<0)
+        {
+            centerHeight += bottomHeight;
+            bottomHeight = 0;
+        }
+        
+        //uv computation should take spritesheet into account.
+        float u0, u1, u2, u3;
+        float v0, v1, v2, v3;
+        if (_rectRotated)
+        {
+            u0 = textureRect.origin.x / atlasWidth;
+            u1 = (leftWidth + textureRect.origin.x) / atlasWidth;
+            u2 = (leftWidth + centerWidth + textureRect.origin.x) / atlasWidth;
+            u3 = (textureRect.origin.x + textureRect.size.height) / atlasWidth;
+            
+            v3 = textureRect.origin.y / atlasHeight;
+            v2 = (topHeight + textureRect.origin.y) / atlasHeight;
+            v1 = (topHeight + centerHeight + textureRect.origin.y) / atlasHeight;
+            v0 = (textureRect.origin.y + textureRect.size.width) / atlasHeight;
+        }
+        else
+        {
+            u0 = textureRect.origin.x / atlasWidth;
+            u1 = (leftWidth + textureRect.origin.x) / atlasWidth;
+            u2 = (leftWidth + centerWidth + textureRect.origin.x) / atlasWidth;
+            u3 = (textureRect.origin.x + textureRect.size.width) / atlasWidth;
+            
+            v0 = textureRect.origin.y / atlasHeight;
+            v1 = (topHeight + textureRect.origin.y) / atlasHeight;
+            v2 = (topHeight + centerHeight + textureRect.origin.y) / atlasHeight;
+            v3 = (textureRect.origin.y + textureRect.size.height) / atlasHeight;
+        }
+        
+        uvCoordinates = {Vec2(u0,v3), Vec2(u1,v2), Vec2(u2,v1), Vec2(u3,v0)};
+    }
+    
+    return uvCoordinates;
+}
+
+std::vector<Vec2> Sprite::calculateVertices(const Rect& capInsets,
+                                                  const Size& originalSize,
+                                                  const Vec4& offsets)
+{
+    
+    float offsetLeft = offsets.x;
+    float offsetTop = offsets.y;
+    float offsetRight = offsets.z;
+    float offsetBottom = offsets.w;
+    
+    std::vector<Vec2> vertices;
+    {
+        float leftWidth = 0, centerWidth = 0, rightWidth = 0;
+        float topHeight = 0, centerHeight = 0, bottomHeight = 0;
+        
+        leftWidth = capInsets.origin.x;
+        centerWidth = capInsets.size.width;
+        rightWidth = originalSize.width - (leftWidth + centerWidth);
+        
+        topHeight = capInsets.origin.y;
+        centerHeight = capInsets.size.height;
+        bottomHeight = originalSize.height - (topHeight + centerHeight);
+        
+        leftWidth = leftWidth;
+        rightWidth = rightWidth;
+        centerWidth = centerWidth;
+        topHeight = topHeight;
+        bottomHeight = bottomHeight;
+        centerHeight = centerHeight;
+        
+        float sizableWidth = _contentSize.width - leftWidth - rightWidth;
+        float sizableHeight = _contentSize.height - topHeight - bottomHeight;
+        
+        leftWidth -= offsetLeft;
+        rightWidth -= offsetRight;
+        topHeight -= offsetTop;
+        bottomHeight -= offsetBottom;
+        
+        float hScale = sizableWidth / centerWidth;
+        float vScale = sizableHeight / centerHeight;
+        
+        if(leftWidth<0)
+        {
+            offsetLeft -= leftWidth * (hScale - 1.0f);
+            sizableWidth += leftWidth * hScale;
+            leftWidth = 0;
+        }
+        if(rightWidth<0)
+        {
+            sizableWidth += rightWidth * hScale;
+            rightWidth = 0;
+        }
+        if(topHeight<0)
+        {
+            sizableHeight += topHeight * vScale;
+            topHeight = 0;
+        }
+        if(bottomHeight<0)
+        {
+            offsetBottom -= bottomHeight * (vScale - 1.0f);
+            sizableHeight += bottomHeight * vScale;
+            bottomHeight = 0;
+        }
+        
+        float x0,x1,x2,x3;
+        float y0,y1,y2,y3;
+        if(sizableWidth >= 0)
+        {
+            x0 = offsetLeft;
+            x1 = x0 + leftWidth;
+            x2 = x1 + sizableWidth;
+            x3 = x2 + rightWidth;
+        }
+        else
+        {
+            float xScale = _contentSize.width / (leftWidth + rightWidth);
+            x0 = offsetLeft;
+            x1 = x2 = offsetLeft + leftWidth * xScale;
+            x3 = x2 + rightWidth * xScale;
+        }
+        
+        if(sizableHeight >= 0)
+        {
+            y0 = offsetBottom;
+            y1 = y0 + bottomHeight;
+            y2 = y1 + sizableHeight;
+            y3 = y2 + topHeight;
+        }
+        else
+        {
+            float yScale = _contentSize.height / (topHeight + bottomHeight);
+            y0 = offsetBottom;
+            y1 = y2 = y0 + bottomHeight * yScale;
+            y3 = y2 + topHeight * yScale;
+        }
+        
+        vertices = {Vec2(x0,y0), Vec2(x1,y1), Vec2(x2,y2), Vec2(x3,y3)};
+    }
+    return vertices;
+}
+
+TrianglesCommand::Triangles Sprite::calculateTriangles(const std::vector<Vec2>& uv,
+                                                             const std::vector<Vec2>& vertices)
+{
+    {
+        
+        unsigned short indicesStart = 0;
+        const unsigned short indicesOffset = 6;
+        const unsigned short sliceQuadIndices[] = {4,0,5, 1,5,0};
+        
+        int vertexCount = (int)(vertices.size() - 1);
+        
+        for (int j = 0; j <= vertexCount; ++j)
+        {
+            for (int i = 0; i <= vertexCount; ++i)
+            {
+                V3F_C4B_T2F &vertextData = _trianglesVertex[i + j * 4];
+                vertextData.vertices.x = vertices[i].x;
+                vertextData.vertices.y = vertices[j].y;
+                
+                if (_rectRotated)
+                {
+                    vertextData.texCoords.u = uv[j].x;
+                    vertextData.texCoords.v = uv[i].y;
+                }
+                else
+                {
+                    vertextData.texCoords.u = uv[i].x;
+                    vertextData.texCoords.v = uv[j].y;
+                }
+                
+                //vertextData.colors = color4;
+                //memcpy(_sliceVertices + i + j * 4, &vertextData, sizeof(V3F_C4B_T2F));
+            }
+        }
+        
+        {
+            for (int j = 0; j <= vertexCount; ++j)
+            {
+                for (int i = 0; i <= vertexCount; ++i)
+                {
+                    if (i < 3 && j < 3)
+                    {
+                        memcpy(_trianglesIndex + indicesStart, sliceQuadIndices, indicesOffset * sizeof(unsigned short));
+                        
+                        for (int k = 0; k  < indicesOffset; ++k)
+                        {
+                            unsigned short actualIndex = (i  + j * 3) * indicesOffset;
+                            _trianglesIndex[k + actualIndex] = _trianglesIndex[k + actualIndex] + j * 4 + i;
+                        }
+                        indicesStart = indicesStart + indicesOffset;
+                    }
+                    
+                }
+            }
+        }
+    }
+    
+    TrianglesCommand::Triangles triangles;
+    triangles.verts = _trianglesVertex;
+    triangles.vertCount = 16;
+    triangles.indices = _trianglesIndex;
+    triangles.indexCount = 6 * 9;   // 9 quads, each needs 6 vertices
+    
+    return triangles;
+}
+
+
 void Sprite::updatePoly()
 {
     // There are 3 cases:
@@ -503,7 +763,7 @@ void Sprite::updatePoly()
         //    +------+----+--------+
         //    u0      u1     u2
 
-
+        /*
         // center rect
         float cx1 = _centerRectNormalized.origin.x;
         float cy1 = _centerRectNormalized.origin.y;
@@ -665,7 +925,112 @@ void Sprite::updatePoly()
 
         // probably we can update the _trianglesCommand directly
         // to avoid memcpy'ing stuff
+        _polyInfo.setTriangles(triangles);*/
+        
+        auto originalSize = _originalContentSize;
+        auto offset = _unflippedOffsetPositionFromCenter;
+        auto textureRect = _rect;
+        
+        auto capInsets = Rect(_centerRectNormalized.origin.x * originalSize.width, _centerRectNormalized.origin.y * originalSize.height, _centerRectNormalized.size.width * originalSize.width, _centerRectNormalized.size.height * originalSize.height);
+        //auto capInsets = Rect(0.4 * originalSize.width, 0.0 * originalSize.height, (1.0 - 0.4 - 0.4) * originalSize.width, (1.0) * originalSize.height);
+        
+        Vec4 offsets;
+        offsets.x = offset.x + (originalSize.width - textureRect.size.width) / 2;
+        offsets.w = offset.y + (originalSize.height - textureRect.size.height) / 2;
+        offsets.z = originalSize.width - textureRect.size.width - offsets.x;
+        offsets.y = originalSize.height - textureRect.size.height - offsets.w;
+        
+        ///auto uv = this->calculateUV(capInsets, originalSize, offsets);
+        
+        auto atlasWidth = _texture->getPixelsWide();
+        auto atlasHeight = _texture->getPixelsHigh();
+        
+        //calculate texture coordinate
+        std::vector<Vec2> uv;
+        {
+            
+            float leftWidth = 0, centerWidth = 0, rightWidth = 0;
+            float topHeight = 0, centerHeight = 0, bottomHeight = 0;
+            
+            if (_rectRotated)
+            {
+                rightWidth = capInsets.origin.y - offsets.y;
+                centerWidth = capInsets.size.height;
+                leftWidth = originalSize.height - centerWidth - capInsets.origin.y - offsets.w;
+                
+                topHeight = capInsets.origin.x - offsets.x;
+                centerHeight = capInsets.size.width;
+                bottomHeight = originalSize.width - (capInsets.origin.x + centerHeight) - offsets.z;
+            }
+            else
+            {
+                leftWidth = capInsets.origin.x - offsets.x;
+                centerWidth = capInsets.size.width;
+                rightWidth = originalSize.width - (capInsets.origin.x + centerWidth) - offsets.z;
+                
+                topHeight = capInsets.origin.y - offsets.y;
+                centerHeight = capInsets.size.height;
+                bottomHeight = originalSize.height - (capInsets.origin.y + centerHeight) - offsets.w;
+            }
+            
+            
+            if(leftWidth<0)
+            {
+                centerWidth += leftWidth;
+                leftWidth = 0;
+            }
+            if(rightWidth<0)
+            {
+                centerWidth += rightWidth;
+                rightWidth = 0;
+            }
+            
+            if(topHeight<0)
+            {
+                centerHeight += topHeight;
+                topHeight = 0;
+            }
+            if(bottomHeight<0)
+            {
+                centerHeight += bottomHeight;
+                bottomHeight = 0;
+            }
+            
+            //uv computation should take spritesheet into account.
+            float u0, u1, u2, u3;
+            float v0, v1, v2, v3;
+            if (_rectRotated)
+            {
+                u0 = textureRect.origin.x / atlasWidth;
+                u1 = (leftWidth + textureRect.origin.x) / atlasWidth;
+                u2 = (leftWidth + centerWidth + textureRect.origin.x) / atlasWidth;
+                u3 = (textureRect.origin.x + textureRect.size.height) / atlasWidth;
+                
+                v3 = textureRect.origin.y / atlasHeight;
+                v2 = (topHeight + textureRect.origin.y) / atlasHeight;
+                v1 = (topHeight + centerHeight + textureRect.origin.y) / atlasHeight;
+                v0 = (textureRect.origin.y + textureRect.size.width) / atlasHeight;
+            }
+            else
+            {
+                u0 = textureRect.origin.x / atlasWidth;
+                u1 = (leftWidth + textureRect.origin.x) / atlasWidth;
+                u2 = (leftWidth + centerWidth + textureRect.origin.x) / atlasWidth;
+                u3 = (textureRect.origin.x + textureRect.size.width) / atlasWidth;
+                
+                v0 = textureRect.origin.y / atlasHeight;
+                v1 = (topHeight + textureRect.origin.y) / atlasHeight;
+                v2 = (topHeight + centerHeight + textureRect.origin.y) / atlasHeight;
+                v3 = (textureRect.origin.y + textureRect.size.height) / atlasHeight;
+            }
+            
+            uv = {Vec2(u0,v3), Vec2(u1,v2), Vec2(u2,v1), Vec2(u3,v0)};
+        }
+ 
+        auto vertices = this->calculateVertices(capInsets, originalSize, offsets);
+        auto triangles = this->calculateTriangles(uv, vertices);
         _polyInfo.setTriangles(triangles);
+        
     }
 }
 
@@ -730,10 +1095,10 @@ void Sprite::setCenterRect(const cocos2d::Rect &rectInPoints)
     {
         Rect rect = rectInPoints;
 
-        const float x = rect.origin.x / _rect.size.width;
-        const float y = rect.origin.y / _rect.size.height;
-        const float w = rect.size.width / _rect.size.width;
-        const float h = rect.size.height / _rect.size.height;
+        const float x = rect.origin.x / _originalContentSize.width;
+        const float y = rect.origin.y / _originalContentSize.height;
+        const float w = rect.size.width / _originalContentSize.width;
+        const float h = rect.size.height / _originalContentSize.height;
         setCenterRectNormalized(Rect(x,y,w,h));
     }
 }
@@ -1422,6 +1787,15 @@ void Sprite::updateStretchFactor()
 
         _stretchFactor = Vec2(std::max(0.0f, x_factor),
                               std::max(0.0f, y_factor));
+        
+        const float x_factor1 = size.width / _originalContentSize.width;
+        const float y_factor2 = size.height / _originalContentSize.height;
+        
+        if(_originalContentSize.width - _rect.size.width != 0)
+        {
+            //_stretchFactor.y = 20;
+        }
+        
     }
 
     // else:

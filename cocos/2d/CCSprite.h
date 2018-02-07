@@ -663,6 +663,10 @@ protected:
 
     virtual void flipX();
     virtual void flipY();
+    
+    std::vector<Vec2> calculateUV(const Rect& capInsets, const Size& originalSize, const Vec4& offsets);
+    std::vector<Vec2> calculateVertices(const Rect& capInsets, const Size& originalSize, const Vec4& offsets);
+    TrianglesCommand::Triangles calculateTriangles(const std::vector<Vec2>& uv, const std::vector<Vec2>& vertices);
 
     //
     // Data used when the sprite is rendered using a SpriteSheet
