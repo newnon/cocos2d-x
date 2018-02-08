@@ -122,17 +122,17 @@ void ButtonLoader::setSpecialProperties(Node* node, const Size &parentSize, floa
     const SpriteFrameDescription &disabledSpriteFrame = getNodeParamValue(params, PROPERTY_BACKGROUNDSPRITEFRAME_DISABLED, _disabledSpriteFrame);
     if(disabledSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        button->loadTexturePressed(disabledSpriteFrame.path, convertTextureResType(disabledSpriteFrame.type));
-        button->setCapInsetsPressedRenderer(calcMargins(margins, disabledSpriteFrame.spriteFrame->getOriginalSize()));
+        button->loadTextureDisabled(disabledSpriteFrame.path, convertTextureResType(disabledSpriteFrame.type));
+        button->setCapInsetsDisabledRenderer(calcMargins(margins, disabledSpriteFrame.spriteFrame->getOriginalSize()));
     }
     const SpriteFrameDescription &mouseOverSpriteFrame = getNodeParamValue(params, PROPERTY_BACKGROUNDSPRITEFRAME_MOUSEOVER, _mouseOverSpriteFrame);
     if(mouseOverSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        button->loadTexturePressed(mouseOverSpriteFrame.path, convertTextureResType(mouseOverSpriteFrame.type));
-        button->setCapInsetsPressedRenderer(calcMargins(margins, mouseOverSpriteFrame.spriteFrame->getOriginalSize()));
+        button->loadTextureMouseOver(mouseOverSpriteFrame.path, convertTextureResType(mouseOverSpriteFrame.type));
+        button->setCapInsetsMouseOverRenderer(calcMargins(margins, mouseOverSpriteFrame.spriteFrame->getOriginalSize()));
     }
     
-    button->setScale9Enabled(true);
+    button->setScale9Enabled(margins != Vec4::ZERO);
     button->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGESCALE, _imageScale)) / CCBXReader::getResolutionScale());
     button->setPressedActionEnabled(true);
     button->setZoomScale(getNodeParamValue(params, PROPERTY_ZOOMONCLICK, _zoomOnClick) - 1.0);
