@@ -502,13 +502,15 @@ void Slider::setPercent(int percent)
     _slidBallRenderer->setPosition(dis, _contentSize.height / 2.0f);
     if (_scale9Enabled)
     {
-        _progressBarRenderer->setPreferredSize(Size(dis / _imageScale, _contentSize.height));
+        _progressBarRenderer->setPreferredSize(Size(dis / _imageScale, _contentSize.height / _imageScale));
+        _progressBarRenderer->setScale(_imageScale);
     }
     else
     {
         Rect rect = _progressBarRenderer->getTextureRect();
         rect.size.width = _progressBarTextureSize.width * res;
         _progressBarRenderer->setTextureRect(rect, _progressBarRenderer->isTextureRectRotated(), rect.size);
+        _progressBarRenderer->setScale(1.0f);
     }
 }
 
