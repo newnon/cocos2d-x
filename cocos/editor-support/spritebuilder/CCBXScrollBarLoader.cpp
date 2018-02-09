@@ -67,10 +67,12 @@ void ScrollBarLoader::setSpecialProperties(Node* node, const Size &parentSize, f
         scrollBar->setScale9Enabled(margins != Vec4::ZERO);
     }
     
+    Rect realHandleMargins;
+    
     if(handleNormalSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        scrollBar->setCapInsetsForBallRendereds(calcMargins(handleMargins, handleNormalSpriteFrame.spriteFrame->getOriginalSize()));
         scrollBar->loadSlidBallTextureNormal(handleNormalSpriteFrame.path, convertTextureResType(handleNormalSpriteFrame.type));
+        realHandleMargins = calcMargins(handleMargins, handleNormalSpriteFrame.spriteFrame->getOriginalSize());
     }
     
     if(handleDisabledSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
@@ -82,6 +84,7 @@ void ScrollBarLoader::setSpecialProperties(Node* node, const Size &parentSize, f
     if(handleMouseOverSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
         scrollBar->loadSlidBallTextureMouseOver(handleMouseOverSpriteFrame.path, convertTextureResType(handleMouseOverSpriteFrame.type));
 
+    scrollBar->setCapInsetsForBallRendereds(realHandleMargins);
     scrollBar->setPercent(getNodeParamValue(params, PROPERTY_SLIDER_VALUE, _percent));
     scrollBar->setZoomScale(getNodeParamValue(params, PROPERTY_ZOOM_SCALE, _zoomScale) - 1.0f);
     scrollBar->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGE_SCALE, _imageScale)) / CCBXReader::getResolutionScale());
