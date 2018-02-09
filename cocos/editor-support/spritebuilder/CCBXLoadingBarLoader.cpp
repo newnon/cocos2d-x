@@ -1,4 +1,5 @@
 #include "CCBXLoadingBarLoader.h"
+#include "ui/UILoadingBar.h"
 
 NS_CC_BEGIN
 namespace spritebuilder {
@@ -15,7 +16,7 @@ static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
 static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
     
-static const std::string PROPERTY_IMAGE_SCALE("imageScale");
+static const std::string PROPERTY_IMAGESCALE("imageScale");
     
 LoadingBarLoader *LoadingBarLoader::create()
 {
@@ -24,47 +25,37 @@ LoadingBarLoader *LoadingBarLoader::create()
     return ret;
 }
 
-Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *LoadingBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     ui::LoadingBar *loadingBar = ui::LoadingBar::create();
     loadingBar->setAnchorPoint(Vec2(0.0f, 0.0f));
     return loadingBar;
 }
-
-void LoadingBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+    
+inline ui::Widget::TextureResType convertTextureResType(SpriteFrameDescription::TextureResType value)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    return static_cast<ui::Widget::TextureResType>(static_cast<int>(value) - 1);
+}
+
+void LoadingBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
+{
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::LoadingBar *loadingBar = static_cast<ui::LoadingBar*>(node);
-    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
+    const Vec4 &margins = getNodeParamValue(params, PROPERTY_MARGIN, _margins);
+    const SpriteFrameDescription &spriteFrame = getNodeParamValue(params, PROPERTY_SPRITEFRAME, _spriteFrame);
     loadingBar->setScale9Enabled(true);
-    switch(_spriteFrame.type)
+    if(spriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            Size size = _spriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            loadingBar->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
-            loadingBar->setCapInsets(realMargins);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            Size size = _spriteFrame.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            loadingBar->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
-            loadingBar->setCapInsets(realMargins);
-        }
-            break;
-        default:
-            break;
-    };
-    loadingBar->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
-    loadingBar->setPercent(_percentage);
-    loadingBar->setDirection(_direction);
+        loadingBar->loadTexture(spriteFrame.path, convertTextureResType(spriteFrame.type));
+        loadingBar->setCapInsets(calcMargins(margins, spriteFrame.spriteFrame->getOriginalSize()));
+    }
+    loadingBar->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGESCALE, _imageScale)) / CCBXReader::getResolutionScale());
+    loadingBar->setPercent(getNodeParamValue(params, PROPERTY_PERCENTAGE, _percentage));
+    loadingBar->setDirection(static_cast<ui::LoadingBar::Direction>(getNodeParamValue(params, PROPERTY_DIRECTION, _direction)));
 }
     
 LoadingBarLoader::LoadingBarLoader()
-    :_direction(ui::LoadingBar::Direction::LEFT)
+    :_direction((int)ui::LoadingBar::Direction::LEFT)
     ,_percentage(0)
     ,_imageScale{0,1.f}
 {
@@ -102,7 +93,7 @@ void LoadingBarLoader::onHandlePropTypeFlip(const std::string &propertyName, boo
 void LoadingBarLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if (propertyName == PROPERTY_DIRECTION) {
-        _direction =  static_cast<ui::LoadingBar::Direction>(value);
+        _direction = value;
     } else {
         WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
@@ -136,7 +127,7 @@ void LoadingBarLoader::onHandlePropTypeFloat(const std::string &propertyName, bo
     
 void LoadingBarLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
 {
-    if(propertyName == PROPERTY_IMAGE_SCALE) {
+    if(propertyName == PROPERTY_IMAGESCALE) {
         _imageScale = value;
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);

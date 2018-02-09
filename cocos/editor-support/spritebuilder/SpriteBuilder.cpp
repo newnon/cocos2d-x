@@ -270,7 +270,8 @@ CCBReaderParams* CCBXReader::getParams() const
     
 SceneScaleType CCBXReader::getSceneScaleType() const
 {
-    return _rootNodeLoader->getSceneScaleType();
+    SceneScaleType scaleType = _rootNodeLoader->getSceneScaleType();
+    return scaleType == SceneScaleType::PROJECT_DEFAULT?_params->getDefaultSceneScaleType():scaleType;
 }
     
 CCBReaderParams* CCBXReader::createParams(const std::string &rootPath)

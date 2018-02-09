@@ -22,23 +22,25 @@ Scale9SpriteLoader *Scale9SpriteLoader::create()
     return ret;
 }
 
-Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *Scale9SpriteLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    ui::Scale9Sprite *sprite = _spriteFrame.spriteFrame?ui::Scale9Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame.get()):ui::Scale9Sprite::create();
+    const SpriteFrameDescription &spriteFrame = getNodeParamValue(params, PROPERTY_SPRITEFRAME, _spriteFrame);
+    ui::Scale9Sprite *sprite = _spriteFrame.spriteFrame?ui::Scale9Sprite::createWithSpriteFrame(spriteFrame.spriteFrame.get()):ui::Scale9Sprite::create();
     sprite->setAnchorPoint(Vec2(0.0f, 0.0f));
     return sprite;
 }
 
-void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void Scale9SpriteLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     ui::Scale9Sprite *sprite = static_cast<ui::Scale9Sprite*>(node);
-    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
+    const Vec4 &margins = getNodeParamValue(params, PROPERTY_MARGIN, _margins);
     Size size = sprite->getOriginalSize();
-    sprite->setRenderingType((_margins == Vec4::ZERO ||_renderingType==RenderingType::SIMPLE) ? ui::Scale9Sprite::RenderingType::SIMPLE : ui::Scale9Sprite::RenderingType::SLICE);
-    sprite->setCapInsets(Rect(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height));
-    sprite->setBlendFunc(_blendFunc);
-    sprite->setFlippedX(_flipped.first);
-    sprite->setFlippedY(_flipped.second);
+    sprite->setRenderingType((margins == Vec4::ZERO ||_renderingType==RenderingType::SIMPLE) ? ui::Scale9Sprite::RenderingType::SIMPLE : ui::Scale9Sprite::RenderingType::SLICE);
+    sprite->setCapInsets(calcMargins(margins, size));
+    sprite->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
+    const std::pair<bool,bool> &flipped = getNodeParamValue(params, PROPERTY_FLIP, _flipped);
+    sprite->setFlippedX(flipped.first);
+    sprite->setFlippedY(flipped.second);
 }
 
 Scale9SpriteLoader::Scale9SpriteLoader()

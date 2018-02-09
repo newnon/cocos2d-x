@@ -1572,7 +1572,7 @@ GLubyte Button::getMouseOverTitleOpacity() const
     return _mouseOverTitleOpacity;
 }
     
-void Button::setPaddingPadding(float left, float top, float right, float bottom)
+void Button::setPadding(float left, float top, float right, float bottom)
 {
     _leftPadding = left;
     _rightPadding = right;

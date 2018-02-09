@@ -14,7 +14,7 @@ static const std::string PROPERTY_MARGIN_LEFT("marginLeft");
 static const std::string PROPERTY_MARGIN_TOP("marginTop");
 static const std::string PROPERTY_MARGIN_RIGHT("marginRight");
 static const std::string PROPERTY_MARGIN_BOTTOM("marginBottom");
-static const std::string PROPERTY_IMAGE_SCALE("imageScale");
+static const std::string PROPERTY_IMAGESCALE("imageScale");
 static const std::string PROPERTY_FLIP("flip");
 static const std::string PROPERTY_RENDERINGTYPE("renderingType");
 
@@ -25,7 +25,7 @@ ImageViewLoader *ImageViewLoader::create()
     return ret;
 }
 
-Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     if(_renderingType == RenderingType::TILED)
     {
@@ -40,71 +40,47 @@ Node *ImageViewLoader::createNodeInstance(const Size &parentSize, float mainScal
         return imageView;
     }
 }
-
-void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+    
+inline ui::Widget::TextureResType convertTextureResType(SpriteFrameDescription::TextureResType value)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    return static_cast<ui::Widget::TextureResType>(static_cast<int>(value) - 1);
+}
+
+void ImageViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
+{
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
+    
+    const SpriteFrameDescription &spriteFrameDesc = getNodeParamValue(params, PROPERTY_SPRITEFRAME, _spriteFrameDesc);
+    
     if(_renderingType == RenderingType::TILED)
     {
         ui::TileImageView *imageView = static_cast<ui::TileImageView*>(node);
         
-        Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
         imageView->ignoreContentAdaptWithSize(false);
-        switch(_spriteFrame.type)
-        {
-            case SpriteFrameDescription::TextureResType::LOCAL:
-            {
-                Size size = _spriteFrame.spriteFrame->getOriginalSize();
-                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
-            }
-                break;
-            case SpriteFrameDescription::TextureResType::PLIST:
-            {
-                Size size = _spriteFrame.spriteFrame->getOriginalSize();
-                Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
-            }
-                break;
-            default:
-                break;
-        };
-        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
-        imageView->setFlippedX(_flipped.first);
-        imageView->setFlippedY(_flipped.second);
+        if(spriteFrameDesc.type != SpriteFrameDescription::TextureResType::NONE)
+            imageView->loadTexture(spriteFrameDesc.path, convertTextureResType(spriteFrameDesc.type));
+        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGESCALE, _imageScale)) / CCBXReader::getResolutionScale());
+        const std::pair<bool,bool> &flipped = getNodeParamValue(params, PROPERTY_FLIP, _flipped);
+        imageView->setFlippedX(flipped.first);
+        imageView->setFlippedY(flipped.second);
     }
     else
     {
         ui::ImageView *imageView = static_cast<ui::ImageView*>(node);
         
-        Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
         imageView->ignoreContentAdaptWithSize(false);
-        switch(_spriteFrame.type)
+        const Vec4 &margins = getNodeParamValue(params, PROPERTY_MARGIN, _margins);
+        if(spriteFrameDesc.type != SpriteFrameDescription::TextureResType::NONE)
         {
-            case SpriteFrameDescription::TextureResType::LOCAL:
-            {
-                Size size = _spriteFrame.spriteFrame->getOriginalSize();
-                Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::LOCAL);
-                imageView->setScale9Enabled(_renderingType == RenderingType::SIMPLE ? false : _margins != Vec4::ZERO);
-                imageView->setCapInsets(realMargins);
-            }
-                break;
-            case SpriteFrameDescription::TextureResType::PLIST:
-            {
-                Size size = _spriteFrame.spriteFrame->getOriginalSize();
-                Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-                imageView->loadTexture(_spriteFrame.path, ui::Widget::TextureResType::PLIST);
-                imageView->setScale9Enabled(_renderingType == RenderingType::SIMPLE ? false : _margins != Vec4::ZERO);
-                imageView->setCapInsets(realMargins);
-            }
-                break;
-            default:
-                break;
-        };
-        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
-        imageView->setBlendFunc(_blendFunc);
-        imageView->setFlippedX(_flipped.first);
-        imageView->setFlippedY(_flipped.second);
+            imageView->loadTexture(spriteFrameDesc.path, convertTextureResType(spriteFrameDesc.type));
+            imageView->setCapInsets(calcMargins(margins, spriteFrameDesc.spriteFrame->getOriginalSize()));
+        }
+        imageView->setScale9Enabled(_renderingType == RenderingType::SIMPLE ? false : margins != Vec4::ZERO);
+        imageView->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGESCALE, _imageScale)) / CCBXReader::getResolutionScale());
+        imageView->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
+        const std::pair<bool,bool> &flipped = getNodeParamValue(params, PROPERTY_FLIP, _flipped);
+        imageView->setFlippedX(flipped.first);
+        imageView->setFlippedY(flipped.second);
     }
 }
 
@@ -131,7 +107,7 @@ void ImageViewLoader::onHandlePropTypeBlendFunc(const std::string &propertyName,
 void ImageViewLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value)
 {
     if(propertyName == PROPERTY_SPRITEFRAME) {
-        _spriteFrame = value;
+        _spriteFrameDesc = value;
     } else {
         WidgetLoader::onHandlePropTypeSpriteFrame(propertyName, isExtraProp, value);
     }
@@ -163,7 +139,7 @@ void ImageViewLoader::onHandlePropTypeFloat(const std::string &propertyName, boo
     
 void ImageViewLoader::onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value)
 {
-    if(propertyName == PROPERTY_IMAGE_SCALE) {
+    if(propertyName == PROPERTY_IMAGESCALE) {
         _imageScale = value;
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);

@@ -12,8 +12,8 @@ class CC_DLL ScrollViewLoader : public WidgetLoader {
 public:
     
     static ScrollViewLoader *create();
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const override;
-    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const override;
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const override;
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const override;
     
 CC_CONSTRUCTOR_ACCESS:
     ScrollViewLoader();
@@ -21,7 +21,7 @@ CC_CONSTRUCTOR_ACCESS:
 
 protected:
     virtual void onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value) override;
-    virtual void onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value) override;
+    virtual void onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value) override;
     virtual void onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value) override;
     virtual void onHandlePropTypeFloatScale(const std::string &propertyName, bool isExtraProp, const FloatScaleDescription &value) override;
     virtual void onHandlePropTypeColor3(const std::string &propertyName, bool isExtraProp, const Color3B &value) override;
@@ -35,8 +35,7 @@ private:
     bool _bounce;
     bool _inertial;
     bool _scrollBar;
-    RefPtr<NodeLoader> _file;
-    std::string _filePath;
+    NodeLoaderDescription _loader;
     FloatScaleDescription _scrollBarWidth;
     bool _scrollBarAutoHideEnabled;
     bool _scrollHideIfSizeFit;

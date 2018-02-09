@@ -27,7 +27,7 @@ ScrollViewLoader *ScrollViewLoader::create()
     return ret;
 }
 
-Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     ui::ScrollView *scrollView = ui::ScrollView::create();
     scrollView->setAnchorPoint(Vec2(0.0f, 0.0f));
@@ -35,45 +35,48 @@ Node *ScrollViewLoader::createNodeInstance(const Size &parentSize, float mainSca
     return scrollView;
 }
 
-void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::ScrollView *scrollView = static_cast<ui::ScrollView*>(node);
     ui::ScrollView::Direction direction = ui::ScrollView::Direction::NONE;
-    if(_horizontalScrollEnabled && _verticalScrollEnabled)
+    bool horizontalScrollEnabled = getNodeParamValue(params, PROPERTY_HORIZONTALSCROLLENABLED, _horizontalScrollEnabled);
+    bool verticalScrollEnabled = getNodeParamValue(params, PROPERTY_VERTICALSCROLLENABLED, _verticalScrollEnabled);
+    if(horizontalScrollEnabled && verticalScrollEnabled)
         direction = ui::ScrollView::Direction::BOTH;
     else if(_horizontalScrollEnabled)
         direction = ui::ScrollView::Direction::HORIZONTAL;
     else if(_verticalScrollEnabled)
         direction = ui::ScrollView::Direction::VERTICAL;
-    scrollView->setBounceEnabled(_bounce);
-    scrollView->setClippingEnabled(_clipping);
+    scrollView->setBounceEnabled(getNodeParamValue(params, PROPERTY_BOUNCES, _bounce));
+    scrollView->setClippingEnabled(getNodeParamValue(params, PROPERTY_CLIPCONTENT, _clipping));
     scrollView->setDirection(direction);
-    if(_file)
+    const NodeLoaderDescription &loader = getNodeParamValue(params, PROPERTY_CONTENTNODE, _loader);
+    if(loader.loader)
     {
-        Node *childNode = _file->createNode(scrollView->getContentSize(), mainScale, additionalScale, owner);
+        Node *childNode = loader.loader->createNode(scrollView->getContentSize(), mainScale, additionalScale, owner);
         scrollView->setInnerContainerSize(childNode->getContentSize());
         scrollView->getInnerContainer()->addChild(childNode);
         scrollView->setEnabled(true);
     }
-    scrollView->setInertiaScrollEnabled(_inertial);
-    scrollView->setScrollBarEnabled(_scrollBar);
+    scrollView->setInertiaScrollEnabled(getNodeParamValue(params, PROPERTY_INERTIAL_SCROLL, _inertial));
+    bool scrollBar = getNodeParamValue(params, PROPERTY_SCROLL_BAR_ENABLED, _scrollBar);
+    scrollView->setScrollBarEnabled(scrollBar);
     
     if(_scrollBar)
     {
-        scrollView->setScrollBarWidth(getAbsoluteScale(mainScale, additionalScale, _scrollBarWidth.scale, _scrollBarWidth.type));
-        scrollView->setScrollBarAutoHideEnabled(_scrollBarAutoHideEnabled);
-        scrollView->setScrollBarPositionFromCorner(getAbsolutePosition(mainScale, additionalScale, _scrollBarPositionFromCorner.pos, _scrollBarPositionFromCorner.referenceCorner, _scrollBarPositionFromCorner.xUnits , _scrollBarPositionFromCorner.yUnits, parentSize));
-        scrollView->setScrollBarColor(_scrollBarColor);
-        scrollView->setScrollBarOpacity(_scrollBarOpacity);
-        scrollView->setScrollBarHideIfSizeFit(_scrollHideIfSizeFit);
+        scrollView->setScrollBarWidth(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SCROLL_BAR_WIDTH, _scrollBarWidth)));
+        scrollView->setScrollBarAutoHideEnabled(getNodeParamValue(params, PROPERTY_SCROLL_BAR_AUTOHIDE_ENABLED, _scrollBarAutoHideEnabled));
+        scrollView->setScrollBarPositionFromCorner(getAbsolutePosition(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SCROLL_BAR_POSITION_FROM_CORNER, _scrollBarPositionFromCorner), parentSize));
+        scrollView->setScrollBarColor(getNodeParamValue(params, PROPERTY_SCROLL_BAR_COLOR, _scrollBarColor));
+        scrollView->setScrollBarOpacity(getNodeOpacityParamValue(params, PROPERTY_SCROLL_BAR_OPACITY, _scrollBarOpacity));
+        scrollView->setScrollBarHideIfSizeFit(getNodeParamValue(params, PROPERTY_SCROLL_BAR_HIDE_IF_SIZE_FIT, _scrollHideIfSizeFit));
     }
 }
 
 ScrollViewLoader::ScrollViewLoader()
     :_clipping(true)
     ,_bounce(false)
-    ,_file(nullptr)
     ,_verticalScrollEnabled(true)
     ,_horizontalScrollEnabled(true)
     ,_inertial(true)
@@ -97,11 +100,10 @@ void ScrollViewLoader::onHandlePropTypeSize(const std::string &propertyName, boo
     WidgetLoader::onHandlePropTypeSize(propertyName, isExtraProp, value);
 }
 
-void ScrollViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value)
+void ScrollViewLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value)
 {
     if(propertyName == PROPERTY_CONTENTNODE) {
-        _filePath = value.first;
-        _file = value.second;
+        _loader = value;
     } else {
         WidgetLoader::onHandlePropTypeCCBFile(propertyName, isExtraProp, value);
     }

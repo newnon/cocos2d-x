@@ -170,6 +170,23 @@ Size getAbsoluteSize(float mainScale, float additionalScale, const Size &content
     
     return size;
 }
+    
+Vec2 getAbsolutePosition(float mainScale, float additionalScale, const PositionDescription &position, const Size &containerSize)
+{
+    return getAbsolutePosition(mainScale, additionalScale, position.pos, position.referenceCorner, position.xUnits, position.yUnits, containerSize);
+}
+Size getAbsoluteSize(float mainScale, float additionalScale, const SizeDescription &size, const Size &containerSize)
+{
+    return getAbsoluteSize(mainScale, additionalScale, size.size, size.widthUnits, size.heightUnits, containerSize);
+}
+Vec2 getAbsoluteScale(float mainScale, float additionalScale, const ScaleDescription &scale)
+{
+    return getAbsoluteScale(mainScale, additionalScale, scale.xScale, scale.yScale, scale.type);
+}
+float getAbsoluteScale(float mainScale, float additionalScale, const FloatScaleDescription &scale)
+{
+    return getAbsoluteScale(mainScale, additionalScale, scale.scale, scale.type);
+}
 
 
 #define ASSERT_FAIL_UNEXPECTED_PROPERTY(PROPERTY) log("Unexpected property: '%s'!\n", PROPERTY.c_str()); assert(false)
@@ -187,6 +204,7 @@ static const std::string PROPERTY_COLOR("color");
 static const std::string PROPERTY_CASCADECOLOR("cascadeColorEnabled");
 static const std::string PROPERTY_OPACITY("opacity");
 static const std::string PROPERTY_CASCADEOPACITY("cascadeOpacityEnabled");
+static const std::string PROPERTY_MEMBERVARASSIGNMENT("memberVarAssignment");
 
 NodeLoader *NodeLoader::create()
 {
@@ -195,29 +213,50 @@ NodeLoader *NodeLoader::create()
     return ret;
 }
     
-Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap &customProperties) const
+Node *NodeLoader::createNode(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager,  Node *rootNode, CCBXReaderOwner *parentOwner, const CreateNodeFunction &createNodeFunction, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap *customProperties, const PrefabParams *paramsProperties) const
 {
+    const NodeParams* params = nullptr;
+    
+    if(paramsProperties)
+    {
+        auto it = paramsProperties->find(_uuid);
+        if(it != paramsProperties->end())
+            params = &(it->second);
+    }
+    
     Node *ret;
     if(createNodeFunction)
         ret = createNodeFunction(parentSize, mainScale, additionalScale);
     else
-        ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode, parentOwner, customProperties);
+        ret = createNodeInstance(parentSize, mainScale, additionalScale, owner, rootNode, parentOwner, customProperties ? *customProperties : _customProperties, params ? *params : NodeParams());
     if(!ret)
         return nullptr;
     
-    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, parentOwner, defaultAnimationCallback, nestedPrefab, customProperties))
+    if(!loadNode(ret, parentSize, mainScale, additionalScale, owner, manager, rootNode, parentOwner, defaultAnimationCallback, nestedPrefab, customProperties, paramsProperties))
         return nullptr;
 
     return ret;
 }
     
-bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap &customProperties) const
+bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, CCBAnimationManager *manager, Node *rootNode, CCBXReaderOwner *parentOwner, const std::function<void(cocos2d::Node*, AnimationCompleteType)> &defaultAnimationCallback, bool nestedPrefab, const cocos2d::ValueMap *customProperties, const PrefabParams *paramsProperties) const
 {
     if(!node)
         return false;
-    setProperties(node, parentSize, mainScale, additionalScale, owner, rootNode);
-    setCallbacks(node, owner, rootNode, parentOwner);
-    setVariables(node, owner, rootNode, parentOwner);
+    
+    const NodeParams emptyParams;
+    const NodeParams* params = &emptyParams;
+    
+    if(paramsProperties)
+    {
+        auto it = paramsProperties->find(_uuid);
+        if(it != paramsProperties->end())
+            params = &(it->second);
+    }
+    
+    setProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, params ? *params : NodeParams());
+    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties ? *customProperties : _customProperties, params ? *params : NodeParams());
+    setCallbacks(node, owner, rootNode, parentOwner, params ? *params : NodeParams());
+    setVariables(node, owner, rootNode, parentOwner, params ? *params : NodeParams());
     
     if(!rootNode)
     {
@@ -254,7 +293,7 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
         parentOwner = newParentOwner;
     for(auto child:_children)
     {
-        Node *childNode = child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode, parentOwner);
+        Node *childNode = child->createNode(node->getContentSize(), mainScale, additionalScale, owner, manager, rootNode, parentOwner, nullptr, nullptr, false, nullptr, paramsProperties);
         
         if (childNode)
         {
@@ -286,13 +325,15 @@ bool NodeLoader::loadNode(Node *node, const Size &parentSize, float mainScale, f
     return true;
 }
     
-void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner) const
+void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner, const NodeParams& params) const
 {
-    if(!_memberVarAssignmentName.empty())
+    VarAssignmentDescription memberVarAssignment = getNodeParamValue(params, PROPERTY_MEMBERVARASSIGNMENT, _memberVarAssignment);
+    
+    if(!memberVarAssignment.name.empty())
     {
-        switch (_memberVarAssignmentType) {
+        switch (memberVarAssignment.type) {
             case TargetType::NONE:
-                CCLOG("no assigment type for name:%s", _memberVarAssignmentName.c_str());
+                CCLOG("no assigment type for name:%s", memberVarAssignment.name.c_str());
                 break;
                 
             case TargetType::DOCUMENT_ROOT:
@@ -300,14 +341,14 @@ void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode
                 CCBXReaderOwner *rootOwner = dynamic_cast<CCBXReaderOwner*>(rootNode);
                 if(rootOwner)
                 {
-                    if(!rootOwner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
+                    if(!rootOwner->onAssignCCBMemberVariable(memberVarAssignment.name, node))
                     {
-                        CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
+                        CCLOG("variable not assigned for name:%s", memberVarAssignment.name.c_str());
                     }
                 }
                 else
                 {
-                    CCLOG("assigment document_root but root node is not CCBXReaderOwner for name:%s", _memberVarAssignmentName.c_str());
+                    CCLOG("assigment document_root but root node is not CCBXReaderOwner for name:%s", memberVarAssignment.name.c_str());
                 }
             }
                 break;
@@ -315,62 +356,113 @@ void NodeLoader::setVariables(Node* node, CCBXReaderOwner *owner, Node *rootNode
             case TargetType::OWNER:
                 if(owner)
                 {
-                    if(!owner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
+                    if(!owner->onAssignCCBMemberVariable(memberVarAssignment.name, node))
                     {
-                        CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
+                        CCLOG("variable not assigned for name:%s", memberVarAssignment.name.c_str());
                     }
                 }
                 else
                 {
-                    CCLOG("assigment type owner but no owner for name:%s", _memberVarAssignmentName.c_str());
+                    CCLOG("assigment type owner but no owner for name:%s", memberVarAssignment.name.c_str());
                 }
                 break;
                 
             case TargetType::PARENT_OWNER:
                 if(parentOwner)
                 {
-                    if(!parentOwner->onAssignCCBMemberVariable(_memberVarAssignmentName, node))
+                    if(!parentOwner->onAssignCCBMemberVariable(memberVarAssignment.name, node))
                     {
-                        CCLOG("variable not assigned for name:%s", _memberVarAssignmentName.c_str());
+                        CCLOG("variable not assigned for name:%s", memberVarAssignment.name.c_str());
                     }
                 }
                 else
                 {
-                    CCLOG("assigment type owner but no parent owner for name:%s", _memberVarAssignmentName.c_str());
+                    CCLOG("assigment type owner but no parent owner for name:%s", memberVarAssignment.name.c_str());
                 }
                 break;
         }
     }
     else
     {
-        if(_memberVarAssignmentType != TargetType::NONE)
+        if(memberVarAssignment.type != TargetType::NONE)
         {
-            CCLOG("variable name set but no assigment type for name:%s", _memberVarAssignmentName.c_str());
+            CCLOG("variable name set but no assigment type for name:%s", memberVarAssignment.name.c_str());
         }
     }
 }
 
-void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void NodeLoader::setProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const NodeParams& params) const
 {
-    node->setVisible(_visible);
-    node->setPosition(getAbsolutePosition(mainScale, additionalScale, _position.pos, _position.referenceCorner, _position.xUnits , _position.yUnits, parentSize));
-    cocos2d::Vec2 scales = getAbsoluteScale(mainScale, additionalScale, _scale.xScale, _scale.yScale, _scale.type);
-    if(_anchorPointLoaded)
-        node->setAnchorPoint(_anchorPoint);
-    if(_sizeLoaded)
-        node->setContentSize(getAbsoluteSize(mainScale, additionalScale, _size.size, _size.widthUnits, _size.heightUnits, parentSize));
-    node->setScaleX(scales.x);
-    node->setScaleY(scales.y);
-    node->setRotation(_rotation);
-    node->setTag(_tag);
-    node->setName(_name);
-    node->setCascadeColorEnabled(_cascadeColorEnabled);
-    node->setCascadeOpacityEnabled(_cascadeOpacityEnabled);
-    node->setColor(_color);
-    node->setOpacity(_opacity);
-    node->setSkewX(_skew.x);
-    node->setSkewY(_skew.y);
-    setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    //don't check params if tey are empty
+    if(params.empty())
+    {
+        node->setVisible(_visible);
+        node->setPosition(getAbsolutePosition(mainScale, additionalScale, _position.pos, _position.referenceCorner, _position.xUnits , _position.yUnits, parentSize));
+        cocos2d::Vec2 scales = getAbsoluteScale(mainScale, additionalScale, _scale.xScale, _scale.yScale, _scale.type);
+        if(_anchorPointLoaded)
+            node->setAnchorPoint(_anchorPoint);
+        if(_sizeLoaded)
+            node->setContentSize(getAbsoluteSize(mainScale, additionalScale, _size.size, _size.widthUnits, _size.heightUnits, parentSize));
+        node->setScaleX(scales.x);
+        node->setScaleY(scales.y);
+        node->setRotation(_rotation);
+        node->setTag(_tag);
+        node->setName(_name);
+        node->setCascadeColorEnabled(_cascadeColorEnabled);
+        node->setCascadeOpacityEnabled(_cascadeOpacityEnabled);
+        node->setColor(_color);
+        node->setOpacity(_opacity);
+        node->setSkewX(_skew.x);
+        node->setSkewY(_skew.y);
+    }
+    else
+    {
+        node->setVisible(getNodeParamValue(params, PROPERTY_VISIBLE, _visible));
+        const PositionDescription &position = getNodeParamValue(params, PROPERTY_POSITION, _position);
+        node->setPosition(getAbsolutePosition(mainScale, additionalScale, position.pos, position.referenceCorner, position.xUnits , position.yUnits, parentSize));
+        const ScaleDescription &scale = getNodeParamValue(params, PROPERTY_SCALE, _scale);
+        cocos2d::Vec2 scales = getAbsoluteScale(mainScale, additionalScale, scale.xScale, scale.yScale, scale.type);
+        
+        auto anchorPointIt = params.find(PROPERTY_ANCHORPOINT);
+        if(anchorPointIt != params.end())
+            node->setAnchorPoint(mpark::get<Vec2>(anchorPointIt->second));
+        else
+            if(_anchorPointLoaded) node->setAnchorPoint(_anchorPoint);
+        
+        auto contentSizeIt = params.find(PROPERTY_CONTENTSIZE);
+        if(contentSizeIt != params.end())
+        {
+            const SizeDescription &size = mpark::get<SizeDescription>(contentSizeIt->second);
+            node->setContentSize(getAbsoluteSize(mainScale, additionalScale, size.size, size.widthUnits, size.heightUnits, parentSize));
+        }
+        else
+        {
+            if(_sizeLoaded)
+                node->setContentSize(getAbsoluteSize(mainScale, additionalScale, _size.size, _size.widthUnits, _size.heightUnits, parentSize));
+        }
+        node->setScaleX(scales.x);
+        node->setScaleY(scales.y);
+        node->setRotation(getNodeParamValue(params, PROPERTY_ROTATION, _rotation));
+        node->setTag(getNodeParamValue(params, PROPERTY_TAG, _tag));
+        node->setName(getNodeParamValue(params, PROPERTY_NAME, _name));
+        node->setCascadeColorEnabled(getNodeParamValue(params, PROPERTY_CASCADECOLOR, _cascadeColorEnabled));
+        node->setCascadeOpacityEnabled(getNodeParamValue(params, PROPERTY_CASCADEOPACITY, _cascadeOpacityEnabled));
+        node->setColor(getNodeParamValue(params, PROPERTY_COLOR, _color));
+        
+        auto opacityIt = params.find(PROPERTY_OPACITY);
+        if(opacityIt != params.end())
+        {
+            float opacity = mpark::get<float>(opacityIt->second) * 255.0f;
+            node->setOpacity((opacity<0.0f)?0:((opacity>255.0f)?255:static_cast<GLubyte>(opacity)));
+        }
+        else
+        {
+            node->setOpacity(_opacity);
+        }
+        const Vec2 &skew = getNodeParamValue(params, PROPERTY_SKEW, _skew);
+        node->setSkewX(skew.x);
+        node->setSkewY(skew.y);
+    }
 }
     
 void NodeLoader::setAnimation(Node* node, CCBAnimationManager *manager) const
@@ -383,25 +475,30 @@ void NodeLoader::setSceneScaleType(SceneScaleType sceneScaleType)
     _sceneScaleType = sceneScaleType;
 }
 
-Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *NodeLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     return Node::create();
 }
     
-void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void NodeLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     
 }
     
-void NodeLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner) const
+void NodeLoader::setCallbacks(Node* node, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *parentOwner, const NodeParams& params) const
 {
     
 }
     
 void NodeLoader::setMemberVarAssignment(TargetType type, const std::string &name)
 {
-    _memberVarAssignmentType = type;
-    _memberVarAssignmentName = name;
+    _memberVarAssignment.type = type;
+    _memberVarAssignment.name = name;
+}
+    
+void NodeLoader::setUUID(unsigned value)
+{
+    _uuid = value;
 }
     
 void NodeLoader::setPhysicsLoader(PhysicsBodyLoader *loader)
@@ -441,8 +538,14 @@ void NodeLoader::setNodeSequences(const std::unordered_map<int, Map<std::string,
     _nodeSequences = sequences;
 }
     
+void NodeLoader::setPrefabParams(const PrefabParams &params)
+{
+    _params = params;
+}
+    
 NodeLoader::NodeLoader()
-    :_position(PositionDescription{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
+    :_uuid(0)
+    ,_position(PositionDescription{PositionReferenceCorner::BOTTOMLEFT, PositionUnit::POINTS, PositionUnit::POINTS, Vec2(0, 0)})
     ,_anchorPointLoaded(false)
     ,_anchorPoint(0,0)
     ,_sizeLoaded(false)
@@ -456,7 +559,7 @@ NodeLoader::NodeLoader()
     ,_cascadeColorEnabled(false)
     ,_cascadeOpacityEnabled(false)
     ,_color(Color3B::WHITE)
-    ,_memberVarAssignmentType(TargetType::NONE)
+    ,_memberVarAssignment{TargetType::NONE, ""}
     ,_physicsLoader(nullptr)
     ,_autoPlaySequenceId(-1)
     ,_sceneScaleType(SceneScaleType::PROJECT_DEFAULT)
@@ -590,7 +693,7 @@ void NodeLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, bo
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }
 
-void NodeLoader::onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, Texture2D * value)
+void NodeLoader::onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, const TextureDescription &value)
 {
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }
@@ -661,7 +764,7 @@ void NodeLoader::onHandlePropTypeTouchCallback(const std::string &propertyName, 
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }
 
-void NodeLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value)
+void NodeLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value)
 {
     ASSERT_FAIL_UNEXPECTED_PROPERTY(propertyName);
 }

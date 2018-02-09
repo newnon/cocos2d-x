@@ -22,7 +22,7 @@
 #include "CCBXReaderParams.h"
 
 #define CCBX_MIN_VERSION 7
-#define CCBX_MAX_VERSION 9
+#define CCBX_MAX_VERSION 10
 #define ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(PROPERTYTYPE) cocos2d::log("Unexpected property type: '%d'!\n", PROPERTYTYPE); assert(false)
 
 NS_CC_BEGIN
@@ -222,6 +222,7 @@ private:
         EFFECT_CONTROL,
         SOUND_FILE,
         OFFSETS,
+        VAR_ASSIGNMENT
     };
     
     
@@ -667,6 +668,7 @@ private:
             {
                 ret.type = SpriteFrameDescription::TextureResType::PLIST;
                 ret.path = spriteFile;
+                assert(ret.spriteFrame->getTexture());
             }
             else
             {
@@ -682,17 +684,14 @@ private:
         return ret;
     }
     
-    Texture2D * parsePropTypeTexture() {
-        std::string spriteFile = _rootPath + readCachedString();
+    TextureDescription parsePropTypeTexture() {
+        TextureDescription ret;
+        ret.path = _rootPath + readCachedString();
         
-        if (spriteFile.length() > 0)
-        {
-            return Director::getInstance()->getTextureCache()->addImage(spriteFile.c_str());
-        }
-        else
-        {
-            return nullptr;
-        }
+        if (ret.path.length() > 0)
+            ret.texture = Director::getInstance()->getTextureCache()->addImage(ret.path.c_str());
+        
+        return ret;
     }
     
     Color3B parsePropTypeColor3()
@@ -803,27 +802,28 @@ private:
         return ret;
     }
     
-    std::pair<std::string, NodeLoader*> parsePropTypeCCBFile(const NodeLoaderLibrary &library, NodeLoaderCache &cache)
+    NodeLoaderDescription parsePropTypeCCBFile(const NodeLoaderLibrary &library, NodeLoaderCache &cache)
     {
+        NodeLoaderDescription ret;
         std::string ccbFileName = _rootPath + readCachedString();
         
         if(ccbFileName.empty())
-            return std::pair<std::string, NodeLoader*>(ccbFileName, nullptr);
+            return ret;
         
-        /* Change path extension to .ccbi. */
+        // Change path extension to .ccbi.
         std::string ccbFileWithoutPathExtension = deletePathExtension(ccbFileName.c_str());
-        ccbFileName = ccbFileWithoutPathExtension + ".ccbi";
+        ret.path = ccbFileWithoutPathExtension + ".ccbi";
         
         // Load sub file
-        NodeLoader *ret = cache.get(ccbFileName);
-        if(!ret)
+        ret.loader = cache.get(ret.path);
+        if(!ret.loader)
         {
-            Data data = FileUtils::getInstance()->getDataFromFile(ccbFileName);
-            ret = InternalReader::parse(data, library, cache, _rootPath, _params);
-            if(ret)
-                cache.add(ccbFileName, ret);
+            Data data = FileUtils::getInstance()->getDataFromFile(ret.path);
+            ret.loader = InternalReader::parse(data, library, cache, _rootPath, _params);
+            if(ret.loader)
+                cache.add(ret.path, ret.loader);
         }
-        return std::pair<std::string, NodeLoader*>(ccbFileName, ret);
+        return ret;
     }
     
     std::string parsePropTypeSoundFile()
@@ -841,7 +841,15 @@ private:
         ret.w = readFloat();
         return ret;
     }
-
+    
+    VarAssignmentDescription parseVarAssignmentDescription()
+    {
+        VarAssignmentDescription ret;
+        ret.type = static_cast<TargetType>(readInt(false));
+        if(ret.type != TargetType::NONE)
+            ret.name = readCachedString();
+        return ret;
+    }
     
     void parseProperties(NodeLoader * loader, const NodeLoaderLibrary &library, NodeLoaderCache &cache, const std::set<std::string> &animatedProperties)
     {
@@ -998,8 +1006,8 @@ private:
                 }
                 case PropertyType::TEXTURE:
                 {
-                    Texture2D * ccTexture2D = parsePropTypeTexture();
-                    loader->onHandlePropTypeTexture(propertyName, isExtraProp, ccTexture2D);
+                    TextureDescription texture = parsePropTypeTexture();
+                    loader->onHandlePropTypeTexture(propertyName, isExtraProp, texture);
                     break;
                 }
                 case PropertyType::COLOR3:
@@ -1007,12 +1015,13 @@ private:
                     Color3B color3B = parsePropTypeColor3();
                     if (animatedProperties.find(propertyName) != animatedProperties.end())
                     {
-                        ValueMap colorMap;
-                        colorMap["r"] = color3B.r;
-                        colorMap["g"] = color3B.g;
-                        colorMap["b"] = color3B.b;
-                        colorMap["a"] = 255;
-                        baseValues.emplace(propertyName, Value(colorMap));
+                        ValueVector colorVector;
+                        colorVector.resize(4);
+                        colorVector[0] = color3B.r;
+                        colorVector[1] = color3B.g;
+                        colorVector[2] = color3B.b;
+                        colorVector[3] = 255;
+                        baseValues.emplace(propertyName, Value(colorVector));
                     }
                     loader->onHandlePropTypeColor3(propertyName, isExtraProp, color3B);
                     break;
@@ -1073,8 +1082,8 @@ private:
                 }
                 case PropertyType::CCB_FILE:
                 {
-                    std::pair<std::string, NodeLoader*> loaderPair = parsePropTypeCCBFile(library, cache);
-                    loader->onHandlePropTypeCCBFile(propertyName, isExtraProp, loaderPair);
+                    NodeLoaderDescription loaderDesc = parsePropTypeCCBFile(library, cache);
+                    loader->onHandlePropTypeCCBFile(propertyName, isExtraProp, loaderDesc);
                     break;
                 }
                 case PropertyType::COLOR4:
@@ -1082,12 +1091,13 @@ private:
                     Color4B color4B = parsePropTypeColor4();
                     if (animatedProperties.find(propertyName) != animatedProperties.end())
                     {
-                        ValueMap colorMap;
-                        colorMap["r"] = color4B.r;
-                        colorMap["g"] = color4B.g;
-                        colorMap["b"] = color4B.b;
-                        colorMap["a"] = color4B.a;
-                        baseValues.emplace(propertyName, Value(colorMap));
+                        ValueVector colorVector;
+                        colorVector.resize(4);
+                        colorVector[0] = color4B.r;
+                        colorVector[1] = color4B.g;
+                        colorVector[2] = color4B.b;
+                        colorVector[3] = color4B.a;
+                        baseValues.emplace(propertyName, Value(colorVector));
                     }
                     loader->onHandlePropTypeColor4(propertyName, isExtraProp, color4B);
                     break;
@@ -1111,6 +1121,186 @@ private:
         }
         loader->setBaseValues(baseValues);
         loader->setObjects(objects);
+    }
+    
+    void parseParamsProperties(NodeLoader * loader, const NodeLoaderLibrary &library, NodeLoaderCache &cache)
+    {
+        PrefabParams params;
+        int propertyCount = readInt(false);
+        
+        std::unordered_map<std::string, cocos2d::Value> baseValues;
+        std::unordered_map<std::string, cocos2d::Ref*> objects;
+        
+        for(int i = 0; i < propertyCount; i++) {
+            int uid = readInt(false);
+            PropertyType type = (PropertyType)readInt(false);
+            std::string propertyName = readCachedString();
+            
+            switch(type)
+            {
+                case PropertyType::POSITION:
+                {
+                    params[uid][propertyName] = parsePropTypePosition();
+                    break;
+                }
+                case PropertyType::POINT:
+                {
+                    params[uid][propertyName] = parsePropTypePoint();
+                    break;
+                }
+                case PropertyType::POINT_LOCK:
+                {
+                    params[uid][propertyName] = parsePropTypePoint();
+                }
+                case PropertyType::SIZE:
+                {
+                    params[uid][propertyName] = parsePropTypeSize();
+                    break;
+                }
+                case PropertyType::SCALE_LOCK:
+                {
+                    params[uid][propertyName] = parsePropTypeScale();
+                    break;
+                }
+                case PropertyType::FLOAT:
+                {
+                    params[uid][propertyName] = parsePropTypeFloat();
+                    break;
+                }
+                case PropertyType::FLOAT_XY:
+                {
+                    params[uid][propertyName] = parsePropTypeFloatXY();
+                    break;
+                }
+                    
+                case PropertyType::DEGREES:
+                {
+                    params[uid][propertyName] = parsePropTypeDegrees();
+                    break;
+                }
+                case PropertyType::FLOAT_SCALE:
+                {
+                    params[uid][propertyName] = parsePropTypeFloatScale();
+                    break;
+                }
+                case PropertyType::INTEGER:
+                {
+                    params[uid][propertyName] = parsePropTypeInteger();
+                    break;
+                }
+                case PropertyType::INTEGER_LABELED:
+                {
+                    params[uid][propertyName] = parsePropTypeInteger();
+                    break;
+                }
+                case PropertyType::ANIMATION:
+                {
+                    params[uid][propertyName] = parsePropTypeInteger();
+                    break;
+                }
+                case PropertyType::FLOAT_VAR:
+                {
+                    params[uid][propertyName] = parsePropTypeFloatVar();
+                    break;
+                }
+                case PropertyType::CHECK:
+                {
+                    params[uid][propertyName] = parsePropTypeCheck();
+                    break;
+                }
+                case PropertyType::SPRITEFRAME:
+                {
+                    params[uid][propertyName] = parsePropTypeSpriteFrame();
+                    break;
+                }
+                case PropertyType::TEXTURE:
+                {
+                    params[uid][propertyName] = parsePropTypeTexture();
+                    break;
+                }
+                case PropertyType::COLOR3:
+                {
+                    params[uid][propertyName] = parsePropTypeColor3();
+                    break;
+                }
+                case PropertyType::COLOR4F_VAR:
+                {
+                    params[uid][propertyName] = parsePropTypeColor4FVar();
+                    break;
+                }
+                case PropertyType::FLIP:
+                {
+                    params[uid][propertyName] = parsePropTypeFlip();
+                    break;
+                }
+                case PropertyType::BLEND_MODE:
+                {
+                    params[uid][propertyName] = parsePropTypeBlendFunc();
+                    break;
+                }
+                case PropertyType::FNT_FILE:
+                {
+                    params[uid][propertyName] = parsePropTypeFntFile();
+                    break;
+                }
+                case PropertyType::FONT_TTF:
+                {
+                    params[uid][propertyName] = parsePropTypeFontTTF();
+                    break;
+                }
+                case PropertyType::STRING:
+                {
+                    params[uid][propertyName] = parsePropTypeText();
+                    break;
+                }
+                case PropertyType::TEXT:
+                {
+                    params[uid][propertyName] = parsePropTypeText();
+                    break;
+                }
+                case PropertyType::BLOCK:
+                {
+                    params[uid][propertyName] = parsePropTypeBlock();
+                    break;
+                }
+                case PropertyType::BLOCK_CONTROL:
+                {
+                    params[uid][propertyName] = parsePropTypeBlockControl();
+                    break;
+                }
+                case PropertyType::CCB_FILE:
+                {
+                    params[uid][propertyName] = parsePropTypeCCBFile(library, cache);
+                    break;
+                }
+                case PropertyType::COLOR4:
+                {
+                    params[uid][propertyName] = parsePropTypeColor4();
+                    break;
+                }
+                case PropertyType::SOUND_FILE:
+                {
+                    params[uid][propertyName] = parsePropTypeSoundFile();
+                    break;
+                }
+                case PropertyType::OFFSETS:
+                {
+                    params[uid][propertyName] = parsePropTypeOffsets();
+                    break;
+                }
+                case PropertyType::VAR_ASSIGNMENT:
+                {
+                    params[uid][propertyName] = parseVarAssignmentDescription();
+                    break;
+                }
+                default:
+                    ASSERT_FAIL_UNEXPECTED_PROPERTYTYPE(type);
+                    break;
+            }
+        }
+        loader->setPrefabParams(params);
+        //loader->setBaseValues(baseValues);
+        //loader->setObjects(objects);
     }
     
     CCBKeyframe* readKeyframe(PropertyType type)
@@ -1150,22 +1340,25 @@ private:
         }
         else if (type == PropertyType::COLOR3)
         {
-            ValueMap colorMap;
+            ValueVector colorVector;
             if(this->_version<6)
             {
-                colorMap["r"] = readByte();
-                colorMap["g"] = readByte();
-                colorMap["b"] = readByte();
+                colorVector.resize(4);
+                colorVector[0] = readByte();
+                colorVector[1] = readByte();
+                colorVector[2] = readByte();
+                colorVector[3] = 255;
             }
             else
             {
-                colorMap["r"] = static_cast<unsigned char>(readFloat()*255.0);
-                colorMap["g"] = static_cast<unsigned char>(readFloat()*255.0);
-                colorMap["b"] = static_cast<unsigned char>(readFloat()*255.0);
-                colorMap["a"] = static_cast<unsigned char>(readFloat()*255.0);
+                colorVector.resize(4);
+                colorVector[0] = static_cast<unsigned char>(readFloat()*255.0);
+                colorVector[1] = static_cast<unsigned char>(readFloat()*255.0);
+                colorVector[2] = static_cast<unsigned char>(readFloat()*255.0);
+                colorVector[3] = static_cast<unsigned char>(readFloat()*255.0);
             }
             
-            value = colorMap;
+            value = colorVector;
         }
         else if (type == PropertyType::DEGREES)
         {
@@ -1280,10 +1473,14 @@ private:
         ccNodeLoader->setNodeSequences(seqs);
         
         if(this->_version >= 8)
-        /*int uuid = */readInt(false);
+            ccNodeLoader->setUUID(readInt(false));
         
         // Read properties
         parseProperties(ccNodeLoader, library, cache, animatedProps);
+        
+        // Read params properties
+        if(this->_version >= 10)
+            parseParamsProperties(ccNodeLoader, library, cache);
         
         bool hasPhysicsBody = false;
         

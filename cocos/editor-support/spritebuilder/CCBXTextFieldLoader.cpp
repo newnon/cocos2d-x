@@ -4,7 +4,6 @@
 NS_CC_BEGIN
 namespace spritebuilder {
 
-static const std::string PROPERTY_BLENDFUNC("blendFunc");
 static const std::string PROPERTY_FONTCOLOR("fontColor");
 static const std::string PROPERTY_FONTNAME("fontName");
 static const std::string PROPERTY_FONTSIZE("fontSize");
@@ -14,10 +13,9 @@ static const std::string PROPERTY_STRING("string");
 
 static const std::string PROPERTY_PLACEHOLDERFONTCOLOR("placeholderFontColor");
 static const std::string PROPERTY_PLACEHOLDER("placeholder");
-
-static const std::string PROPERTY_CONTENTSIZE("contentSize");
     
 static const std::string PROPERTY_MAXLENGTH("maxLength");
+static const std::string PROPERTY_PASSWORD("password");
     
     
 TextFieldLoader *TextFieldLoader::create()
@@ -27,31 +25,39 @@ TextFieldLoader *TextFieldLoader::create()
     return ret;
 }
 
-Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *TextFieldLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    ui::TextField *textField = ui::TextField::create(_placeholder, _font, getAbsoluteScale(mainScale, additionalScale, _fontSize.scale, _fontSize.type));
+    ui::TextField *textField = ui::TextField::create(getNodeParamValue(params, PROPERTY_PLACEHOLDER, _placeholder), getNodeParamValue(params, PROPERTY_FONTNAME, _font), getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_FONTSIZE, _fontSize)));
     textField->setAnchorPoint(Vec2(0.0f, 0.0f));
     return textField;
 }
 
-void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void TextFieldLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     ui::TextField *textField = static_cast<ui::TextField*>(node);
-    textField->setString(_label);
-    textField->setTextVerticalAlignment(_textVAlignment);
-    textField->setTextHorizontalAlignment(_textHAlignment);
-    textField->setTextColor(Color4B(_fontColor));
-    textField->setPlaceHolderColor(_placeholderFontColor);
-    if(_maxLength>0)
+    textField->setString(getNodeParamValue(params, PROPERTY_STRING, _label));
+    textField->setPlaceHolder(getNodeParamValue(params, PROPERTY_PLACEHOLDER, _placeholder));
+    textField->setTextHorizontalAlignment(static_cast<TextHAlignment>(getNodeParamValue(params, PROPERTY_HORIZONTALALIGNMENT, _textHAlignment)));
+    textField->setTextVerticalAlignment(static_cast<TextVAlignment>(getNodeParamValue(params, PROPERTY_VERTICALALIGNMENT, _textVAlignment)));
+    textField->setTextColor(getNodeParamValue(params, PROPERTY_FONTCOLOR, _fontColor));
+    textField->setPlaceHolderColor(getNodeParamValue(params, PROPERTY_PLACEHOLDERFONTCOLOR, _placeholderFontColor));
+    int maxLength = getNodeParamValue(params, PROPERTY_MAXLENGTH, _maxLength);
+    if(maxLength>0)
     {
         textField->setMaxLengthEnabled(true);
-        textField->setMaxLength(_maxLength);
+        textField->setMaxLength(maxLength);
     }
-    textField->setPasswordEnabled(_password);
+    textField->setPasswordEnabled(getNodeParamValue(params, PROPERTY_PASSWORD, _password));
 }
 
 TextFieldLoader::TextFieldLoader()
+    :_fontColor(cocos2d::Color4B::WHITE)
+    ,_placeholderFontColor(cocos2d::Color3B::WHITE)
+    ,_textHAlignment((int)TextHAlignment::LEFT)
+    ,_textVAlignment((int)TextVAlignment::TOP)
+    ,_maxLength(0)
+    ,_password(false)
 {
     
 }
@@ -63,7 +69,11 @@ TextFieldLoader::~TextFieldLoader()
     
 void TextFieldLoader::onHandlePropTypeCheck(const std::string &propertyName, bool isExtraProp, bool value)
 {
-    WidgetLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
+    if(propertyName == PROPERTY_PASSWORD) {
+        _password = value;
+    } else {
+        WidgetLoader::onHandlePropTypeCheck(propertyName, isExtraProp, value);
+    }
 }
     
 void TextFieldLoader::onHandlePropTypeColor3(const std::string &propertyName, bool isExtraProp, const Color3B &value)
@@ -71,7 +81,7 @@ void TextFieldLoader::onHandlePropTypeColor3(const std::string &propertyName, bo
     if(propertyName == PROPERTY_PLACEHOLDERFONTCOLOR) {
         _placeholderFontColor = value;
     } else if(propertyName == PROPERTY_FONTCOLOR) {
-        _fontColor = value;
+        _fontColor = Color4B(value);
     } else {
         WidgetLoader::onHandlePropTypeColor3(propertyName, isExtraProp, value);
     }
@@ -79,15 +89,10 @@ void TextFieldLoader::onHandlePropTypeColor3(const std::string &propertyName, bo
     
 void TextFieldLoader::onHandlePropTypeColor4(const std::string &propertyName, bool isExtraProp, const Color4B &value)
 {
-    WidgetLoader::onHandlePropTypeColor4(propertyName, isExtraProp, value);
-}
-
-void TextFieldLoader::onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const BlendFunc &value)
-{
-    if(propertyName == PROPERTY_BLENDFUNC) {
-        //((LayerColor *)pNode)->setBlendFunc(pBlendFunc);
-    }  else {
-        WidgetLoader::onHandlePropTypeBlendFunc(propertyName, isExtraProp, value);
+    if(propertyName == PROPERTY_FONTCOLOR) {
+        _fontColor = value;
+    } else {
+        WidgetLoader::onHandlePropTypeColor4(propertyName, isExtraProp, value);
     }
 }
 
@@ -132,22 +137,12 @@ void TextFieldLoader::onHandlePropTypeInteger(const std::string &propertyName, b
 void TextFieldLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if(propertyName == PROPERTY_HORIZONTALALIGNMENT) {
-        _textHAlignment = static_cast<TextHAlignment>(value);
+        _textHAlignment = value;
     } else if(propertyName == PROPERTY_VERTICALALIGNMENT) {
-        _textVAlignment = static_cast<TextVAlignment>(value);
+        _textVAlignment = value;
     } else {
         WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
-}
-
-void TextFieldLoader::onHandlePropTypeSize(const std::string &propertyName, bool isExtraProp, const SizeDescription &value)
-{
-    WidgetLoader::onHandlePropTypeSize(propertyName, isExtraProp, value);
-}
-
-void TextFieldLoader::onHandlePropTypePosition(const std::string &propertyName, bool isExtraProp, const PositionDescription &value)
-{
-    WidgetLoader::onHandlePropTypePosition(propertyName, isExtraProp, value);
 }
 
 }

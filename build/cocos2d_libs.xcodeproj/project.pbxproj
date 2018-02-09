@@ -6125,6 +6125,7 @@
 		A5BC425C1EB8BF0A00A237E8 /* UITileImageView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UITileImageView.h; sourceTree = "<group>"; };
 		A5C27CB81DD1E4490069F627 /* UIEditBoxImpl-emcc.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = "UIEditBoxImpl-emcc.cpp"; sourceTree = "<group>"; };
 		A5C27CB91DD1E4490069F627 /* UIEditBoxImpl-emcc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIEditBoxImpl-emcc.h"; sourceTree = "<group>"; };
+		A5C49394200D0143005AF5CC /* variant.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; name = variant.hpp; path = ../base/variant.hpp; sourceTree = "<group>"; };
 		A5E1A90C1DF5A0C80070716C /* CCBXNodeLoaderCache.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = CCBXNodeLoaderCache.cpp; path = spritebuilder/CCBXNodeLoaderCache.cpp; sourceTree = "<group>"; };
 		A5E1A90D1DF5A0C80070716C /* CCBXNodeLoaderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = CCBXNodeLoaderCache.h; path = spritebuilder/CCBXNodeLoaderCache.h; sourceTree = "<group>"; };
 		A5FD79BD1D2A63DC00E11101 /* HttpClient-emcc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "HttpClient-emcc.cpp"; sourceTree = "<group>"; };
@@ -6987,6 +6988,7 @@
 		1A5700A2180BC5E60088DEC7 /* base */ = {
 			isa = PBXGroup;
 			children = (
+				A5C49394200D0143005AF5CC /* variant.hpp */,
 				291901411B05895600F8B4BA /* CCNinePatchImageParser.h */,
 				291901421B05895600F8B4BA /* CCNinePatchImageParser.cpp */,
 				505385001B01887A00793096 /* CCProperties.h */,
@@ -9177,8 +9179,6 @@
 		A5B57CAB1A3B916A00CCBDB4 /* spritebuilder */ = {
 			isa = PBXGroup;
 			children = (
-				CEEBF2261E5B2FD6004BADFB /* CCBXScrollBarLoader.cpp */,
-				CEEBF2271E5B2FD6004BADFB /* CCBXScrollBarLoader.h */,
 				A5B57CAC1A3B919900CCBDB4 /* CCBXAnimationManager.cpp */,
 				A5B57CAD1A3B919900CCBDB4 /* CCBXAnimationManager.h */,
 				A5B57CAE1A3B919900CCBDB4 /* CCBXButtonLoader.cpp */,
@@ -9195,8 +9195,6 @@
 				A5B57CB71A3B919900CCBDB4 /* CCBXLabelTTFLoader.h */,
 				A5B57CB81A3B919900CCBDB4 /* CCBXLayoutBoxLoader.cpp */,
 				A5B57CB91A3B919900CCBDB4 /* CCBXLayoutBoxLoader.h */,
-				A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */,
-				A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */,
 				A5B57CBA1A3B919900CCBDB4 /* CCBXLoadingBarLoader.cpp */,
 				A5B57CBB1A3B919900CCBDB4 /* CCBXLoadingBarLoader.h */,
 				A5B57CBC1A3B919900CCBDB4 /* CCBXNodeColorLoader.cpp */,
@@ -9205,10 +9203,10 @@
 				A5B57CBF1A3B919900CCBDB4 /* CCBXNodeGradientLoader.h */,
 				A5B57CC01A3B919900CCBDB4 /* CCBXNodeLoader.cpp */,
 				A5B57CC11A3B919900CCBDB4 /* CCBXNodeLoader.h */,
-				A5B57CC21A3B919900CCBDB4 /* CCBXNodeLoaderLibrary.cpp */,
-				A5B57CC31A3B919900CCBDB4 /* CCBXNodeLoaderLibrary.h */,
 				A5E1A90C1DF5A0C80070716C /* CCBXNodeLoaderCache.cpp */,
 				A5E1A90D1DF5A0C80070716C /* CCBXNodeLoaderCache.h */,
+				A5B57CC21A3B919900CCBDB4 /* CCBXNodeLoaderLibrary.cpp */,
+				A5B57CC31A3B919900CCBDB4 /* CCBXNodeLoaderLibrary.h */,
 				A5B57CC41A3B919900CCBDB4 /* CCBXParser.cpp */,
 				A5B57CC51A3B919900CCBDB4 /* CCBXParser.h */,
 				A5B57CC61A3B919900CCBDB4 /* CCBXParticleSystemQuadLoader.cpp */,
@@ -9219,12 +9217,14 @@
 				A5B57CCD1A3B919900CCBDB4 /* CCBXReaderParams.h */,
 				A5B57CCE1A3B919900CCBDB4 /* CCBXScale9SpriteLoader.cpp */,
 				A5B57CCF1A3B919900CCBDB4 /* CCBXScale9SpriteLoader.h */,
-				A5B57CD01A3B919900CCBDB4 /* CCBXScrollViewLoader.cpp */,
-				A5B57CD11A3B919900CCBDB4 /* CCBXScrollViewLoader.h */,
-				A594709B1A7FD77B002DB024 /* CCScrollListView.cpp */,
-				A594709C1A7FD77B002DB024 /* CCScrollListView.h */,
+				A59003511A4433D500AF12A4 /* CCBXScissorsNodeLoader.cpp */,
+				A59003521A4433D500AF12A4 /* CCBXScissorsNodeLoader.h */,
+				CEEBF2261E5B2FD6004BADFB /* CCBXScrollBarLoader.cpp */,
+				CEEBF2271E5B2FD6004BADFB /* CCBXScrollBarLoader.h */,
 				A59470341A7F9DC2002DB024 /* CCBXScrollListViewLoader.cpp */,
 				A59470351A7F9DC2002DB024 /* CCBXScrollListViewLoader.h */,
+				A5B57CD01A3B919900CCBDB4 /* CCBXScrollViewLoader.cpp */,
+				A5B57CD11A3B919900CCBDB4 /* CCBXScrollViewLoader.h */,
 				A5B57CD21A3B919900CCBDB4 /* CCBXSequence.cpp */,
 				A5B57CD31A3B919900CCBDB4 /* CCBXSequence.h */,
 				A5B57CD41A3B919900CCBDB4 /* CCBXSequenceProperty.cpp */,
@@ -9239,6 +9239,8 @@
 				A5B57CDD1A3B919900CCBDB4 /* CCBXTextLoader.h */,
 				A5B57CDE1A3B919900CCBDB4 /* CCBXWidgetLoader.cpp */,
 				A5B57CDF1A3B919900CCBDB4 /* CCBXWidgetLoader.h */,
+				A594709B1A7FD77B002DB024 /* CCScrollListView.cpp */,
+				A594709C1A7FD77B002DB024 /* CCScrollListView.h */,
 				A5B57CE01A3B919900CCBDB4 /* SpriteBuilder.cpp */,
 				A5B57CE11A3B919900CCBDB4 /* SpriteBuilder.h */,
 			);

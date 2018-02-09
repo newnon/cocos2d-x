@@ -12,8 +12,8 @@ class CC_DLL TextLoader : public WidgetLoader {
 public:
     
     static TextLoader *create();
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const override;
-    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const override;
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const override;
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const override;
     
 CC_CONSTRUCTOR_ACCESS:
     TextLoader();
@@ -39,8 +39,8 @@ private:
     std::string _label;
     std::string _font;
     FloatScaleDescription _fontSize;
-    TextHAlignment _textHAlignment;
-    TextVAlignment _textVAlignment;
+    int _textHAlignment;
+    int _textVAlignment;
     BlendFunc _blendFunc;
     Color4B _fontColor;
     SizeDescription _dimensions;

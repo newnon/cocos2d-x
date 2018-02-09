@@ -2,7 +2,6 @@
 #define _CCBX_CCLOADINGBARLOADER_H_
 
 #include "CCBXWidgetLoader.h"
-#include "ui/UILoadingBar.h"
 
 NS_CC_BEGIN
 
@@ -12,8 +11,8 @@ class CC_DLL LoadingBarLoader : public WidgetLoader {
 public:
     
     static LoadingBarLoader *create();
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const override;
-    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const override;
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const override;
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const override;
     
 CC_CONSTRUCTOR_ACCESS:
     LoadingBarLoader();
@@ -31,7 +30,7 @@ protected:
 private:
     float _percentage;
     SpriteFrameDescription _spriteFrame;
-    ui::LoadingBar::Direction _direction;
+    int _direction;
     std::pair<bool,bool> _flipped;
     Vec4 _margins;
     FloatScaleDescription _imageScale;

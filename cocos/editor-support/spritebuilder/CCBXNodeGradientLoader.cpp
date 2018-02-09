@@ -18,7 +18,7 @@ NodeGradientLoader *NodeGradientLoader::create()
     return ret;
 }
 
-Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     LayerGradient *layer = LayerGradient::create();
     layer->setAnchorPoint(cocos2d::Vec2(0.0f, 0.0f));
@@ -28,15 +28,15 @@ Node *NodeGradientLoader::createNodeInstance(const Size &parentSize, float mainS
     return layer;
 }
 
-void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void NodeGradientLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
-    NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
+    NodeColorLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
     LayerGradient *layerColor = static_cast<LayerGradient*>(node);
-    layerColor->setStartColor(_startColor);
-    layerColor->setEndColor(_endColor);
-    layerColor->setStartOpacity(_startOpacity);
-    layerColor->setEndOpacity(_endOpacity);
-    layerColor->setVector(_vector);
+    layerColor->setStartColor(getNodeParamValue(params, PROPERTY_STARTCOLOR, _startColor));
+    layerColor->setEndColor(getNodeParamValue(params, PROPERTY_ENDCOLOR, _endColor));
+    layerColor->setStartOpacity(getNodeOpacityParamValue(params, PROPERTY_STARTOPACITY, _startOpacity));
+    layerColor->setEndOpacity(getNodeOpacityParamValue(params, PROPERTY_ENDOPACITY, _endOpacity));
+    layerColor->setVector(getNodeParamValue(params, PROPERTY_VECTOR, _vector));
 }
     
 NodeGradientLoader::NodeGradientLoader()

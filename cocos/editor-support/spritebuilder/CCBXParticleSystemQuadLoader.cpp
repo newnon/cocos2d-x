@@ -1,4 +1,5 @@
 #include "CCBXParticleSystemQuadLoader.h"
+#include "2d/CCParticleSystemQuad.h"
 
 NS_CC_BEGIN
 
@@ -83,70 +84,93 @@ ParticleSystemQuadLoader *ParticleSystemQuadLoader::create()
     return ret;
 }
     
-Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *ParticleSystemQuadLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
     BuilderParticleSystemQuad *builderParticleSystemQuad =  BuilderParticleSystemQuad::createWithTotalParticles(_totalParticles);
     builderParticleSystemQuad->setAnchorPoint(Vec2(0.0f, 0.0f));
     return builderParticleSystemQuad;
 }
     
-void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void ParticleSystemQuadLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     BuilderParticleSystemQuad *particle = static_cast<BuilderParticleSystemQuad*>(node);
     
     particle->setPosVar(_posVar * CCBXReader::getResolutionScale());
     
-    particle->setEmissionRate(_emissionRate);
-    particle->setDuration(_duration);
-    particle->setLife(_life.x);
-    particle->setLifeVar(_life.y);
-    particle->setStartSize(_startSize.x * CCBXReader::getResolutionScale());
-    particle->setStartSizeVar(_startSize.y * CCBXReader::getResolutionScale());
-    particle->setEndSize(_endSize.x * CCBXReader::getResolutionScale());
-    particle->setEndSizeVar(_endSize.y * CCBXReader::getResolutionScale());
-    particle->setStartSpin(_startSpin.x);
-    particle->setStartSpinVar(_startSpin.y);
-    particle->setEndSpin(_endSpin.x);
-    particle->setEndSpinVar(_endSpin.y);
-    particle->setAngle(_angle.x);
-    particle->setAngleVar(_angle.y);
-    particle->setTexture(_texture);
-    particle->setBlendFunc(_blendFunc);
-    particle->setEmitterMode(_emitterMode);
-    particle->setPositionType(_positionType);
+    particle->setEmissionRate(getNodeParamValue(params, PROPERTY_EMISSIONRATE, _emissionRate));
+    particle->setDuration(getNodeParamValue(params, PROPERTY_DURATION, _duration));
     
-    switch(_emitterMode)
+    const Vec2 &life = getNodeParamValue(params, PROPERTY_LIFE, _life);
+    const Vec2 &startSize = getNodeParamValue(params, PROPERTY_STARTSIZE, _startSize);
+    const Vec2 &endSize = getNodeParamValue(params, PROPERTY_ENDSIZE, _endSize);
+    const Vec2 &startSpin = getNodeParamValue(params, PROPERTY_STARTSPIN, _startSpin);
+    const Vec2 &endSpin = getNodeParamValue(params, PROPERTY_ENDSPIN, _endSpin);
+    const Vec2 &angle = getNodeParamValue(params, PROPERTY_ANGLE, _angle); 
+    
+    particle->setLife(life.x);
+    particle->setLifeVar(life.y);
+    particle->setStartSize(startSize.x * CCBXReader::getResolutionScale());
+    particle->setStartSizeVar(startSize.y * CCBXReader::getResolutionScale());
+    particle->setEndSize(endSize.x * CCBXReader::getResolutionScale());
+    particle->setEndSizeVar(endSize.y * CCBXReader::getResolutionScale());
+    particle->setStartSpin(startSpin.x);
+    particle->setStartSpinVar(startSpin.y);
+    particle->setEndSpin(endSpin.x);
+    particle->setEndSpinVar(endSpin.y);
+    particle->setAngle(angle.x);
+    particle->setAngleVar(angle.y);
+    particle->setTexture(getNodeParamValue(params, PROPERTY_TEXTURE, _texture).texture.get());
+    particle->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
+    ParticleSystem::Mode emitterMode = static_cast<ParticleSystem::Mode>(getNodeParamValue(params, PROPERTY_EMITERMODE, _emitterMode));
+    particle->setEmitterMode(emitterMode);
+    particle->setPositionType(static_cast<ParticleSystem::PositionType>(getNodeParamValue(params, PROPERTY_POSITIONTYPE, _positionType)));
+    
+    switch(emitterMode)
     {
         case ParticleSystem::Mode::GRAVITY:
-            particle->setTangentialAccel(_tangentialAccel.x * CCBXReader::getResolutionScale());
-            particle->setTangentialAccelVar(_tangentialAccel.y * CCBXReader::getResolutionScale());
-            particle->setRadialAccel(_radialAccel.x * CCBXReader::getResolutionScale());
-            particle->setRadialAccelVar(_radialAccel.y * CCBXReader::getResolutionScale());
-            particle->setGravity(_gravity * CCBXReader::getResolutionScale());
-            particle->setSpeed(_speed.x * CCBXReader::getResolutionScale());
-            particle->setSpeedVar(_speed.y * CCBXReader::getResolutionScale());
+            {
+                const Vec2 &tangentialAccel = getNodeParamValue(params, PROPERTY_TANGENTIALACCEL, _tangentialAccel);
+                const Vec2 &radialAccel = getNodeParamValue(params, PROPERTY_RADIALACCEL, _radialAccel);
+                const Vec2 &gravity = getNodeParamValue(params, PROPERTY_GRAVITY, _gravity);
+                const Vec2 &speed = getNodeParamValue(params, PROPERTY_SPEED, _speed);
+                
+                particle->setTangentialAccel(tangentialAccel.x * CCBXReader::getResolutionScale());
+                particle->setTangentialAccelVar(tangentialAccel.y * CCBXReader::getResolutionScale());
+                particle->setRadialAccel(radialAccel.x * CCBXReader::getResolutionScale());
+                particle->setRadialAccelVar(radialAccel.y * CCBXReader::getResolutionScale());
+                particle->setGravity(gravity * CCBXReader::getResolutionScale());
+                particle->setSpeed(speed.x * CCBXReader::getResolutionScale());
+                particle->setSpeedVar(speed.y * CCBXReader::getResolutionScale());
+            }
             break;
         case ParticleSystem::Mode::RADIUS:
-            particle->setStartRadius(_startRadius.x * CCBXReader::getResolutionScale());
-            particle->setStartRadiusVar(_startRadius.y * CCBXReader::getResolutionScale());
-            particle->setEndRadius(_endRadius.x * CCBXReader::getResolutionScale());
-            particle->setEndRadiusVar(_endRadius.y * CCBXReader::getResolutionScale());
-            particle->setRotatePerSecond(_rotatePerSecond.x);
-            particle->setRotatePerSecondVar(_rotatePerSecond.y);
+            {
+                const Vec2 &startRadius = getNodeParamValue(params, PROPERTY_STARTRADIUS, _startRadius);
+                const Vec2 &endRadius = getNodeParamValue(params, PROPERTY_ENDRADIUS, _endRadius);
+                const Vec2 &rotatePerSecond = getNodeParamValue(params, PROPERTY_ROTATEPERSECOND, _rotatePerSecond);
+                
+                particle->setStartRadius(startRadius.x * CCBXReader::getResolutionScale());
+                particle->setStartRadiusVar(startRadius.y * CCBXReader::getResolutionScale());
+                particle->setEndRadius(endRadius.x * CCBXReader::getResolutionScale());
+                particle->setEndRadiusVar(endRadius.y * CCBXReader::getResolutionScale());
+                particle->setRotatePerSecond(rotatePerSecond.x);
+                particle->setRotatePerSecondVar(rotatePerSecond.y);
+            }
             break;
     }
-    particle->setStartColor(_startColor);
-    particle->setStartColorVar(_startColorVar);
-    particle->setEndColor(_endColor);
-    particle->setEndColorVar(_endColorVar);
-    particle->setResetOnVisible(_resetOnVisible);
+    const std::pair<Color4F, Color4F> &startColor = getNodeParamValue(params, PROPERTY_STARTCOLOR, _startColor);
+    const std::pair<Color4F, Color4F> &endColor = getNodeParamValue(params, PROPERTY_ENDCOLOR, _endColor);
+    particle->setStartColor(startColor.first);
+    particle->setStartColorVar(startColor.second);
+    particle->setEndColor(endColor.first);
+    particle->setEndColorVar(endColor.second);
+    particle->setResetOnVisible(getNodeParamValue(params, PROPERTY_RESETONVISIBLE, _resetOnVisible));
 }
  
 ParticleSystemQuadLoader::ParticleSystemQuadLoader()
-    :_texture(nullptr)
-    ,_blendFunc({GL_SRC_ALPHA, GL_ONE})
-    ,_emitterMode(ParticleSystem::Mode::GRAVITY)
-    ,_positionType(ParticleSystem::PositionType::FREE)
+    :_blendFunc({GL_SRC_ALPHA, GL_ONE})
+    ,_emitterMode((int)ParticleSystem::Mode::GRAVITY)
+    ,_positionType((int)ParticleSystem::PositionType::FREE)
     ,_posVar(40.0f, 20.0f)
     ,_emissionRate(80.0f)
     ,_duration(-1)
@@ -156,10 +180,8 @@ ParticleSystemQuadLoader::ParticleSystemQuadLoader()
     ,_startSize(54.0f, 10.0f)
     ,_angle(90.0f, 10.0f)
     ,_speed(60.0f, 20.0f)
-    ,_startColor(Color4F::BLACK)
-    ,_startColorVar(0, 0, 0, 0)
-    ,_endColor(Color4F::BLACK)
-    ,_endColorVar(0, 0, 0, 0)
+    ,_startColor({Color4F::BLACK, {0, 0, 0, 0}})
+    ,_endColor({Color4F::BLACK, {0, 0, 0, 0}})
 {
     
 }
@@ -172,9 +194,9 @@ ParticleSystemQuadLoader::~ParticleSystemQuadLoader()
 void ParticleSystemQuadLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
 {
     if(propertyName == PROPERTY_EMITERMODE) {
-        _emitterMode = static_cast<ParticleSystem::Mode>(value);
+        _emitterMode = value;
     } else if (propertyName == PROPERTY_POSITIONTYPE) {
-        _positionType = static_cast<ParticleSystem::PositionType>(value);
+        _positionType = value;
     } else {
         NodeLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
@@ -247,17 +269,15 @@ void ParticleSystemQuadLoader::onHandlePropTypeFloatVar(const std::string &prope
 void ParticleSystemQuadLoader::onHandlePropTypeColor4FVar(const std::string &propertyName, bool isExtraProp, const std::pair<Color4F, Color4F> &value)
 {
     if(propertyName == PROPERTY_STARTCOLOR) {
-        _startColor = value.first;
-        _startColorVar = value.second;
+        _startColor = value;
     } else if(propertyName == PROPERTY_ENDCOLOR) {
-        _endColor = value.first;
-        _endColorVar = value.second;
+        _endColor = value;
     } else {
         NodeLoader::onHandlePropTypeColor4FVar(propertyName, isExtraProp, value);
     }
 }
 
-void ParticleSystemQuadLoader::onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const cocos2d::BlendFunc &pBlendFunc)
+void ParticleSystemQuadLoader::onHandlePropTypeBlendFunc(const std::string &propertyName, bool isExtraProp, const BlendFunc &pBlendFunc)
 {
     if(propertyName == PROPERTY_BLENDFUNC) {
         _blendFunc = pBlendFunc;
@@ -266,12 +286,12 @@ void ParticleSystemQuadLoader::onHandlePropTypeBlendFunc(const std::string &prop
     }
 }
 
-void ParticleSystemQuadLoader::onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, cocos2d::Texture2D * pTexture2D)
+void ParticleSystemQuadLoader::onHandlePropTypeTexture(const std::string &propertyName, bool isExtraProp, const TextureDescription &texture)
 {
     if(propertyName == PROPERTY_TEXTURE) {
-        _texture = pTexture2D;
+        _texture = texture;
     } else {
-        NodeLoader::onHandlePropTypeTexture(propertyName, isExtraProp, pTexture2D);
+        NodeLoader::onHandlePropTypeTexture(propertyName, isExtraProp, texture);
     }
 }
     

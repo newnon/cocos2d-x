@@ -10,19 +10,18 @@ class CC_DLL ImageViewLoader : public WidgetLoader {
 public:
     
     static ImageViewLoader *create();
-    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const override;
-    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const override;
+    virtual Node *createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const override;
+    virtual void setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const override;
     
 CC_CONSTRUCTOR_ACCESS:
     enum class RenderingType
     {
-        AUTO = -1,
-        SIMPLE,
+        SIMPLE = 0,
         SLICE,
         TILED
     };
     
-    ImageViewLoader(RenderingType renderingType = RenderingType::AUTO);
+    ImageViewLoader(RenderingType renderingType = RenderingType::SLICE);
     ~ImageViewLoader();
 
 protected:
@@ -38,7 +37,7 @@ private:
     
     SizeDescription _size;
     FloatScaleDescription _imageScale;
-    SpriteFrameDescription _spriteFrame;
+    SpriteFrameDescription _spriteFrameDesc;
     Vec4 _margins;
     BlendFunc _blendFunc;
     std::pair<bool,bool> _flipped;

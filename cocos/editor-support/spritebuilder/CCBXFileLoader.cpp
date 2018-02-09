@@ -14,18 +14,38 @@ FileLoader *FileLoader::create()
     return ret;
 }
 
-Node *FileLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *FileLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    if(!_file)
+    if(!_loader.loader)
         return nullptr;
-    
-    Node *ret = _file->createNode(parentSize, mainScale, additionalScale, owner, nullptr, nullptr, rootOwner, nullptr, nullptr, true, getCustomProperties());
+    const NodeLoaderDescription &loader = getNodeParamValue(params, PROPERTY_CCBFILE, _loader);
+    Node *ret = loader.loader->createNode(parentSize, mainScale, additionalScale, owner, nullptr, nullptr, rootOwner, nullptr, nullptr, true, &customProperties, &getPrefabParams());
     return ret;
+}
+    
+void FileLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
+{
+    CCBAnimationManager *manager = CCBAnimationManager::fromNode(node);
+    int sequenceId = getNodeParamValue(params, PROPERTY_ANIMATION, _sequenceId);
+    if(manager)
+    {
+        switch (sequenceId) {
+            case -2:
+                manager->runAnimationsForSequenceIdTweenDuration(manager->getAutoPlaySequenceId(), 0.0f);
+                break;
+                
+            case -1:
+                break;
+                
+            default:
+                manager->runAnimationsForSequenceIdTweenDuration(sequenceId, 0.0f);
+                break;
+        }
+    }
 }
 
 FileLoader::FileLoader()
-    :_file(nullptr)
-    ,_sequenceId(-2)
+    :_sequenceId(-2)
 {
     
 }
@@ -34,11 +54,10 @@ FileLoader::~FileLoader()
 {
 }
     
-void FileLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const std::pair<std::string, NodeLoader*> &value)
+void FileLoader::onHandlePropTypeCCBFile(const std::string &propertyName, bool isExtraProp, const NodeLoaderDescription &value)
 {
     if(propertyName == PROPERTY_CCBFILE) {
-        _filePath = value.first;
-        _file = value.second;
+        _loader = value;
     } else {
         NodeLoader::onHandlePropTypeCCBFile(propertyName, isExtraProp, value);
     }
@@ -63,23 +82,7 @@ public:
     
 void FileLoader::onNodeLoaded(Node *node) const
 {
-    CCBAnimationManager *manager = CCBAnimationManager::fromNode(node);
-    if(manager)
-    {
-        switch (_sequenceId) {
-            case -2:
-                manager->runAnimationsForSequenceIdTweenDuration(manager->getAutoPlaySequenceId(), 0.0f);
-                break;
-                
-            case -1:
-                break;
-                
-            default:
-                manager->runAnimationsForSequenceIdTweenDuration(_sequenceId, 0.0f);
-                break;
-        }
-    }
-    static_cast<FileLoaderHackAcces*>(_file.get())->callOnNodeLoaded(node);
+    static_cast<FileLoaderHackAcces*>(_loader.loader.get())->callOnNodeLoaded(node);
     NodeLoader::onNodeLoaded(node);
 }
 

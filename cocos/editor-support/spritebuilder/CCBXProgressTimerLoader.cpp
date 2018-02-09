@@ -21,21 +21,22 @@ ProgressTimerLoader *ProgressTimerLoader::create()
     return ret;
 }
 
-Node *ProgressTimerLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *ProgressTimerLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    ProgressTimer *progressTimer = ProgressTimer::create(_spriteFrame.spriteFrame?Sprite::createWithSpriteFrame(_spriteFrame.spriteFrame):Sprite::create());
+    const SpriteFrameDescription &spriteFrame = getNodeParamValue(params, PROPERTY_SPRITEFRAME, _spriteFrame);
+    ProgressTimer *progressTimer = ProgressTimer::create(spriteFrame.spriteFrame ? Sprite::createWithSpriteFrame(spriteFrame.spriteFrame) : Sprite::create());
     progressTimer->setAnchorPoint(Vec2(0.0f, 0.0f));
     return progressTimer;
 }
 
-void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+void ProgressTimerLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
 {
     ProgressTimer *progressTimer = static_cast<ProgressTimer*>(node);
-    progressTimer->setBarChangeRate(_barChangeRate);
-    progressTimer->setMidpoint(_midpoint);
-    progressTimer->setType(static_cast<ProgressTimer::Type>(_type));
-    progressTimer->setPercentage(_percentage);
-    progressTimer->getSprite()->setBlendFunc(_blendFunc);
+    progressTimer->setBarChangeRate(getNodeParamValue(params, PROPERTY_BARCHANGERATE, _barChangeRate));
+    progressTimer->setMidpoint(getNodeParamValue(params, PROPERTY_MIDPOINT, _midpoint));
+    progressTimer->setType(static_cast<ProgressTimer::Type>(getNodeParamValue(params, PROPERTY_TYPE, _type)));
+    progressTimer->setPercentage(getNodeParamValue(params, PROPERTY_PERCENTAGE, _percentage));
+    progressTimer->getSprite()->setBlendFunc(getNodeParamValue(params, PROPERTY_BLENDFUNC, _blendFunc));
 }
     
 ProgressTimerLoader:: ProgressTimerLoader()

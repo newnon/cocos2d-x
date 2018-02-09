@@ -409,7 +409,7 @@ public:
     
     State getState() const { return _state; }
     
-    void setPaddingPadding(float left, float top, float right, float bottom);
+    void setPadding(float left, float top, float right, float bottom);
     
     void setLeftPadding(float padding);
     float getLeftPadding();

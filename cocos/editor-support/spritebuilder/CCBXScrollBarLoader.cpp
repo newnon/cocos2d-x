@@ -8,7 +8,6 @@ static const std::string PROPERTY_SPACING("spacing");
 static const std::string PROPERTY_DIRECTION("direction");
 static const std::string PROPERTY_BACKGROUND_OLD("backgroundSpriteFrame|Normal");
 static const std::string PROPERTY_BACKGROUND("backgroundSpriteFrame");
-//static const std::string PROPERTY_PROGRESS("progressSpriteFrame");
 static const std::string PROPERTY_HANDLE_NORMAL("handleSpriteFrame|Normal");
 static const std::string PROPERTY_HANDLE_HIGHLIGHTED("handleSpriteFrame|Highlighted");
 static const std::string PROPERTY_HANDLE_DISABLED("handleSpriteFrame|Disabled");
@@ -35,152 +34,66 @@ ScrollBarLoader *ScrollBarLoader::create()
     ret->autorelease();
     return ret;
 }
-Node *ScrollBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const cocos2d::ValueMap &customProperties) const
+Node *ScrollBarLoader::createNodeInstance(const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner, const ValueMap &customProperties, const NodeParams& params) const
 {
-    ui::ScrollBar *slider = ui::ScrollBar::create();
-    slider->setAnchorPoint(Vec2(0.0f, 0.0f));
-    return slider;
-
+    ui::ScrollBar *scrollBar = ui::ScrollBar::create();
+    scrollBar->setAnchorPoint(Vec2(0.0f, 0.0f));
+    return scrollBar;
 }
-void ScrollBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, CCBXReaderOwner *rootOwner) const
+    
+inline ui::Widget::TextureResType convertTextureResType(SpriteFrameDescription::TextureResType value)
 {
-    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, rootOwner);
-    ui::ScrollBar *slider = static_cast<ui::ScrollBar*>(node);
-    slider->setBarType(_isVertical?cocos2d::ui::ScrollBar::BarType::kVertical:cocos2d::ui::ScrollBar::BarType::kHorizontal);
-    Rect margin(_margins.x,_margins.y,1.0-_margins.z-_margins.x,1.0-_margins.w-_margins.y);
-    Rect handleMargin(_handleMargins.x, _handleMargins.y, 1.0-_handleMargins.z-_handleMargins.x, 1.0-_handleMargins.w-_handleMargins.y);
+    return static_cast<ui::Widget::TextureResType>(static_cast<int>(value) - 1);
+}
     
-    switch(_background.type)
-    {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            Size size = _background.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            slider->loadBarTexture(_background.path, ui::Widget::TextureResType::LOCAL);
-            slider->setCapInsetsBarRenderer(realMargins);
-            slider->setScale9Enabled(!realMargins.size.equals(size) || realMargins.origin != Vec2::ZERO);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            Size size = _background.spriteFrame->getOriginalSize();
-            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-            slider->loadBarTexture(_background.path, ui::Widget::TextureResType::PLIST);
-            slider->setCapInsetsBarRenderer(realMargins);
-            slider->setScale9Enabled(!realMargins.size.equals(size) || realMargins.origin != Vec2::ZERO);
-        }
-            break;
-        default:
-            break;
-    };
-//    switch(_progress.type)
-//    {
-//        case SpriteFrameDescription::TextureResType::LOCAL:
-//        {
-//            Size size = _progress.spriteFrame->getOriginalSize();
-//            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-//            //slider->loadProgressBarTexture(_progress.path, ui::Widget::TextureResType::LOCAL);
-//            //slider->setCapInsetProgressBarRenderer(realMargins);
-//            slider->setScale9Enabled(!realMargins.size.equals(size) || realMargins.origin != Vec2::ZERO);
-//        }
-//            break;
-//        case SpriteFrameDescription::TextureResType::PLIST:
-//        {
-//            Size size = _progress.spriteFrame->getOriginalSize();
-//            Rect realMargins(margin.origin.x*size.width,margin.origin.y*size.height,margin.size.width*size.width,margin.size.height*size.height);
-//            //slider->loadProgressBarTexture(_progress.path, ui::Widget::TextureResType::PLIST);
-//            //slider->setCapInsetProgressBarRenderer(realMargins);
-//            slider->setScale9Enabled(!realMargins.size.equals(size) || realMargins.origin != Vec2::ZERO);
-//        }
-//            break;
-//        default:
-//            break;
-//    };
+void ScrollBarLoader::setSpecialProperties(Node* node, const Size &parentSize, float mainScale, float additionalScale, CCBXReaderOwner *owner, Node *rootNode, const cocos2d::ValueMap &customProperties, const NodeParams& params) const
+{
+    WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale, owner, rootNode, customProperties, params);
+    ui::ScrollBar *scrollBar = static_cast<ui::ScrollBar*>(node);
+    scrollBar->setBarType(getNodeParamValue(params, PROPERTY_IS_VERTICAL, _isVertical) ? cocos2d::ui::ScrollBar::BarType::kVertical : cocos2d::ui::ScrollBar::BarType::kHorizontal);
+    const Vec4 &margins = getNodeParamValue(params, PROPERTY_MARGIN, _margins);
+    const Vec4 &handleMargins = getNodeParamValue(params, PROPERTY_HANDLE_MARGIN, _handleMargins);
     
-    Rect realMargins;
-    switch(_handleNormal.type)
+    const SpriteFrameDescription &backgroundSpriteFrame = getNodeParamValue(params, PROPERTY_BACKGROUND, _backgroundSpriteFrame);
+    const SpriteFrameDescription &handleNormalSpriteFrame = getNodeParamValue(params, PROPERTY_HANDLE_NORMAL, _handleNormalSpriteFrame);
+    const SpriteFrameDescription &handleDisabledSpriteFrame = getNodeParamValue(params, PROPERTY_HANDLE_DISABLED, _handleDisabledSpriteFrame);
+    const SpriteFrameDescription &handleHiglihtedSpriteFrame = getNodeParamValue(params, PROPERTY_HANDLE_HIGHLIGHTED, _handleHiglihtedSpriteFrame);
+    const SpriteFrameDescription &handleMouseOverSpriteFrame = getNodeParamValue(params, PROPERTY_HANDLE_MOUSEOVER, _handleMouseOverSpriteFrame);
+    
+    if(backgroundSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            //slider->loadSlidBallTextureNormal(_handleNormal.path, ui::Widget::TextureResType::LOCAL);
-            
-            Size size = _handleNormal.spriteFrame->getOriginalSize();
-            realMargins = {handleMargin.origin.x*size.width,handleMargin.origin.y*size.height,handleMargin.size.width*size.width,handleMargin.size.height*size.height};
-            slider->loadSlidBallTextureNormal(_handleNormal.path, ui::Widget::TextureResType::LOCAL);
-            //slider->setCapInsetsForBallRendereds(realMargins);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            //slider->loadSlidBallTextureNormal(_handleNormal.path, ui::Widget::TextureResType::PLIST);
-            
-            Size size = _handleNormal.spriteFrame->getOriginalSize();
-            realMargins = {handleMargin.origin.x*size.width,handleMargin.origin.y*size.height,handleMargin.size.width*size.width,handleMargin.size.height*size.height};
-            slider->loadSlidBallTextureNormal(_handleNormal.path, ui::Widget::TextureResType::PLIST);
-            //slider->setCapInsetsForBallRendereds(realMargins);
-        }
-            break;
-        default:
-            break;
-    };
-    switch(_handleDisabled.type)
+        scrollBar->loadBarTexture(backgroundSpriteFrame.path, convertTextureResType(backgroundSpriteFrame.type));
+        scrollBar->setCapInsetsBarRenderer(calcMargins(margins, backgroundSpriteFrame.spriteFrame->getOriginalSize()));
+        scrollBar->setScale9Enabled(margins != Vec4::ZERO);
+    }
+    
+    Rect realHandleMargins;
+    
+    if(handleNormalSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
     {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            slider->loadSlidBallTextureDisabled(_handleDisabled.path, ui::Widget::TextureResType::LOCAL);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            slider->loadSlidBallTextureDisabled(_handleDisabled.path, ui::Widget::TextureResType::PLIST);
-        }
-            break;
-        default:
-            break;
-    };
-    switch(_handleHiglihted.type)
-    {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            slider->loadSlidBallTexturePressed(_handleHiglihted.path, ui::Widget::TextureResType::LOCAL);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            slider->loadSlidBallTexturePressed(_handleHiglihted.path, ui::Widget::TextureResType::PLIST);
-        }
-            break;
-        default:
-            break;
-    };
-    switch(_handleMouseOver.type)
-    {
-        case SpriteFrameDescription::TextureResType::LOCAL:
-        {
-            slider->loadSlidBallTextureMouseOver(_handleMouseOver.path, ui::Widget::TextureResType::LOCAL);
-        }
-            break;
-        case SpriteFrameDescription::TextureResType::PLIST:
-        {
-            slider->loadSlidBallTextureMouseOver(_handleMouseOver.path, ui::Widget::TextureResType::PLIST);
-        }
-            break;
-        default:
-            break;
-    };
-    slider->setCapInsetsForBallRendereds(realMargins);
-    slider->setPercent(_percent);
-    slider->setZoomScale(_zoomScale - 1.0f);
-    slider->setImageScale(getAbsoluteScale(mainScale, additionalScale, _imageScale.scale, _imageScale.type) / CCBXReader::getResolutionScale());
-    //WidgetLoader::setSpecialProperties(node, parentSize, mainScale, additionalScale);
-    //ui::ScrollBar *slider = dynamic_cast<ui::ScrollBar*>(node);
+        scrollBar->loadSlidBallTextureNormal(handleNormalSpriteFrame.path, convertTextureResType(handleNormalSpriteFrame.type));
+        realHandleMargins = calcMargins(handleMargins, handleNormalSpriteFrame.spriteFrame->getOriginalSize());
+    }
+    
+    if(handleDisabledSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
+        scrollBar->loadSlidBallTextureDisabled(handleDisabledSpriteFrame.path, convertTextureResType(handleDisabledSpriteFrame.type));
+    
+    if(handleHiglihtedSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
+        scrollBar->loadSlidBallTexturePressed(handleHiglihtedSpriteFrame.path, convertTextureResType(handleHiglihtedSpriteFrame.type));
+    
+    if(handleMouseOverSpriteFrame.type != SpriteFrameDescription::TextureResType::NONE)
+        scrollBar->loadSlidBallTextureMouseOver(handleMouseOverSpriteFrame.path, convertTextureResType(handleMouseOverSpriteFrame.type));
+
+    scrollBar->setCapInsetsForBallRendereds(realHandleMargins);
+    scrollBar->setPercent(getNodeParamValue(params, PROPERTY_SLIDER_VALUE, _percent));
+    scrollBar->setZoomScale(getNodeParamValue(params, PROPERTY_ZOOM_SCALE, _zoomScale) - 1.0f);
+    scrollBar->setImageScale(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_IMAGE_SCALE, _imageScale)) / CCBXReader::getResolutionScale());
 }
 
 ScrollBarLoader::ScrollBarLoader()
     :_zoomScale(1.0f)
-    ,_maxPercent(100)
     ,_percent(0.f)
-    ,_imageScale{0,1.f}
+    ,_imageScale{0, 1.f}
     ,_isVertical(false)
 {
     
@@ -194,17 +107,15 @@ ScrollBarLoader::~ScrollBarLoader()
 void ScrollBarLoader::onHandlePropTypeSpriteFrame(const std::string &propertyName, bool isExtraProp, const SpriteFrameDescription &value)
 {
     if(propertyName == PROPERTY_BACKGROUND || propertyName == PROPERTY_BACKGROUND_OLD) {
-        _background = value;
-    } /*else if(propertyName == PROPERTY_PROGRESS) {
-        _progress = value;
-    }*/ else if(propertyName == PROPERTY_HANDLE_NORMAL) {
-        _handleNormal = value;
+        _backgroundSpriteFrame = value;
+    } else if(propertyName == PROPERTY_HANDLE_NORMAL) {
+        _handleNormalSpriteFrame= value;
     } else if(propertyName == PROPERTY_HANDLE_HIGHLIGHTED) {
-        _handleHiglihted = value;
+        _handleHiglihtedSpriteFrame = value;
     } else if(propertyName == PROPERTY_HANDLE_DISABLED) {
-        _handleDisabled = value;
+        _handleDisabledSpriteFrame = value;
     } else if(propertyName == PROPERTY_HANDLE_MOUSEOVER) {
-        _handleMouseOver = value;
+        _handleMouseOverSpriteFrame = value;
     } else {
         WidgetLoader::onHandlePropTypeSpriteFrame(propertyName, isExtraProp, value);
     }
@@ -257,27 +168,6 @@ void ScrollBarLoader::onHandlePropTypeFloatScale(const std::string &propertyName
         _imageScale = value;
     } else {
         WidgetLoader::onHandlePropTypeFloatScale(propertyName, isExtraProp, value);
-    }
-}
-    
-void ScrollBarLoader::onHandlePropTypeInteger(const std::string &propertyName, bool isExtraProp, int value)
-{
-    if(propertyName == PROPERTY_MAX_PERCENT) {
-        _maxPercent = value;
-    } //else if(propertyName == PROPERTY_SLIDER_VALUE) {
-      //  _percent = value;
-    //}
-    else{
-        WidgetLoader::onHandlePropTypeInteger(propertyName, isExtraProp, value);
-    }
-}
-    
-void ScrollBarLoader::onHandlePropTypeIntegerLabeled(const std::string &propertyName, bool isExtraProp, int value)
-{
-    if(propertyName == PROPERTY_DIRECTION) {
-        //((LayoutBox *)pNode)->setDirection(static_cast<cocos2d::LayoutBoxDirection>(pIntegerLabeled));
-    } else {
-        WidgetLoader::onHandlePropTypeIntegerLabeled(propertyName, isExtraProp, value);
     }
 }
 

@@ -405,10 +405,10 @@ ActionInterval* CCBAnimationManager::getAction(CCBKeyframe *pKeyframe0, CCBKeyfr
     }
     else if (propName == "color")
     {
-        auto c = pKeyframe1->getValue().asValueMap();
-        unsigned char r = c["r"].asByte();
-        unsigned char g = c["g"].asByte();
-        unsigned char b = c["b"].asByte();
+        auto c = pKeyframe1->getValue().asValueVector();
+        unsigned char r = c[0].asByte();
+        unsigned char g = c[1].asByte();
+        unsigned char b = c[2].asByte();
         return TintTo::create(duration, r, g, b);
     }
     else if (propName == "visible")
@@ -580,10 +580,10 @@ void CCBAnimationManager::setAnimatedProperty(const std::string& propName, Node 
             }
             else if (propName == "color")
             {
-                auto c = value.asValueMap();
-                unsigned char r = c["r"].asByte();
-                unsigned char g = c["g"].asByte();
-                unsigned char b = c["b"].asByte();
+                auto c = value.asValueVector();
+                unsigned char r = c[0].asByte();
+                unsigned char g = c[1].asByte();
+                unsigned char b = c[2].asByte();
                 pNode->setColor(Color3B(r, g, b));
             }
             else if (propName == "visible")
