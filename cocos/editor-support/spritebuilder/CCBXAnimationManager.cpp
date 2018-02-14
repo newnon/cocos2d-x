@@ -251,7 +251,7 @@ const Size& CCBAnimationManager::getContainerSize(Node *pNode)
     }
 }
 
-void CCBAnimationManager::addNode(Node *pNode, const std::unordered_map<int, Map<std::string, CCBSequenceProperty*>>& seq)
+void CCBAnimationManager::addNode(Node *pNode, const std::map<int, Map<std::string, CCBSequenceProperty*>>& seq)
 {
     if(!seq.empty())
         _nodeSequences[pNode] = seq;

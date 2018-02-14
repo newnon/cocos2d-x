@@ -162,7 +162,7 @@ class CCBSequence;
     
 using ParamValue = mpark::variant<PositionDescription, Vec2, SizeDescription, ScaleDescription, float, FloatScaleDescription, int, bool, SpriteFrameDescription, TextureDescription, Color3B, std::pair<Color4F, Color4F>, std::pair<bool,bool>, Color4B, BlendFunc, std::string, CallbackDescription, NodeLoaderDescription, Vec4, VarAssignmentDescription>;
     
-using NodeParams = std::unordered_map<std::string, ParamValue>;
+using NodeParams = std::map<std::string, ParamValue>;
 using PrefabParams = std::map<unsigned, NodeParams>;
 
 class CC_DLL NodeLoader : public Ref
@@ -241,9 +241,9 @@ private:
     void addChild(NodeLoader *loader);
     void setSequences(const Vector<CCBSequence*> &sequences);
     void setAutoPlaySequenceId(int id);
-    void setBaseValues(const std::unordered_map<std::string, cocos2d::Value> &values);
-    void setObjects(const std::unordered_map<std::string, cocos2d::Ref*> &objects);
-    void setNodeSequences(const std::unordered_map<int, Map<std::string, CCBSequenceProperty*>> &sequences);
+    void setBaseValues(const std::map<std::string, cocos2d::Value> &values);
+    void setObjects(const std::map<std::string, cocos2d::Ref*> &objects);
+    void setNodeSequences(const std::map<int, Map<std::string, CCBSequenceProperty*>> &sequences);
     void setPrefabParams(const PrefabParams &params);
     
     unsigned _uuid;
@@ -268,9 +268,9 @@ private:
     Vector<CCBSequence*> _sequences;
     PrefabParams _params;
     int _autoPlaySequenceId;
-    std::unordered_map<int, Map<std::string, CCBSequenceProperty*>> _nodeSequences;
-    std::unordered_map<std::string, cocos2d::Value> _baseValues;
-    std::unordered_map<std::string, cocos2d::Ref*> _objects;
+    std::map<int, Map<std::string, CCBSequenceProperty*>> _nodeSequences;
+    std::map<std::string, cocos2d::Value> _baseValues;
+    std::map<std::string, cocos2d::Ref*> _objects;
     cocos2d::ValueMap _customProperties;
     SceneScaleType _sceneScaleType;
 };

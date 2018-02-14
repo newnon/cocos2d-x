@@ -523,17 +523,17 @@ void NodeLoader::setAutoPlaySequenceId(int id)
     _autoPlaySequenceId = id;
 }
     
-void NodeLoader::setBaseValues(const std::unordered_map<std::string, cocos2d::Value> &values)
+void NodeLoader::setBaseValues(const std::map<std::string, cocos2d::Value> &values)
 {
     _baseValues = values;
 }
     
-void NodeLoader::setObjects(const std::unordered_map<std::string, cocos2d::Ref*> &objects)
+void NodeLoader::setObjects(const std::map<std::string, cocos2d::Ref*> &objects)
 {
     _objects = objects;
 }
     
-void NodeLoader::setNodeSequences(const std::unordered_map<int, Map<std::string, CCBSequenceProperty*>> &sequences)
+void NodeLoader::setNodeSequences(const std::map<int, Map<std::string, CCBSequenceProperty*>> &sequences)
 {
     _nodeSequences = sequences;
 }

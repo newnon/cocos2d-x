@@ -857,8 +857,8 @@ private:
         int numExturaProps = readInt(false);
         int propertyCount = numRegularProps + numExturaProps;
         
-        std::unordered_map<std::string, cocos2d::Value> baseValues;
-        std::unordered_map<std::string, cocos2d::Ref*> objects;
+        std::map<std::string, cocos2d::Value> baseValues;
+        std::map<std::string, cocos2d::Ref*> objects;
         
         for(int i = 0; i < propertyCount; i++) {
             bool isExtraProp = (i >= numRegularProps);
@@ -1128,8 +1128,8 @@ private:
         PrefabParams params;
         int propertyCount = readInt(false);
         
-        std::unordered_map<std::string, cocos2d::Value> baseValues;
-        std::unordered_map<std::string, cocos2d::Ref*> objects;
+        std::map<std::string, cocos2d::Value> baseValues;
+        std::map<std::string, cocos2d::Ref*> objects;
         
         for(int i = 0; i < propertyCount; i++) {
             int uid = readInt(false);
@@ -1436,7 +1436,7 @@ private:
         }
         
         // Read animated properties
-        std::unordered_map<int, Map<std::string, CCBSequenceProperty*>> seqs;
+        std::map<int, Map<std::string, CCBSequenceProperty*>> seqs;
         std::set<std::string> animatedProps;
         
         int numSequence = readInt(false);

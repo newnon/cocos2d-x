@@ -58,7 +58,7 @@ public:
     
     const cocos2d::Size& getContainerSize(cocos2d::Node* pNode);
     
-    void addNode(cocos2d::Node *pNode, const std::unordered_map<int, cocos2d::Map<std::string, CCBSequenceProperty*>>& seq);
+    void addNode(cocos2d::Node *pNode, const std::map<int, cocos2d::Map<std::string, CCBSequenceProperty*>>& seq);
     void setBaseValue(const cocos2d::Value& value, cocos2d::Node *pNode, const std::string& propName);
     void setObject(cocos2d::Ref* obj, cocos2d::Node *pNode, const std::string& propName);
     
@@ -101,9 +101,9 @@ private:
     
 private:
     cocos2d::Vector<CCBSequence*> _sequences;
-    std::unordered_map<cocos2d::Node*, std::unordered_map<int, cocos2d::Map<std::string, CCBSequenceProperty*>>> _nodeSequences;
-    std::unordered_map<cocos2d::Node*, std::unordered_map<std::string, cocos2d::Value>> _baseValues;
-    std::unordered_map<cocos2d::Node*, std::unordered_map<std::string, cocos2d::Ref*>> _objects;
+    std::map<cocos2d::Node*, std::map<int, cocos2d::Map<std::string, CCBSequenceProperty*>>> _nodeSequences;
+    std::map<cocos2d::Node*, std::map<std::string, cocos2d::Value>> _baseValues;
+    std::map<cocos2d::Node*, std::map<std::string, cocos2d::Ref*>> _objects;
     
     int _autoPlaySequenceId;
     
