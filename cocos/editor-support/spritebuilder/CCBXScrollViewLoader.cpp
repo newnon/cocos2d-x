@@ -17,6 +17,7 @@ static const std::string PROPERTY_SCROLL_BAR_WIDTH("scrollBarWidth");
 static const std::string PROPERTY_SCROLL_BAR_AUTOHIDE_ENABLED("scrollBarAutoHideEnabled");
 static const std::string PROPERTY_SCROLL_BAR_HIDE_IF_SIZE_FIT("scrollHideIfSizeFit");
 static const std::string PROPERTY_SCROLL_BAR_POSITION_FROM_CORNER("scrollBarPositionFromCorner");
+static const std::string PROPERTY_SCROLL_BAR_POSITION("scrollBarPosition");
 static const std::string PROPERTY_SCROLL_BAR_COLOR("scrollBarColor");
 static const std::string PROPERTY_SCROLL_BAR_OPACITY("scrollBarOpacity");
     
@@ -67,7 +68,7 @@ void ScrollViewLoader::setSpecialProperties(Node* node, const Size &parentSize, 
     {
         scrollView->setScrollBarWidth(getAbsoluteScale(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SCROLL_BAR_WIDTH, _scrollBarWidth)));
         scrollView->setScrollBarAutoHideEnabled(getNodeParamValue(params, PROPERTY_SCROLL_BAR_AUTOHIDE_ENABLED, _scrollBarAutoHideEnabled));
-        scrollView->setScrollBarPositionFromCorner(getAbsolutePosition(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SCROLL_BAR_POSITION_FROM_CORNER, _scrollBarPositionFromCorner), parentSize));
+        scrollView->setScrollBarPositionFromCorner(getAbsolutePosition(mainScale, additionalScale, getNodeParamValue(params, PROPERTY_SCROLL_BAR_POSITION, _scrollBarPositionFromCorner), parentSize));
         scrollView->setScrollBarColor(getNodeParamValue(params, PROPERTY_SCROLL_BAR_COLOR, _scrollBarColor));
         scrollView->setScrollBarOpacity(getNodeOpacityParamValue(params, PROPERTY_SCROLL_BAR_OPACITY, _scrollBarOpacity));
         scrollView->setScrollBarHideIfSizeFit(getNodeParamValue(params, PROPERTY_SCROLL_BAR_HIDE_IF_SIZE_FIT, _scrollHideIfSizeFit));
@@ -138,7 +139,7 @@ void ScrollViewLoader::onHandlePropTypeFloat(const std::string &propertyName, bo
     
 void ScrollViewLoader::onHandlePropTypePosition(const std::string &propertyName, bool isExtraProp, const PositionDescription &value)
 {
-    if(propertyName == PROPERTY_SCROLL_BAR_POSITION_FROM_CORNER) {
+    if(propertyName == PROPERTY_SCROLL_BAR_POSITION_FROM_CORNER || propertyName == PROPERTY_SCROLL_BAR_POSITION) {
         _scrollBarPositionFromCorner = value;
     } else {
         WidgetLoader::onHandlePropTypePosition(propertyName, isExtraProp, value);
