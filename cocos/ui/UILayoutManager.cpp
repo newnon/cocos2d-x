@@ -338,7 +338,7 @@ void LinearVerticalAutoLayoutManager::doLayout(LayoutProtocol* layout)
             else
             {
                 float finalPosX = layoutSize.width / 2.0f - cs.width * (0.5f-ap.x);
-                float finalPosY = topBoundary - ((1.0f-ap.y) * cs.height);
+                float finalPosY = topBoundary - (ap.y * cs.height);
                 
                 subWidget->setPosition(Vec2(finalPosX, finalPosY));
                 topBoundary = subWidget->getPosition().y + ap.y * cs.height - cs.height - spacing;
