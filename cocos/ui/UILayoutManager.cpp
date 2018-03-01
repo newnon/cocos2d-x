@@ -199,7 +199,7 @@ void LinearHorizontalAutoLayoutManager::doLayout(LayoutProtocol* layout)
         if(subWidget->isVisible())
         {
             layoutSize.width += subWidget->getContentSize().width * subWidget->getScaleX() + spacing;
-            layoutSize.height = std::max(layoutSize.height, subWidget->getContentSize().height);
+            layoutSize.height = std::max(layoutSize.height, subWidget->getContentSize().height * subWidget->getScaleY());
         }
     }
     if(layoutHeight > 0)
@@ -286,7 +286,7 @@ void LinearVerticalAutoLayoutManager::doLayout(LayoutProtocol* layout)
         if(subWidget->isVisible())
         {
             layoutSize.height += subWidget->getContentSize().height * subWidget->getScaleY() + spacing;
-            layoutSize.width = std::max(layoutSize.width, subWidget->getContentSize().width);
+            layoutSize.width = std::max(layoutSize.width, subWidget->getContentSize().width * subWidget->getScaleX());
         }
     }
     if(layoutWidth > 0)
