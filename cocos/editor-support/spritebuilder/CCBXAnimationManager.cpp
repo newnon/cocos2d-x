@@ -934,10 +934,13 @@ void CCBAnimationManager::stopAnimations(bool reset)
 {
     if(_runningSequence.first)
     {
+        auto runningSequence = _runningSequence;
+        _runningSequence.first = nullptr;
+        _runningSequence.second = nullptr;
         if (_delegate)
-            _delegate->completedAnimationSequenceNamed(_runningSequence.first->getName(), AnimationCompleteType::CHAINED);
-        if(_runningSequence.second)
-            _runningSequence.second(_rootNode, AnimationCompleteType::STOPED);
+            _delegate->completedAnimationSequenceNamed(runningSequence.first->getName(), AnimationCompleteType::CHAINED);
+        if(runningSequence.second)
+            runningSequence.second(_rootNode, AnimationCompleteType::STOPED);
     }
     
     for(const auto &pair:_runningActions)
