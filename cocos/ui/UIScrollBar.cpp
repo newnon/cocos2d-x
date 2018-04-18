@@ -140,6 +140,7 @@ void ScrollBar::initRenderer()
     _slidBallNormalRenderer = Scale9Sprite::create();
     _slidBallPressedRenderer = Scale9Sprite::create();
     _slidBallPressedRenderer->setVisible(false);
+    _isSlidBallPressed = false;
     _slidBallDisabledRenderer = Scale9Sprite::create();
     _slidBallDisabledRenderer->setVisible(false);
     _slidBallMouseOverRenderer = Scale9Sprite::create();
@@ -616,7 +617,7 @@ void ScrollBar::setScrollView(cocos2d::ui::ScrollView *scrollView)
     
 void ScrollBar::updateBarPosition(bool isSetPercent)
 {
-    if (!_slidBallPressedRenderer->isVisible())
+    if (!_isSlidBallPressed)
     {
         if (BarType::kVertical == _barType)
         {
@@ -740,8 +741,8 @@ void ScrollBar::percentChangedEvent(EventType event)
     {
         _ccEventCallback(this, static_cast<int>(EventType::ON_PERCENTAGE_CHANGED));
     }
-    
-    if (_dataScrollView && _slidBallPressedRenderer->isVisible())
+
+    if (_dataScrollView && _isSlidBallPressed)
     {
         if (_barType == BarType::kVertical)
         {
@@ -837,6 +838,7 @@ void ScrollBar::onPressStateChangedToNormal()
 {
     _slidBallNormalRenderer->setVisible(true);
     _slidBallPressedRenderer->setVisible(false);
+    _isSlidBallPressed = false;
     _slidBallDisabledRenderer->setVisible(false);
     _slidBallMouseOverRenderer->setVisible(false);
     
@@ -858,6 +860,7 @@ void ScrollBar::onPressStateChangedToPressed()
         _slidBallPressedRenderer->setVisible(true);
         _slidBallDisabledRenderer->setVisible(false);
     }
+    _isSlidBallPressed = true;
     _slidBallMouseOverRenderer->setVisible(false);
 }
 
@@ -877,6 +880,7 @@ void ScrollBar::onPressStateChangedToDisabled()
     _slidBallRenderer->setScale(1.0);
     
     _slidBallPressedRenderer->setVisible(false);
+    _isSlidBallPressed = false;
     _slidBallMouseOverRenderer->setVisible(false);
 }
     
@@ -895,6 +899,7 @@ void ScrollBar::onPressStateChangedToMouseOver()
     _slidBallRenderer->setScale(1.0);
     
     _slidBallPressedRenderer->setVisible(false);
+    _isSlidBallPressed = false;
     _slidBallDisabledRenderer->setVisible(false);
 }
     

@@ -400,6 +400,8 @@ protected:
     bool _doLayoutDirty = false;
     bool _doCalcBarSize = false;
     bool _doCalcBackgroundSize = false;
+
+    bool _isSlidBallPressed = false;
 };
 
 }
