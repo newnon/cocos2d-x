@@ -107,6 +107,7 @@ void EditBoxImplCommon::initInactiveLabels(const Size& size)
 void EditBoxImplCommon::placeInactiveLabels(const Size& size)
 {
     _label->setDimensions(size.width, size.height);
+    _labelPlaceHolder->setDimensions(size.width, size.height);
     
     auto placeholderSize = _labelPlaceHolder->getContentSize();
     
