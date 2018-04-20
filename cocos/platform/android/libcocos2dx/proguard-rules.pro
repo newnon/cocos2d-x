@@ -16,7 +16,5 @@
 #   public *;
 #}
 
--dontobfuscate
-
 -keep public class org.cocos2dx.lib.**
 -keepclassmembers public class org.cocos2dx.lib.** { *; }
