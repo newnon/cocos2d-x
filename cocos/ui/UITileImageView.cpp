@@ -260,7 +260,12 @@ void TileImageView::updatePoly()
     PolygonInfo polygonInfo;
     polygonInfo.setTriangles(triangles);
     _imageRenderer->setPolygonInfo(polygonInfo);
-    
+
+    if (triangles.verts)
+        delete [] triangles.verts;
+    if (triangles.indices)
+        delete [] triangles.indices;
+
     _imageRenderer->setColor(getDisplayedColor());
     _imageRenderer->setOpacity(getDisplayedOpacity());
 }
