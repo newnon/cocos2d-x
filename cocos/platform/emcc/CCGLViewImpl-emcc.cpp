@@ -222,8 +222,7 @@ GLViewImpl* GLViewImpl::createWithFullScreen(const std::string& viewName)
 }
 
 GLViewImpl::GLViewImpl()
-    :_screenSurface(nullptr),
-    _captured(false)
+    :_screenSurface(nullptr)
 {
     g_keyCodeMap.clear();
     for (auto& item : g_keyCodeStructArray)
@@ -246,7 +245,7 @@ extern "C"
         float mouseY = 0;
         
         auto glview = cocos2d::Director::getInstance()->getOpenGLView();
-        glview->handleTouchesEnd(1, &touchId, &mouseX, &mouseY);
+        glview->handleTouchesCancel(1, &touchId, &mouseX, &mouseY);
        
         return 0;
     }
@@ -292,23 +291,42 @@ bool GLViewImpl::initWithRect(const std::string& viewName, Rect rect, float fram
     _scissorBox[3] = _windowHeight;
     
     EM_ASM_({
-            Module["canvas"].addEventListener("touchcancel", function(event) {
-                event.preventDefault();
-                var touches = event.changedTouches;
-            
-                for (var i = 0; i < touches.length; i++) {
-                    var touch = event.changedTouches[i];
-                    tempI64    = [touch.identifier >>> 0,
-                                    (tempDouble = touch.identifier, +Math_abs(tempDouble) >= 1 ? tempDouble > 0 ?
-                                    (Math_min(+Math_floor(tempDouble / 4294967296), 4294967295) | 0) >>> 0
-                                    : ~~+Math_ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0
-                                    : 0) ];
-                    var result = Module.ccall('onTouchCancel',
-                                                'number',
-                                                ['number', 'number'], // argument types
-                                                [$0, tempI64[0]]);
+        Module['canvas'].addEventListener('touchcancel', function(event) {
+            event.preventDefault();
+            var touches = event.changedTouches;
+        
+            for (var i = 0; i < touches.length; i++) {
+                var touch = event.changedTouches[i];
+                tempI64    = [touch.identifier >>> 0,
+                                (tempDouble = touch.identifier, +Math_abs(tempDouble) >= 1 ? tempDouble > 0 ?
+                                (Math_min(+Math_floor(tempDouble / 4294967296), 4294967295) | 0) >>> 0
+                                : ~~+Math_ceil((tempDouble - +(~~tempDouble >>> 0)) / 4294967296) >>> 0
+                                : 0) ];
+                var result = Module.ccall('onTouchCancel',
+                                            'number',
+                                            ['number', 'number'], // argument types
+                                            [$0, tempI64[0]]);
             }
         });
+        Module['canvas'].removeEventListener('mouseout', SDL.receiveEvent, true);
+        Module['canvas'].addEventListener('mouseout', function(event) {
+            for (var i = 0; i < 3; i++) {
+                if (SDL.DOMButtons[i]) {
+                    SDL.events.push({
+                        type: 'mouseup',
+                        button: i,
+                        pageX: event.pageX,
+                        pageY: event.pageY
+                    });
+                    var result = Module.ccall('onTouchCancel',
+                                              'number',
+                                              ['number', 'number'], // argument types
+                                              [$0, 0]);
+                    SDL.DOMButtons[i] = 0
+                }
+            }
+            event.preventDefault();
+        }, true);
     }, (int)this );
     
     _wheelScrollScale = EM_ASM_INT(

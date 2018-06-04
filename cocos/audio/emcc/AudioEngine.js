@@ -47,9 +47,9 @@ var LibraryAudioEngine = {
                 var bufferSize = len+1;
                 var buffer = _malloc(bufferSize);
                 stringToUTF8(filename, buffer, bufferSize);
-                var sp = Runtime.stackSave();
-                Runtime.dynCall('vii', Module.CocosAudioState.preloadCallback, [buffer, 1]);
-                Runtime.stackRestore(sp);
+                var sp = stackSave();
+                dynCall('vii', Module.CocosAudioState.preloadCallback, [buffer, 1]);
+                stackRestore(sp);
                 _free(buffer);
             },
             onloaderror: function(i) {
@@ -58,22 +58,22 @@ var LibraryAudioEngine = {
                 var bufferSize = len+1;
                 var buffer = _malloc(bufferSize);
                 stringToUTF8(filename, buffer, bufferSize);
-                var sp = Runtime.stackSave();
-                Runtime.dynCall('vii', Module.CocosAudioState.preloadCallback, [buffer, 0]);
-                Runtime.stackRestore(sp);
+                var sp = stackSave();
+                dynCall('vii', Module.CocosAudioState.preloadCallback, [buffer, 0]);
+                stackRestore(sp);
                 _free(buffer);
             },
             onplay: function(id) {
                 //console.log('onplay');
-                var sp = Runtime.stackSave();
-                Runtime.dynCall('vii', Module.CocosAudioState.playCallback, [id, 1]);
-                Runtime.stackRestore(sp);
+                var sp = stackSave();
+                dynCall('vii', Module.CocosAudioState.playCallback, [id, 1]);
+                stackRestore(sp);
             },
             onplayerror: function(id) {
                 //console.log('onplayerror');
-                var sp = Runtime.stackSave();
-                Runtime.dynCall('vii', Module.CocosAudioState.playCallback, [id, 0]);
-                Runtime.stackRestore(sp);
+                var sp = stackSave();
+                dynCall('vii', Module.CocosAudioState.playCallback, [id, 0]);
+                stackRestore(sp);
             },
             onend: function(id) {
                 //console.log('onend');
@@ -82,9 +82,9 @@ var LibraryAudioEngine = {
                 if(sound !== undefined) {
                     if(!sound.loop(id)) {
                         delete Module.CocosAudioState.idToSoundMap[id];
-                        var sp = Runtime.stackSave();
-                        Runtime.dynCall('vi', Module.CocosAudioState.endCallback, [id]);
-                        Runtime.stackRestore(sp);
+                        var sp = stackSave();
+                        dynCall('vi', Module.CocosAudioState.endCallback, [id]);
+                        stackRestore(sp);
                     }
                 } 
             }

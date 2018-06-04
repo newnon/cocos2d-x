@@ -95,9 +95,9 @@ var LibraryUIEditBox = {
                 if(Module.callback[id] !== undefined)
                 {
                     event.preventDefault();
-                    var sp = Runtime.stackSave();
-                    Runtime.dynCall('vi', Module.callback[id], [Module.userData[id]]);
-                    Runtime.stackRestore(sp);
+                    var sp = stackSave();
+                    dynCall('vi', Module.callback[id], [Module.userData[id]]);
+                    stackRestore(sp);
                 }
             }
         });
@@ -107,9 +107,9 @@ var LibraryUIEditBox = {
             if(Module.focusCallback[id] !== undefined)
             {
                 event.preventDefault();
-                var sp = Runtime.stackSave();
-                Runtime.dynCall('vi', Module.focusCallback[id], [Module.userData[id]]);
-                Runtime.stackRestore(sp);
+                var sp = stackSave();
+                dynCall('vi', Module.focusCallback[id], [Module.userData[id]]);
+                stackRestore(sp);
             }
         });
 

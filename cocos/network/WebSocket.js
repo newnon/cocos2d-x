@@ -43,12 +43,12 @@ var LibraryCocosWebSocket = {
         {
             if (typeof event.data === "string")
             {
-                var sp = Runtime.stackSave();
+                var sp = stackSave();
                 var array = intArrayFromString(event.data);
                 var msg = allocate(array, 'i8', ALLOC_STACK);
                 
                 Module['cocoswebsocket'].emit('message', thiz, [msg, array.length]);
-                Runtime.stackRestore(sp);
+                stackRestore(sp);
             }
             else if (event.data instanceof ArrayBuffer)
             {
@@ -94,10 +94,10 @@ var LibraryCocosWebSocket = {
             else
                 reason = "Unknown reason";
 
-            var sp = Runtime.stackSave();
+            var sp = stackSave();
             var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
             Module['cocoswebsocket'].emit('close', thiz, [event.code, msg, reason.length]);
-            Runtime.stackRestore(sp);
+            stackRestore(sp);
         };
         
         socket.onerror = function(error)
@@ -157,21 +157,21 @@ var LibraryCocosWebSocket = {
             {
                 if (event === 'error')
                 {
-                    var sp = Runtime.stackSave();
-                    Runtime.dynCall('vi', callback, [thiz]);
-                    Runtime.stackRestore(sp);
+                    var sp = stackSave();
+                    dynCall('vi', callback, [thiz]);
+                    stackRestore(sp);
                 }
                 else if (event == 'close')
                 {
-                    var sp = Runtime.stackSave();
-                    Runtime.dynCall('viiii', callback, [thiz, data[0], data[1], data[2]]);
-                    Runtime.stackRestore(sp);
+                    var sp = stackSave();
+                    dynCall('viiii', callback, [thiz, data[0], data[1], data[2]]);
+                    stackRestore(sp);
                 }
                 else
                 {
-                    var sp = Runtime.stackSave();
-                    Runtime.dynCall('viii', callback, [thiz, data[0], data[1]]);
-                    Runtime.stackRestore(sp);
+                    var sp = stackSave();
+                    dynCall('viii', callback, [thiz, data[0], data[1]]);
+                    stackRestore(sp);
                 }
             }
             catch (e)
