@@ -75,9 +75,6 @@ protected:
     
 private:
     SDL_Surface *_screenSurface = nullptr;
-	bool _isGLInitialized = false;
-    
-    bool _captured = false;
     float _frameZoomFactor = 1.0f;
     
     int _windowWidth = 0;
