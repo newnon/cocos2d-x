@@ -127,19 +127,23 @@ var LibraryUIEditBox = {
     {
         if(Module.editBox !== undefined && Module.editBox[id] !== undefined)
         {
-            Module.defaultX[id] = x;
-            Module.defaultY[id] = y;
+            var pixelRatio = 1;
+            if(typeof window.devicePixelRatio !== 'undefined')
+                pixelRatio = window.devicePixelRatio;
 
-            Module.editBox[id].style.left = Module['canvas'].offsetLeft + x + 'px';
+            Module.defaultX[id] = x / pixelRatio;
+            Module.defaultY[id] = y / pixelRatio;
+
+            Module.editBox[id].style.left = Module['canvas'].offsetLeft + (x / pixelRatio) + 'px';
 
             if (document.getElementById('div_fullscreen') == null)
-                Module.editBox[id].style.top = Module['canvas'].offsetTop + y + 'px';
+                Module.editBox[id].style.top = Module['canvas'].offsetTop + (y / pixelRatio) + 'px';
             else
-                Module.editBox[id].style.top = y + 'px';
+                Module.editBox[id].style.top = (y / pixelRatio) + 'px';
                 
 
-            Module.editBox[id].style.width = width + 'px';
-            Module.editBox[id].style.height = height + 'px';
+            Module.editBox[id].style.width = (width / pixelRatio) + 'px';
+            Module.editBox[id].style.height = (height / pixelRatio) + 'px';
 
             if (UIEditBox.isSafariFullscreenMode())
             {
@@ -238,9 +242,13 @@ var LibraryUIEditBox = {
     {
         if(Module.editBox !== undefined && Module.editBox[id] !== undefined)
         {
+            var pixelRatio = 1;
+            if(typeof window.devicePixelRatio !== 'undefined')
+                pixelRatio = window.devicePixelRatio;
+
             var font = Pointer_stringify(fontName);
             Module.editBox[id].style.fontFamily = font;
-            Module.editBox[id].style.fontSize = fontSize + 'px';
+            Module.editBox[id].style.fontSize = (fontSize / pixelRatio) + 'px';
         }
     },
     UIEditBox_setText: function(id, str)
