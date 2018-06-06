@@ -29,7 +29,22 @@ var LibraryCocosWebSocket = {
         Module['cocoswebsocket']._callbacks[thiz] = {};
 
         var serverAddress = Pointer_stringify(address);
-        var socket = new WebSocket(serverAddress);
+
+        try {
+            var socket = new WebSocket(serverAddress);
+        }
+        catch (e) {
+            var reason = e.message;
+
+            setTimeout(function() {
+                var sp = stackSave();
+                var msg = allocate(intArrayFromString(reason), 'i8', ALLOC_STACK);
+                Module['cocoswebsocket'].emit('close', thiz, [-1, msg, reason.length]);
+                stackRestore(sp);
+            }, 50);
+            return;
+        }
+
         socket.binaryType = "arraybuffer";
     
         Module['cocoswebsocket']._socketMap[thiz] = socket;
