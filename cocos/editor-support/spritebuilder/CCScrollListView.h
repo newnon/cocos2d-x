@@ -16,19 +16,19 @@ public:
     /**
      * Push back custom item into listview.
      */
-    ui::Widget* pushBackElement(spritebuilder::CCBXReaderOwner * owner);
+    ui::Widget* pushBackElement(spritebuilder::CCBXReaderOwner *owner, CCBXReader *customReader = nullptr);
     
     /**
      * Insert custom item into listview.
      */
-    ui::Widget* insertElement(ssize_t index, spritebuilder::CCBXReaderOwner * owner);
+    ui::Widget* insertElement(ssize_t index, spritebuilder::CCBXReaderOwner *owner, CCBXReader *customReader = nullptr);
     
 CC_CONSTRUCTOR_ACCESS:
     ScrollListView(NodeLoader *templateLoader, float mainScale, float additionalScale);
     ~ScrollListView();
     
 private:
-    NodeLoader * _template;
+    NodeLoader *_template = nullptr;
     float _mainScale = 1.0f;
     float _additionalScale = 1.0f;
 };

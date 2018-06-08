@@ -38,18 +38,18 @@ ScrollListView::~ScrollListView()
     CC_SAFE_RELEASE(_template);
 }
     
-ui::Widget* ScrollListView::pushBackElement(spritebuilder::CCBXReaderOwner * owner)
+ui::Widget* ScrollListView::pushBackElement(spritebuilder::CCBXReaderOwner *owner, CCBXReader *customReader)
 {
-    Node * node =_template->createNode(getContentSize(), _mainScale, _additionalScale, owner);
+    Node *node = customReader ? customReader->createNode(owner, getContentSize(), _mainScale, _additionalScale) : _template->createNode(getContentSize(), _mainScale, _additionalScale, owner);
     ui::Widget *ret = static_cast<ui::Widget*>(node);
     assert(dynamic_cast<ui::Widget*>(node));
     pushBackCustomItem(ret);
     return ret;
 }
 
-ui::Widget* ScrollListView::insertElement(ssize_t index, spritebuilder::CCBXReaderOwner * owner)
+ui::Widget* ScrollListView::insertElement(ssize_t index, spritebuilder::CCBXReaderOwner *owner, CCBXReader *customReader)
 {
-    Node * node =_template->createNode(getContentSize(), _mainScale, _additionalScale, owner);
+    Node *node = customReader ? customReader->createNode(owner, getContentSize(), _mainScale, _additionalScale) : _template->createNode(getContentSize(), _mainScale, _additionalScale, owner);
     ui::Widget *ret = static_cast<ui::Widget*>(node);
     assert(dynamic_cast<ui::Widget*>(node));
     insertCustomItem(ret, index);
