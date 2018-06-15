@@ -86,6 +86,9 @@ void AudioEngineImpl::onEndCallback(int audioId)
         auto it = g_AudioEngineImpl->_finishCallbacks.find(audioId);
         if (it != g_AudioEngineImpl->_finishCallbacks.end())
         {
+            auto audioInfoIt = AudioEngine::_audioIDInfoMap.find(audioId);
+            if(audioInfoIt != AudioEngine::_audioIDInfoMap.end())
+                it->second(audioId, *(audioInfoIt->second.filePath));
             g_AudioEngineImpl->_finishCallbacks.erase(it);
             AudioEngine::remove(audioId);
         }
