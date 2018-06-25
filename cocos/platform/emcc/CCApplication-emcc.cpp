@@ -119,7 +119,7 @@ const char *beforeunload_callback(int eventType, const void *reserved, void *use
     glview->release();
     
     Application* application = (Application*)userData;
-    delete application;
+    application->~Application(); // Calls desructor directly. This object is local. Local variables never freed in EMCC on exit.
     return nullptr;
 }
 
