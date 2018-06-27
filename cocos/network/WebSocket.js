@@ -104,6 +104,12 @@ var LibraryCocosWebSocket = {
                 reason = "An endpoint (client) is terminating the connection because it has expected the server to negotiate one or more extension, but the server didn't return them in the response message of the WebSocket handshake. <br /> Specifically, the extensions that are needed are: " + event.reason;
             else if(event.code == 1011)
                 reason = "A server is terminating the connection because it encountered an unexpected condition that prevented it from fulfilling the request.";
+            else if(event.code == 1012)
+                reason = "Service Restart The server is terminating the connection because it is restarting.";
+            else if(event.code == 1013)
+                reason = "Try Again Later The server is terminating the connection due to a temporary condition, e.g. it is overloaded and is casting off some of its clients.";
+            else if(event.code == 1014)
+                reason = "Bad Gateway The server was acting as a gateway or proxy and received an invalid response from the upstream server. This is similar to 502 HTTP Status Code.";
             else if(event.code == 1015)
                 reason = "The connection was closed due to a failure to perform a TLS handshake (e.g., the server certificate can't be verified).";
             else
