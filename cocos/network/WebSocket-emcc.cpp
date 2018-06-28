@@ -201,6 +201,7 @@ int WebSocket::onConnectionError()
 {
     CCLOG("WebSocket (%p) onConnectionError ...\n", this);
     _readyState = State::CLOSING;
+    WebSocket_close(this);
     _delegate->onError(this, ErrorCode::CONNECTION_FAILURE);
     return 0;
 }
@@ -215,6 +216,7 @@ int WebSocket::onConnectionClosed()
     
     CCLOG("WebSocket (%p) onConnectionClosed ...\n", this);
     _readyState = State::CLOSED;
+    WebSocket_close(this);
     _delegate->onClose(this);
     return 0;
 }

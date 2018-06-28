@@ -143,8 +143,8 @@ var LibraryCocosWebSocket = {
 			socket.onerror = function(error) { };
 			socket.close();
 
-            Module['cocoswebsocket']._callbacks[thiz] = {};
-            Module['cocoswebsocket']._socketMap[thiz] = null;
+            delete Module['cocoswebsocket']._callbacks[thiz];
+            delete Module['cocoswebsocket']._socketMap[thiz];
         }
     },
     WebSocket_send: function(thiz, data)
