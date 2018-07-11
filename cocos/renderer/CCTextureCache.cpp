@@ -111,7 +111,7 @@ public:
         pixelFormat(Texture2D::getDefaultAlphaPixelFormat()),
         loadSuccess(false)
     {}
-
+    
     std::string filename;
     std::function<void(Texture2D*)> callback;
     std::string callbackKey;
@@ -192,9 +192,7 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
 {
     Texture2D *texture = nullptr;
 
-    std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
-
-    auto it = _textures.find(fullpath);
+    auto it = _textures.find(path);
     if (it != _textures.end())
         texture = it->second;
 
@@ -203,6 +201,8 @@ void TextureCache::addImageAsync(const std::string &path, const std::function<vo
         if (callback) callback(texture);
         return;
     }
+    
+    std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
 
     // check if file exists
     if (fullpath.empty() || !FileUtils::getInstance()->isFileExist(fullpath)) {
@@ -337,7 +337,7 @@ void TextureCache::addImageAsyncCallBack(float /*dt*/)
         }
 
         // check the image has been convert to texture or not
-        auto it = _textures.find(asyncStruct->filename);
+        auto it = _textures.find(asyncStruct->callbackKey);
         if (it != _textures.end())
         {
             texture = it->second;
@@ -359,7 +359,7 @@ void TextureCache::addImageAsyncCallBack(float /*dt*/)
                 VolatileTextureMgr::addImageTexture(texture, asyncStruct->filename);
 #endif
                 // cache the texture. retain it, since it is added in the map
-                _textures.emplace(asyncStruct->filename, texture);
+                _textures.emplace(asyncStruct->callbackKey, texture);
                 texture->retain();
 
                 texture->autorelease();
@@ -403,14 +403,15 @@ Texture2D * TextureCache::addImage(const std::string &path)
     // MUTEX:
     // Needed since addImageAsync calls this method from a different thread
 
+    auto it = _textures.find(path);
+    if (it != _textures.end())
+        texture = it->second;
+    
     std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
     if (fullpath.size() == 0)
     {
         return nullptr;
     }
-    auto it = _textures.find(fullpath);
-    if (it != _textures.end())
-        texture = it->second;
 
     if (!texture)
     {
