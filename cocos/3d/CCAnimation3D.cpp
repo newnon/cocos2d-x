@@ -219,6 +219,16 @@ void Animation3DCache::addAnimation(const std::string& key, Animation3D* animati
     animation->retain();
 }
 
+void Animation3DCache::removeAnimation(const std::string& key)
+{
+    const auto& it = _animations.find(key);
+    if (it != _animations.end())
+    {
+        CC_SAFE_RELEASE(it->second);
+        _animations.erase(it);
+    }
+}
+
 void Animation3DCache::removeAllAnimations()
 {
     for (auto itor : _animations) {

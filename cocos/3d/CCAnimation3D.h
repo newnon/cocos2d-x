@@ -117,6 +117,9 @@ public:
     /**add animation to cache*/
     void addAnimation(const std::string& key, Animation3D* animation);
     
+    /**remove animation from cache*/
+    void removeAnimation(const std::string& key);
+    
     /**remove all animation*/
     void removeAllAnimations();
     /**remove unused animation*/
