@@ -206,12 +206,12 @@ bool FontAtlasCache::releaseFontAtlas(FontAtlas *atlas)
         {
             if ( item.second == atlas )
             {
+                atlas->release();
                 if (atlas->getReferenceCount() == 1)
                 {
+                  atlas->release();
                   _atlasMap.erase(item.first);
                 }
-                
-                atlas->release();
                 
                 return true;
             }
