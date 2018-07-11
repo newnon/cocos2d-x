@@ -30,8 +30,7 @@ NS_CC_BEGIN
 
 Animation3D* Animation3D::create(const std::string& fileName, const std::string& animationName)
 {
-    std::string fullPath = FileUtils::getInstance()->fullPathForFilename(fileName);
-    std::string key = fullPath + "#" + animationName;
+    std::string key = fileName + "#" + animationName;
     auto animation = Animation3DCache::getInstance()->getAnimation(key);
     if (animation != nullptr)
         return animation;
@@ -58,7 +57,7 @@ bool Animation3D::initWithFile(const std::string& filename, const std::string& a
     Animation3DData animationdata;
     if (bundle->load(fullPath) && bundle->loadAnimationData(animationName, &animationdata) && init(animationdata))
     {
-        std::string key = fullPath + "#" + animationName;
+        std::string key = filename + "#" + animationName;
         Animation3DCache::getInstance()->addAnimation(key, this);
         Bundle3D::destroyBundle(bundle);
         return true;
