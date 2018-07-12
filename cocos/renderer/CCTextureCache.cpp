@@ -406,15 +406,15 @@ Texture2D * TextureCache::addImage(const std::string &path)
     auto it = _textures.find(path);
     if (it != _textures.end())
         texture = it->second;
-    
-    std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
-    if (fullpath.size() == 0)
-    {
-        return nullptr;
-    }
 
     if (!texture)
     {
+        std::string fullpath = FileUtils::getInstance()->fullPathForFilename(path);
+        if (fullpath.size() == 0)
+        {
+            return nullptr;
+        }
+        
         // all images are handled by UIImage except PVR extension that is handled by our own handler
         do
         {
