@@ -169,6 +169,8 @@ void Configuration::gatherGPUInfo()
 
 #ifdef CC_PLATFORM_PC
     _supportsShareableVAO = checkForGLExtension("vertex_array_object");
+#elif CC_TARGET_PLATFORM == CC_PLATFORM_EMSCRIPTEN
+    _supportsShareableVAO = checkForGLExtension("OES_vertex_array_object");
 #else
     _supportsShareableVAO = checkForGLExtension("GL_OES_vertex_array_object");
 #endif
