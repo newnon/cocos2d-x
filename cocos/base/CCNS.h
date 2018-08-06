@@ -27,6 +27,7 @@ THE SOFTWARE.
 #define __PLATFOMR_CCNS_H__
 
 #include "math/CCGeometry.h"
+#include "base/ccTypes.h"
 
 NS_CC_BEGIN
 
@@ -70,6 +71,9 @@ Vec2 CC_DLL PointFromString(const std::string& str);
  *      If the string is not well-formed, the function returns Size::ZERO.
  */
 Size CC_DLL SizeFromString(const std::string& str);
+
+
+Color3B CC_DLL Color3BFromString(const std::string& str);
 
 // end of data_structure group
 /** @} */

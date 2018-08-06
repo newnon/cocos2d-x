@@ -182,4 +182,22 @@ Size SizeFromString(const std::string& pszContent)
     return ret;
 }
 
+Color3B CC_DLL Color3BFromString(const std::string& str) {
+    
+    Color3B ret = {0,0,0};
+    
+    do
+    {
+        strArray strs;
+        CC_BREAK_IF(!splitWithForm(str, strs));
+        
+        ret.r = (GLubyte) utils::atof(strs[0].c_str());
+        ret.g = (GLubyte) utils::atof(strs[1].c_str());
+        ret.b = (GLubyte) utils::atof(strs[2].c_str());
+        
+    } while (0);
+    
+    return ret;
+}
+
 NS_CC_END
