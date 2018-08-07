@@ -83,7 +83,7 @@ static bool splitWithForm(const std::string& content, strArray& strs)
         CC_BREAK_IF(nPos1 != std::string::npos || nPos2 != std::string::npos);
 
         split(pointStr, ",", strs);
-        if (strs.size() != 2 || strs[0].length() == 0 || strs[1].length() == 0)
+        if (strs[0].length() == 0 || strs[1].length() == 0)
         {
             strs.clear();
             break;
@@ -182,7 +182,7 @@ Size SizeFromString(const std::string& pszContent)
     return ret;
 }
 
-Color3B CC_DLL Color3BFromString(const std::string& str) {
+Color3B Color3BFromString(const std::string& str) {
     
     Color3B ret = {0,0,0};
     
