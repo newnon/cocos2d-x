@@ -35,6 +35,7 @@ THE SOFTWARE.
 NS_CC_BEGIN
 
 class Rect;
+typedef const char *(*em_beforeunload_callback)(int eventType, const void *reserved, void *userData);
 
 class CC_DLL Application : public ApplicationProtocol
 {
@@ -126,6 +127,8 @@ public:
     
     void setForegroundMainLoop();
     void setBackgroundMainLoop();
+protected:
+    virtual em_beforeunload_callback getEmBeforeunloadCallback() const;
     
 protected:
     int       _animationInterval;  // 1/60 seconds

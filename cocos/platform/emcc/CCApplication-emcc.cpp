@@ -150,8 +150,7 @@ int Application::run()
 	// XXX: Set to 1FPS while debugging
     
     EM_ASM(setInterval(function(){ Module.ccall('backgroundMainLoop'); }, 500););
-    
-    emscripten_set_beforeunload_callback(this, beforeunload_callback);
+    emscripten_set_beforeunload_callback(this, getEmBeforeunloadCallback());
     
     emscripten_set_main_loop(&mainLoopIter, 0, 1);
 
@@ -303,6 +302,11 @@ void Application::setBackgroundMainLoop()
 {
     applicationDidEnterBackground();
     useBackgroundLoop = true;
+}
+
+em_beforeunload_callback Application::getEmBeforeunloadCallback() const
+{
+    return beforeunload_callback;
 }
 
 NS_CC_END
