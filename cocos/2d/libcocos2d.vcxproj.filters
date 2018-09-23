@@ -1963,7 +1963,7 @@
     <ClCompile Include="..\ui\UITabControl.cpp">
       <Filter>ui\UIWidgets</Filter>
     </ClCompile>
-    <ClCompile Include="..\ui\UIScrollBar.cpp" />
+    <ClCompile Include="..\ui\UIScrollBar.cpp">
       <Filter>ui\UIWidgets</Filter>
     </ClCompile>
     <ClCompile Include="..\editor-support\cocostudio\LocalizationManager.cpp">
@@ -3972,7 +3972,7 @@
     <ClInclude Include="..\ui\UITabControl.h">
       <Filter>ui\UIWidgets</Filter>
     </ClInclude>
-    <ClInclude Include="..\ui\UIScrollBar.h" />
+    <ClInclude Include="..\ui\UIScrollBar.h">
       <Filter>ui\UIWidgets</Filter>
     </ClInclude>
     <ClInclude Include="..\editor-support\cocostudio\LocalizationManager.h">
