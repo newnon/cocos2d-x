@@ -483,6 +483,8 @@ public:
      */
     virtual const std::vector<std::string>& getOriginalSearchPaths() const;
 
+    virtual void setDictionariesToExcludeFromSearchPaths(const std::vector<std::string>& dictionariesToExcludeFromSearchPaths);
+
     /**
      *  Gets the writable path.
      *  @return  The path that can be write/read a file in
@@ -973,6 +975,8 @@ protected:
      * The search paths which was set by 'setSearchPaths' / 'addSearchPath'.
      */
     std::vector<std::string> _originalSearchPaths;
+
+    std::vector<std::string> _dictionariesToExcludeFromSearchPaths;
 
     /**
      *  The default root path of resources.

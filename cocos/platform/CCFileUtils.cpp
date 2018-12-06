@@ -1287,6 +1287,11 @@ const std::vector<std::string>& FileUtils::getOriginalSearchPaths() const
     return _originalSearchPaths;
 }
 
+void FileUtils::setDictionariesToExcludeFromSearchPaths(const std::vector<std::string>& dictionariesToExcludeFromSearchPaths)
+{
+    _dictionariesToExcludeFromSearchPaths = dictionariesToExcludeFromSearchPaths;
+}
+
 void FileUtils::setWritablePath(const std::string& writablePath)
 {
     _writablePath = writablePath;
@@ -1437,6 +1442,20 @@ std::string FileUtils::getFullPathForDirectoryAndFilename(const std::string& dir
 
 bool FileUtils::isFileExist(const std::string& filename) const
 {
+    if (!_dictionariesToExcludeFromSearchPaths.empty())
+    {
+        std::string file_path;
+        size_t pos = filename.find_last_of("/");
+        if (pos != std::string::npos)
+        {
+            file_path = filename.substr(0, pos);
+        }
+        if (std::find(_dictionariesToExcludeFromSearchPaths.begin(), _dictionariesToExcludeFromSearchPaths.end(), file_path) != _dictionariesToExcludeFromSearchPaths.end())
+        {
+            return false;
+        }
+    }
+
     if (isAbsolutePath(filename))
     {
         if(_archiveContoller->isFileExist(filename))
