@@ -30,6 +30,7 @@
 
 #include <iosfwd>
 #include <stdint.h>
+#include <map>
 
 namespace cocos2d {
     class Data;
@@ -96,6 +97,8 @@ namespace cocos2d {
                 static void didFinishLoading(const int viewTag, const std::string &url);
                 static void didFailLoading(const int viewTag, const std::string &url);
                 static void onJsCallback(const int viewTag, const std::string &message);
+
+                void setLocalFiles(std::map<std::string, std::string> localFiles);
 
             private:
                 int _viewTag;

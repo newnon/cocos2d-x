@@ -2,15 +2,20 @@ package org.cocos2dx.lib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
+import android.webkit.MimeTypeMap;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.FrameLayout;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 class ShouldStartLoadingWorker implements Runnable {
@@ -38,6 +43,8 @@ public class Cocos2dxWebView extends WebView {
 
     private int mViewTag;
     private String mJSScheme;
+    private Context context;
+    private Cocos2dxWebViewClient webViewClient;
 
     public Cocos2dxWebView(Context context) {
         this(context, -1);
@@ -46,6 +53,7 @@ public class Cocos2dxWebView extends WebView {
     @SuppressLint("SetJavaScriptEnabled")
     public Cocos2dxWebView(Context context, int viewTag) {
         super(context);
+        this.context = context;
         this.mViewTag = viewTag;
         this.mJSScheme = "";
 
@@ -56,6 +64,8 @@ public class Cocos2dxWebView extends WebView {
 
         this.getSettings().setDomStorageEnabled(true);
         this.getSettings().setJavaScriptEnabled(true);
+        this.getSettings().setAllowFileAccessFromFileURLs(true);
+        this.getSettings().setAllowUniversalAccessFromFileURLs(true);
 
         // `searchBoxJavaBridge_` has big security risk. http://jvn.jp/en/jp/JVN53768697
         try {
@@ -65,8 +75,14 @@ public class Cocos2dxWebView extends WebView {
             Log.d(TAG, "This API level do not support `removeJavascriptInterface`");
         }
 
-        this.setWebViewClient(new Cocos2dxWebViewClient());
+        this.webViewClient = new Cocos2dxWebViewClient();
+        this.setWebViewClient(webViewClient);
         this.setWebChromeClient(new WebChromeClient());
+    }
+
+    public void setLocalFiles(Map<String, String> localFiles)
+    {
+        this.webViewClient.setLocalFiles(localFiles);
     }
 
     public void setJavascriptInterfaceScheme(String scheme) {
@@ -78,6 +94,40 @@ public class Cocos2dxWebView extends WebView {
     }
 
     class Cocos2dxWebViewClient extends WebViewClient {
+
+        private Map<String, String> localFiles = null;
+
+        public void setLocalFiles(Map<String, String> localFiles)
+        {
+            this.localFiles = localFiles;
+        }
+
+        @Override
+        public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+            if(localFiles == null)
+                return null;
+
+            Uri uri = Uri.parse(url);
+            String server = uri.getAuthority();
+            String path = uri.getPath();
+            String localPath  = localFiles.get(server + path);
+            if(localPath != null)
+            {
+                String extension = MimeTypeMap.getFileExtensionFromUrl(url);
+                try {
+                    return new WebResourceResponse(MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension), "UTF-8", context.getAssets().open(localPath));
+                }
+                catch (IOException e) {
+                    Log.e(TAG, "failed to load local file", e);
+                    return null;
+                }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, final String urlString) {
             Cocos2dxActivity activity = (Cocos2dxActivity)getContext();

@@ -232,6 +232,10 @@ public:
     virtual void setBackgroundTransparent();
     virtual void onEnter() override;
     virtual void onExit() override;
+
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+    void setLocalFiles(std::map<std::string, std::string> localFiles);
+#endif
     
 protected:
     virtual cocos2d::ui::Widget* createCloneInstance() override;

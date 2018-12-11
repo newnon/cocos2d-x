@@ -140,6 +140,37 @@ int createWebViewJNI() {
     return -1;
 }
 
+static jobject jobjectFromDictionary(const std::map<std::string,std::string> &dictionary)
+{
+    JNIEnv* env = cocos2d::JniHelper::getEnv();
+    jclass mapClass = env->FindClass("java/util/HashMap");
+    if(mapClass == NULL)
+    {
+        return NULL;
+    }
+
+    jsize map_len = 1;
+
+    jmethodID init = env->GetMethodID(mapClass, "<init>", "(I)V");
+    jobject hashMap = env->NewObject(mapClass, init, map_len);
+
+    jmethodID put = env->GetMethodID(mapClass, "put", "(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;");
+
+    for(auto &it : dictionary)
+    {
+        jstring key = env->NewStringUTF(it.first.c_str());
+        jstring value = env->NewStringUTF(it.second.c_str());
+
+        env->CallObjectMethod(hashMap, put, key, value);
+
+        env->DeleteLocalRef(key);
+        env->DeleteLocalRef(value);
+    }
+
+    env->DeleteLocalRef(mapClass);
+    return hashMap;
+}
+
 std::string getUrlStringByFileName(const std::string &fileName) {
     // LOGD("error: %s,%d",__func__,__LINE__);
     const std::string basePath("file:///android_asset/");
@@ -301,6 +332,18 @@ namespace cocos2d {
 
             void WebViewImpl::setBounces(bool bounces) {
                 // empty function as this was mainly a fix for iOS
+            }
+
+            void WebViewImpl::setLocalFiles(std::map<std::string, std::string> localFiles)
+            {
+                cocos2d::JniMethodInfo methodInfo;
+                if(cocos2d::JniHelper::getStaticMethodInfo(methodInfo, className.c_str(), "setLocalFiles", "(ILjava/util/Map;)V"))
+                {
+                    jobject jLocalFiles = jobjectFromDictionary(localFiles);
+                    methodInfo.env->CallStaticVoidMethod(methodInfo.classID, methodInfo.methodID, _viewTag, jLocalFiles);
+                    methodInfo.env->DeleteLocalRef(jLocalFiles);
+                    methodInfo.env->DeleteLocalRef(methodInfo.classID);
+                }
             }
         } // namespace ui
     } // namespace experimental

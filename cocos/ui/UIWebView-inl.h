@@ -239,6 +239,13 @@ namespace experimental{
             return _onJSCallback;
         }
 
+#if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
+        void WebView::setLocalFiles(std::map<std::string, std::string> localFiles)
+        {
+            _impl->setLocalFiles(localFiles);
+        }
+#endif
+
     } // namespace ui
 } // namespace experimental
 } //namespace cocos2d

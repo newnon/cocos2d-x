@@ -1,19 +1,17 @@
 package org.cocos2dx.lib;
 
-import android.annotation.TargetApi;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
-import android.webkit.WebSettings;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
@@ -178,6 +176,18 @@ public class Cocos2dxWebViewHelper {
                 Cocos2dxWebView webView = webViews.get(index);
                 if (webView != null) {
                     webView.setWebViewRect(left, top, maxWidth, maxHeight);
+                }
+            }
+        });
+    }
+
+    public static void setLocalFiles(final int index, final Map<String, String> localFiles) {
+        sCocos2dxActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Cocos2dxWebView webView = webViews.get(index);
+                if (webView != null) {
+                    webView.setLocalFiles(localFiles);
                 }
             }
         });
