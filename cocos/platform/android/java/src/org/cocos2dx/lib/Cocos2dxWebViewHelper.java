@@ -9,13 +9,16 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.FrameLayout;
+import android.util.DisplayMetrics;
+import android.view.ViewGroup.LayoutParams;
+import android.view.ViewGroup.MarginLayoutParams;
+import android.widget.ImageView;
 
 import java.lang.reflect.Method;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
-
 
 public class Cocos2dxWebViewHelper {
     private static final String TAG = Cocos2dxWebViewHelper.class.getSimpleName();
@@ -24,6 +27,7 @@ public class Cocos2dxWebViewHelper {
     private static FrameLayout sLayout;
 
     private static SparseArray<Cocos2dxWebView> webViews;
+    private static SparseArray<View> closeViews;
     private static int viewTag = 0;
 
     public Cocos2dxWebViewHelper(FrameLayout layout) {
@@ -32,6 +36,7 @@ public class Cocos2dxWebViewHelper {
 
         Cocos2dxWebViewHelper.sCocos2dxActivity = (Cocos2dxActivity) Cocos2dxActivity.getContext();
         Cocos2dxWebViewHelper.webViews = new SparseArray<Cocos2dxWebView>();
+        Cocos2dxWebViewHelper.closeViews = new SparseArray<View>();
     }
 
     private static native boolean shouldStartLoading(int index, String message);
@@ -54,11 +59,17 @@ public class Cocos2dxWebViewHelper {
 
     private static native void onJsCallback(int index, String message);
 
+    private static native void onCloseCallback(int index, String message);
+
     public static void _onJsCallback(int index, String message) {
         onJsCallback(index, message);
     }
 
-    public static int createWebView() {
+    public static void _onCloseCallback(int index, String message) {
+        onCloseCallback(index, message);
+    }
+
+    public static int createWebView(/*final Boolean enableCloseButton*/) {
         final int index = viewTag;
         sCocos2dxActivity.runOnUiThread(new Runnable() {
             @Override
@@ -68,8 +79,35 @@ public class Cocos2dxWebViewHelper {
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT);
                 sLayout.addView(webView, lParams);
-
                 webViews.put(index, webView);
+
+                if (/*enableCloseButton*/true)
+                {
+                    DisplayMetrics metrics = sCocos2dxActivity.getResources().getDisplayMetrics();
+                    MarginLayoutParams params = new MarginLayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+                    params.setMargins(0, 0, metrics.widthPixels - 400, metrics.heightPixels - 200);
+                    ImageView closeButton = new ImageView(sCocos2dxActivity);
+                    closeButton.setImageResource(R.drawable.btn_back_arrow);
+                    closeButton.setLayoutParams(params);
+                    closeButton.setBackgroundColor(0x00000000);
+                    closeButton.setOnClickListener(new View.OnClickListener()
+                    {
+                        @Override
+                        public void onClick(View v)
+                        {
+                            sCocos2dxActivity.runOnGLThread(new Runnable()
+                            {
+                                @Override
+                                public void run()
+                                {
+                                    _onCloseCallback(index, "");
+                                }
+                            });
+                        }
+                    });
+                    sLayout.addView(closeButton);
+                    closeViews.put(index, closeButton);
+                }
             }
         });
         return viewTag++;
@@ -84,6 +122,11 @@ public class Cocos2dxWebViewHelper {
                     webViews.remove(index);
                     sLayout.removeView(webView);
                 }
+                View closeView = closeViews.get(index);
+                if (closeView != null) {
+                    closeViews.remove(index);
+                    sLayout.removeView(closeView);
+                }
             }
         });
     }
@@ -95,6 +138,10 @@ public class Cocos2dxWebViewHelper {
                 Cocos2dxWebView webView = webViews.get(index);
                 if (webView != null) {
                     webView.setVisibility(visible ? View.VISIBLE : View.GONE);
+                }
+                View closeView = closeViews.get(index);
+                if (closeView != null) {
+                    closeView.setVisibility(visible ? View.VISIBLE : View.GONE);
                 }
             }
         });

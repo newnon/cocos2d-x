@@ -125,15 +125,28 @@ extern "C" {
         env->ReleaseStringUTFChars(jmessage, charMessage);
         cocos2d::experimental::ui::WebViewImpl::onJsCallback(index, message);
     }
+
+    /*
+     * Class:     org_cocos2dx_lib_Cocos2dxWebViewHelper
+     * Method:    onCloseCallback
+     * Signature: (ILjava/lang/String;)V
+     */
+    JNIEXPORT void JNICALL Java_org_cocos2dx_lib_Cocos2dxWebViewHelper_onCloseCallback(JNIEnv *env, jclass, jint index, jstring jmessage) {
+        // LOGD("closeCallback");
+        auto charMessage = env->GetStringUTFChars(jmessage, NULL);
+        std::string message = charMessage;
+        env->ReleaseStringUTFChars(jmessage, charMessage);
+        cocos2d::experimental::ui::WebViewImpl::onCloseCallback(index, message);
+    }
 }
 
 namespace {
 
-int createWebViewJNI() {
+int createWebViewJNI(/*jboolean enableCloseButton*/) {
     cocos2d::JniMethodInfo t;
-    if (cocos2d::JniHelper::getStaticMethodInfo(t, className.c_str(), "createWebView", "()I")) {
+    if (cocos2d::JniHelper::getStaticMethodInfo(t, className.c_str(), "createWebView", "()I")) { // "(" /*"Z"*/ ")I"
         // LOGD("error: %s,%d",__func__,__LINE__);
-        jint viewTag = t.env->CallStaticIntMethod(t.classID, t.methodID);
+        jint viewTag = t.env->CallStaticIntMethod(t.classID, t.methodID/*, enableCloseButton*/);
         t.env->DeleteLocalRef(t.classID);
         return viewTag;
     }
@@ -194,8 +207,8 @@ namespace cocos2d {
 
             static std::unordered_map<int, cocos2d::experimental::ui::WebViewImpl*> s_WebViewImpls;
 
-            WebViewImpl::WebViewImpl(WebView *webView) : _viewTag(-1), _webView(webView) {
-                _viewTag = createWebViewJNI();
+            WebViewImpl::WebViewImpl(WebView *webView/*, bool enableCloseButton*/) : _viewTag(-1), _webView(webView) {
+                _viewTag = createWebViewJNI(/*enableCloseButton*/);
                 s_WebViewImpls[_viewTag] = this;
             }
 
@@ -300,6 +313,16 @@ namespace cocos2d {
                     auto webView = it->second->_webView;
                     if (webView->_onJSCallback) {
                         webView->_onJSCallback(webView, message);
+                    }
+                }
+            }
+
+            void WebViewImpl::onCloseCallback(const int viewTag, const std::string &message){
+                auto it = s_WebViewImpls.find(viewTag);
+                if (it != s_WebViewImpls.end()) {
+                    auto webView = it->second->_webView;
+                    if (webView->_onCloseCallback) {
+                        webView->_onCloseCallback(webView, message);
                     }
                 }
             }

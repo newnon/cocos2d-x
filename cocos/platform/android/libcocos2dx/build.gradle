@@ -16,6 +16,7 @@ android {
         aidl.srcDir "../java/src"
         java.srcDir "../java/src"
         manifest.srcFile "AndroidManifest.xml"
+        res.srcDirs = ["../java/res"]
     }
 }
 

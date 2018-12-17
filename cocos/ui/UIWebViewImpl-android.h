@@ -97,6 +97,7 @@ namespace cocos2d {
                 static void didFinishLoading(const int viewTag, const std::string &url);
                 static void didFailLoading(const int viewTag, const std::string &url);
                 static void onJsCallback(const int viewTag, const std::string &message);
+                static void onCloseCallback(const int viewTag, const std::string &message);
 
                 void setLocalFiles(std::map<std::string, std::string> localFiles);
 

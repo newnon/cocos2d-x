@@ -219,6 +219,11 @@ namespace experimental{
             _onJSCallback = callback;
         }
 
+       void WebView::setOnCloseCallback(const ccWebViewCallback &callback)
+        {
+            _onCloseCallback = callback;
+        }
+
         std::function<bool(WebView *sender, const std::string &url)> WebView::getOnShouldStartLoading()const
         {
             return _onShouldStartLoading;
@@ -237,6 +242,11 @@ namespace experimental{
         WebView::ccWebViewCallback WebView::getOnJSCallback()const
         {
             return _onJSCallback;
+        }
+
+        WebView::ccWebViewCallback WebView::getOnCloseCallback()const
+        {
+            return _onCloseCallback;
         }
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID

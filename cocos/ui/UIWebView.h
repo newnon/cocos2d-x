@@ -184,7 +184,12 @@ public:
      * This callback called when load URL that start with javascript interface scheme.
      */
     void setOnJSCallback(const ccWebViewCallback& callback);
-    
+
+    /**
+     * This callback called when close button clicked.
+     */
+    void setOnCloseCallback(const ccWebViewCallback& callback);
+
     /**
      * Get the callback when WebView is about to start.
      */
@@ -204,6 +209,11 @@ public:
      *Get the Javascript callback.
      */
     ccWebViewCallback getOnJSCallback()const;
+
+    /**
+     *Get the Close callback.
+     */
+    ccWebViewCallback getOnCloseCallback()const;
 
     /**
      * Set whether the webview bounces at end of scroll of WebView.
@@ -248,6 +258,8 @@ protected:
     ccWebViewCallback _onDidFailLoading;
    
     ccWebViewCallback _onJSCallback;
+
+    ccWebViewCallback _onCloseCallback;
 
 CC_CONSTRUCTOR_ACCESS:
     /**
