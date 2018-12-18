@@ -83,6 +83,7 @@ public class Cocos2dxWebViewHelper {
                 if (webView != null) {
                     webViews.remove(index);
                     sLayout.removeView(webView);
+                    webView.destroy();
                 }
             }
         });
