@@ -2,6 +2,7 @@ package org.cocos2dx.lib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
@@ -57,6 +58,7 @@ public class Cocos2dxWebView extends WebView {
         this.mViewTag = viewTag;
         this.mJSScheme = "";
 
+        this.setBackgroundColor(Color.BLACK);
         this.setFocusable(true);
         this.setFocusableInTouchMode(true);
 
@@ -66,6 +68,9 @@ public class Cocos2dxWebView extends WebView {
         this.getSettings().setJavaScriptEnabled(true);
         this.getSettings().setAllowFileAccessFromFileURLs(true);
         this.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        Log.d(TAG, "DEBUG_WEBVIEW userAgent before = " + this.getSettings().getUserAgentString());
+        this.getSettings().setUserAgentString(this.getSettings().getUserAgentString().replace("Android", ""));
+        Log.d(TAG, "DEBUG_WEBVIEW userAgent after = " + this.getSettings().getUserAgentString());
 
         // `searchBoxJavaBridge_` has big security risk. http://jvn.jp/en/jp/JVN53768697
         try {
