@@ -121,6 +121,20 @@ public class Cocos2dxWebViewHelper {
         }
     }
 
+    public static void setBackgroundColor(final int index, final int r, final int g, final int b, final int a) {
+        if(android.os.Build.VERSION.SDK_INT >10) {
+            sCocos2dxActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Cocos2dxWebView webView = webViews.get(index);
+                    if (webView != null) {
+                        webView.setBackgroundColor(Color.argb(a, r, g, b));
+                    }
+                }
+            });
+        }
+    }
+
     public static void setOpacityWebView(final int index, final float opacity) {
         if(android.os.Build.VERSION.SDK_INT >10){
             sCocos2dxActivity.runOnUiThread(new Runnable() {

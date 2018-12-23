@@ -93,6 +93,8 @@ namespace cocos2d {
                 
                 void setBackgroundTransparent();
 
+                void setBackgroundColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
                 static bool shouldStartLoading(const int viewTag, const std::string &url);
                 static void didFinishLoading(const int viewTag, const std::string &url);
                 static void didFailLoading(const int viewTag, const std::string &url);

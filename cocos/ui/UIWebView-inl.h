@@ -160,6 +160,11 @@ namespace experimental{
         {
             _impl->setBackgroundTransparent();
         };
+        
+        void WebView::setBackgroundColor(const Color4B &color)
+        {
+            _impl->setBackgroundColor(color.r, color.g, color.b, color.a);
+        };
 
         void WebView::onEnter()
         {
