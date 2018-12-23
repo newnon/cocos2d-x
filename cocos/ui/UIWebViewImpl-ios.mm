@@ -80,6 +80,8 @@ static std::string getFixedBaseUrl(const std::string& baseUrl)
 
 - (void)setBackgroundTransparent;
 
+- (void)setBackgroundColor:(UIColor*) color;
+
 - (void)setFrameWithX:(float)x y:(float)y width:(float)width height:(float)height;
 
 - (void)setJavascriptInterfaceScheme:(const std::string &)scheme;
@@ -169,6 +171,10 @@ static std::string getFixedBaseUrl(const std::string& baseUrl)
 
 -(void) setBackgroundTransparent{
     [self.uiWebView setBackgroundColor:[UIColor clearColor]];
+}
+
+-(void) setBackgroundColor:(UIColor*) color {
+    [self.uiWebView setBackgroundColor:color];
 }
 
 - (void)setFrameWithX:(float)x y:(float)y width:(float)width height:(float)height {
@@ -422,13 +428,20 @@ void WebViewImpl::setVisible(bool visible){
 void WebViewImpl::setOpacityWebView(float opacity){
     [_uiWebViewWrapper setOpacityWebView: opacity];
 }
-        
+
 float WebViewImpl::getOpacityWebView() const{
     return [_uiWebViewWrapper getOpacityWebView];
 }
 
 void WebViewImpl::setBackgroundTransparent(){
     [_uiWebViewWrapper setBackgroundTransparent];
+}
+        
+void WebViewImpl::setBackgroundColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    [_uiWebViewWrapper setBackgroundColor:[UIColor colorWithRed:r / 255.0f
+                                                          green:g / 255.0f
+                                                           blue:b / 255.0f
+                                                          alpha:a / 255.f]];
 }
 
         

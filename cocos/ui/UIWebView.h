@@ -232,6 +232,8 @@ public:
     virtual void setBackgroundTransparent();
     virtual void onEnter() override;
     virtual void onExit() override;
+    
+    virtual void setBackgroundColor(const Color4B &color);
 
 #if CC_TARGET_PLATFORM == CC_PLATFORM_ANDROID
     void setLocalFiles(std::map<std::string, std::string> localFiles);
