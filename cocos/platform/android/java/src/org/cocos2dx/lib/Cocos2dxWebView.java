@@ -2,7 +2,6 @@ package org.cocos2dx.lib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Color;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
@@ -58,7 +57,6 @@ public class Cocos2dxWebView extends WebView {
         this.mViewTag = viewTag;
         this.mJSScheme = "";
 
-        this.setBackgroundColor(Color.BLACK);
         this.setFocusable(true);
         this.setFocusableInTouchMode(true);
 
