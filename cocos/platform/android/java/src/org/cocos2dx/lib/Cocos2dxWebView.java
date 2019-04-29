@@ -2,6 +2,7 @@ package org.cocos2dx.lib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 import android.view.Gravity;
@@ -133,6 +134,23 @@ public class Cocos2dxWebView extends WebView {
 
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, final String urlString) {
+            try {
+                if (urlString.startsWith("bitcoin:") || urlString.startsWith("ethereum:")) {
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(urlString));
+                    getContext().startActivity(intent);
+    //                view.reload();
+                    view.evaluateJavascript("location.href='cmd://exit'", null);
+                    return true;
+                }
+
+    //            view.loadUrl(urlString);
+    //            return true;
+            } catch (Exception e) {
+                Log.d(TAG, "No Activity found to handle Intent " + urlString);
+                view.evaluateJavascript("alert('No Wallet App')", null);
+                return true;
+            }
+
             Cocos2dxActivity activity = (Cocos2dxActivity)getContext();
 
             try {
