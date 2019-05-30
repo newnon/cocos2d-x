@@ -2,7 +2,9 @@ package org.cocos2dx.lib;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
 import android.webkit.MimeTypeMap;
@@ -196,8 +198,8 @@ public class Cocos2dxWebView extends WebView {
                 FrameLayout.LayoutParams.WRAP_CONTENT);
         layoutParams.leftMargin = left;
         layoutParams.topMargin = top;
-        layoutParams.width = maxWidth;
-        layoutParams.height = maxHeight;
+        layoutParams.width = maxHeight;
+        layoutParams.height = maxWidth;
         layoutParams.gravity = Gravity.TOP | Gravity.LEFT;
         this.setLayoutParams(layoutParams);
     }
