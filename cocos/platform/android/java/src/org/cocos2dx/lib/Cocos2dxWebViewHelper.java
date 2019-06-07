@@ -4,6 +4,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -381,5 +382,38 @@ public class Cocos2dxWebViewHelper {
                 }
             }
         });
+    }
+
+    public static void onPause() {
+        Log.d(TAG, "onPause()");
+        for (int i = 0, e = webViews.size(); i < e; ++i) {
+            Cocos2dxWebView obj = webViews.valueAt(i);
+            obj.onPause();
+            obj.pauseTimers();
+            setVisible(i, false);
+            Log.d(TAG, "onPause() i = " + i + " obj = " + obj);
+
+        }
+    }
+
+    public static void onResume() {
+        Log.d(TAG, "onResume()");
+        for (int i = 0, e = webViews.size(); i < e; ++i) {
+            Cocos2dxWebView obj = webViews.valueAt(i);
+            obj.resumeTimers();
+            obj.onResume();
+            setVisible(i, true);
+            Log.d(TAG, "onResume() i = " + i + " obj = " + obj);
+        }
+    }
+
+    public static void onDestroy() {
+        Log.d(TAG, "onDestroy()");
+        for (int i = 0, e = webViews.size(); i < e; ++i) {
+            Cocos2dxWebView obj = webViews.valueAt(i);
+            obj.destroy();
+            Log.d(TAG, "onDestroy() i = " + i + " obj = " + obj);
+        }
+        webViews.clear();
     }
 }
